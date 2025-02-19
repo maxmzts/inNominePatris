@@ -9,6 +9,10 @@
 			"name": "Prototipo 0: plantilla_fv",
 			"path": "src/pro/plantilla_fv"
 		},
+        {
+			"name": "Prototipo Max: multimax",
+			"path": "src/pro/multimax"
+		},
 
 	],
 	"settings": {
