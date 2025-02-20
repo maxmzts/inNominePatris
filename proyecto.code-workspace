@@ -13,6 +13,10 @@
 			"name": "Prototipo Max: multimax",
 			"path": "src/pro/multimax"
 		},
+		{
+			"name": "Prototipo 0: plantilla_fv",
+			"path": "src/pro/Pelee4"
+		},
 
 	],
 	"settings": {
