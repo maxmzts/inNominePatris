@@ -10,12 +10,16 @@
 			"path": "src/pro/plantilla_fv"
 		},
         {
-			"name": "Prototipo Max: multimax",
+			"name": "Prototipo 0: multimax",
 			"path": "src/pro/multimax"
 		},
 		{
-			"name": "Prototipo 0: plantilla_fv",
+			"name": "Prototipo 0: Pele",
 			"path": "src/pro/Pelee4"
+		},
+		{
+			"name": "Prototipo 0: Estrella",
+			"path": "src/pro/Estrella"
 		},
 
 	],
