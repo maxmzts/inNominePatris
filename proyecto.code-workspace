@@ -24,6 +24,6 @@
 
 	],
 	"settings": {
-		"editor.wordWrap": "on"
+        "editor.wordWrap": "off"
 	}
 }
