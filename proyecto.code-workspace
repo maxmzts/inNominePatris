@@ -21,6 +21,10 @@
 			"name": "Prototipo 0: Estrella",
 			"path": "src/pro/Estrella"
 		},
+		{
+			"name": "Prototipo 0: Davinson",
+			"path": "src/pro/Davinson"
+		},
 
 	],
 	"settings": {
