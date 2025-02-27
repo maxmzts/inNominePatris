@@ -15,3 +15,6 @@ Revisé el ```CMakeLists.txt``` y añadí una referencia que me faltó a la libr
 
 ## 20250226 MaximoMartinez @(1 h)
 (Antes de la clase de prácticas) Seguí el tutorial.
+
+## 20250226 JorgePelegrín @(2h, 30min)
+Añdí la clase espada, para empezar a probar el ataque básico y la habilidad. Además, cree una clase de personaje básica y una de enemigo para poder probar el daño de los ataques. Tiene algún error de compilación y falta añadir los sprites bien para que la prueba sea visual.
