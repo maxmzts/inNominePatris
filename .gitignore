@@ -3,3 +3,5 @@ src/pro/Pelee4/build
 src/pro/Estrella/build
 src/pro/Davinson/build
 .vscode/settings.json
+.vscode/c_cpp_properties.json
+.vscode/launch.json

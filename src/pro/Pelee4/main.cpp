@@ -19,7 +19,7 @@ int main() {
     std::cerr << "Error cargando la imagen sprites.png";
     exit(0);
   }
-
+  
   sf::Texture swordTex;
   if (!swordTex.loadFromFile("resources/sword.png")) {
     std::cerr << "Error cargando la imagen sword.png";
