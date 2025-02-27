@@ -8,6 +8,8 @@
 #include "include/config.h"
 
 int main() {
+    //init srand
+    std::srand(static_cast<unsigned>(time(NULL)));
 
     //Inicializar motor de juego
     Game game;

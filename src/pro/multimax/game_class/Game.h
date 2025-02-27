@@ -4,6 +4,8 @@
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/Audio.hpp>
+#include <vector>
+#include <ctime>
 
 /*
     Clase para encapsular el motor de juego.
@@ -18,8 +20,26 @@ private:
     sf::RenderWindow* window; 
     sf::VideoMode videomode;
     sf::Event event;
+
+    //mouse positions
+    sf::Vector2i mousePosWindow;
+
+    //Game logic
+    int points;
+    float enemySpawnTimer;
+    float enemySpawnTimerMax;
+    int maxEnemies;
+
+    //Game objects
+    std::vector<sf::RectangleShape> enemies;
+    sf::RectangleShape enemy;
+
+    //Inicializadores
     void initVariables();
     void initWindow();
+    void initEnemies();
+    
+
 public:
     //constructors and destructors
     Game();
@@ -29,7 +49,12 @@ public:
     const bool running() const;
 
     //functions
+    void spawnEnemy();
+
     void pollEvents();
+    void updateMousePositions();
+    void updateEnemies();
+    void renderEnemies();
     void update();
     void render();
 };
