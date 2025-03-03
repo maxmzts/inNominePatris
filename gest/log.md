@@ -23,4 +23,7 @@ Añadí la clase espada, para empezar a probar el ataque básico y la habilidad.
 He creado el backlog del equipo en github para poder organizar nuestras tareas, además he añadido mis tareas al to do.
 
 ## 20250303 EstrellaDomínguez @(1h)
-He solucionado errores de ```CMakeList.txt``` y creado la clase ```Interface``` que contiene el código del Menú y el HUD.  Además he añadido mis tareas al to do.
+He solucionado errores de ```CMakeList.txt``` y creado la clase ```Interface``` que contiene el código del Menú y el HUD. Además he añadido mis tareas al to do.
+
+## 20250303 EstrellaDomínguez @(30min)
+He empezado a implementar el menú. Compila sin errores pero no se ve en pantalla lo que esperaba.
