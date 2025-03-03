@@ -17,7 +17,16 @@ Revisé el ```CMakeLists.txt``` y añadí una referencia que me faltó a la libr
 Antes y durante la clase de prácticas seguí el tutorial que mencioné. No hice commit porque estaba sin terminar y estaba estudiando para otra asigatura durante la semana.
 
 ## 20250226 JorgePelegrín @(2h, 30min)
-Añdí la clase espada, para empezar a probar el ataque básico y la habilidad. Además, cree una clase de personaje básica y una de enemigo para poder probar el daño de los ataques. Tiene algún error de compilación y falta añadir los sprites bien para que la prueba sea visual.
+Añadí la clase espada, para empezar a probar el ataque básico y la habilidad. Además, cree una clase de personaje básica y una de enemigo para poder probar el daño de los ataques. Tiene algún error de compilación y falta añadir los sprites bien para que la prueba sea visual.
 
-## 20250303 MaximoMartinez @(0.5 h)
+## 20250303 DavidGonzález @(1h, 15min)
+He creado el backlog del equipo en github para poder organizar nuestras tareas, además he añadido mis tareas al to do.
+
+## 20250303 EstrellaDomínguez @(1h)
+He solucionado errores de ```CMakeList.txt``` y creado la clase ```Interface``` que contiene el código del Menú y el HUD. Además he añadido mis tareas al to do.
+
+## 20250303 EstrellaDomínguez @(30min)
+He empezado a implementar el menú. Compila sin errores pero no se ve en pantalla lo que esperaba.
+
+## 20250303 MaximoMartinez @(30min)
 Tendría que dejar de hacer tutoriales.
