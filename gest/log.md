@@ -14,7 +14,10 @@ He seguido un [tutorial de YouTube](https://www.youtube.com/playlist?list=PL6xSO
 Revisé el ```CMakeLists.txt``` y añadí una referencia que me faltó a la librería, conseguí compilar el trabajo de ayer. Además agregé ".vscode/settings.json" al ```.gitignore```.
 
 ## 20250226 MaximoMartinez @(1 h)
-(Antes de la clase de prácticas) Seguí el tutorial.
+Antes y durante la clase de prácticas seguí el tutorial que mencioné. No hice commit porque estaba sin terminar y estaba estudiando para otra asigatura durante la semana.
 
 ## 20250226 JorgePelegrín @(2h, 30min)
 Añdí la clase espada, para empezar a probar el ataque básico y la habilidad. Además, cree una clase de personaje básica y una de enemigo para poder probar el daño de los ataques. Tiene algún error de compilación y falta añadir los sprites bien para que la prueba sea visual.
+
+## 20250303 MaximoMartinez @(0.5 h)
+Tendría que dejar de hacer tutoriales.

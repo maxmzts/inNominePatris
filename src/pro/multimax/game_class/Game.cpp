@@ -14,7 +14,9 @@ void Game::initVariables()
     this->enemySpawnTimerMax = 60.f;
     this->enemySpawnTimer = this->enemySpawnTimerMax;
     this->maxEnemies = 10;
+    this->mouseHeld = false;
 }
+
 void Game::initWindow()
 {
     //Creamos una ventana
@@ -33,8 +35,6 @@ void Game::initEnemies()
     this->enemy.setFillColor(sf::Color::Red);
     this->enemy.setOutlineColor(sf::Color(180,0,0,255));
     this->enemy.setOutlineThickness(3.f);
-
-
 }
 
 // CONSTRUCTOR y DESTRUCTOR
@@ -108,10 +108,15 @@ void Game::updateMousePositions()
     /*
         @ return void
 
-        Updates the mouse poisitons:
-        - Mouse position relative to window
+        Actualiza la posición del mouse:
+        - Obtiene la posición discreta en píxeles
+        - Calcula la posición continua en float para cálculos
     */
+
+    // posición discreta
     this->mousePosWindow = sf::Mouse::getPosition(*this->window);
+    // posición continua
+    this->mousePosView = this->window->mapPixelToCoords(this->mousePosWindow);
 }
 
 void Game::updateEnemies()
@@ -137,10 +142,42 @@ void Game::updateEnemies()
             this->enemySpawnTimer += 1.f;
     }
 
-    // Mover enemigos hacia abajo
-    for (auto &e : this->enemies)
+    // Mover enemigos hacia abajo y eliminarlos
+    for (int i = 0; i < this->enemies.size(); i++)
     {
-        e.move(0.f, 2.f);
+        bool deleted = false;
+
+        this->enemies[i].move(0.f, 2.f);
+
+        // eliminar enemigos si salen de la pantalla
+        if(this->enemies[i].getPosition().y > this->window->getSize().y)
+            this->enemies.erase(this->enemies.begin() + i);
+    }
+
+    //si se ha clicado la pantalla se comprueba que se ha clicado sobre un enemigo
+    //ponerlo fuera del loop anterior evita poder eliminar enemigos manteniendo el clic
+    if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
+    {
+        if(this->mouseHeld == false)
+        {
+            this->mouseHeld = true;
+            bool deleted = false;
+            for (size_t i = 0; i < this->enemies.size() && deleted == false; i++)
+            {
+                if(this->enemies[i].getGlobalBounds().contains(this->mousePosView))
+                {
+                    deleted = true;
+                    this->enemies.erase(this->enemies.begin() + i);
+
+                    // conseguir puntos
+                    this->points += 1.f;
+                }
+            }
+        }
+    }
+    else
+    {
+        this->mouseHeld = false;
     }
 }
 
