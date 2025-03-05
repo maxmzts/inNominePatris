@@ -1,8 +1,9 @@
 #include "Character.h"
 
 Character::Character() 
-    : equippedWeapon(nullptr), isDashing(false), dashSpeed(0.0f), dashDuration(0.0f) {
+    : direction(0.0f, 1.0f), equippedWeapon(nullptr), isDashing(false), dashSpeed(0.0f), dashDuration(0.0f) {
         sprite.setPosition(100, 300);
+
     }
 
 void Character::equipWeapon(Weapon* newWeapon) {
@@ -18,6 +19,31 @@ void Character::setTexture(const sf::Texture& tex) {
 // Cambia el rectángulo de la textura
 void Character::setTextureRect(int left, int top, int width, int height) {
     sprite.setTextureRect(sf::IntRect(left, top, width, height));
+}
+
+void Character::setScale(float x, float y) {
+    sprite.setScale(x, y);
+}
+
+sf::Vector2f Character::getScale() const{
+    return sprite.getScale();
+}
+
+void Character::setOrigin(float x, float y) {
+    sprite.setOrigin(x, y);
+}
+
+void Character::setPosition(float x, float y) {
+    sprite.setPosition(x, y);
+}
+
+void Character::move(float x, float y) {
+    sprite.move(x, y);
+}
+
+void Character::setDirection(float x, float y) {
+    direction.x = x;
+    direction.y = y;
 }
 
 void Character::attack(std::vector<Enemy>& enemies) {
@@ -36,8 +62,17 @@ void Character::startDash(float speed, float duration) {
         dashSpeed = speed;
         dashDuration = duration;
         dashTimer.restart();
-        velocity.x = dashSpeed;
+        velocity.x = dashSpeed * direction.x; // Se mueve en la dirección que mira el personaje
+        velocity.y = dashSpeed * direction.y;
     }
+}
+
+void Character::increaseDashSpeed(float speed) {
+    dashSpeed += speed;
+}
+
+void Character::increaseSpeed(float speed) {
+    this->speed += speed;
 }
 
 void Character::update(float deltaTime) {
@@ -45,6 +80,7 @@ void Character::update(float deltaTime) {
         if (dashTimer.getElapsedTime().asSeconds() > dashDuration) {
             isDashing = false;
             velocity.x = 0;
+            velocity.y = 0;
         }
     }
     sprite.move(velocity * deltaTime);

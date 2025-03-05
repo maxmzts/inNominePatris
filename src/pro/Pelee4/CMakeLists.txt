@@ -12,7 +12,7 @@ add_subdirectory(Armas)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -Wall -Wextra")
 #Se desea generar un ejecutable, se especifica donde está el main
 #y ficheros que aporten código que no sean librerias o subcarpetas 
-add_executable(MiJuego mainPrueba.cpp)
+add_executable(MiJuego main.cpp)
 
 #Copio el ejecutable fuera de build para tener acceso fácil a los recursos
 add_custom_command(TARGET MiJuego 
