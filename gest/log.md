@@ -75,3 +75,13 @@
   - Implementado el pickUp de item, probado con uno para aumentar la distancia del dash
   - Cambio un poco de la estructura del log para que se vea mejor estructurado. 
 
+## 2025-03-05 EstrellaDomínguez @(1h)
+- **Descripción**
+  - He conseguido que salga texto en el menú
+  - Ya se puede seleccionar entre las opciones y se cierra si pulsas en "Salir"
+
+## 2025-03-05 EstrellaDomínguez @(45min)
+- **Descripción**
+  - He puesto imagen de fondo en el menú y mejorado la estética.
+  - Ahora se controla con las teclas "W" y "S" en vez de "Up" y "Down".
+  - Actualmente está puesta la ruta completa (/home/estrella...) para la imagen de fondo y la fuente porque no funcionaba con "resources/background".
