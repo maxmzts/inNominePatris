@@ -3,17 +3,26 @@
 
 Menu::Menu(float width, float height) {
     // Cargar fuente
-    if (!font.loadFromFile("assets/fonts/ARIAL.TTF")) {
+    if (!font.loadFromFile("/home/estrella/proyecto-abp-grupo-f4/src/pro/Estrella/assets/fonts/ARIAL.TTF")) {
         std::cerr << "Error al cargar la fuente. Usando texto sin fuente" << std::endl;
     }
 
-    std::vector<std::string> opciones = {"Nueva Partida", "Continuar", "Salir"};
+    // Cargar la imagen de fondo
+    if (!backgroundTexture.loadFromFile("/home/estrella/proyecto-abp-grupo-f4/src/pro/Estrella/resources/background.png")) {
+        std::cerr << "Error al cargar la imagen de fondo" << std::endl;
+    }
+    backgroundSprite.setTexture(backgroundTexture);
+    backgroundSprite.setScale(width / backgroundTexture.getSize().x, height / backgroundTexture.getSize().y);
+
+    std::vector<std::string> opciones = {"Nueva Partida", "Continuar partida", "Salir"};
     
     for (size_t i = 0; i < opciones.size(); ++i) {
         // Crear fondo del texto
         sf::RectangleShape background(sf::Vector2f(300, 50));
-        background.setPosition(width / 2.5 - 20, height / (opciones.size() + 1) * (i + 1) - 10);
+        background.setPosition((width - 300) / 2, height / (opciones.size() + 1) * (i + 1));
         background.setFillColor(sf::Color(50, 50, 50, 200)); // Color gris con transparencia
+        background.setOutlineThickness(2);
+        background.setOutlineColor(sf::Color::White);
         menuBackgrounds.push_back(background);
 
         // Crear texto del menú
@@ -22,7 +31,12 @@ Menu::Menu(float width, float height) {
         text.setString(opciones[i]);
         text.setFillColor(i == 0 ? sf::Color::Red : sf::Color::White);
         text.setCharacterSize(30);
-        text.setPosition(width / 2.5, height / (opciones.size() + 1) * (i + 1));
+
+        // Centrar el texto dentro del recuadro
+        sf::FloatRect textBounds = text.getLocalBounds();
+        text.setOrigin(textBounds.width / 2, textBounds.height / 2);
+        text.setPosition(background.getPosition().x + 300 / 2, background.getPosition().y + 60 / 2 - 5);
+        
         menuItems.push_back(text);
     }
 
@@ -30,6 +44,8 @@ Menu::Menu(float width, float height) {
 }
 
 void Menu::draw(sf::RenderWindow &window) {
+    window.draw(backgroundSprite);
+
     for (size_t i = 0; i < menuItems.size(); ++i) {
         window.draw(menuBackgrounds[i]);
         window.draw(menuItems[i]);

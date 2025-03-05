@@ -13,9 +13,9 @@ int main() {
                 window.close();
             
             if (event.type == sf::Event::KeyPressed) {
-                if (event.key.code == sf::Keyboard::Up)
+                if (event.key.code == sf::Keyboard::W)
                     menu.moveUp();
-                else if (event.key.code == sf::Keyboard::Down)
+                else if (event.key.code == sf::Keyboard::S)
                     menu.moveDown();
                 else if (event.key.code == sf::Keyboard::Enter) {
                     int selected = menu.getSelectedItem();

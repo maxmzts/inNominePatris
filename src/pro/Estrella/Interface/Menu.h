@@ -18,6 +18,8 @@ private:
     std::vector<sf::Text> menuItems;
     std::vector<sf::RectangleShape> menuBackgrounds;
     sf::Font font; // Fuente para los textos
+    sf::Texture backgroundTexture;
+    sf::Sprite backgroundSprite;
 };
 
 #endif 
