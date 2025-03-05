@@ -6,7 +6,7 @@
 class MeleeWeapon : public Weapon {
     public:
         MeleeWeapon(float range) : attackRange(range) {}
-    private:
+    protected:
         float attackRange;
 };
 

@@ -46,6 +46,10 @@ void Character::setDirection(float x, float y) {
     direction.y = y;
 }
 
+sf::Vector2f Character::getDirection() const {
+    return direction;
+}
+
 void Character::attack(std::vector<Enemy>& enemies) {
     if (equippedWeapon) equippedWeapon->attack(*this, enemies);
 }
@@ -65,10 +69,6 @@ void Character::startDash(float speed, float duration) {
         velocity.x = dashSpeed * direction.x; // Se mueve en la dirección que mira el personaje
         velocity.y = dashSpeed * direction.y;
     }
-}
-
-void Character::increaseDashSpeed(float speed) {
-    dashSpeed += speed;
 }
 
 void Character::increaseSpeed(float speed) {
@@ -92,4 +92,8 @@ void Character::draw(sf::RenderWindow& window) {
 
 sf::Vector2f Character::getPosition() const {
     return sprite.getPosition();
+}
+
+sf::FloatRect Character::getBounds() const {
+    return sprite.getGlobalBounds();
 }

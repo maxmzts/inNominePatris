@@ -1,4 +1,3 @@
-// Menu.h
 #ifndef MENU_H
 #define MENU_H
 
@@ -13,10 +12,12 @@ public:
     void moveUp();
     void moveDown();
     int getSelectedItem() { return selectedItemIndex; }
+
 private:
     int selectedItemIndex;
-    sf::Font font;
     std::vector<sf::Text> menuItems;
+    std::vector<sf::RectangleShape> menuBackgrounds;
+    sf::Font font; // Fuente para los textos
 };
 
-#endif // MENU_H
+#endif 

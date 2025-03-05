@@ -2,19 +2,32 @@
 #define ITEM_H
 
 #include <SFML/Graphics.hpp>
+#include "Character.h"
+#include "Sword.h"
 
 class Item {
+    protected:
+        sf::Sprite sprite;
+        sf::Texture texture;
+        bool isPickedUp = false;
     public:
-        virtual void applyEffect(Character& character) = 0;
+        virtual void applyEffect(Sword& sword) = 0;
+        void setTexture(const sf::Texture& tex);
+        void setTextureRect(int left, int top, int width, int height);
+        void setPosition(float x, float y);
+        void draw(sf::RenderWindow& window);
+        sf::FloatRect getBounds() const;
         virtual ~Item() = default;
 };
 
-class DashBoost : public Item {
+class DashBoostItem : public Item {
     public:
-        void applyEffect(Character& character) override;
+        void applyEffect(Sword& sword) override;
 };
 
-class SpeedBoost : public Item {
+class SpeedBoostItem : public Item {
     public:
-        void applyEffect(Character& character) override;
+        void applyEffect(Sword& sword) override;
 };
+
+#endif // !ITEM_H

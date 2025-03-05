@@ -7,6 +7,7 @@ project(MiJuego)
 add_library(libModulos STATIC)
 add_subdirectory(Character)
 add_subdirectory(Armas)
+add_subdirectory(Item)
 
 #Opciones a pasar al compilador de C++
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -Wall -Wextra")
