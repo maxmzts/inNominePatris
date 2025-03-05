@@ -85,3 +85,10 @@
   - He puesto imagen de fondo en el menú y mejorado la estética.
   - Ahora se controla con las teclas "W" y "S" en vez de "Up" y "Down".
   - Actualmente está puesta la ruta completa (/home/estrella...) para la imagen de fondo y la fuente porque no funcionaba con "resources/background".
+
+## 2025-03-05 DavidGonzález @(3h)
+- **Descripción**
+  - He implementado la clase Character que es el personaje principal.
+  - He implementado el movimiento del personaje en 8 direcciones de manera fluida y con una buena velocidad ajustable.
+  - He implementado parametros de aceleracion y deceleracion para el movimiento del personaje, que sirven para hacer un movimiento mas orgánico y se pueden emplear para agregar mecánicas en un fututo.
+  - He ajustado el tamaño del personaje.

@@ -6,6 +6,7 @@ project(MiJuego)
 #Habitualmente cada subdirectorio determinará una libreria 
 add_library(libModulos STATIC)
 add_subdirectory(ej_modulos)
+add_subdirectory(character)
 
 #Opciones a pasar al compilador de C++
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -Wall -Wextra")
