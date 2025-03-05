@@ -1,38 +1,69 @@
-# Log del trabajo realizado por dia
-**El log es obligatorio**
+# Log del trabajo realizado por día
 
-## 20230108 FidelAznar @(1h)
-Debe contener un sub item como el anterior, con la fecha de la entrada y las cuestiones generales que se realizaron, así como el tiempo total dedicado en la sesión. 
+## 2023-01-08 FidelAznar @(1h)
+- **Descripción**: 
+  - Se trabajó en tareas generales y se documentó lo realizado.
+  
+## 2025-02-23 JorgePelegrín @(30min)
+- **Descripción**:
+  - Añadí el sprite de la espada al main de la plantilla.
+  - Hice que la espada siempre estuviera delante del sprite del jugador en las cuatro posiciones.
 
-## 20250223 JorgePelegrín @(30min)
-Añadí el sprite de la espada al main de la plantilla e hice que siempre estuviera delante del sprite del jugador en las cuatro posiciones.
+## 2025-02-24 MaximoMartinez @(1.25h)
+- **Descripción**:
+  - Seguí un [tutorial de YouTube](https://www.youtube.com/playlist?list=PL6xSOsbVA1eb_QqMTTcql_3PdOiE928up) para empezar a comprender SFML.
+  - Creé una clase `Game` que encapsula el motor de juego y la aproveché para entender la gestión de librerías con CMake.
+  - El código no compilaba cuando dejé de trabajar.
 
-## 20250224 MaximoMartinez @(1.25h)
-He seguido un [tutorial de YouTube](https://www.youtube.com/playlist?list=PL6xSOsbVA1eb_QqMTTcql_3PdOiE928up) para empezar a comprender SFML. Creé una clase ```Game``` que encapsula el motor de juego y la aproveché para entender la gestión de librerías con CMake. No compilaba cuando dejé de trabajar.
+## 2025-02-25 MaximoMartinez @(10min)
+- **Descripción**:
+  - Revisé el `CMakeLists.txt` y añadí una referencia faltante a la librería.
+  - Conseguí compilar el trabajo de ayer.
+  - Añadí `.vscode/settings.json` al `.gitignore`.
 
-## 20250225 MaximoMartinez @(10 min)
-Revisé el ```CMakeLists.txt``` y añadí una referencia que me faltó a la librería, conseguí compilar el trabajo de ayer. Además agregé ".vscode/settings.json" al ```.gitignore```.
+## 2025-02-26 MaximoMartinez @(1h)
+- **Descripción**:
+  - Antes y durante la clase de prácticas, seguí el tutorial mencionado.
+  - No hice commit ya que el trabajo estaba sin terminar y estuve estudiando para otra asignatura durante la semana.
 
-## 20250226 MaximoMartinez @(1 h)
-Antes y durante la clase de prácticas seguí el tutorial que mencioné. No hice commit porque estaba sin terminar y estaba estudiando para otra asigatura durante la semana.
+## 2025-02-26 JorgePelegrín @(2h, 30min)
+- **Descripción**:
+  - Añadí la clase de espada para empezar a probar el ataque básico y la habilidad.
+  - Creé una clase de personaje básica y una de enemigo para poder probar el daño de los ataques.
+  - Se presentaron algunos errores de compilación y falta de integración de los sprites para la visualización.
 
-## 20250226 JorgePelegrín @(2h, 30min)
-Añadí la clase espada, para empezar a probar el ataque básico y la habilidad. Además, cree una clase de personaje básica y una de enemigo para poder probar el daño de los ataques. Tiene algún error de compilación y falta añadir los sprites bien para que la prueba sea visual.
+## 2025-02-28 JorgePelegrín @(1h)
+- **Descripción**:
+  - El proyecto ya compila, el ataque básico y la habilidad funcionan.
+  - Falta dibujar al enemigo y la espada, y probar si el ataque básico hace daño.
+  - El principal problema es que el personaje no se mueve con las flechas, solo con el dash.
 
-## 20250228 JorgePelegrín @(1h)
-Ya compila, el ataque se ejecuta y el la habilidad también, además funciona. Falta dibujar al enemigo y la espada y probar si el básico funciona y hace daño. El mayor problema es que el personaje no se mueve con las flechas, solo con el dash.
+## 2025-03-03 DavidGonzález @(1h, 15min)
+- **Descripción**:
+  - Creé el backlog del equipo en GitHub para organizar las tareas.
+  - Añadí mis tareas al "To Do".
 
-## 20250303 DavidGonzález @(1h, 15min)
-He creado el backlog del equipo en github para poder organizar nuestras tareas, además he añadido mis tareas al to do.
+## 2025-03-03 EstrellaDomínguez @(1h)
+- **Descripción**:
+  - Solucioné errores de `CMakeLists.txt`.
+  - Creé la clase `Interface` que contiene el código del Menú y el HUD.
+  - Añadí mis tareas al "To Do".
 
-## 20250303 EstrellaDomínguez @(1h)
-He solucionado errores de ```CMakeList.txt``` y creado la clase ```Interface``` que contiene el código del Menú y el HUD. Además he añadido mis tareas al to do.
+## 2025-03-03 EstrellaDomínguez @(30min)
+- **Descripción**:
+  - Empecé a implementar el menú.
+  - Compila sin errores, pero no se ve en pantalla lo que esperaba.
 
-## 20250303 EstrellaDomínguez @(30min)
-He empezado a implementar el menú. Compila sin errores pero no se ve en pantalla lo que esperaba.
+## 2025-03-03 MaximoMartinez @(30min)
+- **Descripción**:
+  - Debería dejar de hacer tutoriales.
 
-## 20250303 MaximoMartinez @(30min)
-Tendría que dejar de hacer tutoriales.
-
-## 20250305 JorgePelegrín @(1h, 45 min)
-Hecho un sistema de items, que mejoran las estadísticas del personaje, falta probar si funciona. El personaje ya se mueve, dashea hacia todas las direcciones, y ataca, aunque solo hacia la derecha y la izquierda.
+## 2025-03-05 JorgePelegrín @(2h, 45min)
+- **Descripción**:
+  - Implementé un sistema de items que mejoran las estadísticas del personaje.
+  - Falta probar si el sistema funciona correctamente.
+  - El personaje ya se mueve, realiza dash en todas las direcciones y ataca, aunque solo hacia la derecha y la izquierda.
+  - *(1 hora despúes de los anteriores)*
+  - El personaje ya ataca hacia todas las direcciones
+  - Implementado el pickUp de item, probado con uno para aumentar la distancia del dash
+  - Cambio un poco de la estructura del log para que se vea mejor estructurado. 

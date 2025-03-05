@@ -27,16 +27,17 @@ public:
     void setOrigin(float x, float y);
     void setPosition(float x, float y);
     void setDirection(float x, float y);
+    sf::Vector2f getDirection() const;
     sf::Vector2f getScale() const;
     void move(float x, float y);
     void attack(std::vector<Enemy>& enemies);
     void useAbility();
     void startDash(float speed, float duration);
-    void increaseDashSpeed(float speed);
     void increaseSpeed(float speed);
     void update(float deltaTime);
     void draw(sf::RenderWindow& window);
     sf::Vector2f getPosition() const;
+    sf::FloatRect getBounds() const;
 };
 
 #endif // CHARACTER_H
