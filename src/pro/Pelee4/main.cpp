@@ -5,6 +5,7 @@
 #include "Character.h"
 #include "Sword.h"
 #include "Enemy.h"
+#include "Item.h"
 
 #define kVel 5
 
@@ -26,6 +27,12 @@ int main() {
         return 1;
     }
 
+    sf::Texture itemTex;
+    if(!itemTex.loadFromFile("resources/cubo.png")){
+        std::cerr << "Error cargando la imagen cubo.png";
+        return 1;
+    }
+
     // Creamos el personaje y le asignamos la textura
     Character player;
     player.setTexture(tex);
@@ -43,7 +50,12 @@ int main() {
     for (auto& enemy : enemies) {
         enemy.setTexture(tex);
         enemy.setTextureRect(0 * 75, 0 * 75, 75, 75);
-    }    
+    }
+
+    DashBoostItem dashItem;
+    dashItem.setTexture(itemTex);
+    dashItem.setPosition(100, 100);
+
 
     // Reloj para el control de tiempo
     sf::Clock clock;
@@ -66,6 +78,10 @@ int main() {
                 }
             }
 
+            if(dashItem.getBounds().intersects(player.getBounds())){
+                dashItem.applyEffect(sword);
+            }
+
             switch (event.type)
             {
             case sf::Event::Closed:
@@ -74,24 +90,24 @@ int main() {
             case sf::Event::KeyPressed:
                 
                 switch (event.key.code) {
-                case sf::Keyboard::Right:
+                case sf::Keyboard::D:
                     player.setTextureRect(0 * 75, 2 * 75, 75, 75);
                     player.setScale(1, 1);
                     player.move(kVel, 0);
                     player.setDirection(1.0f, 0.0f);
                     break;
-                case sf::Keyboard::Left:    
+                case sf::Keyboard::A:    
                     player.setTextureRect(0 * 75, 2 * 75, 75, 75);
                     player.setScale(-1, 1);
                     player.move(-kVel, 0);
                     player.setDirection(-1.0f, 0.0f);
                     break;
-                case sf::Keyboard::Up:
+                case sf::Keyboard::W:
                     player.setTextureRect(0 * 75, 3 * 75, 75, 75);
                     player.move(0, -kVel);
                     player.setDirection(0.0f, -1.0f);
                     break;
-                case sf::Keyboard::Down:
+                case sf::Keyboard::S:
                     player.setTextureRect(0 * 75, 0 * 75, 75, 75);
                     player.move(0, kVel);
                     player.setDirection(0.0f, 1.0f);
@@ -115,6 +131,7 @@ int main() {
         // Dibujado de la escena
         window.clear();
         player.draw(window);
+        dashItem.draw(window);
         for (Enemy& enemy : enemies) {
             enemy.draw(window);
         }

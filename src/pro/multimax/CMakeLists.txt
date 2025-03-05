@@ -8,6 +8,8 @@ add_library(libModulos STATIC)
 add_subdirectory(ej_modulos)
 add_library(game_class STATIC)
 add_subdirectory(game_class)
+add_library(area_class STATIC)
+add_subdirectory(area_class)
 
 #Opciones a pasar al compilador de C++
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -Wall -Wextra")
@@ -23,7 +25,7 @@ add_custom_command(TARGET MiJuego
 #Añadir todos los objetos (ficheros o) que requiera el ejecutable. 
 #Habitualmente todas las librerias definidas mediante subcarpetas
 #aportaran código
-target_link_libraries(MiJuego libModulos game_class)
+target_link_libraries(MiJuego libModulos game_class area_class)
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake_modules")
 #Para usar SFML
