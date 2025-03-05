@@ -9,6 +9,7 @@
 
 /*
     Clase para encapsular el motor de juego.
+    Funciona además como sigleton para gestionar la información del juego.
 */
 
 class Game

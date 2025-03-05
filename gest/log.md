@@ -36,3 +36,9 @@ Tendría que dejar de hacer tutoriales.
 
 ## 20250305 JorgePelegrín @(1h, 45 min)
 Hecho un sistema de items, que mejoran las estadísticas del personaje, falta probar si funciona. El personaje ya se mueve, dashea hacia todas las direcciones, y ataca, aunque solo hacia la derecha y la izquierda.
+
+## 20250305 MaximoMartinez @(2h)
+Durante prácticas he comenzado a programar un sistema de detección de áreas. Se compone de 2 clases abstractas que sirven de interfaz para cualquier implementación que se les quiera dar. 
+- DetectedArea: existe para ser detectado.
+- DetectingArea: escanea instancias de DetectedArea dentro de su área.
+He hecho una prueba de este sistema en el main.
