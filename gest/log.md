@@ -19,6 +19,9 @@ Antes y durante la clase de prácticas seguí el tutorial que mencioné. No hice
 ## 20250226 JorgePelegrín @(2h, 30min)
 Añadí la clase espada, para empezar a probar el ataque básico y la habilidad. Además, cree una clase de personaje básica y una de enemigo para poder probar el daño de los ataques. Tiene algún error de compilación y falta añadir los sprites bien para que la prueba sea visual.
 
+## 20250228 JorgePelegrín @(1h)
+Ya compila, el ataque se ejecuta y el la habilidad también, además funciona. Falta dibujar al enemigo y la espada y probar si el básico funciona y hace daño. El mayor problema es que el personaje no se mueve con las flechas, solo con el dash.
+
 ## 20250303 DavidGonzález @(1h, 15min)
 He creado el backlog del equipo en github para poder organizar nuestras tareas, además he añadido mis tareas al to do.
 
@@ -30,3 +33,6 @@ He empezado a implementar el menú. Compila sin errores pero no se ve en pantall
 
 ## 20250303 MaximoMartinez @(30min)
 Tendría que dejar de hacer tutoriales.
+
+## 20250305 JorgePelegrín @(1h, 45 min)
+Hecho un sistema de items, que mejoran las estadísticas del personaje, falta probar si funciona. El personaje ya se mueve, dashea hacia todas las direcciones, y ataca, aunque solo hacia la derecha y la izquierda.
