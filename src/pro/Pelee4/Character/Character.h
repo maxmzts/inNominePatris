@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include "Weapon.h"
 #include "Enemy.h"
+#include "AbilityType.h"
 
 class Character{
 private:
@@ -23,6 +24,7 @@ public:
     void setTexture(const sf::Texture& tex); // Método para asignar textura
     void setTextureRect(int left, int top, int width, int height); // Método para cambiar el rectángulo de la textura
     void equipWeapon(Weapon* newWeapon);
+    Weapon* getEquippedWeapon() const { return equippedWeapon; }
     void setScale(float x, float y);
     void setOrigin(float x, float y);
     void setPosition(float x, float y);
@@ -31,7 +33,7 @@ public:
     sf::Vector2f getScale() const;
     void move(float x, float y);
     void attack(std::vector<Enemy>& enemies);
-    void useAbility();
+    void useAbility(sf::RenderWindow& window);
     void startDash(float speed, float duration);
     void increaseSpeed(float speed);
     void update(float deltaTime);

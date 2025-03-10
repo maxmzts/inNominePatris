@@ -4,7 +4,7 @@
 #include "Character.h"
 #include "Enemy.h"
 
-Sword::Sword() : MeleeWeapon(50.0f), attackRange(50.0f), dashSpeed(500.0f){}
+Sword::Sword() : attackRange(50.0f), dashSpeed(500.0f){}
 
 void Sword::attack(Character& character, std::vector<Enemy>& enemies) {
     std::cout << "Sword attack!" << std::endl;

@@ -54,9 +54,12 @@ void Character::attack(std::vector<Enemy>& enemies) {
     if (equippedWeapon) equippedWeapon->attack(*this, enemies);
 }
 
-void Character::useAbility() {
+void Character::useAbility(sf::RenderWindow& window) {
     if (equippedWeapon) {
-        equippedWeapon->useAbility(*this);
+        if (equippedWeapon->getAbilityType() == AbilityType::Dash)
+            equippedWeapon->useAbility(*this);
+        else if (equippedWeapon->getAbilityType() == AbilityType::Teleport)  
+            equippedWeapon->useAbility(*this, window);
     }
 }
 

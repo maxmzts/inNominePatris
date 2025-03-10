@@ -6,6 +6,7 @@
 #include "Sword.h"
 #include "Enemy.h"
 #include "Item.h"
+#include "Lance.h"
 
 #define kVel 5
 
@@ -42,7 +43,8 @@ int main() {
 
     // Creamos la espada y la equipamos al personaje
     Sword sword;
-    player.equipWeapon(&sword);
+    Lance lance;
+    player.equipWeapon(&lance);
 
     // Creamos enemigos de prueba
     std::vector<Enemy> enemies = { Enemy(160, 320), Enemy(450, 320) };
@@ -74,13 +76,26 @@ int main() {
                     player.attack(enemies); // Ataque básico
                 }
                 if (event.mouseButton.button == sf::Mouse::Right) {
-                    player.useAbility(); // Habilidad especial
+                    player.useAbility(window); // Habilidad especial
                 }
             }
 
-            if(dashItem.getBounds().intersects(player.getBounds())){
-                dashItem.applyEffect(sword);
+            if(event.type == sf::Event::KeyPressed){
+                if(event.key.code == sf::Keyboard::Q){
+                    AbilityType type = player.getEquippedWeapon()->getAbilityType();
+                    if(type == AbilityType::Dash){
+                        player.equipWeapon(&lance);
+                    }
+                    else {
+                        player.equipWeapon(&sword);
+                    }
+                    std :: cout << "Cambiando arma" << std::endl;
+                }
             }
+
+            // if(dashItem.getBounds().intersects(player.getBounds())){
+            //     dashItem.applyEffect(sword);
+            // }
 
             switch (event.type)
             {
@@ -88,7 +103,6 @@ int main() {
                 window.close();
                 break;
             case sf::Event::KeyPressed:
-                
                 switch (event.key.code) {
                 case sf::Keyboard::D:
                     player.setTextureRect(0 * 75, 2 * 75, 75, 75);

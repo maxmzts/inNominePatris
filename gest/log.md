@@ -92,3 +92,10 @@
   - He implementado el movimiento del personaje en 8 direcciones de manera fluida y con una buena velocidad ajustable.
   - He implementado parametros de aceleracion y deceleracion para el movimiento del personaje, que sirven para hacer un movimiento mas orgánico y se pueden emplear para agregar mecánicas en un fututo.
   - He ajustado el tamaño del personaje.
+
+## 2025-03-05 JorgePelegrín @(2h)
+- **Descripción**:
+  - He añadido un nuevo arma, la lanza, junto a su ataque básico. Es el mismo que el de la espada, pero con un más rango.
+  - He añadido también su habilidad, que deja un portal al que te puedes teletransportar. 
+  - He reestructurado las clases de las armas, para que sea más flexible a la hora de añadir parámetros a los métodos del ataque y la habilidad.
+  - He logrado que se pueda cambiar de arma al pulsar un botón, pudiendo combinar sus habilidades.
