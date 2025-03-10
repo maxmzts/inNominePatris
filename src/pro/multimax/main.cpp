@@ -50,6 +50,7 @@ public:
     void interact() override {
         std::cout << "Tamaño de detectedObjects: " << detectedObjects.size() << std::endl;
         if (!detectedObjects.empty()) {
+            sortDetectedObjects();
             DetectedArea *area = detectedObjects.front();
             DataSingleton::getInstance().removeArea(area);
             detectedObjects.erase(detectedObjects.begin());
@@ -64,11 +65,11 @@ private:
     InteractionArea interactionArea;
 
 public:
-    Jugador(const sf::Texture &tex) : sprite(tex), interactionArea(90.0f) {
+    Jugador(const sf::Texture &tex) : sprite(tex), interactionArea(90.f) {
         sprite.setOrigin(75 / 2, 75 / 2);
         sprite.setTextureRect(sf::IntRect(0 * 75, 0 * 75, 75, 75));
         sprite.setPosition(320, 240);
-        interactionArea.setOrigin(sprite.getOrigin() + sf::Vector2<float>(90 / 2, 90 / 2));
+        interactionArea.setOrigin(sf::Vector2f(90.f, 90.f));
         interactionArea.setPosition(sprite.getPosition());
         interactionArea.setFillColor(sf::Color(0, 128, 255, 76));
     }
@@ -123,16 +124,16 @@ int main() {
     DataSingleton &data = DataSingleton::getInstance();
 
     data.addArea(new DetectedArea(30.0f));
-    data.getAreas().back()->setOrigin(90.0f, 90.0f);
+    data.getAreas().back()->setOrigin(30.f, 30.f);
     data.getAreas().back()->setPosition(400, 300);
 
     data.addArea(new DetectedArea(30.0f));
-    data.getAreas().back()->setOrigin(10.0f, 10.0f);
-    data.getAreas().back()->setPosition(400, 300);
+    data.getAreas().back()->setOrigin(30.0f, 30.0f);
+    data.getAreas().back()->setPosition(500, 300);
 
     data.addArea(new DetectedArea(30.0f));
-    data.getAreas().back()->setOrigin(10.0f, 90.0f);
-    data.getAreas().back()->setPosition(400, 300);
+    data.getAreas().back()->setOrigin(30.0f, 30.0f);
+    data.getAreas().back()->setPosition(500, 400);
 
     while (window.isOpen()) {
         sf::Event event;
