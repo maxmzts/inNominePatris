@@ -1,9 +1,10 @@
-// detectingArea.h
 #pragma once
-#include "DetectedArea.h"
+
 #include <vector>
 #include <algorithm>
 #include <cmath>
+
+#include "DetectedArea.h"
 
 // Clase abstracta que representa un área que detecta instancias de DetectedArea
 class DetectingArea : public sf::CircleShape {
@@ -12,7 +13,7 @@ protected:
 
 public:
     DetectingArea(float radius);
-    virtual ~DetectingArea() = default;
+    virtual ~DetectingArea();
 
     // Método para detectar y almacenar objetos DetectedArea
     void detect(const std::vector<DetectedArea*>& areas);
@@ -31,5 +32,8 @@ public:
     
     // Obtener las áreas detectadas
     const DetectedArea* getClosestArea() const;
+
+    // Interactuar con el primer Area de la lista
+    virtual void interact() = 0;
 
 };

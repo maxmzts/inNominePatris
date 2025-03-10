@@ -1,7 +1,8 @@
-// detectingArea.cpp
 #include "DetectingArea.h"
 
 DetectingArea::DetectingArea(float radius) : sf::CircleShape(radius) {}
+
+DetectingArea::~DetectingArea(){}
 
 void DetectingArea::detect(const std::vector<DetectedArea*>& areas) {
     detectedObjects.clear();

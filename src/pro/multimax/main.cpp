@@ -5,20 +5,42 @@
 
 #define kVel 5
 
+// implementación de la clase abstracta DetectingArea. Con esta le damos un funcionamiento a InteractionArea.
+
+class InteractionArea : public DetectingArea {
+    public:
+        InteractionArea(float radius) : DetectingArea(radius) {
+            setFillColor(sf::Color(255, 0, 0, 76)); // Rojo con 30% de opacidad
+        }
+    
+        bool isDetected(const DetectedArea& area) const override {
+            return getGlobalBounds().intersects(area.getGlobalBounds());
+        }
+
+        void interact() override {
+            std::cout << "Tamaño de detectedObjects: " << detectedObjects.size() << std::endl;
+            if (!detectedObjects.empty()) {
+                delete detectedObjects.front(); // Liberar la memoria del primer objeto
+                detectedObjects.erase(detectedObjects.begin()); // Eliminar la referencia del vector
+                std::cout << " He eliminado y liberado memoria." << std::endl;
+            }
+        }
+};
+
 class Jugador {
 private:
     sf::Sprite sprite;
-    DetectedArea detectedArea;
+    InteractionArea interactionArea;
 
 public:
-    Jugador(const sf::Texture &tex) : sprite(tex), detectedArea(45.0f) {
+    Jugador(const sf::Texture &tex) : sprite(tex), interactionArea(90.0f) {
         sprite.setOrigin(75 / 2, 75 / 2);
         sprite.setTextureRect(sf::IntRect(0 * 75, 0 * 75, 75, 75));
         sprite.setPosition(320, 240);
         
-        detectedArea.setOrigin(45.0f, 45.0f);
-        detectedArea.setPosition(sprite.getPosition());
-        detectedArea.setFillColor(sf::Color(0,128,255,76));
+        interactionArea.setOrigin(sprite.getOrigin() + sf::Vector2<float>(90/2,90/2));
+        interactionArea.setPosition(sprite.getPosition());
+        interactionArea.setFillColor(sf::Color(0,128,255,76));
     }
 
     void mover(sf::Keyboard::Key key) {
@@ -41,30 +63,25 @@ public:
                 sprite.setTextureRect(sf::IntRect(0 * 75, 0 * 75, 75, 75));
                 sprite.move(0, kVel);
                 break;
+            case sf::Keyboard::Space:
+                interactionArea.interact();
             default:
                 return;
         }
-        detectedArea.setPosition(sprite.getPosition());
+        interactionArea.setPosition(sprite.getPosition());
     }
 
     void drawPlayer(sf::RenderWindow &window) {
-        window.draw(detectedArea);
+        window.draw(interactionArea);
         window.draw(sprite);
     }
 
-    DetectedArea& getDetectedArea() { return detectedArea; }
+    void updatePlayerAreas(std::vector<DetectedArea *> areas){
+        interactionArea.detect(areas);
+    }
 };
 
-class DetectingAreaImpl : public DetectingArea {
-    public:
-        DetectingAreaImpl(float radius) : DetectingArea(radius) {
-            setFillColor(sf::Color(255, 0, 0, 76)); // Rojo con 30% de opacidad
-        }
-    
-        bool isDetected(const DetectedArea& area) const override {
-            return getGlobalBounds().intersects(area.getGlobalBounds());
-        }
-};
+
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(640, 480), "P0. Fundamentos de los Videojuegos. DCCIA");
@@ -75,9 +92,20 @@ int main() {
     }
 
     Jugador jugador(tex);
-    DetectingAreaImpl detectingArea(90.0f);
-    detectingArea.setOrigin(90.0f, 90.0f);
-    detectingArea.setPosition(400, 300);
+
+    std::vector<DetectedArea *> inGameAreas;
+    inGameAreas.push_back(new DetectedArea(30.0f));
+    inGameAreas.back()->setOrigin(90.0f, 90.0f);
+    inGameAreas.back()->setPosition(400, 300);
+
+    inGameAreas.push_back(new DetectedArea(30.0f));
+    inGameAreas.back()->setOrigin(10.0f, 10.0f);
+    inGameAreas.back()->setPosition(400, 300);
+
+    inGameAreas.push_back(new DetectedArea(30.0f));
+    inGameAreas.back()->setOrigin(10.0f, 90.0f);
+    inGameAreas.back()->setPosition(400, 300);
+
     int count = 0;
     while (window.isOpen()) {
         sf::Event event;
@@ -88,13 +116,13 @@ int main() {
                 jugador.mover(event.key.code);
         }
 
-        detectingArea.detect({ &jugador.getDetectedArea() });
-        if (!detectingArea.getDetectedArea().empty()) {
-            std::cout << "Estoy dentro " << count << std::endl;
-        }
+        jugador.updatePlayerAreas(inGameAreas);
         
         window.clear();
-        window.draw(detectingArea);
+        for ( DetectedArea* area : inGameAreas){
+            if(area != nullptr)
+                window.draw(*area);
+        }
         jugador.drawPlayer(window);
         window.display();
         count++;
