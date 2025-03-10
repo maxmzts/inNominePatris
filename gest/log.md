@@ -99,3 +99,9 @@
   - He añadido también su habilidad, que deja un portal al que te puedes teletransportar. 
   - He reestructurado las clases de las armas, para que sea más flexible a la hora de añadir parámetros a los métodos del ataque y la habilidad.
   - He logrado que se pueda cambiar de arma al pulsar un botón, pudiendo combinar sus habilidades.
+
+## 20250308 MáximoMartínez @(1h)
+Seguí haciendo pruebas y ampliaciones a la detección de áreas para ampliar sus posibilidades de uso y refrescar punteros de C++ (no me basta con que me lo haga ChatGPT). Intenté hacer un experimento con un vector dinámico pero no pude terminarlo por lo que no subí los cambios.
+
+## 20250310 MáximoMartínez @()
+Para terminar el sistema de áreas y he implementado un singleton (también a modo de práctica después de haberlo visto en teoría) porque me venía bien para gestionar una lista dinámica en las pruebas dicho sistema. Hecho eso he pasado a hacer otra cosa. 
