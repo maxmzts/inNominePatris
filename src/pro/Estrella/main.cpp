@@ -2,9 +2,12 @@
 #include <iostream>
 #include "Menu.h"
 
+#include "ej_modulos/mimodulo.h"
+
 int main() {
     sf::RenderWindow window(sf::VideoMode(800, 600), "Menu Principal");
     Menu menu(800, 600);
+    MiModulo mod;
 
     while (window.isOpen()) {
         sf::Event event;
@@ -21,6 +24,8 @@ int main() {
                     int selected = menu.getSelectedItem();
                     if (selected == 0) {
                         std::cout << "Nueva Partida seleccionada\n";
+                        window.close();
+                        mod.iniciarNuevaPartida();
                     } else if (selected == 1) {
                         std::cout << "Continuar seleccionada\n";
                     } else if (selected == 2) {

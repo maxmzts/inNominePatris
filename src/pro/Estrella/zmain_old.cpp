@@ -6,7 +6,7 @@
 
 #define kVel 5
 
-int main() {
+void iniciarNuevaPartida() {
 
   MiModulo *mod = new MiModulo();
 
@@ -93,5 +93,5 @@ int main() {
     window.display();
   }
 
-  return 0;
+  delete mod;
 }

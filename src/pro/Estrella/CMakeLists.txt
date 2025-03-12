@@ -5,6 +5,9 @@ project(MiJuego)
 #En cada subdirectorio debe haber un fichero CMakeLists.txt
 #Habitualmente cada subdirectorio determinará una libreria 
 add_library(libModulos STATIC)
+
+target_sources(libModulos PRIVATE ej_modulos/mimodulo.cpp)
+
 add_subdirectory(Interface)
 
 #Opciones a pasar al compilador de C++

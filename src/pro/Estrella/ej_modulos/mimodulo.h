@@ -4,5 +4,6 @@ class MiModulo{
     
     public:
      MiModulo();
+     void iniciarNuevaPartida();
 
 };
