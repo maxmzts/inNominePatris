@@ -88,3 +88,7 @@ Seguí haciendo pruebas y ampliaciones a la detección de áreas para ampliar su
 
 ## 20250310 MáximoMartínez @(1h)
 Para terminar el sistema de áreas y he implementado un singleton (también a modo de práctica después de haberlo visto en teoría) porque me venía bien para gestionar una lista dinámica en las pruebas dicho sistema. Hecho eso he pasado a hacer otra cosa. 
+
+## 20250311 EstrellaDomínguez @(1h)
+He terminado el menú principal, con su tipografía y fondo.
+He comenzado a implementar el HUD.
