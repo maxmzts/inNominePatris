@@ -4,7 +4,7 @@
 #include <SFML/Window/Mouse.hpp>
 #include <cmath>
 
-Lance::Lance() : attackRange(300.0f), isPortalDropped(false), PortalRange(500.0f) {}
+Lance::Lance() : attackRange(300.0f), isPortalDropped(false), PortalRange(200.0f) {}
 
 void Lance::attack(Character& character, std::vector<Enemy>& enemies){
     std::cout << "Lance attack!" << std::endl;
@@ -70,4 +70,10 @@ void Portal::setPosition(const sf::Vector2f& pos) {
 
 const sf::Vector2f& Portal::getPosition() const {
     return position;
+}
+
+
+void Lance::increasePortalRange(float range) {
+    PortalRange += range;
+    std::cout << "Portal range increased!" << std::endl;
 }

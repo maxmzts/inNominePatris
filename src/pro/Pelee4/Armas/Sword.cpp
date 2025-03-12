@@ -4,7 +4,7 @@
 #include "Character.h"
 #include "Enemy.h"
 
-Sword::Sword() : attackRange(50.0f), dashSpeed(500.0f){}
+Sword::Sword() : attackRange(50.0f), dashSpeed(500.0f), abilityCooldown(1.5f), lastAbilityTime(-abilityCooldown){}
 
 void Sword::attack(Character& character, std::vector<Enemy>& enemies) {
     std::cout << "Sword attack!" << std::endl;
@@ -41,6 +41,14 @@ void Sword::attack(Character& character, std::vector<Enemy>& enemies) {
 
 
 void Sword::useAbility(Character& character) {
+    static sf::Clock clock;
+    float elapsedTime = clock.getElapsedTime().asSeconds();
+    if(elapsedTime - lastAbilityTime < abilityCooldown) {
+        std::cout << "Ability on cooldown!" << std::endl;
+        return;
+    }
+
+    lastAbilityTime = elapsedTime;
     std::cout << "Sword ability!" << std::endl;
     character.startDash(dashSpeed, 0.2f);
     //Aqui llama al metodo de la clase character para que haga el dash
@@ -49,4 +57,9 @@ void Sword::useAbility(Character& character) {
 void Sword::increaseDashSpeed(float speed) {
     std::cout << "Dash speed increased!" << std::endl;
     dashSpeed += speed;
+}
+
+void Sword::increaseAttackRange(float range) {
+    std::cout << "Attack range increased!" << std::endl;
+    attackRange += range;
 }

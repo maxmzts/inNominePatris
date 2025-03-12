@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <vector>
+#include <random>
 
 #include "Character.h"
 #include "Sword.h"
@@ -11,6 +12,8 @@
 #define kVel 5
 
 int main() {
+    srand(static_cast<unsigned>(time(0)));
+
     // Creamos una ventana
     sf::RenderWindow window(sf::VideoMode(640, 480), "Prueba de Clases");
 
@@ -46,6 +49,17 @@ int main() {
     Lance lance;
     player.equipWeapon(&lance);
 
+    Item* swordItem = swordItem->generateRandomItemforWeapon(ItemType::Sword);
+    Item* lanceItem = lanceItem->generateRandomItemforWeapon(ItemType::Lance);
+
+    swordItem->setTexture(itemTex);
+    swordItem->setTextureRect(0, 0, 32, 32);
+    swordItem->setPosition(100, 100);
+
+    lanceItem->setTexture(itemTex);
+    lanceItem->setTextureRect(0, 0, 32, 32);
+    lanceItem->setPosition(200, 200);
+
     // Creamos enemigos de prueba
     std::vector<Enemy> enemies = { Enemy(160, 320), Enemy(450, 320) };
 
@@ -53,11 +67,6 @@ int main() {
         enemy.setTexture(tex);
         enemy.setTextureRect(0 * 75, 0 * 75, 75, 75);
     }
-
-    DashBoostItem dashItem;
-    dashItem.setTexture(itemTex);
-    dashItem.setPosition(100, 100);
-
 
     // Reloj para el control de tiempo
     sf::Clock clock;
@@ -93,9 +102,15 @@ int main() {
                 }
             }
 
-            // if(dashItem.getBounds().intersects(player.getBounds())){
-            //     dashItem.applyEffect(sword);
-            // }
+            if(swordItem->getBounds().intersects(player.getBounds())){
+                swordItem->applyEffect(sword);
+                lanceItem->markAsPicked();
+            }
+
+            if(lanceItem->getBounds().intersects(player.getBounds())){
+                lanceItem->applyEffect(lance);
+                swordItem->markAsPicked();
+            }
 
             switch (event.type)
             {
@@ -145,7 +160,8 @@ int main() {
         // Dibujado de la escena
         window.clear();
         player.draw(window);
-        dashItem.draw(window);
+        swordItem->draw(window);
+        lanceItem->draw(window);
         for (Enemy& enemy : enemies) {
             enemy.draw(window);
         }

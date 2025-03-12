@@ -11,11 +11,14 @@ class Sword : public Weapon {
         void attack(Character& character, std::vector<Enemy>& enemies) override;
         void useAbility(Character& character) override;
         void increaseDashSpeed(float speed);
+        void increaseAttackRange(float range);
 
         AbilityType getAbilityType() const override { return AbilityType::Dash; };
     private:
         float attackRange;
         float dashSpeed;
+        float abilityCooldown;
+        float lastAbilityTime;
 };
 
 #endif // !SWORD_H

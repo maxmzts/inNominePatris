@@ -92,3 +92,6 @@ Para terminar el sistema de áreas y he implementado un singleton (también a mo
 ## 20250311 EstrellaDomínguez @(1h)
 He terminado el menú principal, con su tipografía y fondo.
 He comenzado a implementar el HUD.
+
+## 20250312 JorgePelegrín @(1h, 30min)
+He añadido varios items, los he clasificado dependiendo del arma que mejoren, o si mejoran al propio personaje en sí(como la velocidad). Estos items aparecen uno aleatorio de cada arma. Falta añadir la lógica de la doble arma al personaje para que aparezcan solo items de las armas equipadas. También he implementado cooldown a las habilidades.

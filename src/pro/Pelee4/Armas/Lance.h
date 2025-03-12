@@ -21,6 +21,7 @@ class Lance : public Weapon {
         void attack(Character& character, std::vector<Enemy>& enemies) override;
         void useAbility(Character& character) override {}
         void useAbility(Character& character,  sf::RenderWindow& window) override;
+        void increasePortalRange(float range);
 
         AbilityType getAbilityType() const override { return AbilityType::Teleport; };
 
