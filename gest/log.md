@@ -7,17 +7,17 @@ Se trabajó en tareas generales y se documentó lo realizado.
 Añadí el sprite de la espada al main de la plantilla.
 Hice que la espada siempre estuviera delante del sprite del jugador en las cuatro posiciones.
 
-## 20250224 MaximoMartinez @(1.25h)
+## 20250224 MáximoMartínez @(1.25h)
 Seguí un [tutorial de YouTube](https://www.youtube.com/playlist?list=PL6xSOsbVA1eb_QqMTTcql_3PdOiE928up) para empezar a comprender SFML.
 Creé una clase `Game` que encapsula el motor de juego y la aproveché para entender la gestión de librerías con CMake.
 El código no compilaba cuando dejé de trabajar.
 
-## 20250225 MaximoMartinez @(10min)
+## 20250225 MáximoMartínez @(10min)
 Revisé el `CMakeLists.txt` y añadí una referencia faltante a la librería.
 Conseguí compilar el trabajo de ayer.
 Añadí `.vscode/settings.json` al `.gitignore`.
 
-## 20250226 MaximoMartinez @(1h)
+## 20250226 MáximoMartínez @(1h)
 Antes y durante la clase de prácticas, seguí el tutorial mencionado.
 No hice commit ya que el trabajo estaba sin terminar y estuve estudiando para otra asignatura durante la semana.
 
@@ -44,10 +44,10 @@ Añadí mis tareas al "To Do".
 Empecé a implementar el menú.
 Compila sin errores, pero no se ve en pantalla lo que esperaba.
 
-## 20250303 MaximoMartinez @(30min)
+## 20250303 MáximoMartínez @(30min)
 Debería dejar de hacer tutoriales.
 
-## 20250305 MaximoMartinez @(2h)
+## 20250305 MáximoMartínez @(2h)
 Durante prácticas he comenzado a programar un sistema de detección de áreas. Se compone de 2 clases abstractas que sirven de interfaz para cualquier implementación que se les quiera dar. 
   - DetectedArea: existe para ser detectado.
   - DetectingArea: escanea instancias de DetectedArea dentro de su área.
@@ -87,7 +87,7 @@ He logrado que se pueda cambiar de arma al pulsar un botón, pudiendo combinar s
 Seguí haciendo pruebas y ampliaciones a la detección de áreas para ampliar sus posibilidades de uso y refrescar punteros de C++ (no me basta con que me lo haga ChatGPT). Intenté hacer un experimento con un vector dinámico pero no pude terminarlo por lo que no subí los cambios.
 
 ## 20250310 MáximoMartínez @(1h)
-Para terminar el sistema de áreas y he implementado un singleton (también a modo de práctica después de haberlo visto en teoría) porque me venía bien para gestionar una lista dinámica en las pruebas dicho sistema. Hecho eso he pasado a hacer otra cosa. 
+Para terminar el sistema de áreas y he implementado un **singleton** (también a modo de práctica después de haberlo visto en teoría) porque me venía bien para gestionar una lista dinámica en las pruebas dicho sistema. 
 
 ## 20250311 EstrellaDomínguez @(1h)
 He terminado el menú principal, con su tipografía y fondo.
@@ -100,3 +100,6 @@ He añadido varios items, los he clasificado dependiendo del arma que mejoren, o
 He conseguido que al darle a nueva partida se cree la partida y te redirija al propio juego.
 Ahora el personaje tiene una barra de vida.
 Aparece un rectángulo abajo a la izquierda que posteriormente mostrará las habilidades de las armas y otros aspectos del jugador.
+
+## 20250312 MáximoMartínez @(2h, 45min)
+He empezado a diseñar el **sistema de audio** intentando aprovechar para que funcione a modo de **fachada del módulo de audio de SFML**. He empezado por los sonidos individuales, todo lo que no sea música. Después de mucha pelea con GPT, he conseguido que suenen muchos sonidos simultáneamente.

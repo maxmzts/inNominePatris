@@ -3,6 +3,7 @@
 #include <vector>
 #include <DetectedArea.h>
 #include <DetectingArea.h>
+#include <SoundPlayer.h>
 
 #define kVel 5
 
@@ -15,6 +16,8 @@ private:
     DataSingleton() {}
 
 public:
+    SoundPlayer soundPlayer;
+
     static DataSingleton &getInstance() {
         static DataSingleton instance;
         return instance;
@@ -37,6 +40,7 @@ public:
     }
 };
 
+// IMPLEMENTACIÓN DE LA INTERFAZ DE DETECCION
 class InteractionArea : public DetectingArea {
 public:
     InteractionArea(float radius) : DetectingArea(radius) {
@@ -48,17 +52,16 @@ public:
     }
 
     void interact() override {
-        std::cout << "Tamaño de detectedObjects: " << detectedObjects.size() << std::endl;
         if (!detectedObjects.empty()) {
             sortDetectedObjects();
             DetectedArea *area = detectedObjects.front();
             DataSingleton::getInstance().removeArea(area);
             detectedObjects.erase(detectedObjects.begin());
-            std::cout << " He eliminado y liberado memoria." << std::endl;
         }
     }
 };
 
+// CLASE DE JUGADOR PROVISIONAL PARA LAS PRUEBAS
 class Jugador {
 private:
     sf::Sprite sprite;
@@ -75,6 +78,7 @@ public:
     }
 
     void mover(sf::Keyboard::Key key) {
+        DataSingleton &data = DataSingleton::getInstance();
         switch (key) {
         case sf::Keyboard::Right:
             sprite.setTextureRect(sf::IntRect(0 * 75, 2 * 75, 75, 75));
@@ -96,6 +100,10 @@ public:
             break;
         case sf::Keyboard::Space:
             interactionArea.interact();
+            data.soundPlayer.play("gunshot1");
+            data.soundPlayer.setVolume(100.f);
+            std::cout << "Disparo.\n";
+            break;
         default:
             return;
         }
@@ -113,6 +121,7 @@ public:
 };
 
 int main() {
+    // CONFIGURACIÓN DE VENTANA
     sf::RenderWindow window(sf::VideoMode(640, 480), "P0. Fundamentos de los Videojuegos. DCCIA");
     sf::Texture tex;
     if (!tex.loadFromFile("resources/sprites.png")) {
@@ -120,7 +129,10 @@ int main() {
         return 1;
     }
 
+    // CONFIGURACIÓN DE JUGADOR
     Jugador jugador(tex);
+
+    // CONFIGURACIÓN DE ÁREAS EN LA ESCENA
     DataSingleton &data = DataSingleton::getInstance();
 
     data.addArea(new DetectedArea(30.0f));
@@ -135,13 +147,29 @@ int main() {
     data.getAreas().back()->setOrigin(30.0f, 30.0f);
     data.getAreas().back()->setPosition(500, 400);
 
+    // CONFIGURACIÓN SONIDO
+
+    data.soundPlayer.loadSound("gunshot1", "./resources/gunshot1.ogg");
+    data.soundPlayer.loadSound("gunshot2", "./resources/gunshot2.ogg");
+    
+    sf::Clock clock;
+
+    // BUCLE DE JUEGO
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
                 window.close();
-            else if (event.type == sf::Event::KeyPressed)
+            else if (event.type == sf::Event::KeyPressed){
                 jugador.mover(event.key.code);
+            }
+        }
+
+        if (clock.getElapsedTime().asSeconds() >= 10.0f) {
+            data.soundPlayer.play("gunshot1");
+            data.soundPlayer.play("gunshot2");
+            clock.restart();
+            std::cout << "Disparo dos veces.\n";
         }
 
         jugador.updatePlayerAreas();
