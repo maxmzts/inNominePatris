@@ -3,7 +3,7 @@
 
 Menu::Menu(float width, float height) {
     // Cargar fuente
-    if (!font.loadFromFile("/home/estrella/proyecto-abp-grupo-f4/src/pro/Estrella/assets/fonts/ARIAL.TTF")) {
+    if (!font.loadFromFile("/home/estrella/proyecto-abp-grupo-f4/src/pro/Estrella/assets/fonts/IMPACT.TTF")) {
         std::cerr << "Error al cargar la fuente. Usando texto sin fuente" << std::endl;
     }
 
