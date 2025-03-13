@@ -103,3 +103,6 @@ Aparece un rectángulo abajo a la izquierda que posteriormente mostrará las hab
 
 ## 20250312 MáximoMartínez @(2h, 45min)
 He empezado a diseñar el **sistema de audio** intentando aprovechar para que funcione a modo de **fachada del módulo de audio de SFML**. He empezado por los sonidos individuales, todo lo que no sea música. Después de mucha pelea con GPT, he conseguido que suenen muchos sonidos simultáneamente.
+
+## 20250313 MáximoMartínez @(5h)
+He implementado la camara en movimiento que sigue al personaje y un sistema de tiles, tilesets y tilemaps para montar y cargar mapas flexibles y personalizables. No he conseguido que dicho sistema funcione correctamente todavía.

@@ -83,6 +83,58 @@ void Character::update() {
     // Mover el sprite según la velocidad calculada
     sprite.move(velocity);
 
+
+
+
+    // // CODIGO DE COLISION DEL PERSONAJE CON LOS LIMITES DEL MAPA
+    // // Obtener posición futura del personaje
+    // sf::Vector2f newPosition = sprite.getPosition() + velocity;
+
+    // // Obtener dimensiones del sprite
+    // sf::FloatRect spriteBounds = sprite.getGlobalBounds();
+
+    // // Limites de la ventana (asumiendo una resolución fija de 640x480)
+    // float leftLimit = spriteBounds.width / 2;
+    // float rightLimit = 640 - spriteBounds.width / 2;
+    // float topLimit = spriteBounds.height / 2;
+    // float bottomLimit = 480 - spriteBounds.height / 2;
+
+    // // Restringir movimiento dentro de la pantalla
+    // if (newPosition.x < leftLimit) {
+    //     newPosition.x = leftLimit;
+    //     velocity.x = 0; // Detener la velocidad en ese eje
+    // }
+    // if (newPosition.x > rightLimit) {
+    //     newPosition.x = rightLimit;
+    //     velocity.x = 0;
+    // }
+    // if (newPosition.y < topLimit) {
+    //     newPosition.y = topLimit;
+    //     velocity.y = 0;
+    // }
+    // if (newPosition.y > bottomLimit) {
+    //     newPosition.y = bottomLimit;
+    //     velocity.y = 0;
+    // }
+
+    // // Establecer la posición restringida
+    // sprite.setPosition(newPosition);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     // Ajustar la textura según la dirección del movimiento
     if (movingRight) {
         sprite.setTextureRect(sf::IntRect(0, 2 * 75, 75, 75));

@@ -10,11 +10,16 @@ public:
     void handleInput(const sf::Event& event);
     void update();
     void draw(sf::RenderWindow& window);
+    sf::Vector2f getPosition() const {
+        return sprite.getPosition();
+    }
+    
 
 private:
     sf::Texture texture;
     sf::Sprite sprite;
     sf::Vector2f velocity;
+    
     float speed;
     float acceleration;
     float deceleration;
