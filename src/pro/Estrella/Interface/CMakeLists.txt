@@ -2,6 +2,7 @@
 target_sources(libModulos PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/HUD.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/Menu.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/MenuConf.cpp"
 )
 
 #Y donde se encuentran los .h

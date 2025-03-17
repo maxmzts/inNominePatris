@@ -112,3 +112,7 @@ He implementado la camara en movimiento que sigue al personaje y un sistema de t
 
 ## 20250317 JorgePelegrín @(30min)
 He añadido la lógica para poder llevar hasta dos armas equipadas.
+
+## 20250317 EstrellaDomínguez (1h, 15min)
+He añadido la opción de Configuración en el menú principal.
+He creado el menú Configuración (y su acceso desde el principal), así como sus diferentes opciones.

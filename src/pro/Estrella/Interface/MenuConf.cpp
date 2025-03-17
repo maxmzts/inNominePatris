@@ -1,7 +1,7 @@
-#include "Menu.h"
+#include "MenuConf.h"
 #include <iostream>
 
-Menu::Menu(float width, float height) {
+MenuConf::MenuConf(float width, float height) {
     // Cargar fuente
     if (!font.loadFromFile("/home/estrella/proyecto-abp-grupo-f4/src/pro/Estrella/assets/fonts/IMPACT.TTF")) {
         std::cerr << "Error al cargar la fuente. Usando texto sin fuente" << std::endl;
@@ -14,13 +14,12 @@ Menu::Menu(float width, float height) {
     backgroundSprite.setTexture(backgroundTexture);
     backgroundSprite.setScale(width / backgroundTexture.getSize().x, height / backgroundTexture.getSize().y);
 
-    std::vector<std::string> opciones = {"Nueva Partida", "Continuar partida", "Configuracion", "Salir"};
+    std::vector<std::string> opciones = {"Graficos", "Accesibilidad", "Sonido", "Controles"};
     
     for (size_t i = 0; i < opciones.size(); ++i) {
         // Crear fondo del texto
         sf::RectangleShape background(sf::Vector2f(300, 50));
-        float spacing = height / (opciones.size() + 1);
-        background.setPosition((width - 300) / 2, spacing * (i + 1));
+        background.setPosition((width - 300) / 2, height / (opciones.size() + 1) * (i + 1));
         background.setFillColor(sf::Color(50, 50, 50, 200)); // Color gris con transparencia
         background.setOutlineThickness(2);
         background.setOutlineColor(sf::Color::White);
@@ -44,7 +43,7 @@ Menu::Menu(float width, float height) {
     selectedItemIndex = 0;
 }
 
-void Menu::draw(sf::RenderWindow &window) {
+void MenuConf::draw(sf::RenderWindow &window) {
     window.draw(backgroundSprite);
 
     for (size_t i = 0; i < menuItems.size(); ++i) {
@@ -53,7 +52,7 @@ void Menu::draw(sf::RenderWindow &window) {
     }
 }
 
-void Menu::moveUp() {
+void MenuConf::moveUp() {
     if (selectedItemIndex > 0) {
         menuItems[selectedItemIndex].setFillColor(sf::Color::White);
         selectedItemIndex--;
@@ -61,7 +60,7 @@ void Menu::moveUp() {
     }
 }
 
-void Menu::moveDown() {
+void MenuConf::moveDown() {
     if (selectedItemIndex < menuItems.size() - 1) {
         menuItems[selectedItemIndex].setFillColor(sf::Color::White);
         selectedItemIndex++;
