@@ -18,13 +18,14 @@ private:
     sf::Clock dashTimer;
     float dashSpeed;
     float dashDuration;
+    std::vector<Weapon*> weapons; // Máximo 2 armas
+    int equippedIndex = 0; // Índice del arma equipada
 
 public:
     Character();
     void setTexture(const sf::Texture& tex); // Método para asignar textura
     void setTextureRect(int left, int top, int width, int height); // Método para cambiar el rectángulo de la textura
-    void equipWeapon(Weapon* newWeapon);
-    Weapon* getEquippedWeapon() const { return equippedWeapon; }
+    void equipWeapon();
     void setScale(float x, float y);
     void setOrigin(float x, float y);
     void setPosition(float x, float y);
@@ -40,6 +41,11 @@ public:
     void draw(sf::RenderWindow& window);
     sf::Vector2f getPosition() const;
     sf::FloatRect getBounds() const;
+    void addWeapon(Weapon* weapon);
+    void switchWeapon();
+    void setWeapon(int index);
+    int getWeaponCount() const;
+    Weapon* getEquippedWeapon() const;
 };
 
 #endif // CHARACTER_H

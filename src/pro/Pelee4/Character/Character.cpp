@@ -1,13 +1,13 @@
 #include "Character.h"
 
 Character::Character() 
-    : direction(0.0f, 1.0f), equippedWeapon(nullptr), isDashing(false), dashSpeed(0.0f), dashDuration(0.0f) {
+    : direction(0.0f, 1.0f), equippedWeapon(nullptr), isDashing(false), dashSpeed(0.0f), dashDuration(0.0f), speed(100.0f), weapons(),  equippedIndex(0) {
         sprite.setPosition(100, 300);
 
     }
 
-void Character::equipWeapon(Weapon* newWeapon) {
-    equippedWeapon = newWeapon;
+void Character::equipWeapon() {
+    equippedWeapon = weapons[equippedIndex];
 }
 
 // Asigna una textura al sprite del personaje
@@ -99,4 +99,27 @@ sf::Vector2f Character::getPosition() const {
 
 sf::FloatRect Character::getBounds() const {
     return sprite.getGlobalBounds();
+}
+
+void Character::addWeapon(Weapon* weapon) {
+    if(weapons.size() < 2){
+        weapons.push_back(weapon);
+        if(weapons.size() == 1) 
+            equippedIndex = 0;
+    }
+}
+
+void Character::switchWeapon() {
+    if(weapons.size() > 1) {
+        equippedIndex = 1 - equippedIndex;
+    }
+}
+
+int Character::getWeaponCount() const {
+    return weapons.size();
+}
+
+Weapon* Character::getEquippedWeapon() const {
+    if (weapons.empty()) return nullptr;
+    return weapons[equippedIndex];
 }

@@ -47,7 +47,9 @@ int main() {
     // Creamos la espada y la equipamos al personaje
     Sword sword;
     Lance lance;
-    player.equipWeapon(&lance);
+    player.addWeapon(&sword);
+    player.addWeapon(&lance);
+    player.equipWeapon();
 
     Item* swordItem = swordItem->generateRandomItemforWeapon(ItemType::Sword);
     Item* lanceItem = lanceItem->generateRandomItemforWeapon(ItemType::Lance);
@@ -90,14 +92,9 @@ int main() {
             }
 
             if(event.type == sf::Event::KeyPressed){
-                if(event.key.code == sf::Keyboard::Q){
-                    AbilityType type = player.getEquippedWeapon()->getAbilityType();
-                    if(type == AbilityType::Dash){
-                        player.equipWeapon(&lance);
-                    }
-                    else {
-                        player.equipWeapon(&sword);
-                    }
+                if(event.key.code == sf::Keyboard::Q && player.getWeaponCount() > 1){
+                    player.switchWeapon();
+                    player.equipWeapon();
                     std :: cout << "Cambiando arma" << std::endl;
                 }
             }
