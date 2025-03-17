@@ -109,3 +109,6 @@ He implementado la camara en movimiento que sigue al personaje y un sistema de t
 
 ## 2020317 MáximoMartínez @(1h 20min)
 (1h 20min) Empezado y terminado módulo fachada ```MusicPlayer``` para la reproducción de música. Tiene unos métodos de fade y transición que necesitan ajustes, pero funciona.
+
+## 20250317 JorgePelegrín @(30min)
+He añadido la lógica para poder llevar hasta dos armas equipadas.
