@@ -6,5 +6,5 @@
 class DetectedArea : public sf::CircleShape {
 public:
     DetectedArea(float radius);
-    virtual ~DetectedArea() = default;
+    ~DetectedArea() = default;
 };

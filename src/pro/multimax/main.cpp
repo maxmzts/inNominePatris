@@ -8,7 +8,7 @@
 #include <MusicPlayer.h>
 
 #define kVel 5
-
+#define ENEMY_SPEED  1
 
 // clase singleton para la lista dinamica usada en el main
 // práctica para aprender a hacer un singleton.
@@ -19,6 +19,7 @@ private:
 
 public:
     SoundPlayer soundPlayer;
+    sf::Vector2f playerPosition;
 
     static DataSingleton &getInstance() {
         static DataSingleton instance;
@@ -74,9 +75,14 @@ public:
         sprite.setOrigin(75 / 2, 75 / 2);
         sprite.setTextureRect(sf::IntRect(0 * 75, 0 * 75, 75, 75));
         sprite.setPosition(320, 240);
+
+        DataSingleton &data = DataSingleton::getInstance();
+        data.playerPosition = sprite.getPosition();
+
         interactionArea.setOrigin(sf::Vector2f(90.f, 90.f));
         interactionArea.setPosition(sprite.getPosition());
         interactionArea.setFillColor(sf::Color(0, 128, 255, 76));
+
     }
 
     void mover(sf::Keyboard::Key key) {
@@ -109,6 +115,7 @@ public:
         default:
             return;
         }
+        data.playerPosition = sprite.getPosition();
         interactionArea.setPosition(sprite.getPosition());
     }
 
@@ -119,6 +126,45 @@ public:
 
     void updatePlayerAreas() {
         interactionArea.detect(DataSingleton::getInstance().getAreas());
+    }
+};
+
+class Enemigo {
+private:
+    sf::Sprite sprite;
+    DetectedArea hitbox;
+public:
+    Enemigo(const sf::Texture &tex) : sprite(tex), hitbox(75.f) {
+        sprite.setOrigin(75 / 2, 75 / 2);
+        sprite.setTextureRect(sf::IntRect(4.5 * 75, 3 * 75, 75, 75));
+        sprite.setPosition(50, 50);
+        
+        hitbox.setOrigin(sf::Vector2f(75.f, 75.f));
+        hitbox.setPosition(sprite.getPosition());
+        hitbox.setFillColor(sf::Color(255, 0, 0, 76));
+    }
+
+    void updateEnemy(float delta) {
+        //calcular dirección de movimiento
+        DataSingleton &data = DataSingleton::getInstance();
+        sf::Vector2f targetPosition = data.playerPosition - sprite.getPosition();
+        sf::Vector2f direction = normalize(targetPosition);
+
+        // mover
+        sprite.move(delta * ENEMY_SPEED * direction);
+        hitbox.setPosition(sprite.getPosition());
+    }
+
+    sf::Vector2f normalize(const sf::Vector2f& vector) {
+        float length = std::sqrt(vector.x * vector.x + vector.y * vector.y);
+        if (length != 0) {
+            return vector / length;
+        }
+        return vector;  // Devuelve el vector original si la longitud es 0 (evita división por cero)
+    }
+
+    void drawEnemy(sf::RenderWindow &window) {
+        window.draw(sprite);
     }
 };
 
@@ -133,6 +179,7 @@ int main() {
 
     // CONFIGURACIÓN DE JUGADOR
     Jugador jugador(tex);
+    Enemigo enemigo(tex);
 
     // CONFIGURACIÓN DE ÁREAS EN LA ESCENA
     DataSingleton &data = DataSingleton::getInstance();
@@ -204,7 +251,12 @@ int main() {
             transitionDone = false; // Reset para evitar múltiples fade outs
         }
 
+        // UPDATE ------------
+
+        float delta = clock.restart().asSeconds() * 60;
+
         jugador.updatePlayerAreas();
+        enemigo.updateEnemy(delta);
 
         window.clear();
         for (DetectedArea *area : data.getAreas()) {
@@ -212,6 +264,7 @@ int main() {
                 window.draw(*area);
         }
         jugador.drawPlayer(window);
+        enemigo.drawEnemy(window);
         window.display();
     }
     return 0;
