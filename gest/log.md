@@ -106,3 +106,6 @@ He empezado a diseñar el **sistema de audio** intentando aprovechar para que fu
 
 ## 20250313 MáximoMartínez @(5h)
 He implementado la camara en movimiento que sigue al personaje y un sistema de tiles, tilesets y tilemaps para montar y cargar mapas flexibles y personalizables. No he conseguido que dicho sistema funcione correctamente todavía.
+
+## 2020317 MáximoMartínez @(1h 20min)
+(1h 20min) Empezado y terminado módulo fachada ```MusicPlayer``` para la reproducción de música. Tiene unos métodos de fade y transición que necesitan ajustes, pero funciona.

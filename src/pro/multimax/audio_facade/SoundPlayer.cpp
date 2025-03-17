@@ -1,5 +1,3 @@
-#pragma once
-
 #include "SoundPlayer.h"
 #include <stdexcept>
 #include <algorithm>

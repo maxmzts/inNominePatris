@@ -1,9 +1,11 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <vector>
+
 #include <DetectedArea.h>
 #include <DetectingArea.h>
 #include <SoundPlayer.h>
+#include <MusicPlayer.h>
 
 #define kVel 5
 
@@ -151,8 +153,21 @@ int main() {
 
     data.soundPlayer.loadSound("gunshot1", "./resources/gunshot1.ogg");
     data.soundPlayer.loadSound("gunshot2", "./resources/gunshot2.ogg");
+
+    // CONFIGURACIÓN DE MÚSICA
+
+    MusicPlayer musicPlayer;
+    sf::Clock musicClock; // Reloj para medir el tiempo transcurrido
+
+    // Cargar y reproducir la primera música con un fade in de 3 segundos
+    musicPlayer.loadMusic("resources/Whispers_of_the_Abyss.ogg");
+    musicPlayer.fadeIn(3.0f, 100.0f);
+    musicClock.restart(); // Reiniciar el reloj cuando la música empieza
+
+    bool transitionDone = false;
     
     sf::Clock clock;
+    
 
     // BUCLE DE JUEGO
     while (window.isOpen()) {
@@ -165,11 +180,28 @@ int main() {
             }
         }
 
-        if (clock.getElapsedTime().asSeconds() >= 10.0f) {
-            data.soundPlayer.play("gunshot1");
-            data.soundPlayer.play("gunshot2");
-            clock.restart();
-            std::cout << "Disparo dos veces.\n";
+        // if (clock.getElapsedTime().asSeconds() >= 10.0f) {
+        //     data.soundPlayer.play("gunshot1");
+        //     data.soundPlayer.play("gunshot2");
+        //     clock.restart();
+        //     std::cout << "Disparo dos veces.\n";
+        // }
+
+        // PRUEBA MÚSICA Y TRANSICIÓN
+
+        musicPlayer.update();
+
+        // Verificar si han pasado 10 segundos y aún no se ha hecho la transición
+        if (musicClock.getElapsedTime().asSeconds() >= 10.0f && !transitionDone) {
+            musicPlayer.transition("resources/The_Dark_Throne.ogg", 3.0f, 3.0f, 100.0f);
+            musicClock.restart(); // Reiniciar el reloj para medir la duración de la nueva música
+            transitionDone = true;
+        }
+
+        // Verificar si han pasado 10 segundos desde la transición y hacer fade out final
+        if (transitionDone && musicClock.getElapsedTime().asSeconds() >= 10.0f) {
+            musicPlayer.fadeOut(3.0f);
+            transitionDone = false; // Reset para evitar múltiples fade outs
         }
 
         jugador.updatePlayerAreas();
