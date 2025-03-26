@@ -116,3 +116,8 @@ He añadido la lógica para poder llevar hasta dos armas equipadas.
 ## 20250317 EstrellaDomínguez (1h, 15min)
 He añadido la opción de Configuración en el menú principal.
 He creado el menú Configuración (y su acceso desde el principal), así como sus diferentes opciones.
+
+## 2020322 MáximoMartínez @(4h)
+He mejorado el sistema de áreas para que permita distintias formas.
+He creado ya una clase entidad, una clase hitbox y una clase hurtbox para implementar el "combate" o interacción del jugador con los enemigos.
+He estado mucho tiempo y no he llegado a nada funcional porque una idea que tenía resultaba en una referencia circular y las IA no me avisaron. 

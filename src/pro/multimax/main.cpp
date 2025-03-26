@@ -4,6 +4,11 @@
 
 #include <DetectedArea.h>
 #include <DetectingArea.h>
+
+#include <Entity.h>
+#include <Hitbox.h>
+#include <Hurtbox.h>
+
 #include <SoundPlayer.h>
 #include <MusicPlayer.h>
 
@@ -14,12 +19,13 @@
 // práctica para aprender a hacer un singleton.
 class DataSingleton {
 private:
-    std::vector<DetectedArea *> inGameAreas;
+    std::vector<DetectedArea *> inGameAreas; //test areas
     DataSingleton() {}
 
 public:
     SoundPlayer soundPlayer;
     sf::Vector2f playerPosition;
+    std::vector<Enemigo> enemigos;
 
     static DataSingleton &getInstance() {
         static DataSingleton instance;
@@ -50,10 +56,6 @@ public:
         setFillColor(sf::Color(255, 0, 0, 76));
     }
 
-    bool isDetected(const DetectedArea &area) const override {
-        return getGlobalBounds().intersects(area.getGlobalBounds());
-    }
-
     void interact() override {
         if (!detectedObjects.empty()) {
             sortDetectedObjects();
@@ -65,13 +67,14 @@ public:
 };
 
 // CLASE DE JUGADOR PROVISIONAL PARA LAS PRUEBAS
-class Jugador {
+class Jugador: public Entity {
 private:
     sf::Sprite sprite;
-    InteractionArea interactionArea;
+    Hitbox hitbox;
+    bool spacePressed;
 
 public:
-    Jugador(const sf::Texture &tex) : sprite(tex), interactionArea(90.f) {
+    Jugador(const sf::Texture &tex) : sprite(tex), hitbox(90.f) {
         sprite.setOrigin(75 / 2, 75 / 2);
         sprite.setTextureRect(sf::IntRect(0 * 75, 0 * 75, 75, 75));
         sprite.setPosition(320, 240);
@@ -79,9 +82,9 @@ public:
         DataSingleton &data = DataSingleton::getInstance();
         data.playerPosition = sprite.getPosition();
 
-        interactionArea.setOrigin(sf::Vector2f(90.f, 90.f));
-        interactionArea.setPosition(sprite.getPosition());
-        interactionArea.setFillColor(sf::Color(0, 128, 255, 76));
+        hitbox.setOrigin(sf::Vector2f(90.f, 90.f));
+        hitbox.setPosition(sprite.getPosition());
+        hitbox.setFillColor(sf::Color(0, 128, 255, 76));
 
     }
 
@@ -107,7 +110,8 @@ public:
             sprite.move(0, kVel);
             break;
         case sf::Keyboard::Space:
-            interactionArea.interact();
+            hitbox.detect();
+            hitbox.executeAttack();
             data.soundPlayer.play("gunshot1");
             data.soundPlayer.setVolume(100.f);
             std::cout << "Disparo.\n";
@@ -116,32 +120,45 @@ public:
             return;
         }
         data.playerPosition = sprite.getPosition();
-        interactionArea.setPosition(sprite.getPosition());
+        hitbox.setPosition(sprite.getPosition());
+    }
+    
+    void updateInput(const sf::Time& deltaTime) {
+        // Verificar si se presionó la tecla espacio
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && !spacePressed) {
+            //eliminarEnemigoMasCercano();
+            spacePressed = true;
+        }
+        
+        // Resetear el estado cuando se suelta la tecla
+        if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+            spacePressed = false;
+        }
+    }
+
+    void updatePlayerAreas() {
+        interactionArea.detect(DataSingleton::getInstance().getAreas());
     }
 
     void drawPlayer(sf::RenderWindow &window) {
         window.draw(interactionArea);
         window.draw(sprite);
     }
-
-    void updatePlayerAreas() {
-        interactionArea.detect(DataSingleton::getInstance().getAreas());
-    }
 };
 
-class Enemigo {
+class Enemigo: public Entity {
 private:
     sf::Sprite sprite;
-    DetectedArea hitbox;
+    DetectedArea hurtbox;
 public:
-    Enemigo(const sf::Texture &tex) : sprite(tex), hitbox(75.f) {
-        sprite.setOrigin(75 / 2, 75 / 2);
-        sprite.setTextureRect(sf::IntRect(4.5 * 75, 3 * 75, 75, 75));
+    Enemigo(const sf::Texture &tex) : sprite(tex), hurtbox(sf::RectangleShape(sf::Vector2f(75.f,100.f))) {
+        sprite.setOrigin(75.f / 2.f, 75.f / 2.f);
+        sprite.setTextureRect(sf::IntRect(4.6 * 75, 3.1 * 75, 75, 75));
         sprite.setPosition(50, 50);
         
-        hitbox.setOrigin(sf::Vector2f(75.f, 75.f));
-        hitbox.setPosition(sprite.getPosition());
-        hitbox.setFillColor(sf::Color(255, 0, 0, 76));
+        hurtbox.setOrigin(sf::Vector2f(37.5f, 50.f));
+        hurtbox.setPosition(sprite.getPosition());
+        hurtbox.setFillColor(sf::Color(255, 0, 0, 76));
     }
 
     void updateEnemy(float delta) {
@@ -152,7 +169,7 @@ public:
 
         // mover
         sprite.move(delta * ENEMY_SPEED * direction);
-        hitbox.setPosition(sprite.getPosition());
+        hurtbox.setPosition(sprite.getPosition());
     }
 
     sf::Vector2f normalize(const sf::Vector2f& vector) {
@@ -164,6 +181,7 @@ public:
     }
 
     void drawEnemy(sf::RenderWindow &window) {
+        hurtbox.draw(window);
         window.draw(sprite);
     }
 };
@@ -254,14 +272,16 @@ int main() {
         // UPDATE ------------
 
         float delta = clock.restart().asSeconds() * 60;
+        sf::Time deltaTime = clock.restart();
 
+        jugador.updateInput(deltaTime);
         jugador.updatePlayerAreas();
         enemigo.updateEnemy(delta);
 
         window.clear();
         for (DetectedArea *area : data.getAreas()) {
             if (area != nullptr)
-                window.draw(*area);
+                area->draw(window);
         }
         jugador.drawPlayer(window);
         enemigo.drawEnemy(window);

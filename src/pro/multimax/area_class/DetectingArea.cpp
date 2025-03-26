@@ -23,6 +23,10 @@ void DetectingArea::sortDetectedObjects() {
     });
 }
 
+bool DetectingArea::isDetected(const DetectedArea& area) const{
+    return getGlobalBounds().intersects(area.getGlobalBounds());
+}
+
 float DetectingArea::getDistance(const DetectedArea& area) const {
     sf::Vector2f diff = area.getPosition() - getPosition();
     return std::sqrt(diff.x * diff.x + diff.y * diff.y);

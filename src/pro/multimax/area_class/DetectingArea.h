@@ -22,7 +22,7 @@ public:
     void sortDetectedObjects();
     
     // Método abstracto para definir la lógica de detección
-    virtual bool isDetected(const DetectedArea& area) const = 0;
+    bool isDetected(const DetectedArea& area) const;
 
     // Obtener la distancia de un área detectada al centro de esta área
     float getDistance(const DetectedArea& area) const;

@@ -2,6 +2,9 @@
 target_sources(area_class PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/DetectedArea.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/DetectingArea.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Hitbox.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Hurtbox.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Entity.cpp"
 )
 
 #Y donde se encuentran los .h
