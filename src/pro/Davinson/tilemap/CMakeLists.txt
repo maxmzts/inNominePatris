@@ -1,6 +1,7 @@
 #Especificar donde se encuentran los ficheros cpp a compilar
 target_sources(libModulos PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/TileMap.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/TileSet.cpp"
 )
 
 #Y donde se encuentran los .h

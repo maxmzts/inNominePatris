@@ -33,4 +33,15 @@ if (SFML_FOUND)
     target_link_libraries(MiJuego ${SFML_LIBRARIES})
 endif()
 
+# Agregar la biblioteca TinyXML-2 manualmente
+find_library(TINYXML2_LIBRARY tinyxml2)
+
+if (TINYXML2_LIBRARY)
+    message(STATUS "TinyXML-2 encontrado: ${TINYXML2_LIBRARY}")
+    target_link_libraries(MiJuego ${TINYXML2_LIBRARY})
+else()
+    message(FATAL_ERROR "No se encontró la biblioteca TinyXML-2.")
+endif()
+
+
 
