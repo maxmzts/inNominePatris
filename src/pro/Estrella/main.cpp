@@ -53,7 +53,7 @@ int main() {
 
 void menuConf() {
     // Crear una nueva ventana para el menú de configuración
-    sf::RenderWindow configWindow(sf::VideoMode(800, 600), "Menu Configuración");
+    sf::RenderWindow configWindow(sf::VideoMode(800, 600), "Menu Configuracion");
     MenuConf configMenu(800, 600);
 
     while (configWindow.isOpen()) {
