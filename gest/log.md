@@ -131,3 +131,8 @@ IMPORTANTE: A partir de ahora para ejecutar el programa se debe instalar *Tinyxm
 
 ## 20250402 JorgePelegrin @(1h 30min)
 Arco y habilidad.
+
+## 20250402 EstrellaDominguez @(1h 30min)
+Creada la rama developer.
+Arregladas las rutas para acceder a los recursos desde los menus.
+Terminada mi parte del diagrama.
