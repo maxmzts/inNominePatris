@@ -4,20 +4,31 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <map>
+#include <string>
+#include <tinyxml2.h>
 
-class TileMap : public sf::Drawable {
+class TileMap : public sf::Drawable, public sf::Transformable {
 public:
-    bool load(const std::string& tileset, sf::Vector2u tileSize, const std::vector<int>& tiles, unsigned int width, unsigned int height);
-
-    // Mapa que almacena la posición de cada tile en la textura
-    std::map<int, sf::IntRect> tileMap;
+    bool loadFromFile(const std::string& filename);
 
 private:
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-    sf::VertexArray vertices;
-    sf::Texture tilesetTexture;
-    unsigned int mapWidth, mapHeight;
+    struct TileSet {
+        sf::Texture texture;
+        int firstGid;
+        int tileWidth, tileHeight;
+        int columns;
+    };
+
+    struct Layer {
+        sf::VertexArray vertices;
+        sf::Texture* tilesetTexture;
+    };
+
+    std::map<int, TileSet> m_tilesets;  // Mapeo de firstGid a tilesets
+    std::vector<Layer> m_layers;        // Lista de capas
+    int m_mapWidth, m_mapHeight;
 };
 
 #endif

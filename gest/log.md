@@ -104,7 +104,7 @@ Aparece un rectángulo abajo a la izquierda que posteriormente mostrará las hab
 ## 20250312 MáximoMartínez @(2h, 45min)
 He empezado a diseñar el **sistema de audio** intentando aprovechar para que funcione a modo de **fachada del módulo de audio de SFML**. He empezado por los sonidos individuales, todo lo que no sea música. Después de mucha pelea con GPT, he conseguido que suenen muchos sonidos simultáneamente.
 
-## 20250313 MáximoMartínez @(5h)
+## 20250313 DavidGonzález @(5h)
 He implementado la camara en movimiento que sigue al personaje y un sistema de tiles, tilesets y tilemaps para montar y cargar mapas flexibles y personalizables. No he conseguido que dicho sistema funcione correctamente todavía.
 
 ## 2020317 MáximoMartínez @(1h 20min)
@@ -121,6 +121,3 @@ He creado el menú Configuración (y su acceso desde el principal), así como su
 He mejorado el sistema de áreas para que permita distintias formas.
 He creado ya una clase entidad, una clase hitbox y una clase hurtbox para implementar el "combate" o interacción del jugador con los enemigos.
 He estado mucho tiempo y no he llegado a nada funcional porque una idea que tenía resultaba en una referencia circular y las IA no me avisaron. 
-
-## 20250402 JorgePelegrín @(1h 30min)
-Creado el arco junto a su habilidad.

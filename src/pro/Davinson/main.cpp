@@ -5,6 +5,9 @@
 #include "ej_modulos/mimodulo.h"
 #include "character/Character.h"
 #include "TileMap.h"
+#include "TileSet.h"
+
+
 
 
 #define kVel 5
@@ -24,24 +27,23 @@ int main() {
   // Configurar la vista (cámara)
   sf::View view(sf::FloatRect(0, 0, 640, 480));
 
-  // Cargar el mapa de tiles
-  std::vector<int> level = {
-    0, 1, 2, 2, 1, 21, 45, 1, 82, 2, 1, 0, 
-    0, 1, 6, 2, 1, 4, 32, 1, 2, 2, 1, 0, 
-    0, 1, 2, 2, 1, 0, 33, 1, 2, 2, 1, 0
-    };
-
-    TileMap map;
-    if (!map.load("resources/mainlevbuild.png", sf::Vector2u(32, 32), level, 12, 3)) {
-        return -1;
-    }
-
-
 
 
 
   //Creamos el personaje
   Character character("resources/sprites.png");
+
+
+
+
+   // Crear el TileMap y cargar el mapa
+   TileMap tileMap;
+if (!tileMap.loadFromFile("maps/lobby.tmx")) {
+    return -1;
+}
+
+
+
 
   //Bucle del juego
   while (window.isOpen()) {
@@ -69,7 +71,8 @@ int main() {
 
 
     window.clear();
-    window.draw(map);
+    window.draw(tileMap); // Dibujar el mapa
+
 
     character.draw(window);
     window.display();
