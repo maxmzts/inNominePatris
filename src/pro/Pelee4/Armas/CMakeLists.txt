@@ -2,6 +2,8 @@
 target_sources(libModulos PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/Sword.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/Lance.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Bow.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Arrow.cpp"
 )
 
 #Y donde se encuentran los .h

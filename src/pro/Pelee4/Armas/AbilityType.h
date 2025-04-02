@@ -5,7 +5,8 @@
 enum class AbilityType {
     None,
     Dash,
-    Teleport
+    Teleport,
+    Shot
 };
 
 #endif // ABILITY_TYPE_H

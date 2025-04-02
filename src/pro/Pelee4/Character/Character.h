@@ -34,7 +34,7 @@ public:
     sf::Vector2f getScale() const;
     void move(float x, float y);
     void attack(std::vector<Enemy>& enemies);
-    void useAbility(sf::RenderWindow& window);
+    void useAbility(sf::RenderWindow& window, std::vector<Enemy>& enemies);
     void startDash(float speed, float duration);
     void increaseSpeed(float speed);
     void update(float deltaTime);

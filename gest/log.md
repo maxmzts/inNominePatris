@@ -121,3 +121,6 @@ He creado el menú Configuración (y su acceso desde el principal), así como su
 He mejorado el sistema de áreas para que permita distintias formas.
 He creado ya una clase entidad, una clase hitbox y una clase hurtbox para implementar el "combate" o interacción del jugador con los enemigos.
 He estado mucho tiempo y no he llegado a nada funcional porque una idea que tenía resultaba en una referencia circular y las IA no me avisaron. 
+
+## 20250402 JorgePelegrín @(1h 30min)
+Creado el arco junto a su habilidad.

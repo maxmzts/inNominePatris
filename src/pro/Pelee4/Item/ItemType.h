@@ -4,7 +4,8 @@
 enum class ItemType {
     None,
     Sword,
-    Lance
+    Lance,
+    Character
 };
 
 #endif // ITEM_TYPE_H
