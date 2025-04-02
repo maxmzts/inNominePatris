@@ -124,7 +124,10 @@ He estado mucho tiempo y no he llegado a nada funcional porque una idea que ten�
 
 ## 20250401 DavidGonzález @(12h)
 He conseguido que el juego cargue mapas parseando archivos exportados desde la aplicacion tiled (carga el mapa. con sus capas aunque todavia no he conseguido que cargue distinos tilesets, por tanto no puedo emplear el tileset de la decoracion de momento). También he comenzado con el dibujado de mapas, ya están hechos la sala_1 que puede servir como tutorial, y parte del lobby. La realización de todo esto está siendo bastante tediosa y no hice commits hasta ahora ya que no obtenía progresos útiles, de ahí la gran cantidad de horas que he invertido para este commit.
-IMPORTANTE: A partir de ahora para ejecutar el programa se debe instalar **Tinyxml12**, para ello escribimos los siguientes comandos en la plantilla del proyecto (Davinson en mi caso):
+IMPORTANTE: A partir de ahora para ejecutar el programa se debe instalar *Tinyxml12*, para ello escribimos los siguientes comandos en la plantilla del proyecto (Davinson en mi caso):
 - sudo apt install pkg-config
 - sudo apt install libtinyxml2-dev
 - pkg-config --modversion tinyxml2 (para comprobar que se ha instalado correctamente)
+
+## 20250402 JorgePelegrin @(1h 30min)
+Arco y habilidad.

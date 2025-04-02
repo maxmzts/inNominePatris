@@ -8,6 +8,7 @@
 #include "Enemy.h"
 #include "Item.h"
 #include "Lance.h"
+#include "Bow.h"
 
 #define kVel 5
 
@@ -47,8 +48,9 @@ int main() {
     // Creamos la espada y la equipamos al personaje
     Sword sword;
     Lance lance;
+    Bow bow;
     player.addWeapon(&sword);
-    player.addWeapon(&lance);
+    player.addWeapon(&bow);
     player.equipWeapon();
 
     Item* swordItem = swordItem->generateRandomItemforWeapon(ItemType::Sword);
@@ -87,7 +89,7 @@ int main() {
                     player.attack(enemies); // Ataque básico
                 }
                 if (event.mouseButton.button == sf::Mouse::Right) {
-                    player.useAbility(window); // Habilidad especial
+                    player.useAbility(window,enemies); // Habilidad especial
                 }
             }
 
@@ -154,11 +156,14 @@ int main() {
         float deltaTime = clock.restart().asSeconds();
         player.update(deltaTime);
 
+        bow.update(deltaTime, enemies);
+
         // Dibujado de la escena
         window.clear();
         player.draw(window);
         swordItem->draw(window);
         lanceItem->draw(window);
+        bow.draw(window);
         for (Enemy& enemy : enemies) {
             enemy.draw(window);
         }
