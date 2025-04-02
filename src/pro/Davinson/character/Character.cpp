@@ -1,11 +1,14 @@
 #include "Character.h"
 #include <iostream>
 
-Character::Character(const std::string& textureFile) : speed(1.75f), acceleration(0.1f), deceleration(0.15f) {
+Character::Character(const std::string& textureFile) 
+    : speed(1.75f), acceleration(0.1f), deceleration(0.15f) {
+    
     if (!texture.loadFromFile(textureFile)) {
         std::cerr << "Error cargando la textura" << std::endl;
         exit(1);
     }
+    
     sprite.setTexture(texture);
     sprite.setOrigin(75 / 2, 75 / 2);
     sprite.setTextureRect(sf::IntRect(0, 0, 75, 75));
@@ -33,7 +36,7 @@ void Character::handleInput(const sf::Event& event) {
     }
 }
 
-void Character::update() {
+void Character::update(const TileMap& tilemap) {
     sf::Vector2f moveDirection(0.f, 0.f);
 
     // Detectar entrada del usuario
@@ -42,7 +45,7 @@ void Character::update() {
     if (movingUp) moveDirection.y -= 1;
     if (movingDown) moveDirection.y += 1;
 
-    // Normalizar el vector de movimiento en caso de diagonal
+    // Normalizar el vector de movimiento en caso de movimiento diagonal
     if (moveDirection.x != 0 && moveDirection.y != 0) {
         moveDirection *= 0.7071f; // sqrt(2)/2 para mantener velocidad uniforme
     }
@@ -80,60 +83,16 @@ void Character::update() {
         }
     }
 
-    // Mover el sprite según la velocidad calculada
-    sprite.move(velocity);
+    // **Comprobación de colisiones antes de mover al personaje**
+    sf::FloatRect nextBounds = sprite.getGlobalBounds();
+    nextBounds.left += velocity.x;
+    nextBounds.top += velocity.y;
 
-
-
-
-    // // CODIGO DE COLISION DEL PERSONAJE CON LOS LIMITES DEL MAPA
-    // // Obtener posición futura del personaje
-    // sf::Vector2f newPosition = sprite.getPosition() + velocity;
-
-    // // Obtener dimensiones del sprite
-    // sf::FloatRect spriteBounds = sprite.getGlobalBounds();
-
-    // // Limites de la ventana (asumiendo una resolución fija de 640x480)
-    // float leftLimit = spriteBounds.width / 2;
-    // float rightLimit = 640 - spriteBounds.width / 2;
-    // float topLimit = spriteBounds.height / 2;
-    // float bottomLimit = 480 - spriteBounds.height / 2;
-
-    // // Restringir movimiento dentro de la pantalla
-    // if (newPosition.x < leftLimit) {
-    //     newPosition.x = leftLimit;
-    //     velocity.x = 0; // Detener la velocidad en ese eje
-    // }
-    // if (newPosition.x > rightLimit) {
-    //     newPosition.x = rightLimit;
-    //     velocity.x = 0;
-    // }
-    // if (newPosition.y < topLimit) {
-    //     newPosition.y = topLimit;
-    //     velocity.y = 0;
-    // }
-    // if (newPosition.y > bottomLimit) {
-    //     newPosition.y = bottomLimit;
-    //     velocity.y = 0;
-    // }
-
-    // // Establecer la posición restringida
-    // sprite.setPosition(newPosition);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    if (!tilemap.isColliding(nextBounds)) {
+        sprite.move(velocity);
+    } else {
+        velocity = {0, 0}; // Detiene el movimiento en caso de colisión
+    }
 
     // Ajustar la textura según la dirección del movimiento
     if (movingRight) {

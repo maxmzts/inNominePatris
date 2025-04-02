@@ -1,34 +1,31 @@
-#ifndef TILEMAP_H
-#define TILEMAP_H
-
+#pragma once
 #include <SFML/Graphics.hpp>
+#include "tinyxml2.h"
 #include <vector>
-#include <map>
-#include <string>
-#include <tinyxml2.h>
+#include <unordered_map>
 
 class TileMap : public sf::Drawable, public sf::Transformable {
 public:
     bool loadFromFile(const std::string& filename);
+    bool isColliding(const sf::FloatRect& playerBounds) const; // NUEVA FUNCIÓN
 
 private:
-    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
-
     struct TileSet {
-        sf::Texture texture;
         int firstGid;
-        int tileWidth, tileHeight;
-        int columns;
+        sf::Texture texture;
+        int tileWidth, tileHeight, columns;
     };
 
     struct Layer {
         sf::VertexArray vertices;
-        sf::Texture* tilesetTexture;
+        const sf::Texture* tilesetTexture;
     };
 
-    std::map<int, TileSet> m_tilesets;  // Mapeo de firstGid a tilesets
-    std::vector<Layer> m_layers;        // Lista de capas
+    std::vector<Layer> m_layers;
+    std::unordered_map<int, TileSet> m_tilesets;
     int m_mapWidth, m_mapHeight;
-};
 
-#endif
+    std::vector<sf::FloatRect> collisionBlocks; // ALMACENA LOS BLOQUES DE COLISIÓN
+
+    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+};

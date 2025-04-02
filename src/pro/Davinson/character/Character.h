@@ -2,18 +2,19 @@
 #define CHARACTER_H
 
 #include <SFML/Graphics.hpp>
+#include "TileMap.h" // clase TileMap para detección de colisiones
 
 class Character {
 public:
     Character(const std::string& textureFile);
 
     void handleInput(const sf::Event& event);
-    void update();
+    void update(const TileMap& tilemap); // update recibe el mapa para verificar colisiones
     void draw(sf::RenderWindow& window);
+
     sf::Vector2f getPosition() const {
         return sprite.getPosition();
     }
-    
 
 private:
     sf::Texture texture;
