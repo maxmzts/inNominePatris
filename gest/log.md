@@ -136,3 +136,6 @@ Arco y habilidad.
 Creada la rama developer.
 Arregladas las rutas para acceder a los recursos desde los menus.
 Terminada mi parte del diagrama.
+
+## 20250402 DavidGonzález @(12h)
+He creado los limites del mapa mediante una capa bounds en tiled, y he cambiado algunos ajustes + sigo tileando el lobby
