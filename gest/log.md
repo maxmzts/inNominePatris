@@ -121,3 +121,13 @@ He creado el menú Configuración (y su acceso desde el principal), así como su
 He mejorado el sistema de áreas para que permita distintias formas.
 He creado ya una clase entidad, una clase hitbox y una clase hurtbox para implementar el "combate" o interacción del jugador con los enemigos.
 He estado mucho tiempo y no he llegado a nada funcional porque una idea que tenía resultaba en una referencia circular y las IA no me avisaron. 
+
+## 20250401 DavidGonzález @(12h)
+He conseguido que el juego cargue mapas parseando archivos exportados desde la aplicacion tiled (carga el mapa. con sus capas aunque todavia no he conseguido que cargue distinos tilesets, por tanto no puedo emplear el tileset de la decoracion de momento). También he comenzado con el dibujado de mapas, ya están hechos la sala_1 que puede servir como tutorial, y parte del lobby. La realización de todo esto está siendo bastante tediosa y no hice commits hasta ahora ya que no obtenía progresos útiles, de ahí la gran cantidad de horas que he invertido para este commit.
+IMPORTANTE: A partir de ahora para ejecutar el programa se debe instalar *Tinyxml12*, para ello escribimos los siguientes comandos en la plantilla del proyecto (Davinson en mi caso):
+- sudo apt install pkg-config
+- sudo apt install libtinyxml2-dev
+- pkg-config --modversion tinyxml2 (para comprobar que se ha instalado correctamente)
+
+## 20250402 JorgePelegrin @(1h 30min)
+Arco y habilidad.
