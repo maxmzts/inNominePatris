@@ -49,12 +49,13 @@ int main() {
     Sword sword;
     Lance lance;
     Bow bow;
-    player.addWeapon(&sword);
+    player.addWeapon(&lance);
     player.addWeapon(&bow);
     player.equipWeapon();
 
     Item* swordItem = swordItem->generateRandomItemforWeapon(ItemType::Sword);
     Item* lanceItem = lanceItem->generateRandomItemforWeapon(ItemType::Lance);
+    Item* bowItem = bowItem->generateRandomItemforWeapon(ItemType::Bow);
 
     swordItem->setTexture(itemTex);
     swordItem->setTextureRect(0, 0, 32, 32);
@@ -157,12 +158,14 @@ int main() {
         player.update(deltaTime);
 
         bow.update(deltaTime, enemies);
+        lance.PortalUpdate(deltaTime);
 
         // Dibujado de la escena
         window.clear();
         player.draw(window);
         swordItem->draw(window);
         lanceItem->draw(window);
+        lance.DrawPortal(window);
         bow.draw(window);
         for (Enemy& enemy : enemies) {
             enemy.draw(window);

@@ -132,6 +132,9 @@ IMPORTANTE: A partir de ahora para ejecutar el programa se debe instalar *Tinyxm
 ## 20250402 JorgePelegrin @(1h 30min)
 Arco y habilidad.
 
+## 20250402 JorgePelegrin @(1h)
+He creado varios objetos y he añadido el portal animado (la habilidad de la lanza).
+
 ## 20250402 EstrellaDominguez @(1h 30min)
 Creada la rama developer.
 Arregladas las rutas para acceder a los recursos desde los menus.

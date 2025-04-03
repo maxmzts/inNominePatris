@@ -5,6 +5,7 @@
 #include "Character.h"
 #include "Sword.h"
 #include "Lance.h"
+#include "Bow.h"
 #include "ItemType.h"
 
 class Item {
@@ -25,6 +26,12 @@ class Item {
         sf::FloatRect getBounds() const;
         virtual ~Item() = default;
 };
+class AttackRangeSword : public Item {
+    public:
+        AttackRangeSword() : Item(ItemType::Sword) {}
+        void applyEffect(Weapon& weapon) override;
+        void Picked();
+};
 
 class DashBoostItem : public Item {
     public:
@@ -33,16 +40,31 @@ class DashBoostItem : public Item {
         void Picked();
 };
 
-class AttackRangeSword : public Item {
+class AttackRangeLance : public Item {
     public:
-        AttackRangeSword() : Item(ItemType::Sword) {}
+        AttackRangeLance() : Item(ItemType::Lance) {}
         void applyEffect(Weapon& weapon) override;
         void Picked();
 };
 
+
 class PortalRangeItem: public Item {
     public:
         PortalRangeItem() : Item(ItemType::Lance) {}
+        void applyEffect(Weapon& weapon) override;
+        void Picked();
+};
+
+class ArrowSpeedItem: public Item {
+    public:
+        ArrowSpeedItem() : Item(ItemType::Bow) {}
+        void applyEffect(Weapon& weapon) override;
+        void Picked();
+};
+
+class AbilityArrowCountItem: public Item {
+    public:
+        AbilityArrowCountItem() : Item(ItemType::Bow) {}
         void applyEffect(Weapon& weapon) override;
         void Picked();
 };

@@ -51,6 +51,7 @@ void Lance::useAbility(Character& character,  sf::RenderWindow& window){
         if (distance <= PortalRange) {
             std::cout << "Dropping Portal at: " << worldMousePos.x << ", " << worldMousePos.y << std::endl;
             portal = Portal(worldMousePos);
+            portal.setVisible(true);
             isPortalDropped = true;
         } else {
             std::cout << "Portal placement out of range!" << "Distance - PortalRange" << distance << "-" << PortalRange << std::endl;
@@ -58,20 +59,81 @@ void Lance::useAbility(Character& character,  sf::RenderWindow& window){
     } else {
         std::cout << "Teleporting to Portal!" << std::endl;
         character.setPosition(portal.getPosition().x, portal.getPosition().y);
+        portal.setVisible(false);
         isPortalDropped = false;
     }
 }
 
-Portal::Portal() : position(0.f, 0.f) {}
-Portal::Portal(const sf::Vector2f& pos) : position(pos) {}
+Portal::Portal() : position(0.f, 0.f), visible(false) {
+    loadAnimationFrames();
+    sprite.setScale(1.0f, 1.0f);
+}
+Portal::Portal(const sf::Vector2f& pos) : position(pos) {
+    loadAnimationFrames();
+    sprite.setScale(1.0f, 1.0f);
+    setPosition(pos);
+}
 void Portal::setPosition(const sf::Vector2f& pos) {
     position = pos;
+    sprite.setPosition(position.x - sprite.getGlobalBounds().width / 2, 
+    position.y - sprite.getGlobalBounds().height / 2);
 }
 
 const sf::Vector2f& Portal::getPosition() const {
     return position;
 }
 
+void Portal::draw(sf::RenderWindow& window) {
+    if (visible) {
+        window.draw(sprite);
+    }
+}
+
+void Lance::DrawPortal(sf::RenderWindow& window) {
+    portal.draw(window);
+}
+
+void Lance::PortalUpdate(float deltaTime) {
+    portal.update(deltaTime);
+}
+
+void Portal::setVisible(bool visible) {
+    this->visible = visible;
+}
+
+bool Portal::isVisible() const {
+    return visible;
+}
+
+void Portal::loadAnimationFrames() {
+    for (int i = 1; i <= 7; i++){
+        sf::Texture texture;
+        if (texture.loadFromFile("./resources/portal-animation/portal1_frame_" + std::to_string(i) + ".png")) {
+            animationFrames.push_back(texture);
+        } else {
+            std::cerr << "Error loading portal_frame" << i << ".png" << std::endl;
+        }
+    }
+    if (!animationFrames.empty()) {
+        sprite.setTexture(animationFrames[0]); // Usar el primer frame por defecto
+    }
+}
+
+void Portal::update(float deltaTime) {
+    if (!visible || animationFrames.empty()) return;
+
+    animationTimer += deltaTime;
+    if (animationTimer >= frameDuration){
+        animationTimer = 0.0f;
+        currentFrame = (currentFrame + 1) % animationFrames.size();
+        sprite.setTexture(animationFrames[currentFrame]);
+    }
+}
+
+void Lance::increaseAttackRange(float range) {
+    attackRange += range;
+    std::cout << "Attack range increased!" << std::endl;
+}
 
 void Lance::increasePortalRange(float range) {
     PortalRange += range;

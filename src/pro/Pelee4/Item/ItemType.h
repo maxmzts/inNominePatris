@@ -5,6 +5,7 @@ enum class ItemType {
     None,
     Sword,
     Lance,
+    Bow,
     Character
 };
 

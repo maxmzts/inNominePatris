@@ -19,6 +19,9 @@ public:
     void draw(sf::RenderWindow& window);
 
     AbilityType getAbilityType() const override { return AbilityType::Shot; };
+
+    void increaseArrowSpeed(float speed);
+    void increaseAbilityArrowCount(int count);
 private:
     float arrowSpeed;
     float abilityRange;
