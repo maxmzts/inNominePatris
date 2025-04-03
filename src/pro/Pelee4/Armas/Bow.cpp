@@ -5,7 +5,7 @@
 #include <iostream>
 #include <cmath>
 
-Bow::Bow() : arrowSpeed(500.0f), abilityArrowCount(8), abilitySpreadAngle(45.0f) {}
+Bow::Bow() : arrowSpeed(500.0f), abilityArrowCount(5), abilitySpreadAngle(45.0f) {}
 
 void Bow::attack(Character& character, std::vector<Enemy>& enemies) {
     std::cout << "Bow attack: Shooting an arrow!" << std::endl;
@@ -86,4 +86,12 @@ void Bow::draw(sf::RenderWindow& window) {
     for (auto& arrow : arrows) {
         arrow.draw(window);
     }
+}
+
+void Bow::increaseAbilityArrowCount(int count) {
+    abilityArrowCount += count; // Incrementar el número de flechas de la habilidad
+}
+
+void Bow::increaseArrowSpeed(float speed) {
+    arrowSpeed += speed; // Incrementar la velocidad de las flechas
 }
