@@ -9,14 +9,15 @@ bool TileMap::loadFromFile(const std::string& filename) {
         return false;
     }
 
-    // Obtener nodo raíz <map>
     tinyxml2::XMLElement* mapElement = doc.FirstChildElement("map");
     if (!mapElement) return false;
 
     mapElement->QueryIntAttribute("width", &m_mapWidth);
     mapElement->QueryIntAttribute("height", &m_mapHeight);
 
-    // Leer tilesets
+    TileSet* mainTileset = nullptr;
+    TileSet* decoTileset = nullptr;
+
     for (tinyxml2::XMLElement* tilesetElement = mapElement->FirstChildElement("tileset");
          tilesetElement; tilesetElement = tilesetElement->NextSiblingElement("tileset")) {
         
@@ -37,12 +38,21 @@ bool TileMap::loadFromFile(const std::string& filename) {
         tileset.columns = tileset.texture.getSize().x / tileset.tileWidth;
 
         m_tilesets[firstGid] = tileset;
+
+        if (!mainTileset) {
+            mainTileset = &m_tilesets[firstGid];
+        } else {
+            decoTileset = &m_tilesets[firstGid];
+        }
     }
 
-    // Leer capas
     for (tinyxml2::XMLElement* layerElement = mapElement->FirstChildElement("layer");
          layerElement; layerElement = layerElement->NextSiblingElement("layer")) {
         
+        const char* layerName = layerElement->Attribute("name");
+        bool isDecoLayer = (layerName && std::string(layerName) == "deco");
+        bool isBoundsLayer = (layerName && std::string(layerName) == "bounds");
+
         tinyxml2::XMLElement* dataElement = layerElement->FirstChildElement("data");
         if (!dataElement) continue;
 
@@ -55,7 +65,19 @@ bool TileMap::loadFromFile(const std::string& filename) {
             tiles.push_back(std::stoi(tileID));
         }
 
-        // Crear una nueva capa
+        if (isBoundsLayer) {
+            for (int y = 0; y < m_mapHeight; ++y) {
+                for (int x = 0; x < m_mapWidth; ++x) {
+                    int tileNumber = tiles[y * m_mapWidth + x];
+                    if (tileNumber != 0) {
+                        collisionBlocks.push_back(sf::FloatRect(x * mainTileset->tileWidth, y * mainTileset->tileHeight,
+                                                                mainTileset->tileWidth, mainTileset->tileHeight));
+                    }
+                }
+            }
+            continue; 
+        }
+
         Layer layer;
         layer.vertices.setPrimitiveType(sf::Quads);
         layer.vertices.resize(m_mapWidth * m_mapHeight * 4);
@@ -63,17 +85,9 @@ bool TileMap::loadFromFile(const std::string& filename) {
         for (int y = 0; y < m_mapHeight; ++y) {
             for (int x = 0; x < m_mapWidth; ++x) {
                 int tileNumber = tiles[y * m_mapWidth + x];
-                if (tileNumber == 0) continue; // Espacio vacío
+                if (tileNumber == 0) continue;
 
-                // Determinar qué tileset usar
-                TileSet* tileset = nullptr;
-                for (auto& [firstGid, ts] : m_tilesets) {
-                    if (tileNumber >= firstGid) {
-                        tileset = &ts;
-                    } else {
-                        break;
-                    }
-                }
+                TileSet* tileset = isDecoLayer ? decoTileset : mainTileset;
                 if (!tileset) continue;
 
                 int relativeTileID = tileNumber - tileset->firstGid;
@@ -94,22 +108,30 @@ bool TileMap::loadFromFile(const std::string& filename) {
             }
         }
 
-        // Asignar textura de tileset a la capa
-        if (!m_tilesets.empty()) {
-            layer.tilesetTexture = &m_tilesets.begin()->second.texture;
-        }
-
+        layer.tilesetTexture = isDecoLayer ? &decoTileset->texture : &mainTileset->texture;
         m_layers.push_back(layer);
     }
 
     return true;
 }
 
+bool TileMap::isColliding(const sf::FloatRect& playerBounds) const {
+    for (const auto& block : collisionBlocks) {
+        if (playerBounds.intersects(block)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// Implementación de la función `draw`, necesaria para evitar errores de vtable
 void TileMap::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     states.transform *= getTransform();
 
     for (const auto& layer : m_layers) {
-        states.texture = layer.tilesetTexture;
-        target.draw(layer.vertices, states);
+        if (layer.tilesetTexture) {
+            states.texture = layer.tilesetTexture;
+            target.draw(layer.vertices, states);
+        }
     }
 }

@@ -7,77 +7,54 @@
 #include "TileMap.h"
 #include "TileSet.h"
 
-
-
-
 #define kVel 5
 
 int main() {
+    // Crear una ventana
+    sf::RenderWindow window(sf::VideoMode(640, 480), "P0. Fundamentos de los Videojuegos. DCCIA");
 
-  // MiModulo *mod = new MiModulo();
+    // Configurar la vista (cámara)
+    sf::View view(sf::FloatRect(0, 0, 640, 480));
 
-  //Creamos una ventana
-  sf::RenderWindow window(sf::VideoMode(640, 480), "P0. Fundamentos de los Videojuegos. DCCIA");
+    // Crear el personaje
+    Character character("resources/sprites.png");
 
-
-
-
-
-
-  // Configurar la vista (cámara)
-  sf::View view(sf::FloatRect(0, 0, 640, 480));
-
-
-
-
-  //Creamos el personaje
-  Character character("resources/sprites.png");
-
-
-
-
-   // Crear el TileMap y cargar el mapa
-   TileMap tileMap;
-if (!tileMap.loadFromFile("maps/lobby.tmx")) {
-    return -1;
-}
-
-
-
-
-  //Bucle del juego
-  while (window.isOpen()) {
-    sf::Event event;
-    while (window.pollEvent(event)) {
-        if (event.type == sf::Event::Closed) {
-            window.close();
-        }
-
-        if (event.type == sf::Event::KeyPressed || event.type == sf::Event::KeyReleased) {
-            if (event.key.code == sf::Keyboard::Escape) {
-                window.close();
-            } else {
-                character.handleInput(event);
-            }
-        }
+    // Crear el TileMap y cargar el mapa
+    TileMap tileMap;
+    if (!tileMap.loadFromFile("maps/lobby.tmx")) {
+        return -1;
     }
 
-    // Actualiza la lógica del personaje
-    character.update();
+    // Bucle del juego
+    while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.close();
+            }
 
-    // Mover la cámara para que siga al personaje
-    view.setCenter(character.getPosition());
-    window.setView(view);
+            if (event.type == sf::Event::KeyPressed || event.type == sf::Event::KeyReleased) {
+                if (event.key.code == sf::Keyboard::Escape) {
+                    window.close();
+                } else {
+                    character.handleInput(event);
+                }
+            }
+        }
 
+        // Actualiza la lógica del personaje y maneja colisiones con la capa "bounds"
+        character.update(tileMap);
 
-    window.clear();
-    window.draw(tileMap); // Dibujar el mapa
+        // Mover la cámara para que siga al personaje
+        view.setCenter(character.getPosition());
+        window.setView(view);
 
+        // Dibujar escena
+        window.clear();
+        window.draw(tileMap); // Dibujar el mapa
+        character.draw(window);
+        window.display();
+    }
 
-    character.draw(window);
-    window.display();
-}
-
-
-  return 0;
+    return 0;
 }

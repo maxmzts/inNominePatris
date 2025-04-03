@@ -3,12 +3,12 @@
 
 Menu::Menu(float width, float height) {
     // Cargar fuente
-    if (!font.loadFromFile("/home/estrella/proyecto-abp-grupo-f4/src/pro/Estrella/assets/fonts/IMPACT.TTF")) {
+    if (!font.loadFromFile("../assets/fonts/IMPACT.TTF")) {
         std::cerr << "Error al cargar la fuente. Usando texto sin fuente" << std::endl;
     }
 
     // Cargar la imagen de fondo
-    if (!backgroundTexture.loadFromFile("/home/estrella/proyecto-abp-grupo-f4/src/pro/Estrella/resources/background.png")) {
+    if (!backgroundTexture.loadFromFile("../resources/background.png")) {
         std::cerr << "Error al cargar la imagen de fondo" << std::endl;
     }
     backgroundSprite.setTexture(backgroundTexture);
