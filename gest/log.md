@@ -137,5 +137,8 @@ Creada la rama developer.
 Arregladas las rutas para acceder a los recursos desde los menus.
 Terminada mi parte del diagrama.
 
-## 20250402 DavidGonzález @(12h)
+## 20250402 DavidGonzález @(3h)
 He creado los limites del mapa mediante una capa bounds en tiled, y he cambiado algunos ajustes + sigo tileando el lobby
+
+## 20250402 DavidGonzález @(2h 30 min)
+Estoy realizando la interaccion (que todavia no funciona al 100%) y está el lobby terminado con los bounds, las puertas y los bloques de interaccion puestos
