@@ -1,22 +1,21 @@
-#include "GameEngine/GameEngine.h"
+#include "GameEngine.h"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
 int main() {
-    GameEngine engine("Mi Juego", 800, 600);
+    // Crear el motor de juego
+    GameEngine engine("In Nomine Patris", 800, 600);
 
-    // Crear un sprite
-    sf::Sprite player = engine.createSprite("resources/Weapons/sword.png", {400, 300});
+    // Crear un sprite usando el motor
+    sf::Sprite sprite = engine.createSprite("resources/sprites.png", {400, 300});
 
     // Bucle principal
-    while (engine.isRunning()) { // Método para verificar si la ventana está abierta
-        engine.clear(); // Limpiar la pantalla
-
+    while (engine.isWindowOpen()) {
         // Dibujar el sprite
-        engine.drawSprite(player);
+        engine.drawSprite(sprite);
 
-        engine.display(); // Mostrar el contenido en pantalla
-        engine.pollEvents(); // Manejar eventos
+        // Ejecutar el motor
+        engine.run();
     }
 
     return 0;
