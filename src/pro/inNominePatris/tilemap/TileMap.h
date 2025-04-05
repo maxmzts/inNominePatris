@@ -1,14 +1,16 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "tinyxml2.h"
+#include "Tile.h"
+#include "GameEngine.h"
 #include <vector>
 #include <unordered_map>
 
 class TileMap : public sf::Drawable, public sf::Transformable {
 public:
-    bool loadFromFile(const std::string& filename);
+    bool loadFromFile(const std::string& filename, GameEngine& engine);
     bool isColliding(const sf::FloatRect& playerBounds) const; // NUEVA FUNCIÓN
-
+    void draw(GameEngine& engine) const;
 private:
     struct TileSet {
         int firstGid;
@@ -27,5 +29,10 @@ private:
 
     std::vector<sf::FloatRect> collisionBlocks; // ALMACENA LOS BLOQUES DE COLISIÓN
 
-    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+    // Atributos privados
+    sf::VertexArray m_vertices;
+    sf::Texture m_tileset;
+
+    // Método privado para dibujar (sobrescribe sf::Drawable)
+    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override{};
 };

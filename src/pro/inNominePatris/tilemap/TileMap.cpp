@@ -2,7 +2,7 @@
 #include <iostream>
 #include <sstream>
 
-bool TileMap::loadFromFile(const std::string& filename) {
+bool TileMap::loadFromFile(const std::string& filename, GameEngine& engine) {
     tinyxml2::XMLDocument doc;
     if (doc.LoadFile(filename.c_str()) != tinyxml2::XML_SUCCESS) {
         std::cerr << "Error cargando el mapa XML\n";
@@ -32,7 +32,7 @@ bool TileMap::loadFromFile(const std::string& filename) {
 
         TileSet tileset;
         tileset.firstGid = firstGid;
-        tileset.texture.loadFromFile(std::string("resources/") + source);
+        tileset.texture = engine.loadTexture(std::string("resources/") + source); // Usar el motor para cargar texturas
         tilesetElement->QueryIntAttribute("tilewidth", &tileset.tileWidth);
         tilesetElement->QueryIntAttribute("tileheight", &tileset.tileHeight);
         tileset.columns = tileset.texture.getSize().x / tileset.tileWidth;
@@ -125,13 +125,10 @@ bool TileMap::isColliding(const sf::FloatRect& playerBounds) const {
 }
 
 // Implementación de la función `draw`, necesaria para evitar errores de vtable
-void TileMap::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-    states.transform *= getTransform();
-
+void TileMap::draw(GameEngine& engine) const {
     for (const auto& layer : m_layers) {
         if (layer.tilesetTexture) {
-            states.texture = layer.tilesetTexture;
-            target.draw(layer.vertices, states);
+            engine.drawVertices(layer.vertices, *layer.tilesetTexture, getTransform());
         }
     }
 }

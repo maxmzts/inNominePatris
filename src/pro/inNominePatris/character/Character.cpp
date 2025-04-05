@@ -107,6 +107,6 @@ void Character::update(const TileMap& tilemap) {
     if (movingDown) sprite.setTextureRect(sf::IntRect(0, 0 * 75, 75, 75));
 }
 
-void Character::draw(sf::RenderWindow& window) {
-    window.draw(sprite);
+void Character::draw(GameEngine& engine) {
+    engine.drawSprite(sprite);
 }

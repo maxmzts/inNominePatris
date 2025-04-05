@@ -54,3 +54,25 @@ void GameEngine::pollEvents() {
         }
     }
 }
+
+sf::Texture& GameEngine::loadTexture(const std::string& path) {
+    auto it = textures.find(path);
+    if (it != textures.end()) {
+        return it->second;
+    }
+
+    sf::Texture texture;
+    if (!texture.loadFromFile(path)) {
+        throw std::runtime_error("Error cargando textura: " + path);
+    }
+
+    textures[path] = std::move(texture);
+    return textures[path];
+}
+
+void GameEngine::drawVertices(const sf::VertexArray& vertices, const sf::Texture& texture, const sf::Transform& transform) {
+    sf::RenderStates states;
+    states.texture = &texture;
+    states.transform = transform;
+    window.draw(vertices, states);
+}

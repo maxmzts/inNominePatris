@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "TileMap.h" // clase TileMap para detección de colisiones
+#include "GameEngine.h" // clase GameEngine para la ventana y eventos
 
 class Character {
 public:
@@ -10,7 +11,7 @@ public:
 
     void handleInput(const sf::Event& event);
     void update(const TileMap& tilemap); // update recibe el mapa para verificar colisiones
-    void draw(sf::RenderWindow& window);
+    void draw(GameEngine& engine);
 
     sf::Vector2f getPosition() const {
         return sprite.getPosition();
