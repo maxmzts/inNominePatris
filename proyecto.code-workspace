@@ -25,6 +25,10 @@
 			"name": "Prototipo 0: Davinson",
 			"path": "src/pro/Davinson"
 		},
+        {
+			"name": "Prototipo 0: inNominePatris",
+			"path": "src/pro/inNominePatris"
+		},
 
 	],
 	"settings": {
