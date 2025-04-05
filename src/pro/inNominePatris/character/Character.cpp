@@ -2,7 +2,7 @@
 #include <iostream>
 
 Character::Character(const std::string& textureFile) 
-    : speed(1.75f), acceleration(0.1f), deceleration(0.15f) {
+    : speed(1.75f), acceleration(0.1f), deceleration(0.15f), equippedWeapon(nullptr), isDashing(false), dashSpeed(0.0f), dashDuration(0.0f), weapons(),  equippedIndex(0), direction(0.0f, 1.0f) {
     
     if (!texture.loadFromFile(textureFile)) {
         std::cerr << "Error cargando la textura" << std::endl;
@@ -108,5 +108,73 @@ void Character::update(const TileMap& tilemap) {
 }
 
 void Character::draw(GameEngine& engine) {
+    // Dibujar el personaje
     engine.drawSprite(sprite);
+
+    // Dibujar el arma equipada
+    if (equippedWeapon) {
+        equippedWeapon->draw(*this); // Pasar el personaje para ajustar la posición del arma
+    }
+}
+
+void Character::equipWeapon() {
+    equippedWeapon = weapons[equippedIndex];
+}
+
+void Character::attack(std::vector<Enemy>& enemies) {
+    if (equippedWeapon) equippedWeapon->attack(*this, enemies);
+}
+
+void Character::useAbility(sf::RenderWindow& window, std::vector<Enemy>& enemies) {
+    if (equippedWeapon) {
+        if (equippedWeapon->getAbilityType() == AbilityType::Dash)
+            equippedWeapon->useAbility(*this);
+        else if (equippedWeapon->getAbilityType() == AbilityType::Teleport)  
+            equippedWeapon->useAbility(*this, window);
+        else if (equippedWeapon->getAbilityType() == AbilityType::Shot)
+            equippedWeapon->useAbility(*this, enemies);
+    }
+}
+
+void Character::startDash(float speed, float duration) {
+    if (!isDashing) {
+        isDashing = true;
+        dashSpeed = speed;
+        dashDuration = duration;
+        dashTimer.restart();
+        velocity.x = dashSpeed * direction.x; // Se mueve en la dirección que mira el personaje
+        velocity.y = dashSpeed * direction.y;
+    }
+}
+
+
+void Character::addWeapon(Weapon* weapon) {
+    if(weapons.size() < 2){
+        weapons.push_back(weapon);
+        if(weapons.size() == 1) 
+            equippedIndex = 0;
+    }
+}
+
+void Character::switchWeapon() {
+    if(weapons.size() > 1) {
+        equippedIndex = 1 - equippedIndex;
+    }
+}
+
+int Character::getWeaponCount() const {
+    return weapons.size();
+}
+
+Weapon* Character::getEquippedWeapon() const {
+    if (weapons.empty()) return nullptr;
+    return weapons[equippedIndex];
+}
+
+void Character::setPosition(float x, float y) {
+    sprite.setPosition(x, y);
+}
+
+sf::Vector2f Character::getDirection() const {
+    return direction;
 }

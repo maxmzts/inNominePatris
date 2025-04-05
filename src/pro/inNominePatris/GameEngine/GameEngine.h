@@ -12,11 +12,11 @@ private:
 
 
     void initWindow(const std::string& title, int width, int height);
-
+    
 public:
     GameEngine(const std::string& title, int width, int height);
     ~GameEngine();
-
+    sf::RenderWindow& getWindow();
     void clear();
     void display();
     void drawSprite(const sf::Sprite& sprite);
@@ -25,4 +25,5 @@ public:
     void drawVertices(const sf::VertexArray& vertices, const sf::Texture& texture, const sf::Transform& transform);
     bool isRunning() const; // Nuevo método
     void pollEvents();      // Nuevo método
+    sf::Vector2f getMousePosition() const;
 };

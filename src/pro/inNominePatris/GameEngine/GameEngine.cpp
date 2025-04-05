@@ -76,3 +76,11 @@ void GameEngine::drawVertices(const sf::VertexArray& vertices, const sf::Texture
     states.transform = transform;
     window.draw(vertices, states);
 }
+
+sf::Vector2f GameEngine::getMousePosition() const {
+    return window.mapPixelToCoords(sf::Mouse::getPosition(window));
+}
+
+sf::RenderWindow& GameEngine::getWindow() {
+    return window;
+}

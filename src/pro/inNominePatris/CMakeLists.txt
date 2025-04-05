@@ -12,6 +12,7 @@ add_subdirectory(ej_modulos)
 add_subdirectory(character)
 add_subdirectory(tilemap)
 add_subdirectory(GameEngine)
+add_subdirectory(Weapon)
 
 
 #Opciones a pasar al compilador de C++

@@ -146,3 +146,6 @@ Estoy realizando la interaccion (que todavia no funciona al 100%) y está el lob
 
 ## 20250402 JorgePelegrin @(1h)
 He creado varios objetos y he añadido el portal animado (la habilidad de la lanza).
+
+## 20250405 JorgePelegrin @(4h)
+He creado el motor de juego y el façade de la clase Sprite de sfml. Además he añadido las armas y he hecho un main "funcional". En el main se dibuja el mapa y el personaje junto a su arma equipada.
