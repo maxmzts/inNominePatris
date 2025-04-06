@@ -8,7 +8,6 @@ add_library(libModulos STATIC)
 
 
 # nuestros sub directorios
-add_subdirectory(ej_modulos)
 add_subdirectory(character)
 add_subdirectory(tilemap)
 add_subdirectory(GameEngine)

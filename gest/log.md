@@ -155,3 +155,9 @@ He creado el motor de juego y el façade de la clase Sprite de sfml. Además he 
 
 ## 20250402 DavidGonzález @(2h)
 Diseño de los niveles y el flujo del juego + comienzo de creacion del mapa world_1 + modificaciones en el workspace + intentos de modificar el motor para que corra al personaje (está en proceso)
+
+## 20250402 JorgePelegrin @(1h)
+Unificación de character de david y mio para el movimiento del character con arma, golpeo y dasheo
+
+## 20250402 DavidGonzález @(2h)
+Unificación de character de Jorge y mio para el movimiento del character con arma, golpeo y dasheo. Creado archivo notion con los ids de las interacciones de cada mapa y actualización del lobby

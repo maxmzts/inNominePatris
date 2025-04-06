@@ -1,8 +1,12 @@
+// GameEngine.cpp
 #include "GameEngine.h"
 #include <iostream>
 
 GameEngine::GameEngine(const std::string& title, int width, int height) {
     initWindow(title, width, height);
+    view.setSize(static_cast<float>(width), static_cast<float>(height));
+    view.setCenter(static_cast<float>(width) / 2, static_cast<float>(height) / 2);
+    window.setView(view);
 }
 
 GameEngine::~GameEngine() {
@@ -83,4 +87,14 @@ sf::Vector2f GameEngine::getMousePosition() const {
 
 sf::RenderWindow& GameEngine::getWindow() {
     return window;
+}
+
+// --- NUEVO ---
+void GameEngine::setViewCenter(const sf::Vector2f& center) {
+    view.setCenter(center);
+    window.setView(view);
+}
+
+void GameEngine::resetView() {
+    window.setView(view);
 }

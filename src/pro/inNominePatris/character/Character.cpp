@@ -2,7 +2,7 @@
 #include <iostream>
 
 Character::Character(const std::string& textureFile) 
-    : speed(1.75f), acceleration(0.1f), deceleration(0.15f), equippedWeapon(nullptr), isDashing(false), dashSpeed(0.0f), dashDuration(0.0f), weapons(),  equippedIndex(0), direction(0.0f, 1.0f) {
+    : speed(10.75f), acceleration(5.1f), deceleration(5.15f), equippedWeapon(nullptr), isDashing(false), dashSpeed(0.0f), dashDuration(0.0f), weapons(),  equippedIndex(0), direction(0.f, 0.f) {
     
     if (!texture.loadFromFile(textureFile)) {
         std::cerr << "Error cargando la textura" << std::endl;
@@ -36,14 +36,14 @@ void Character::handleInput(const sf::Event& event) {
     }
 }
 
-void Character::update(const TileMap& tilemap) {
+void Character::update(const TileMap& tilemap, float deltaTime) {
     sf::Vector2f moveDirection(0.f, 0.f);
 
     // Detectar entrada del usuario
-    if (movingRight) moveDirection.x += 1;
-    if (movingLeft) moveDirection.x -= 1;
-    if (movingUp) moveDirection.y -= 1;
-    if (movingDown) moveDirection.y += 1;
+    if (movingRight) {moveDirection.x += 1; setDirection(1.0f, 0.0f);}
+    if (movingLeft) {moveDirection.x -= 1; setDirection(-1.0f, 0.0f);}
+    if (movingUp) {moveDirection.y -= 1; setDirection(0.0f, -1.0f);}
+    if (movingDown) {moveDirection.y += 1; setDirection(0.0f, 1.0f);}
 
     // Normalizar el vector de movimiento en caso de movimiento diagonal
     if (moveDirection.x != 0 && moveDirection.y != 0) {
@@ -80,6 +80,13 @@ void Character::update(const TileMap& tilemap) {
         if (velocity.y < 0) {
             velocity.y += deceleration;
             if (velocity.y > 0) velocity.y = 0;
+        }
+    }
+    if (isDashing) {
+        if (dashTimer.getElapsedTime().asSeconds() > dashDuration) {
+            isDashing = false;
+            velocity.x = 0;
+            velocity.y = 0;
         }
     }
 
@@ -138,6 +145,7 @@ void Character::useAbility(sf::RenderWindow& window, std::vector<Enemy>& enemies
 
 void Character::startDash(float speed, float duration) {
     if (!isDashing) {
+        std::cout << "startea el dashhhhhhh" << std::endl;
         isDashing = true;
         dashSpeed = speed;
         dashDuration = duration;
@@ -178,3 +186,9 @@ void Character::setPosition(float x, float y) {
 sf::Vector2f Character::getDirection() const {
     return direction;
 }
+
+void Character::setDirection(float x, float y) {
+    direction.x = x;
+    direction.y = y;
+}
+

@@ -14,7 +14,7 @@ public:
     Character(const std::string& textureFile);
 
     void handleInput(const sf::Event& event);
-    void update(const TileMap& tilemap); // update recibe el mapa para verificar colisiones
+    void update(const TileMap& tilemap, float deltaTime); // update recibe el mapa para verificar colisiones
     void draw(GameEngine& engine);
     
     void equipWeapon();
@@ -33,6 +33,9 @@ public:
     sf::Vector2f getPosition() const {
         return sprite.getPosition();
     }
+    void setDirection(float x, float y);
+
+    
 
 private:
     sf::Texture texture;
