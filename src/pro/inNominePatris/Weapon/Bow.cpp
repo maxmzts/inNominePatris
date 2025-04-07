@@ -6,7 +6,7 @@
 #include <cmath>
 
 Bow::Bow(GameEngine* engine) : Weapon(engine), arrowSpeed(500.0f), abilityArrowCount(5), abilitySpreadAngle(45.0f) {
-    spriteFacade.loadTexture("resources/bow.png");
+    spriteFacade.loadTexture("resources/Weapons/Bow.png");
 
 }
 
@@ -84,10 +84,32 @@ void Bow::update(float deltaTime, std::vector<Enemy>& enemies) {
         arrows.end());
 }
 
-void Bow::draw() {
-    spriteFacade.draw(engine->getWindow()); // Dibujar usando el Façade
-    for (const Arrow& arrow : arrows) {
-        arrow.draw(engine->getWindow());
+void Bow::draw(GameEngine& engine, const Character* character) {
+    if (character) {
+        // El arma está equipada, dibujar dependiendo del personaje
+        sf::Vector2f position = character->getPosition();
+        sf::Vector2f direction = character->getDirection();
+
+        // Ajustar la posición del arma en función de la dirección
+        if (direction.x > 0) {  // Mirando a la derecha
+            spriteFacade.setPosition(position.x + 20, position.y);
+            spriteFacade.setRotation(0); // Sin rotación
+        } else if (direction.x < 0) {  // Mirando a la izquierda
+            spriteFacade.setPosition(position.x - 20, position.y);
+            spriteFacade.setRotation(180); // Rotar 180 grados
+        } else if (direction.y < 0) {  // Mirando hacia arriba
+            spriteFacade.setPosition(position.x, position.y - 20);
+            spriteFacade.setRotation(270); // Rotar 270 grados
+        } else if (direction.y > 0) {  // Mirando hacia abajo
+            spriteFacade.setPosition(position.x, position.y + 20);
+            spriteFacade.setRotation(90); // Rotar 90 grados
+        }
+    }
+
+    // Dibujar el sprite del arma
+    spriteFacade.draw(engine.getWindow());
+    for(const Arrow& arrow : arrows) {
+        arrow.draw(engine.getWindow()); // Dibujar cada flecha
     }
 }
 

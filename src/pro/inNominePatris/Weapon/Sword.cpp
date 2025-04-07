@@ -5,7 +5,7 @@
 #include "Enemy.h"
 
 Sword::Sword(GameEngine* engine) : Weapon(engine), attackRange(50.0f), dashSpeed(50.0f), abilityCooldown(1.5f), lastAbilityTime(-abilityCooldown) {
-    spriteFacade.loadTexture("resources/sword.png"); // Cargar textura usando el Façade
+    spriteFacade.loadTexture("resources/Weapons/sword.png"); // Cargar textura usando el Façade
     spriteFacade.setOrigin(16.0f, 16.0f);           // Establecer el origen
 }
 
@@ -66,26 +66,28 @@ void Sword::increaseAttackRange(float range) {
     attackRange += range;
 }
 
-void Sword::draw(Character& character) {
-    // Obtener la posición y dirección del personaje
-    sf::Vector2f position = character.getPosition();
-    sf::Vector2f direction = character.getDirection();
+void Sword::draw(GameEngine& engine, const Character* character) {
+    if (character) {
+        // El arma está equipada, dibujar dependiendo del personaje
+        sf::Vector2f position = character->getPosition();
+        sf::Vector2f direction = character->getDirection();
 
-    // Ajustar la posición del arma en función de la dirección
-    if (direction.x > 0) {  // Mirando a la derecha
-        spriteFacade.setPosition(position.x + 20, position.y);
-        spriteFacade.setRotation(0); // Sin rotación
-    } else if (direction.x < 0) {  // Mirando a la izquierda
-        spriteFacade.setPosition(position.x - 20, position.y);
-        spriteFacade.setRotation(180); // Rotar 180 grados
-    } else if (direction.y < 0) {  // Mirando hacia arriba
-        spriteFacade.setPosition(position.x, position.y - 20);
-        spriteFacade.setRotation(270); // Rotar 270 grados
-    } else if (direction.y > 0) {  // Mirando hacia abajo
-        spriteFacade.setPosition(position.x, position.y + 20);
-        spriteFacade.setRotation(90); // Rotar 90 grados
+        // Ajustar la posición del arma en función de la dirección
+        if (direction.x > 0) {  // Mirando a la derecha
+            spriteFacade.setPosition(position.x + 20, position.y);
+            spriteFacade.setRotation(0); // Sin rotación
+        } else if (direction.x < 0) {  // Mirando a la izquierda
+            spriteFacade.setPosition(position.x - 20, position.y);
+            spriteFacade.setRotation(180); // Rotar 180 grados
+        } else if (direction.y < 0) {  // Mirando hacia arriba
+            spriteFacade.setPosition(position.x, position.y - 20);
+            spriteFacade.setRotation(270); // Rotar 270 grados
+        } else if (direction.y > 0) {  // Mirando hacia abajo
+            spriteFacade.setPosition(position.x, position.y + 20);
+            spriteFacade.setRotation(90); // Rotar 90 grados
+        }
     }
 
     // Dibujar el sprite del arma
-    spriteFacade.draw(engine->getWindow());
+    spriteFacade.draw(engine.getWindow());
 }

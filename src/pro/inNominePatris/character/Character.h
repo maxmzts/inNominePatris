@@ -28,6 +28,8 @@ public:
     void setWeapon(int index);
     int getWeaponCount() const;
     Weapon* getEquippedWeapon() const;
+    void addWeaponWithPosition(Weapon* weapon, sf::Vector2f originalPosition);
+    Weapon* removeFirstWeapon(sf::Vector2f& outOriginalPosition);
     
     void setPosition(float x, float y);
     sf::Vector2f getPosition() const {
@@ -60,6 +62,7 @@ private:
     float dashDuration;
     std::vector<Weapon*> weapons; // Máximo 2 armas
     int equippedIndex = 0; // Índice del arma equipada
+    std::vector<sf::Vector2f> weaponOriginalPositions; // Posiciones de las armas en el suelo
 };
 
 #endif // CHARACTER_H

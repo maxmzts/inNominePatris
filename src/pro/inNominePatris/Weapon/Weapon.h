@@ -22,7 +22,9 @@ class Weapon {
         virtual AbilityType getAbilityType() const = 0;
 
         // Método para dibujar el arma, ajustado al personaje
-        virtual void draw(Character& character) = 0;
+        virtual void draw(GameEngine& engine, const Character* character) = 0;
+        virtual sf::Vector2f getPosition() const = 0;
+        virtual void setPosition(float x, float y) = 0;
     };
 
 #endif // !WEAPON_H
