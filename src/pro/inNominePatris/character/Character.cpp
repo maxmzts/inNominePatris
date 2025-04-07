@@ -124,6 +124,42 @@ void Character::draw(GameEngine& engine) {
     }
 }
 
+
+void Character::spawnAt(const TileMap& tilemap, float x, float y) {
+    // Obtiene una posición de spawn válida
+    sf::Vector2f spawnPos = tilemap.getSpawnPosition(x, y);
+    
+    // Establece la posición del jugador
+    setPosition(spawnPos.x, spawnPos.y);
+    
+    // Reinicia la velocidad y otros estados del jugador
+    velocity = sf::Vector2f(0.f, 0.f);
+    movingLeft = false;
+    movingRight = false;
+    movingUp = false;
+    movingDown = false;
+    isDashing = false;
+    
+    // Establece la dirección inicial del jugador (hacia abajo)
+    direction = sf::Vector2f(0.0f, 1.0f);
+    
+    // Asegúrate de que la textura del sprite esté correctamente orientada
+    sprite.setTextureRect(sf::IntRect(0, 0, 75, 75));
+}
+
+
+
+
+
+
+
+
+
+
+
+
+// WEAPON STUFF-------------------------------------------------------------------------------------------------------------------------------------------
+
 void Character::equipWeapon() {
     equippedWeapon = weapons[equippedIndex];
 }

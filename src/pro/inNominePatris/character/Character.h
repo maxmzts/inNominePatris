@@ -36,6 +36,8 @@ public:
         return sprite.getPosition();
     }
     void setDirection(float x, float y);
+    // para spawn del jugador
+    void spawnAt(const TileMap& tilemap, float x, float y);
 
     
 
@@ -63,6 +65,8 @@ private:
     std::vector<Weapon*> weapons; // Máximo 2 armas
     int equippedIndex = 0; // Índice del arma equipada
     std::vector<sf::Vector2f> weaponOriginalPositions; // Posiciones de las armas en el suelo
+
+    
 };
 
 #endif // CHARACTER_H

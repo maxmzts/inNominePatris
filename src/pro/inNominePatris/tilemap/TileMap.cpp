@@ -124,6 +124,67 @@ bool TileMap::isColliding(const sf::FloatRect& playerBounds) const {
     return false;
 }
 
+sf::Vector2f TileMap::getSpawnPosition(float x, float y) const {
+    // Creamos un rectángulo para el jugador en la posición solicitada
+    sf::FloatRect playerBounds(x, y, 30, 30); // Tamaño aproximado del jugador (ajustar según necesidad)
+    
+    // Verificamos si la posición está libre de colisiones
+    if (!isColliding(playerBounds)) {
+        return sf::Vector2f(x, y); // Devolver la posición original si es válida
+    }
+    
+    // Si hay colisión, intentamos encontrar una posición cercana libre
+    const int MAX_ATTEMPTS = 100;
+    const float SEARCH_RADIUS = 10.0f;
+    
+    for (int attempt = 1; attempt <= MAX_ATTEMPTS; ++attempt) {
+        // Crear un patrón de búsqueda en espiral
+        int offsetX = 0, offsetY = 0;
+        int layer = 1;
+        int leg = 1;
+        
+        for (int i = 0; i < attempt; ++i) {
+            // Mover en la dirección actual
+            switch ((i / leg) % 4) {
+                case 0: offsetX += SEARCH_RADIUS; break; // Derecha
+                case 1: offsetY += SEARCH_RADIUS; break; // Abajo
+                case 2: offsetX -= SEARCH_RADIUS; break; // Izquierda
+                case 3: offsetY -= SEARCH_RADIUS; break; // Arriba
+            }
+            
+            // Aumentar el tamaño de la "pierna" cuando sea necesario
+            if (i % (leg * 2) == 0) {
+                layer++;
+                leg = layer;
+            }
+        }
+        
+        // Comprobar la nueva posición
+        sf::FloatRect newBounds(x + offsetX, y + offsetY, 30, 30);
+        if (!isColliding(newBounds)) {
+            return sf::Vector2f(x + offsetX, y + offsetY);
+        }
+    }
+    
+    // Si no encontramos una posición válida después de varios intentos,
+    // buscamos en el mapa entero una posición sin colisión
+    for (int tileY = 0; tileY < m_mapHeight; ++tileY) {
+        for (int tileX = 0; tileX < m_mapWidth; ++tileX) {
+            float testX = tileX * 32.0f; // Suponiendo que un tile es 32x32
+            float testY = tileY * 32.0f;
+            
+            sf::FloatRect testBounds(testX, testY, 30, 30);
+            if (!isColliding(testBounds)) {
+                return sf::Vector2f(testX, testY);
+            }
+        }
+    }
+    
+    // Si todo falla, devolvemos la posición original
+    std::cerr << "No se pudo encontrar una posición de spawn válida." << std::endl;
+    return sf::Vector2f(x, y);
+}
+
 // Implementación de la función `draw`, necesaria para evitar errores de vtable
 void TileMap::draw(GameEngine& engine) const {
     for (const auto& layer : m_layers) {

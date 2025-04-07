@@ -1,13 +1,12 @@
-#include "GameEngine/GameEngine.h"
-#include "TileMap/TileMap.h"
-#include "Character/Character.h"
+#include "GameEngine.h"
+#include "TileMap.h"
+#include "Character.h"
 #include "Weapon/Sword.h"
 #include "Weapon/Lance.h"
 #include "Weapon/Bow.h"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <vector>
-/*...*/ 
 #include <algorithm> // Para std::remove_if
 
 int main() {
@@ -16,13 +15,17 @@ int main() {
 
     // Cargar el mapa
     TileMap tileMap;
-    if (!tileMap.loadFromFile("maps/lobby.tmx", engine)) {
+    if (!tileMap.loadFromFile("maps/world_1.tmx", engine)) {
         std::cerr << "Error cargando el mapa\n";
         return -1;
     }
 
     // Crear el personaje principal
     Character player("resources/sprites.png");
+    
+    // Hacer spawn al jugador en una posición específica (lo emplearemos para cambiar de salas)
+    player.spawnAt(tileMap, 500, 600);
+
 
     // Crear las armas y colocarlas en los pilares
     Sword* sword = new Sword(&engine);
@@ -41,9 +44,9 @@ int main() {
     lance->setPosition(lancePosition.x, lancePosition.y);
     bow->setPosition(bowPosition.x, bowPosition.y);
 
-    /*...*/
     sf::Clock clock;
     sf::RenderWindow& window = engine.getWindow();
+    
     while (engine.isRunning()) {
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -51,6 +54,14 @@ int main() {
                 window.close();
             } else {
                 player.handleInput(event);
+            }
+
+            // Tecla para hacer respawn en una posición diferente (para pruebas)
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::R) {
+                // Coordenadas de spawn aleatorias para pruebas
+                float randomX = rand() % 500;
+                float randomY = rand() % 500;
+                player.spawnAt(tileMap, randomX, randomY);
             }
 
             // Interacción con los pilares
@@ -115,11 +126,14 @@ int main() {
         }
 
         // Actualizar el personaje y otros elementos del juego
-
         float deltaTime = clock.restart().asSeconds();
         player.update(tileMap, deltaTime);
+        
         std::vector<Enemy> enemies;
-        bow->update(deltaTime, enemies); // Actualiza las flechas
+        if (bow) { // Verificar que el arco exista antes de usarlo
+            bow->update(deltaTime, enemies); // Actualiza las flechas
+        }
+        
         // Actualizar la posición de la cámara para seguir al jugador
         engine.setViewCenter(player.getPosition());
 

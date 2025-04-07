@@ -11,6 +11,10 @@ public:
     bool loadFromFile(const std::string& filename, GameEngine& engine);
     bool isColliding(const sf::FloatRect& playerBounds) const; // NUEVA FUNCIÓN
     void draw(GameEngine& engine) const;
+    
+    // verificar posición de spawn válida
+    sf::Vector2f getSpawnPosition(float x, float y) const;
+    
 private:
     struct TileSet {
         int firstGid;
