@@ -164,3 +164,6 @@ Unificación de character de Jorge y mio para el movimiento del character con ar
 
 ## 20250407 JorgePelegrin @(2h)
 He colocado las armas dentro del lobby para poder equiparlas utilizando el boton "E". Falta restringir las armas para que se puedan ir equipando a medida que pasemos los mundos.
+
+## 20250402 DavidGonzález @(2h)
+He metido el mapa del mundo 1 que está en proceso. He introducido una funcion para que el jugador spawnee en la parte del mapa que se le indique
