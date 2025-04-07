@@ -4,8 +4,8 @@
 #include <SFML/Window/Mouse.hpp>
 #include <cmath>
 
-Lance::Lance(GameEngine* engine) : Weapon(engine), isPortalDropped(false), attackRange(100.0f), PortalRange(300.0f) {
-    spriteFacade.loadTexture("resources/lance.png"); // Cargar textura usando el Façade
+Lance::Lance(GameEngine* engine) : Weapon(engine), isPortalDropped(false), attackRange(100.0f), PortalRange(300.0f), portal() {
+    spriteFacade.loadTexture("resources/Weapons/lance.png"); // Cargar textura usando el Façade
 }
 
 void Lance::attack(Character& character, std::vector<Enemy>& enemies){
@@ -52,7 +52,7 @@ void Lance::useAbility(Character& character,  sf::RenderWindow& window){
         
         if (distance <= PortalRange) {
             std::cout << "Dropping Portal at: " << worldMousePos.x << ", " << worldMousePos.y << std::endl;
-            portal = Portal(worldMousePos);
+            portal.setPosition(worldMousePos);
             portal.setVisible(true);
             isPortalDropped = true;
         } else {
@@ -69,12 +69,22 @@ void Lance::useAbility(Character& character,  sf::RenderWindow& window){
 Portal::Portal() : position(0.f, 0.f), visible(false) {
     loadAnimationFrames();
     sprite.setScale(1.0f, 1.0f);
+
+    if (animationFrames.empty()) {
+        std::cerr << "Warning: Portal created without valid animation frames!" << std::endl;
+    }
 }
-Portal::Portal(const sf::Vector2f& pos) : position(pos) {
+
+Portal::Portal(const sf::Vector2f& pos) : position(pos), visible(false) {
     loadAnimationFrames();
     sprite.setScale(1.0f, 1.0f);
     setPosition(pos);
+
+    if (animationFrames.empty()) {
+        std::cerr << "Warning: Portal created without valid animation frames!" << std::endl;
+    }
 }
+
 void Portal::setPosition(const sf::Vector2f& pos) {
     position = pos;
     sprite.setPosition(position.x - sprite.getGlobalBounds().width / 2, 
@@ -86,8 +96,8 @@ const sf::Vector2f& Portal::getPosition() const {
 }
 
 void Portal::draw(sf::RenderWindow& window) {
-    if (visible) {
-        engine->drawSprite(sprite);
+    if (visible && sprite.getTexture() != nullptr) {
+        window.draw(sprite);
     }
 }
 
@@ -108,16 +118,21 @@ bool Portal::isVisible() const {
 }
 
 void Portal::loadAnimationFrames() {
-    for (int i = 1; i <= 7; i++){
+    for (int i = 1; i <= 7; i++) {
         sf::Texture texture;
-        if (texture.loadFromFile("./resources/portal-animation/portal1_frame_" + std::to_string(i) + ".png")) {
+        std::string filePath = "./resources/portal-animation/portal1_frame_" + std::to_string(i) + ".png";
+        if (texture.loadFromFile(filePath)) {
             animationFrames.push_back(texture);
         } else {
-            std::cerr << "Error loading portal_frame" << i << ".png" << std::endl;
+            std::cerr << "Error loading " << filePath << std::endl;
         }
     }
+
+    // Verificar si se cargaron frames correctamente
     if (!animationFrames.empty()) {
         sprite.setTexture(animationFrames[0]); // Usar el primer frame por defecto
+    } else {
+        std::cerr << "No animation frames loaded for portal!" << std::endl;
     }
 }
 
@@ -125,7 +140,7 @@ void Portal::update(float deltaTime) {
     if (!visible || animationFrames.empty()) return;
 
     animationTimer += deltaTime;
-    if (animationTimer >= frameDuration){
+    if (animationTimer >= frameDuration) {
         animationTimer = 0.0f;
         currentFrame = (currentFrame + 1) % animationFrames.size();
         sprite.setTexture(animationFrames[currentFrame]);
@@ -142,9 +157,31 @@ void Lance::increasePortalRange(float range) {
     std::cout << "Portal range increased!" << std::endl;
 }
 
-void Lance::draw() {
-    spriteFacade.draw(engine->getWindow()); // Dibujar usando el Façade
+void Lance::draw(GameEngine& engine, const Character* character) {
+    if (character) {
+        // El arma está equipada, dibujar dependiendo del personaje
+        sf::Vector2f position = character->getPosition();
+        sf::Vector2f direction = character->getDirection();
+
+        // Ajustar la posición del arma en función de la dirección
+        if (direction.x > 0) {  // Mirando a la derecha
+            spriteFacade.setPosition(position.x + 20, position.y);
+            spriteFacade.setRotation(0); // Sin rotación
+        } else if (direction.x < 0) {  // Mirando a la izquierda
+            spriteFacade.setPosition(position.x - 20, position.y);
+            spriteFacade.setRotation(180); // Rotar 180 grados
+        } else if (direction.y < 0) {  // Mirando hacia arriba
+            spriteFacade.setPosition(position.x, position.y - 20);
+            spriteFacade.setRotation(270); // Rotar 270 grados
+        } else if (direction.y > 0) {  // Mirando hacia abajo
+            spriteFacade.setPosition(position.x, position.y + 20);
+            spriteFacade.setRotation(90); // Rotar 90 grados
+        }
+    }
+
+    // Dibujar el sprite del arma
+    spriteFacade.draw(engine.getWindow());
     if (isPortalDropped) {
-        portal.draw(engine->getWindow());
+        portal.draw(engine.getWindow());
     }
 }

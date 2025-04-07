@@ -41,8 +41,9 @@ class Lance : public Weapon {
         void PortalUpdate(float deltaTime);
         void increaseAttackRange(float range);
         void increasePortalRange(float range);
-        void draw();
-
+        void draw(GameEngine& engine, const Character* character) override;
+        void setPosition(float x, float y) override { spriteFacade.setPosition(x, y); };
+        sf::Vector2f getPosition() const override { return spriteFacade.getPosition(); };
         AbilityType getAbilityType() const override { return AbilityType::Teleport; };
 
 

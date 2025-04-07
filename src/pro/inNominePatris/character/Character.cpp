@@ -120,7 +120,7 @@ void Character::draw(GameEngine& engine) {
 
     // Dibujar el arma equipada
     if (equippedWeapon) {
-        equippedWeapon->draw(*this); // Pasar el personaje para ajustar la posición del arma
+        equippedWeapon->draw(engine, this); // Pasar el personaje para ajustar la posición del arma
     }
 }
 
@@ -192,3 +192,41 @@ void Character::setDirection(float x, float y) {
     direction.y = y;
 }
 
+void Character::addWeaponWithPosition(Weapon* weapon, sf::Vector2f originalPosition) {
+    if (weapons.size() < 2) {
+        weapons.push_back(weapon);
+        weaponOriginalPositions.push_back(originalPosition);
+        if (weapons.size() == 1) 
+            equippedIndex = 0;
+    } else {
+        // Replace the first weapon (index 0)
+        Weapon* oldWeapon = weapons[0];
+        sf::Vector2f oldPos = weaponOriginalPositions[0];
+        
+        // Return the old weapon to ground
+        oldWeapon->setPosition(oldPos.x, oldPos.y);
+        
+        // Update with the new weapon
+        weapons[0] = weapon;
+        weaponOriginalPositions[0] = originalPosition;
+        
+        // Make sure we're using the second weapon (index 1)
+        equippedIndex = 1;
+    }
+}
+
+Weapon* Character::removeFirstWeapon(sf::Vector2f& outOriginalPosition) {
+    if (weapons.empty()) return nullptr;
+    
+    Weapon* removedWeapon = weapons[0];
+    outOriginalPosition = weaponOriginalPositions[0];
+    
+    // Remove the first weapon
+    weapons.erase(weapons.begin());
+    weaponOriginalPositions.erase(weaponOriginalPositions.begin());
+    
+    // Adjust equipped index if needed
+    if (!weapons.empty()) equippedIndex = 0;
+    
+    return removedWeapon;
+}
