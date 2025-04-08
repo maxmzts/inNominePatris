@@ -14,7 +14,12 @@ add_subdirectory(GameEngine)
 add_subdirectory(Weapon)
 add_subdirectory(hboxes)
 add_subdirectory(enemy)
+add_subdirectory(State)
 
+# Añadir Game.cpp al target libModulos para patron State
+target_sources(libModulos PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/Game.cpp"
+)
 
 #Opciones a pasar al compilador de C++
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -Wall -Wextra")

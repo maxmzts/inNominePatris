@@ -175,3 +175,14 @@ He metido el mapa del mundo 1 que está en proceso. He introducido una funcion p
 
 ## 20250408 MáximoMartínez @(4h)
 He empezado a diseñar los enemigos del videojuego creando una clase definitiva EnemyA (la "A" para no tener conflicto con la clase prototipo que no hemos eliminado todavía) con unas clases totalmente recodificadas de Hitbox y Hurtbox. Luego además he implementado como he podido el algoritmo A* para que vayan hacia el jugador. NADA DE ESTO ESTÁ TESTEADO a fecha de este log, por lo que he hecho commit pero no he pusheado por si las moscas, simplemente para dejar constancia.
+## 20250407 EstrellaDomínguez @(4h)
+He modificado todos los códigos para aplicar correctamente el patrón State.
+Ahora hay una carpeta State con todos los estados y desde el main se controla el estado inicial.
+Hay un par de fallos: La ventana del menú no se cierra cuando se abre el lobby, lo cuál creo que es lo que hace que no funcione correctamente el juego (el personaje no se mueve).
+
+## 20250408 EstrellaDomínguez @(2h)
+He intentado arreglar el error de las ventanas pero no he conseguido nada.
+He cambiado el main para controlar mejor algunas excepciones y he cambiado el menú configuración para que se controle con WASD en vez de Up y Down.
+
+## 20250407 JorgePelegrin @(1h 30min)
+He arreglado el error de las dos ventanas, y ahora funciona el InGame perfectamente.

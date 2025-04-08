@@ -6,7 +6,7 @@
 #include <cmath>
 
 Bow::Bow(GameEngine* engine) : Weapon(engine), arrowSpeed(500.0f), abilityArrowCount(5), abilitySpreadAngle(45.0f) {
-    spriteFacade.loadTexture("resources/Weapons/Bow.png");
+    spriteFacade.loadTexture("../resources/Weapons/Bow.png");
 
 }
 
