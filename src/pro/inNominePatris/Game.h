@@ -19,6 +19,7 @@ public:
     void restartGame();      // Reinicia el juego
 
     sf::RenderWindow& getWindow(); // Devuelve la ventana del juego
+    State* getCurrentState() const { return currentState; } // Devuelve el estado actual
 };
 
 #endif // GAME_H

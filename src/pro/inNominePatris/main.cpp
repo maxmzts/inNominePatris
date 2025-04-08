@@ -1,5 +1,6 @@
 #include "Game.h"
 #include "MainMenu.h"
+#include <iostream>
 
 int main() {
     // Crear el juego con una ventana de 800x600
@@ -10,6 +11,12 @@ int main() {
 
     // Bucle principal del juego
     while (game.getWindow().isOpen()) {
+        if (game.getCurrentState() == nullptr) {
+            std::cerr << "No hay un estado válido. Cerrando la ventana...\n";
+            game.getWindow().close();
+            break;
+        }
+
         game.update();  // Actualizar el estado actual
         game.render();  // Renderizar el estado actual
     }

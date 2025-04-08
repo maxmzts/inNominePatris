@@ -61,20 +61,19 @@ void ConfMenu::update(Game& game) {
         if (event.type == sf::Event::Closed) {
             window.close();
         } else if (event.type == sf::Event::KeyPressed) {
-            if (event.key.code == sf::Keyboard::Up) {
+            if (event.key.code == sf::Keyboard::W) {
                 moveUp();
-            } else if (event.key.code == sf::Keyboard::Down) {
+            } else if (event.key.code == sf::Keyboard::S) {
                 moveDown();
             } else if (event.key.code == sf::Keyboard::Enter) {
-                int selected = getSelectedItem();
-                if (selected == 0) {
+                if (selectedItemIndex == 0) {
                     std::cout << "Graficos seleccionados\n";
-                } else if (selected == 1) {
+                } else if (selectedItemIndex == 1) {
                     std::cout << "Accesibilidad seleccionada\n";
-                } else if (selected == 2) {
+                } else if (selectedItemIndex == 2) {
                     std::cout << "Sonido seleccionado\n";
-                } else if (selected == 3) {
-                    std::cout << "Controles seleccionados\n";
+                } else if (selectedItemIndex == 3) {
+                    std::cout << "Menu principal seleccionado\n";
                     game.changeState(MainMenu::getInstance(800, 600));
                 }
             }

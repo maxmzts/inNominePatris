@@ -28,9 +28,11 @@ void Game::render() {
 
 void Game::changeState(State* newState) {
     if (currentState) {
+        std::cout << "Eliminando estado actual\n";
         delete currentState; // Limpia el estado actual
     }
     currentState = newState; // Cambia al nuevo estado
+    std::cout << "Nuevo estado asignado\n";
 }
 
 void Game::restartGame() {

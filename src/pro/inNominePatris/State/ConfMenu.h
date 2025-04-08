@@ -28,7 +28,6 @@ public:
 
     void moveUp();
     void moveDown();
-    int getSelectedItem() { return selectedItemIndex; }
 };
 
 #endif // CONFMENU_H
