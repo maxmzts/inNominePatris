@@ -12,6 +12,8 @@ add_subdirectory(character)
 add_subdirectory(tilemap)
 add_subdirectory(GameEngine)
 add_subdirectory(Weapon)
+add_subdirectory(hboxes)
+add_subdirectory(enemy)
 
 
 #Opciones a pasar al compilador de C++
