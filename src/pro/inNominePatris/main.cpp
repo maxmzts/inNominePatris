@@ -1,13 +1,14 @@
 #include "Game.h"
+#include "GameEngine/GameEngine.h"
 #include "MainMenu.h"
 #include <iostream>
 
 int main() {
     // Crear el juego con una ventana de 800x600
     Game game("In Nomine Patris", 800, 600);
-
+    GameEngine engine(game.getWindow());
     // Establecer el estado inicial como MainMenu
-    game.changeState(MainMenu::getInstance(800, 600));
+    game.changeState(MainMenu::getInstance(engine, 800, 600));
 
     // Bucle principal del juego
     while (game.getWindow().isOpen()) {

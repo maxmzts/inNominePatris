@@ -74,7 +74,7 @@ void ConfMenu::update(Game& game) {
                     std::cout << "Sonido seleccionado\n";
                 } else if (selectedItemIndex == 3) {
                     std::cout << "Menu principal seleccionado\n";
-                    game.changeState(MainMenu::getInstance(800, 600));
+                    // game.changeState(MainMenu::getInstance(GameEngine engine, 800, 600));
                 }
             }
         }

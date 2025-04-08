@@ -176,3 +176,6 @@ Hay un par de fallos: La ventana del menú no se cierra cuando se abre el lobby,
 ## 20250408 EstrellaDomínguez @(2h)
 He intentado arreglar el error de las ventanas pero no he conseguido nada.
 He cambiado el main para controlar mejor algunas excepciones y he cambiado el menú configuración para que se controle con WASD en vez de Up y Down.
+
+## 20250407 JorgePelegrin @(1h 30min)
+He arreglado el error de las dos ventanas, y ahora funciona el InGame perfectamente.

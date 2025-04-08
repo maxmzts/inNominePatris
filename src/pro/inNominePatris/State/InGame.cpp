@@ -6,10 +6,10 @@
 
 InGame* InGame::instance = nullptr;
 
-InGame::InGame()
-    : engine("In Nomine Patris", 800, 600), player("../resources/sprites.png") {
+InGame::InGame(GameEngine& engine)
+    : engine(engine), player("../resources/sprites.png") {
     // Cargar el mapa
-    if (!tileMap.loadFromFile("../maps/world_1.tmx", engine)) {
+    if (!tileMap.loadFromFile("../maps/lobby.tmx", engine)) {
         std::cerr << "Error cargando el mapa\n";
         exit(-1);
     }
@@ -30,9 +30,9 @@ InGame::InGame()
     bow->setPosition(163, 578);
 }
 
-InGame* InGame::getInstance() {
+InGame* InGame::getInstance(GameEngine& engine) {
     if (!instance) {
-        instance = new InGame();
+        instance = new InGame(engine);
     }
     return instance;
 }

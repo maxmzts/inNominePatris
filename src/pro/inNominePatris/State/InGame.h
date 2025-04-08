@@ -14,16 +14,17 @@
 class InGame : public State {
 private:
     static InGame* instance;
+    GameEngine& engine; // Puntero al GameEngine
 
-    GameEngine engine;
     TileMap tileMap;
     Character player;
     std::vector<Weapon*> weaponsOnGround;
+    sf::Clock clock;
 
-    InGame();
+    InGame(GameEngine& engine); // Constructor privado
 
 public:
-    static InGame* getInstance();
+    static InGame* getInstance(GameEngine& engine); // Método para obtener la instancia
     ~InGame();  
 
     void update(Game& game) override;

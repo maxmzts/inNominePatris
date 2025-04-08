@@ -6,7 +6,7 @@
 
 MainMenu* MainMenu::instance = nullptr;
 
-MainMenu::MainMenu(float width, float height) : selectedItemIndex(0) {
+MainMenu::MainMenu(GameEngine& engine, float width, float height) :engine(engine), selectedItemIndex(0) {
     // Cargar fuente
     if (!font.loadFromFile("../assets/fonts/IMPACT.TTF")) {
         std::cerr << "Error al cargar la fuente. Usando texto sin fuente" << std::endl;
@@ -48,9 +48,9 @@ MainMenu::MainMenu(float width, float height) : selectedItemIndex(0) {
     }
 }
 
-MainMenu* MainMenu::getInstance(float width, float height) {
+MainMenu* MainMenu::getInstance(GameEngine& engine, float width, float height) {
     if (!instance) {
-        instance = new MainMenu(width, height);
+        instance = new MainMenu(engine, width, height);
     }
     return instance;
 }
@@ -72,10 +72,10 @@ void MainMenu::update(Game& game) {
                 // Acción según la opción seleccionada
                 if (selectedItemIndex == 0) {
                     std::cout << "Nueva Partida seleccionada\n";
-                    game.changeState(InGame::getInstance());
+                    game.changeState(InGame::getInstance(engine));
                 } else if (selectedItemIndex == 1) {
                     std::cout << "Continuar partida seleccionada\n";
-                    game.changeState(InGame::getInstance());
+                    game.changeState(InGame::getInstance(engine));
                 } else if (selectedItemIndex == 2) {
                     std::cout << "Configuración seleccionada\n";
                     game.changeState(ConfMenu::getInstance(800, 600));
