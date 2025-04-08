@@ -98,3 +98,7 @@ void GameEngine::setViewCenter(const sf::Vector2f& center) {
 void GameEngine::resetView() {
     window.setView(view);
 }
+
+float GameEngine::getDeltaTime() {
+    return clock.restart().asSeconds();
+}

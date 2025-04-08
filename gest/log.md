@@ -167,3 +167,8 @@ He colocado las armas dentro del lobby para poder equiparlas utilizando el boton
 
 ## 20250402 DavidGonzález @(2h)
 He metido el mapa del mundo 1 que está en proceso. He introducido una funcion para que el jugador spawnee en la parte del mapa que se le indique
+
+## 20250407 EstrellaDomínguez @(4h)
+He modificado todos los códigos para aplicar correctamente el patrón State.
+Ahora hay una carpeta State con todos los estados y desde el main se controla el estado inicial.
+Hay un par de fallos: La ventana del menú no se cierra cuando se abre el lobby, lo cuál creo que es lo que hace que no funcione correctamente el juego (el personaje no se mueve).

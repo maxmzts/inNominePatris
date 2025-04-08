@@ -13,6 +13,8 @@ private:
     std::vector<sf::Sprite> spritesToDraw;
     std::map<std::string, sf::Texture> textures;
 
+    sf::Clock clock; // Reloj para el tiempo de juego
+
     void initWindow(const std::string& title, int width, int height);
 
 public:
@@ -33,4 +35,5 @@ public:
     // --- NUEVO ---
     void setViewCenter(const sf::Vector2f& center);
     void resetView();
+    float getDeltaTime();
 };
