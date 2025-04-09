@@ -7,7 +7,7 @@ sf::Texture Arrow::arrowTexture;
 Arrow::Arrow(const sf::Vector2f& position, const sf::Vector2f& direction, float speed) {
     // Cargar la textura si no se ha cargado aún
     if (arrowTexture.getSize().x == 0) {
-        if (!arrowTexture.loadFromFile("../resources/Weapons/arrow.png")) {
+        if (!arrowTexture.loadFromFile("./resources/Weapons/arrow.png")) {
             std::cerr << "Error cargando la textura arrow.png";
         }
     }
