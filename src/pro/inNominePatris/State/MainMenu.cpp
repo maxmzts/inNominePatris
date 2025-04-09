@@ -8,12 +8,12 @@ MainMenu* MainMenu::instance = nullptr;
 
 MainMenu::MainMenu(GameEngine& engine, float width, float height) :engine(engine), selectedItemIndex(0) {
     // Cargar fuente
-    if (!font.loadFromFile("../assets/fonts/IMPACT.TTF")) {
+    if (!font.loadFromFile("./assets/fonts/IMPACT.TTF")) {
         std::cerr << "Error al cargar la fuente. Usando texto sin fuente" << std::endl;
     }
 
     // Cargar la imagen de fondo
-    if (!backgroundTexture.loadFromFile("../resources/background.png")) {
+    if (!backgroundTexture.loadFromFile("./resources/background.png")) {
         std::cerr << "Error al cargar la imagen de fondo" << std::endl;
     }
     backgroundSprite.setTexture(backgroundTexture);

@@ -5,7 +5,7 @@
 #include <cmath>
 
 Lance::Lance(GameEngine* engine) : Weapon(engine), isPortalDropped(false), attackRange(100.0f), PortalRange(300.0f), portal() {
-    spriteFacade.loadTexture("../resources/Weapons/lance.png"); // Cargar textura usando el Façade
+    spriteFacade.loadTexture("./resources/Weapons/lance.png"); // Cargar textura usando el Façade
 }
 
 void Lance::attack(Character& character, std::vector<Enemy>& enemies){
@@ -120,7 +120,7 @@ bool Portal::isVisible() const {
 void Portal::loadAnimationFrames() {
     for (int i = 1; i <= 7; i++) {
         sf::Texture texture;
-        std::string filePath = "../resources/portal-animation/portal1_frame_" + std::to_string(i) + ".png";
+        std::string filePath = "./resources/portal-animation/portal1_frame_" + std::to_string(i) + ".png";
         if (texture.loadFromFile(filePath)) {
             animationFrames.push_back(texture);
         } else {

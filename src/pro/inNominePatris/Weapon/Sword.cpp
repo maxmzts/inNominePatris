@@ -5,7 +5,7 @@
 #include "Enemy.h"
 
 Sword::Sword(GameEngine* engine) : Weapon(engine), attackRange(50.0f), dashSpeed(50.0f), abilityCooldown(1.5f), lastAbilityTime(-abilityCooldown) {
-    spriteFacade.loadTexture("../resources/Weapons/sword.png"); // Cargar textura usando el Façade
+    spriteFacade.loadTexture("./resources/Weapons/sword.png"); // Cargar textura usando el Façade
     spriteFacade.setOrigin(16.0f, 16.0f);           // Establecer el origen
 }
 

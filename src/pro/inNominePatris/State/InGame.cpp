@@ -7,9 +7,9 @@
 InGame* InGame::instance = nullptr;
 
 InGame::InGame(GameEngine& engine)
-    : engine(engine), player("../resources/sprites.png") {
+    : engine(engine), player("./resources/sprites.png") {
     // Cargar el mapa
-    if (!tileMap.loadFromFile("../maps/lobby.tmx", engine)) {
+    if (!tileMap.loadFromFile("./maps/lobby.tmx", engine)) {
         std::cerr << "Error cargando el mapa\n";
         exit(-1);
     }

@@ -32,7 +32,7 @@ bool TileMap::loadFromFile(const std::string& filename, GameEngine& engine) {
 
         TileSet tileset;
         tileset.firstGid = firstGid;
-        tileset.texture = engine.loadTexture(std::string("../resources/") + source); // Usar el motor para cargar texturas
+        tileset.texture = engine.loadTexture(std::string("./resources/") + source); // Usar el motor para cargar texturas
         tilesetElement->QueryIntAttribute("tilewidth", &tileset.tileWidth);
         tilesetElement->QueryIntAttribute("tileheight", &tileset.tileHeight);
         tileset.columns = tileset.texture.getSize().x / tileset.tileWidth;
