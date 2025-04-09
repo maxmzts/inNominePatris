@@ -64,7 +64,7 @@ int main() {
                 player.spawnAt(tileMap, randomX, randomY);
             }
 
-            // Interacción con los pilares
+            // // Interacción con los pilares
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::E) {
                 sf::Vector2f playerPosition = player.getPosition();
             
@@ -100,6 +100,48 @@ int main() {
                         
                         player.equipWeapon();
                         std::cout << "Arma reemplazada y equipada!" << std::endl;
+                    }
+                }
+
+                if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::E) {
+                    sf::Vector2f playerPosition = player.getPosition();
+                    
+                    // Primero comprobar interacción con tiles
+                    player.interact(tileMap);
+                    
+                    // Verificar si el jugador está cerca de un arma en el suelo
+                    auto it = std::find_if(weaponsOnGround.begin(), weaponsOnGround.end(), [&](Weapon* weapon) {
+                        sf::Vector2f weaponPosition = weapon->getPosition();
+                        return std::abs(playerPosition.x - weaponPosition.x) < 50 &&
+                               std::abs(playerPosition.y - weaponPosition.y) < 50;
+                    });
+                
+                    if (it != weaponsOnGround.end()) {
+                        Weapon* weapon = *it;
+                        sf::Vector2f weaponPos = weapon->getPosition();
+                        
+                        if (player.getWeaponCount() < 2) {
+                            // Player has 0 or 1 weapons, just add the new one
+                            player.addWeaponWithPosition(weapon, weaponPos);
+                            weaponsOnGround.erase(it); // Remove from ground
+                            player.equipWeapon();
+                            std::cout << "Arma equipada!" << std::endl;
+                        } else {
+                            // Player already has 2 weapons, replace the first one
+                            sf::Vector2f oldWeaponPos;
+                            Weapon* oldWeapon = player.removeFirstWeapon(oldWeaponPos);
+                            
+                            // Add the new weapon
+                            player.addWeaponWithPosition(weapon, weaponPos);
+                            weaponsOnGround.erase(it); // Remove from ground
+                            
+                            // Return old weapon to ground
+                            oldWeapon->setPosition(oldWeaponPos.x, oldWeaponPos.y);
+                            weaponsOnGround.push_back(oldWeapon);
+                            
+                            player.equipWeapon();
+                            std::cout << "Arma reemplazada y equipada!" << std::endl;
+                        }
                     }
                 }
             }

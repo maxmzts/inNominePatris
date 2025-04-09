@@ -2,6 +2,7 @@
 #include <iostream>
 #include <sstream>
 
+
 bool TileMap::loadFromFile(const std::string& filename, GameEngine& engine) {
     tinyxml2::XMLDocument doc;
     if (doc.LoadFile(filename.c_str()) != tinyxml2::XML_SUCCESS) {
@@ -52,6 +53,7 @@ bool TileMap::loadFromFile(const std::string& filename, GameEngine& engine) {
         const char* layerName = layerElement->Attribute("name");
         bool isDecoLayer = (layerName && std::string(layerName) == "deco");
         bool isBoundsLayer = (layerName && std::string(layerName) == "bounds");
+        bool isInteractiveLayer = (layerName && std::string(layerName) == "interaction");
 
         tinyxml2::XMLElement* dataElement = layerElement->FirstChildElement("data");
         if (!dataElement) continue;
@@ -76,6 +78,24 @@ bool TileMap::loadFromFile(const std::string& filename, GameEngine& engine) {
                 }
             }
             continue; 
+        }
+        
+        // Procesar la capa de tiles interactivos
+        if (isInteractiveLayer) {
+            for (int y = 0; y < m_mapHeight; ++y) {
+                for (int x = 0; x < m_mapWidth; ++x) {
+                    int tileNumber = tiles[y * m_mapWidth + x];
+                    if (tileNumber != 0) {
+                        addInteractiveTile(tileNumber, sf::FloatRect(
+                            x * mainTileset->tileWidth, 
+                            y * mainTileset->tileHeight,
+                            mainTileset->tileWidth, 
+                            mainTileset->tileHeight
+                        ));
+                    }
+                }
+            }
+            continue; // Saltar al siguiente layer
         }
 
         Layer layer;
@@ -114,6 +134,7 @@ bool TileMap::loadFromFile(const std::string& filename, GameEngine& engine) {
 
     return true;
 }
+
 
 bool TileMap::isColliding(const sf::FloatRect& playerBounds) const {
     for (const auto& block : collisionBlocks) {
@@ -192,4 +213,18 @@ void TileMap::draw(GameEngine& engine) const {
             engine.drawVertices(layer.vertices, *layer.tilesetTexture, getTransform());
         }
     }
+}
+
+bool TileMap::isPlayerInteractingWithTile(const sf::FloatRect& playerBounds, int& outTileId) const {
+    for (const auto& tile : interactiveTiles) {
+        if (playerBounds.intersects(tile.rect)) {
+            outTileId = tile.id;
+            return true;
+        }
+    }
+    return false;
+}
+
+void TileMap::addInteractiveTile(int id, const sf::FloatRect& rect) {
+    interactiveTiles.push_back({id, rect});
 }

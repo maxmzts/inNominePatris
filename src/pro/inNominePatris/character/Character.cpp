@@ -266,3 +266,31 @@ Weapon* Character::removeFirstWeapon(sf::Vector2f& outOriginalPosition) {
     
     return removedWeapon;
 }
+
+void Character::interact(TileMap& tilemap) {
+    // Obtener el hitbox del jugador
+    sf::FloatRect playerBounds = sprite.getGlobalBounds();
+    
+    // Comprobar si está interactuando con algún tile
+    int tileId = -1;
+    if (tilemap.isPlayerInteractingWithTile(playerBounds, tileId)) {
+        // Acciones según el ID del tile
+        switch (tileId) {
+            case 772:
+                std::cout << "Interactuando con tile 772 (puerta)" << std::endl;
+                break;
+            case 773:
+                std::cout << "Interactuando con tile 773 (cofre)" << std::endl;
+                break;
+            case 774:
+                std::cout << "Interactuando con tile 774 (palanca)" << std::endl;
+                break;
+            // Puedes agregar más casos según necesites
+            default:
+                std::cout << "NO hay interaccion: " << tileId << std::endl;
+                break;
+        }
+    } else {
+        std::cout << "No hay nada con lo que interactuar aquí." << std::endl;
+    }
+}
