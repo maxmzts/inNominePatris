@@ -2,11 +2,15 @@
 #include "GameEngine.h"
 #include <iostream>
 
-GameEngine::GameEngine(const std::string& title, int width, int height) {
+GameEngine::GameEngine(const std::string& title, int width, int height) : ownsWindow(true), existingWindow(nullptr) {
     initWindow(title, width, height);
     view.setSize(static_cast<float>(width), static_cast<float>(height));
     view.setCenter(static_cast<float>(width) / 2, static_cast<float>(height) / 2);
     window.setView(view);
+}
+
+GameEngine::GameEngine(sf::RenderWindow& windowRef) : ownsWindow(false), existingWindow(&windowRef) {
+    view = windowRef.getView();
 }
 
 GameEngine::~GameEngine() {
@@ -21,15 +25,27 @@ void GameEngine::initWindow(const std::string& title, int width, int height) {
 }
 
 void GameEngine::clear() {
-    window.clear(sf::Color::Black);
+    if (ownsWindow) {
+        window.clear();
+    } else {
+        existingWindow->clear();
+    }
 }
 
 void GameEngine::display() {
-    window.display();
+    if(ownsWindow) {
+        window.display();
+    } else {
+        existingWindow->display();
+    }
 }
 
 void GameEngine::drawSprite(const sf::Sprite& sprite) {
-    window.draw(sprite);
+    if(ownsWindow) {
+        window.draw(sprite);
+    } else {
+        existingWindow->draw(sprite);
+    }
 }
 
 sf::Sprite GameEngine::createSprite(const std::string& texturePath, const sf::Vector2f& position) {
@@ -47,7 +63,11 @@ sf::Sprite GameEngine::createSprite(const std::string& texturePath, const sf::Ve
 }
 
 bool GameEngine::isRunning() const {
-    return window.isOpen();
+    if(ownsWindow) {
+        return window.isOpen();
+    } else {
+        return existingWindow->isOpen();
+    }
 }
 
 void GameEngine::pollEvents() {
@@ -78,7 +98,11 @@ void GameEngine::drawVertices(const sf::VertexArray& vertices, const sf::Texture
     sf::RenderStates states;
     states.texture = &texture;
     states.transform = transform;
-    window.draw(vertices, states);
+    if(ownsWindow) {
+        window.draw(vertices, states);
+    } else {
+        existingWindow->draw(vertices, states);
+    }
 }
 
 sf::Vector2f GameEngine::getMousePosition() const {
@@ -86,15 +110,27 @@ sf::Vector2f GameEngine::getMousePosition() const {
 }
 
 sf::RenderWindow& GameEngine::getWindow() {
-    return window;
+    if(ownsWindow) {
+        return window;
+    } else {
+        return *existingWindow;
+    }
 }
 
 // --- NUEVO ---
 void GameEngine::setViewCenter(const sf::Vector2f& center) {
     view.setCenter(center);
-    window.setView(view);
+    if(ownsWindow) {
+        window.setView(view);
+    } else {
+        existingWindow->setView(view);
+    }
 }
 
 void GameEngine::resetView() {
     window.setView(view);
+}
+
+float GameEngine::getDeltaTime() {
+    return clock.restart().asSeconds();
 }

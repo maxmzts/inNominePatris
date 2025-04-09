@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="43" height="32" tilewidth="16" tileheight="16" infinite="0" nextlayerid="2" nextobjectid="1">
  <tileset firstgid="1" name="test-tiles" tilewidth="16" tileheight="16" tilecount="2560" columns="64">
-  <image source="../resources/mainlevbuild.png" width="1024" height="640"/>
+  <image source="./resources/mainlevbuild.png" width="1024" height="640"/>
  </tileset>
  <tileset firstgid="2561" name="deco" tilewidth="16" tileheight="16" tilecount="256" columns="16">
-  <image source="../resources/decorative.png" width="256" height="256"/>
+  <image source="./resources/decorative.png" width="256" height="256"/>
  </tileset>
  <layer id="1" name="Capa de patrones 1" width="43" height="32">
   <data encoding="csv">

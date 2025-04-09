@@ -9,14 +9,20 @@
 class GameEngine {
 private:
     sf::RenderWindow window;
+    sf:: RenderWindow* existingWindow; // Referencia a la ventana
     sf::View view; // Cámara
     std::vector<sf::Sprite> spritesToDraw;
     std::map<std::string, sf::Texture> textures;
+    bool ownsWindow;
+
+    sf::Clock clock; // Reloj para el tiempo de juego
 
     void initWindow(const std::string& title, int width, int height);
 
 public:
     GameEngine(const std::string& title, int width, int height);
+
+    GameEngine(sf::RenderWindow& windowRef);
     ~GameEngine();
     
     sf::RenderWindow& getWindow();
@@ -33,4 +39,5 @@ public:
     // --- NUEVO ---
     void setViewCenter(const sf::Vector2f& center);
     void resetView();
+    float getDeltaTime();
 };
