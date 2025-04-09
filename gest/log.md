@@ -187,5 +187,8 @@ He cambiado el main para controlar mejor algunas excepciones y he cambiado el me
 ## 20250408 JorgePelegrin @(1h 30min)
 He arreglado el error de las dos ventanas, y ahora funciona el InGame perfectamente.
 
-## 20250408 DavidGonzález @(6h)
+## 20250402 DavidGonzález @(6h)
 Interacción implementada con éxito e incluida dentro del patrón state + modificaciones en world_1 que sigue en proceso
+
+## 20250408 EstrellaDomínguez @(2h)
+He implementado el HUD. Ahora el personaje tiene barra de vida y hay un inventario que indica que arma tiene seleccionada.
