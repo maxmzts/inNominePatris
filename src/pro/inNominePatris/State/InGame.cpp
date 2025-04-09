@@ -6,11 +6,19 @@
 
 InGame* InGame::instance = nullptr;
 
+/** 
+ * Constructor de InGame. Carga el motor y el lobby con el jugador.
+ */
 InGame::InGame(GameEngine& engine)
     : engine(engine), player("../resources/sprites.png") {
     // Cargar el mapa
     if (!tileMap.loadFromFile("../maps/lobby.tmx", engine)) {
         std::cerr << "Error cargando el mapa\n";
+        exit(-1);
+    }
+    sf::Texture enemy_tex;
+    if (!enemy_tex.loadFromFile("resources/sprites.png")) {
+        std::cerr << "Error cargando la imagen sprites.png";
         exit(-1);
     }
 
@@ -28,6 +36,17 @@ InGame::InGame(GameEngine& engine)
     sword->setPosition(183, 530);
     lance->setPosition(234, 500);
     bow->setPosition(163, 578);
+
+    //TESTS ENEMIGOS
+    EnemyA* enemy = nullptr;
+    //cargar enemigos
+    for (size_t i = 0; i < 3; i++)
+    {
+        enemy = new EnemyA("Goblin", 180.f, 10.f, sf::Vector2f(100.f,100.f));
+        enemy->setTexture(enemy_tex);
+        enemies.push_back(enemy);
+    }
+    
 }
 
 InGame* InGame::getInstance(GameEngine& engine) {
@@ -37,6 +56,11 @@ InGame* InGame::getInstance(GameEngine& engine) {
     return instance;
 }
 
+/**
+ * Update de InGame
+ * Captura eventos del jugador (armas, cambiar de arma, etc).
+ * Se ejecuta cada frame.
+ */
 void InGame::update(Game& game) {
     sf::RenderWindow& window = game.getWindow();
     sf::Event event;
@@ -110,6 +134,9 @@ void InGame::update(Game& game) {
     // Actualizar el jugador y otros elementos
     float deltaTime = engine.getDeltaTime();
     player.update(tileMap, deltaTime);
+    for(EnemyA* enemy : enemies){
+        enemy->update(deltaTime,&player,&tileMap);
+    }
 
     // Actualizar la posición de la cámara para seguir al jugador
     engine.setViewCenter(player.getPosition());
@@ -122,6 +149,9 @@ InGame::~InGame() {
     weaponsOnGround.clear();
 }
 
+/**
+ * Renderiza los elementos de InGame
+ */
 void InGame::render(Game& game, sf::RenderWindow& window) {
     engine.clear();
     tileMap.draw(engine);
