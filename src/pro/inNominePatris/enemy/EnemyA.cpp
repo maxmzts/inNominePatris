@@ -50,6 +50,9 @@ void EnemyA::setPosition(const sf::Vector2f& position) {
 void EnemyA::setTexture(const sf::Texture& texture) {
     m_texture = texture;
     m_sprite.setTexture(m_texture);
+    m_sprite.setOrigin(75.f / 2.f, 75.f / 2.f);
+    m_sprite.setTextureRect(sf::IntRect(4.6 * 75, 3.1 * 75, 75, 75));
+    m_sprite.setPosition(50, 50);
     
     // Centrar el origen del sprite
     sf::FloatRect bounds = m_sprite.getLocalBounds();

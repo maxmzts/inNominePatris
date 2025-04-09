@@ -42,7 +42,7 @@ InGame::InGame(GameEngine& engine)
     //cargar enemigos
     for (size_t i = 0; i < 3; i++)
     {
-        enemy = new EnemyA("Goblin", 180.f, 10.f, sf::Vector2f(100.f,100.f));
+        enemy = new EnemyA("Goblin", 180.f, 100.f, sf::Vector2f(100.f*i,100.f*i));
         enemy->setTexture(enemy_tex);
         enemies.push_back(enemy);
     }
@@ -121,10 +121,10 @@ void InGame::update(Game& game) {
         if (event.type == sf::Event::MouseButtonPressed) {
             if (event.mouseButton.button == sf::Mouse::Left) {
                 // Ataque normal
-                player.attack(enemies);
+                ///////////////////////////////////////////////////////////player.attack(enemies);
             } else if (event.mouseButton.button == sf::Mouse::Right) {
                 // Usar habilidad especial
-                player.useAbility(window, enemies);
+                //////////////////////////////////////////////////////////player.useAbility(window, enemies);
             }
         }
     }
@@ -143,7 +143,7 @@ void InGame::update(Game& game) {
     Weapon* equippedWeapon = player.getEquippedWeapon();
     if (equippedWeapon != nullptr) {
         if (Bow* bow = dynamic_cast<Bow*>(equippedWeapon)) {
-            bow->update(deltaTime, enemies); // Actualizar el arco
+            ////////////////////////////////////////////////////////bow->update(deltaTime, enemies); // Actualizar el arco
         } else if (Lance* lance = dynamic_cast<Lance*>(equippedWeapon)) {
             lance->PortalUpdate(deltaTime); // Actualizar la lanza
         }
@@ -166,6 +166,10 @@ void InGame::render(Game& game, sf::RenderWindow& window) {
 
     for (Weapon* weapon : weaponsOnGround) {
         weapon->draw(engine, nullptr);
+    }
+
+    for (EnemyA* enemy : enemies){
+        enemy->render(engine.getWindow());
     }
 
     player.draw(engine);
