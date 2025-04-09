@@ -12,6 +12,8 @@ add_subdirectory(character)
 add_subdirectory(tilemap)
 add_subdirectory(GameEngine)
 add_subdirectory(Weapon)
+add_subdirectory(hboxes)
+add_subdirectory(enemy)
 add_subdirectory(State)
 
 # Añadir Game.cpp al target libModulos para patron State
