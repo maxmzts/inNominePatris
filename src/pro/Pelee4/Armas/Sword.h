@@ -8,7 +8,7 @@
 class Sword : public Weapon {
     public:
         Sword();
-        void attack(Character& character, std::vector<Enemy>& enemies) override;
+        void attack(sf::Vector2f position, sf::Vector2f direction std::vector<Enemy>& enemies) override;
         void useAbility(Character& character) override;
         void increaseDashSpeed(float speed);
         void increaseAttackRange(float range);

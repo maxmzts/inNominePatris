@@ -1,15 +1,11 @@
-#include "EnemyA.h"
-#include "TileMap.h"
-#include "Hitbox.h"    
-#include "Hurtbox.h"
-#include "Character.h"
+#include "Enemy.h"
 #include <vector>
 #include <queue>
 #include <unordered_map>
 #include <cmath>
 #include <algorithm>
 
-EnemyA::EnemyA(const std::string& name, float maxHealth, float movementSpeed, const sf::Vector2f& startPosition)
+Enemy::Enemy(const std::string& name, float maxHealth, float movementSpeed, const sf::Vector2f& startPosition)
     : m_name(name)
     , m_maxHealth(maxHealth)
     , m_currentHealth(maxHealth)
@@ -36,18 +32,18 @@ EnemyA::EnemyA(const std::string& name, float maxHealth, float movementSpeed, co
     updateHitboxes();
 }
 
-EnemyA::~EnemyA() {
+Enemy::~Enemy() {
     delete m_hitbox;
     delete m_hurtbox;
 }
 
-void EnemyA::setPosition(const sf::Vector2f& position) {
+void Enemy::setPosition(const sf::Vector2f& position) {
     m_position = position;
     m_sprite.setPosition(position);
     updateHitboxes();
 }
 
-void EnemyA::setTexture(const sf::Texture& texture) {
+void Enemy::setTexture(const sf::Texture& texture) {
     m_texture = texture;
     m_sprite.setTexture(m_texture);
     m_sprite.setOrigin(75.f / 2.f, 75.f / 2.f);
@@ -59,7 +55,7 @@ void EnemyA::setTexture(const sf::Texture& texture) {
     m_sprite.setOrigin(bounds.width / 2.0f, bounds.height / 2.0f);
 }
 
-void EnemyA::takeDamage(float damage) {
+void Enemy::takeDamage(float damage) {
     // Si está invencible, ignorar el daño
     if (m_isInvincible) {
         return;
@@ -84,7 +80,7 @@ void EnemyA::takeDamage(float damage) {
     }
 }
 
-void EnemyA::attack(Character* player) {
+void Enemy::attack() {
     // Verificar si el ataque está en cooldown
     if (m_attackTimer > 0) {
         return;
@@ -100,7 +96,7 @@ void EnemyA::attack(Character* player) {
     // cuando el hitbox del enemigo colisione con el hurtbox del jugador
 }
 
-void EnemyA::move(const sf::Vector2f& direction) {
+void Enemy::move(const sf::Vector2f& direction) {
     // Normalizar el vector de dirección si no es cero
     float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
     if (length > 0) {
@@ -149,8 +145,8 @@ float calculateHeuristic(int x1, int y1, int x2, int y2) {
     return std::abs(x1 - x2) + std::abs(y1 - y2);
 }
 
-// Esta función reemplaza la versión básica en EnemyA.cpp
-void EnemyA::findPathToPlayer(const Character* player, const TileMap* tileMap) {
+// Esta función reemplaza la versión básica en Enemy.cpp
+void Enemy::findPathToPlayer(const Character* player, const TileMap* tileMap) {
     if (!player || !tileMap) {
         return;
     }
@@ -317,7 +313,7 @@ void EnemyA::findPathToPlayer(const Character* player, const TileMap* tileMap) {
     }
 }
 
-void EnemyA::render(sf::RenderWindow& window) {
+void Enemy::render(sf::RenderWindow& window) {
     // Dibujar el sprite del enemigo
     window.draw(m_sprite);
     
@@ -326,9 +322,9 @@ void EnemyA::render(sf::RenderWindow& window) {
     // m_hurtbox->render(window);
 }
 
-// Primero, añade estos miembros a la clase EnemyA en el archivo de cabecera (EnemyA.h):
+// Primero, añade estos miembros a la clase Enemy en el archivo de cabecera (Enemy.h):
 
-void EnemyA::update(float deltaTime, Character* player, const TileMap* tileMap) {
+void Enemy::update(float deltaTime, Character* player, const TileMap* tileMap) {
     // Actualizar los timers
     if (m_invincibilityTimer > 0) {
         m_invincibilityTimer -= deltaTime;
@@ -385,7 +381,7 @@ void EnemyA::update(float deltaTime, Character* player, const TileMap* tileMap) 
                 
                 // Si estamos lo suficientemente cerca y el ataque no está en cooldown
                 if (distance < 50.0f && m_attackTimer <= 0) {
-                    attack(player);
+                    attack();
                 }
             }
             break;
@@ -412,7 +408,7 @@ void EnemyA::update(float deltaTime, Character* player, const TileMap* tileMap) 
     }
 }
 
-void EnemyA::setInvincible(bool invincible) {
+void Enemy::setInvincible(bool invincible) {
     m_isInvincible = invincible;
     if (invincible) {
         m_invincibilityTimer = m_invincibilityDuration;
@@ -424,7 +420,7 @@ void EnemyA::setInvincible(bool invincible) {
     }
 }
 
-void EnemyA::updateHitboxes() {
+void Enemy::updateHitboxes() {
     // Actualizar las posiciones de los hitboxes y hurtboxes
     if (m_hitbox) {
         m_hitbox->setPosition(m_position + sf::Vector2f(10.0f, 10.0f));  // Ajustar según el sprite
@@ -435,7 +431,7 @@ void EnemyA::updateHitboxes() {
     }
 }
 
-void EnemyA::changeState(EnemyState newState) {
+void Enemy::changeState(EnemyState newState) {
     // Si estamos cambiando a un nuevo estado, reiniciar el timer
     if (m_currentState != newState) {
         m_currentState = newState;

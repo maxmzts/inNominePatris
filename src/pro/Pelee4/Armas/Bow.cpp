@@ -7,7 +7,7 @@
 
 Bow::Bow() : arrowSpeed(500.0f), abilityArrowCount(5), abilitySpreadAngle(45.0f) {}
 
-void Bow::attack(Character& character, std::vector<Enemy>& enemies) {
+void Bow::attack(sf::Vector2f position, sf::Vector2f direction std::vector<Enemy>& enemies) {
     std::cout << "Bow attack: Shooting an arrow!" << std::endl;
 
     // Obtener la posición y dirección del personaje

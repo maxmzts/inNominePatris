@@ -6,12 +6,10 @@
 
 Lance::Lance() : attackRange(300.0f), isPortalDropped(false), PortalRange(200.0f) {}
 
-void Lance::attack(Character& character, std::vector<Enemy>& enemies){
+void Lance::attack(sf::Vector2f position, sf::Vector2f direction std::vector<Enemy>& enemies){
     std::cout << "Lance attack!" << std::endl;
 
-    // Obtiene la posición y dirección del personaje
-    sf::Vector2f position = character.getPosition();
-    sf::Vector2f direction = character.getDirection(); // Detecta si el personaje mira a la izquierda o derecha
+    
 
     // Define una hitbox dependiendo de la dirección
     sf::FloatRect hitbox;

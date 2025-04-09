@@ -2,8 +2,6 @@
 #define WEAPON_H
 #include <vector>
 #include "GameEngine.h"
-class Character;
-class Enemy;
 
 #include "AbilityType.h"
 
@@ -15,14 +13,17 @@ class Weapon {
         Weapon(GameEngine* engine) : engine(engine) {}
         virtual ~Weapon() = default;
         
-        virtual void attack(Character& character, std::vector<Enemy>& enemies) = 0;
-        virtual void useAbility(Character& character) = 0;
-        virtual void useAbility(Character& character, sf::RenderWindow& window) { useAbility(character); }
-        virtual void useAbility(Character& character, std::vector<Enemy>& enemies) {}
+        virtual void attack(sf::Vector2f position, sf::Vector2f direction) = 0;
+        // REIMPLEMENTAR PORQUE CAUSA REFERENCIAS CIRCULARES POR TODOS LADOS
+        // virtual void useAbility(Character& character) = 0;
+        // virtual void useAbility(Character& character, sf::RenderWindow& window) { useAbility(character); }
+        // virtual void useAbility(Character& character, std::vector<Enemy>& enemies) {}
         virtual AbilityType getAbilityType() const = 0;
 
         // Método para dibujar el arma, ajustado al personaje
-        virtual void draw(GameEngine& engine, const Character* character) = 0;
+        //virtual void draw(sf::Vector2f position, sf::Vector2f direction) = 0;
+        virtual void render() = 0;
+        virtual void renderOnPlayer(sf::Vector2f position, sf::Vector2f direction) = 0;
         virtual sf::Vector2f getPosition() const = 0;
         virtual void setPosition(float x, float y) = 0;
     };

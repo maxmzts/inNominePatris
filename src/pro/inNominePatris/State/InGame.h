@@ -8,7 +8,7 @@
 #include "Sword.h"
 #include "Lance.h"
 #include "Bow.h"
-#include "EnemyA.h"
+#include "Enemy.h"
 #include <SFML/Graphics.hpp>
 #include <vector>
 
@@ -20,7 +20,7 @@ private:
     TileMap tileMap;
     Character player;
     std::vector<Weapon*> weaponsOnGround;
-    std::vector<EnemyA*> enemies;
+    std::vector<Enemy*> enemies;
     sf::Clock clock;
 
     InGame(GameEngine& engine); // Constructor privado

@@ -5,7 +5,6 @@
 #include "TileMap.h" // clase TileMap para detección de colisiones
 #include "GameEngine.h" // clase GameEngine para la ventana y eventos
 #include "Weapon.h" // clase Weapon para armas
-#include "Enemy.h" // clase Enemy para detectar colisiones con enemigos
 #include <vector>
 #include "AbilityType.h"
 
@@ -19,8 +18,9 @@ public:
     
     void equipWeapon();
     sf::Vector2f getDirection() const;
-    void attack(std::vector<Enemy>& enemies);
-    void useAbility(sf::RenderWindow& window, std::vector<Enemy>& enemies);
+    // cambiar
+    // void attack(std::vector<Enemy>& enemies);
+    void useAbility(sf::RenderWindow& window);
     void startDash(float speed, float duration);
     sf::FloatRect getBounds() const;
     void addWeapon(Weapon* weapon);

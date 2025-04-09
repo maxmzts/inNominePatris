@@ -120,7 +120,7 @@ void Character::draw(GameEngine& engine) {
 
     // Dibujar el arma equipada
     if (equippedWeapon) {
-        equippedWeapon->draw(engine, this); // Pasar el personaje para ajustar la posición del arma
+        equippedWeapon->renderOnPlayer(getPosition(), getDirection()); // Pasar el posicion y direccion para ajustar la posición del arma
     }
 }
 
@@ -164,20 +164,24 @@ void Character::equipWeapon() {
     equippedWeapon = weapons[equippedIndex];
 }
 
-void Character::attack(std::vector<Enemy>& enemies) {
-    if (equippedWeapon) equippedWeapon->attack(*this, enemies);
-}
+// ESTO HAY QUE CAMBIARLO
+// lo que debería hacer es activar la hitbox y dejar que el InGame gestione las intersecciones
+// crea una referencia circular al enemigo 
+//
+// void Character::attack(std::vector<Enemy>& enemies) {
+//     if (equippedWeapon) equippedWeapon->attack(*this, enemies);
+// }
 
-void Character::useAbility(sf::RenderWindow& window, std::vector<Enemy>& enemies) {
-    if (equippedWeapon) {
-        if (equippedWeapon->getAbilityType() == AbilityType::Dash)
-            equippedWeapon->useAbility(*this);
-        else if (equippedWeapon->getAbilityType() == AbilityType::Teleport)  
-            equippedWeapon->useAbility(*this, window);
-        else if (equippedWeapon->getAbilityType() == AbilityType::Shot)
-            equippedWeapon->useAbility(*this, enemies);
-    }
-}
+// void Character::useAbility(sf::RenderWindow& window, std::vector<Enemy>& enemies) {
+//     if (equippedWeapon) {
+//         if (equippedWeapon->getAbilityType() == AbilityType::Dash)
+//             equippedWeapon->useAbility(*this);
+//         else if (equippedWeapon->getAbilityType() == AbilityType::Teleport)  
+//             equippedWeapon->useAbility(*this, window);
+//         else if (equippedWeapon->getAbilityType() == AbilityType::Shot)
+//             equippedWeapon->useAbility(*this, enemies);
+//     }
+// }
 
 void Character::startDash(float speed, float duration) {
     if (!isDashing) {

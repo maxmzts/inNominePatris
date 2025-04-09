@@ -33,7 +33,7 @@ class Portal {
 class Lance : public Weapon {
     public:
         Lance();
-        void attack(Character& character, std::vector<Enemy>& enemies) override;
+        void attack(sf::Vector2f position, sf::Vector2f direction std::vector<Enemy>& enemies) override;
         void useAbility(Character& character) override {}
         void useAbility(Character& character,  sf::RenderWindow& window) override;
         void DrawPortal(sf::RenderWindow& window);

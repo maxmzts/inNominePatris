@@ -38,11 +38,11 @@ InGame::InGame(GameEngine& engine)
     bow->setPosition(163, 578);
 
     //TESTS ENEMIGOS
-    EnemyA* enemy = nullptr;
+    Enemy* enemy = nullptr;
     //cargar enemigos
     for (size_t i = 0; i < 3; i++)
     {
-        enemy = new EnemyA("Goblin", 180.f, 100.f, sf::Vector2f(100.f*i,100.f*i));
+        enemy = new Enemy("Goblin", 180.f, 100.f, sf::Vector2f(100.f*i,100.f*i));
         enemy->setTexture(enemy_tex);
         enemies.push_back(enemy);
     }
@@ -132,7 +132,7 @@ void InGame::update(Game& game) {
     // Actualizar el jugador y otros elementos
     float deltaTime = engine.getDeltaTime();
     player.update(tileMap, deltaTime);
-    for(EnemyA* enemy : enemies){
+    for(Enemy* enemy : enemies){
         enemy->update(deltaTime,&player,&tileMap);
     }
 
@@ -165,10 +165,10 @@ void InGame::render(Game& game, sf::RenderWindow& window) {
     tileMap.draw(engine);
 
     for (Weapon* weapon : weaponsOnGround) {
-        weapon->draw(engine, nullptr);
+        weapon->render();
     }
 
-    for (EnemyA* enemy : enemies){
+    for (Enemy* enemy : enemies){
         enemy->render(engine.getWindow());
     }
 

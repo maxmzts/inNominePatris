@@ -34,14 +34,16 @@ class Portal {
 class Lance : public Weapon {
     public:
         Lance(GameEngine* engine);
-        void attack(Character& character, std::vector<Enemy>& enemies) override;
-        void useAbility(Character& character) override {}
-        void useAbility(Character& character,  sf::RenderWindow& window) override;
+        void attack(sf::Vector2f position, sf::Vector2f direction) override;
+        // void useAbility(Character& character) override {}
+        // void useAbility(Character& character,  sf::RenderWindow& window) override;
         void DrawPortal(sf::RenderWindow& window);
         void PortalUpdate(float deltaTime);
         void increaseAttackRange(float range);
         void increasePortalRange(float range);
-        void draw(GameEngine& engine, const Character* character) override;
+        //void draw(GameEngine& engine, sf::Vector2f position, sf::Vector2f direction) override;
+        void render() override;
+        void renderOnPlayer(sf::Vector2f position, sf::Vector2f direction) override;
         void setPosition(float x, float y) override { spriteFacade.setPosition(x, y); };
         sf::Vector2f getPosition() const override { return spriteFacade.getPosition(); };
         AbilityType getAbilityType() const override { return AbilityType::Teleport; };

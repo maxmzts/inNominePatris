@@ -4,13 +4,18 @@
 #include <string>
 #include <vector>
 
-// Declaraciones adelantadas para evitar dependencias circulares
-class Hitbox;
-class Hurtbox;
-class Character;
-class TileMap;
+#include "TileMap.h"
+#include "Hitbox.h"    
+#include "Hurtbox.h"
+#include "Character.h"
 
-class EnemyA {
+// Declaraciones adelantadas para evitar dependencias circulares
+// class Hitbox;
+// class Hurtbox;
+// class Character;
+// class TileMap;
+
+class Enemy {
 private:
     std::string m_name;
     float m_maxHealth;
@@ -56,8 +61,8 @@ private:
     
 public:
     // Constructor y destructor
-    EnemyA(const std::string& name, float maxHealth, float movementSpeed, const sf::Vector2f& startPosition);
-    ~EnemyA();
+    Enemy(const std::string& name, float maxHealth, float movementSpeed, const sf::Vector2f& startPosition);
+    ~Enemy();
     
     // Getters y setters básicos
     std::string getName() const { return m_name; }
@@ -71,7 +76,7 @@ public:
     
     // Funciones requeridas
     void takeDamage(float damage);
-    void attack(Character* player);
+    void attack();
     void move(const sf::Vector2f& direction);
     
     // Algoritmo A*
