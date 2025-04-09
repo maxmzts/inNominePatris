@@ -4,11 +4,12 @@
 #include "State.h"
 #include "GameEngine.h"
 #include "TileMap.h"
-#include "../character/Character.h"
-#include "../Weapon/Sword.h"
-#include "../Weapon/Lance.h"
-#include "../Weapon/Bow.h"
-#include "../interface/HUD.h"
+#include "Character.h"
+#include "Sword.h"
+#include "Lance.h"
+#include "Bow.h"
+#include "EnemyA.h"
+#include "HUD.h"
 #include <SFML/Graphics.hpp>
 #include <vector>
 
@@ -20,6 +21,7 @@ private:
     TileMap tileMap;
     Character player;
     std::vector<Weapon*> weaponsOnGround;
+    std::vector<EnemyA*> enemies;
     sf::Clock clock;
 
     InGame(GameEngine& engine); // Constructor privado

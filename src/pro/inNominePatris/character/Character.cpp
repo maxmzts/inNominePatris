@@ -41,49 +41,53 @@ void Character::handleInput(const sf::Event& event) {
 void Character::update(const TileMap& tilemap, float deltaTime) {
     sf::Vector2f moveDirection(0.f, 0.f);
 
-    // Detectar entrada del usuario
-    if (movingRight) {moveDirection.x += 1; setDirection(1.0f, 0.0f);}
-    if (movingLeft) {moveDirection.x -= 1; setDirection(-1.0f, 0.0f);}
-    if (movingUp) {moveDirection.y -= 1; setDirection(0.0f, -1.0f);}
-    if (movingDown) {moveDirection.y += 1; setDirection(0.0f, 1.0f);}
+    // Detectar entrada del usuario solo si no está en dash
+    if (!isDashing) {
+        if (movingRight) { moveDirection.x += 1; setDirection(1.0f, 0.0f); }
+        if (movingLeft) { moveDirection.x -= 1; setDirection(-1.0f, 0.0f); }
+        if (movingUp) { moveDirection.y -= 1; setDirection(0.0f, -1.0f); }
+        if (movingDown) { moveDirection.y += 1; setDirection(0.0f, 1.0f); }
 
-    // Normalizar el vector de movimiento en caso de movimiento diagonal
-    if (moveDirection.x != 0 && moveDirection.y != 0) {
-        moveDirection *= 0.7071f; // sqrt(2)/2 para mantener velocidad uniforme
+        // Normalizar el vector de movimiento en caso de movimiento diagonal
+        if (moveDirection.x != 0 && moveDirection.y != 0) {
+            moveDirection *= 0.7071f; // sqrt(2)/2 para mantener velocidad uniforme
+        }
+
+        // Aplicar aceleración si hay movimiento
+        if (moveDirection.x != 0) {
+            velocity.x += moveDirection.x * acceleration * deltaTime;
+            if (velocity.x > speed) velocity.x = speed;
+            if (velocity.x < -speed) velocity.x = -speed;
+        } else {
+            // Aplicar desaceleración si no hay entrada en X
+            if (velocity.x > 0) {
+                velocity.x -= deceleration * deltaTime;
+                if (velocity.x < 0) velocity.x = 0;
+            }
+            if (velocity.x < 0) {
+                velocity.x += deceleration * deltaTime;
+                if (velocity.x > 0) velocity.x = 0;
+            }
+        }
+
+        if (moveDirection.y != 0) {
+            velocity.y += moveDirection.y * acceleration * deltaTime;
+            if (velocity.y > speed) velocity.y = speed;
+            if (velocity.y < -speed) velocity.y = -speed;
+        } else {
+            // Aplicar desaceleración si no hay entrada en Y
+            if (velocity.y > 0) {
+                velocity.y -= deceleration * deltaTime;
+                if (velocity.y < 0) velocity.y = 0;
+            }
+            if (velocity.y < 0) {
+                velocity.y += deceleration * deltaTime;
+                if (velocity.y > 0) velocity.y = 0;
+            }
+        }
     }
 
-    // Aplicar aceleración si hay movimiento
-    if (moveDirection.x != 0) {
-        velocity.x += moveDirection.x * acceleration;
-        if (velocity.x > speed) velocity.x = speed;
-        if (velocity.x < -speed) velocity.x = -speed;
-    } else {
-        // Aplicar desaceleración si no hay entrada en X
-        if (velocity.x > 0) {
-            velocity.x -= deceleration;
-            if (velocity.x < 0) velocity.x = 0;
-        }
-        if (velocity.x < 0) {
-            velocity.x += deceleration;
-            if (velocity.x > 0) velocity.x = 0;
-        }
-    }
-
-    if (moveDirection.y != 0) {
-        velocity.y += moveDirection.y * acceleration;
-        if (velocity.y > speed) velocity.y = speed;
-        if (velocity.y < -speed) velocity.y = -speed;
-    } else {
-        // Aplicar desaceleración si no hay entrada en Y
-        if (velocity.y > 0) {
-            velocity.y -= deceleration;
-            if (velocity.y < 0) velocity.y = 0;
-        }
-        if (velocity.y < 0) {
-            velocity.y += deceleration;
-            if (velocity.y > 0) velocity.y = 0;
-        }
-    }
+    // Manejar el dash
     if (isDashing) {
         if (dashTimer.getElapsedTime().asSeconds() > dashDuration) {
             isDashing = false;
@@ -94,13 +98,19 @@ void Character::update(const TileMap& tilemap, float deltaTime) {
 
     // **Comprobación de colisiones antes de mover al personaje**
     sf::FloatRect nextBounds = sprite.getGlobalBounds();
-    nextBounds.left += velocity.x;
-    nextBounds.top += velocity.y;
+    nextBounds.left += velocity.x * deltaTime;
+    nextBounds.top += velocity.y * deltaTime;
 
     if (!tilemap.isColliding(nextBounds)) {
-        sprite.move(velocity);
+        sprite.move(velocity * deltaTime);
     } else {
-        velocity = {0, 0}; // Detiene el movimiento en caso de colisión
+        if (isDashing) {
+            // Si hay colisión durante el dash, detener el dash
+            isDashing = false;
+            velocity = {0, 0};
+        } else {
+            velocity = {0, 0}; // Detiene el movimiento en caso de colisión
+        }
     }
 
     // Ajustar la textura según la dirección del movimiento

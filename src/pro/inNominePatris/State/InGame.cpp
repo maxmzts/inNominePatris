@@ -1,16 +1,25 @@
 #include "InGame.h"
 #include "../Game.h"
 #include "../character/Character.h"
+#include "../interface/HUD.h"
 #include <iostream>
 #include <algorithm> // Para std::remove_if
 
 InGame* InGame::instance = nullptr;
 
+/** 
+ * Constructor de InGame. Carga el motor y el lobby con el jugador.
+ */
 InGame::InGame(GameEngine& engine)
     : engine(engine), player("./resources/sprites.png"), hud(800, 600) {
     // Cargar el mapa
-    if (!tileMap.loadFromFile("./maps/lobby.tmx", engine)) {
+    if (!tileMap.loadFromFile("./maps/world_1.tmx", engine)) {
         std::cerr << "Error cargando el mapa\n";
+        exit(-1);
+    }
+    sf::Texture enemy_tex;
+    if (!enemy_tex.loadFromFile("resources/sprites.png")) {
+        std::cerr << "Error cargando la imagen sprites.png";
         exit(-1);
     }
 
@@ -28,6 +37,17 @@ InGame::InGame(GameEngine& engine)
     sword->setPosition(183, 530);
     lance->setPosition(234, 500);
     bow->setPosition(163, 578);
+
+    //TESTS ENEMIGOS
+    EnemyA* enemy = nullptr;
+    //cargar enemigos
+    for (size_t i = 0; i < 3; i++)
+    {
+        enemy = new EnemyA("Goblin", 180.f, 100.f, sf::Vector2f(100.f*i,100.f*i));
+        enemy->setTexture(enemy_tex);
+        enemies.push_back(enemy);
+    }
+    
 }
 
 InGame* InGame::getInstance(GameEngine& engine) {
@@ -37,6 +57,11 @@ InGame* InGame::getInstance(GameEngine& engine) {
     return instance;
 }
 
+/**
+ * Update de InGame
+ * Captura eventos del jugador (armas, cambiar de arma, etc).
+ * Se ejecuta cada frame.
+ */
 void InGame::update(Game& game) {
     sf::RenderWindow& window = game.getWindow();
     sf::Event event;
@@ -55,35 +80,59 @@ void InGame::update(Game& game) {
             player.spawnAt(tileMap, randomX, randomY);
         }
 
+
+
+
         // Interacción con armas (tecla E)
+        
         if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::E) {
             sf::Vector2f playerPosition = player.getPosition();
-
+            
+            // Primero comprobar interacción con tiles
+            player.interact(tileMap);
+            
+            // Verificar si el jugador está cerca de un arma en el suelo
             auto it = std::find_if(weaponsOnGround.begin(), weaponsOnGround.end(), [&](Weapon* weapon) {
                 sf::Vector2f weaponPosition = weapon->getPosition();
                 return std::abs(playerPosition.x - weaponPosition.x) < 50 &&
                        std::abs(playerPosition.y - weaponPosition.y) < 50;
             });
-
+        
             if (it != weaponsOnGround.end()) {
                 Weapon* weapon = *it;
                 sf::Vector2f weaponPos = weapon->getPosition();
-
+                
                 if (player.getWeaponCount() < 2) {
+                    // Player has 0 or 1 weapons, just add the new one
                     player.addWeaponWithPosition(weapon, weaponPos);
-                    weaponsOnGround.erase(it);
+                    weaponsOnGround.erase(it); // Remove from ground
                     player.equipWeapon();
+                    std::cout << "Arma equipada!" << std::endl;
                 } else {
+                    // Player already has 2 weapons, replace the first one
                     sf::Vector2f oldWeaponPos;
                     Weapon* oldWeapon = player.removeFirstWeapon(oldWeaponPos);
+                    
+                    // Add the new weapon
                     player.addWeaponWithPosition(weapon, weaponPos);
-                    weaponsOnGround.erase(it);
+                    weaponsOnGround.erase(it); // Remove from ground
+                    
+                    // Return old weapon to ground
                     oldWeapon->setPosition(oldWeaponPos.x, oldWeaponPos.y);
                     weaponsOnGround.push_back(oldWeapon);
+                    
                     player.equipWeapon();
+                    std::cout << "Arma reemplazada y equipada!" << std::endl;
                 }
             }
         }
+    
+
+
+
+
+
+
 
         // Cambiar de arma (tecla Q)
         if (player.getEquippedWeapon() != nullptr) {
@@ -97,12 +146,10 @@ void InGame::update(Game& game) {
         if (event.type == sf::Event::MouseButtonPressed) {
             if (event.mouseButton.button == sf::Mouse::Left) {
                 // Ataque normal
-                std::vector<Enemy> enemies; // Deberías tener una lista real de enemigos
-                player.attack(enemies);
+                ///////////////////////////////////////////////////////////player.attack(enemies);
             } else if (event.mouseButton.button == sf::Mouse::Right) {
                 // Usar habilidad especial
-                std::vector<Enemy> enemies; // Deberías tener una lista real de enemigos
-                player.useAbility(window, enemies);
+                //////////////////////////////////////////////////////////player.useAbility(window, enemies);
             }
         }
     }
@@ -110,10 +157,22 @@ void InGame::update(Game& game) {
     // Actualizar el jugador y otros elementos
     float deltaTime = engine.getDeltaTime();
     player.update(tileMap, deltaTime);
+    for(EnemyA* enemy : enemies){
+        enemy->update(deltaTime,&player,&tileMap);
+    }
 
     // Actualizar la posición de la cámara para seguir al jugador
     engine.setViewCenter(player.getPosition());
 
+    // Actualizar armas específicas si están equipadas
+    Weapon* equippedWeapon = player.getEquippedWeapon();
+    if (equippedWeapon != nullptr) {
+        if (Bow* bow = dynamic_cast<Bow*>(equippedWeapon)) {
+            ////////////////////////////////////////////////////////bow->update(deltaTime, enemies); // Actualizar el arco
+        } else if (Lance* lance = dynamic_cast<Lance*>(equippedWeapon)) {
+            lance->PortalUpdate(deltaTime); // Actualizar la lanza
+        }
+    }
     hud.update(player);
 }
 
@@ -124,6 +183,9 @@ InGame::~InGame() {
     weaponsOnGround.clear();
 }
 
+/**
+ * Renderiza los elementos de InGame
+ */
 void InGame::render(Game& game, sf::RenderWindow& window) {
     engine.clear();
     tileMap.draw(engine);
@@ -132,11 +194,14 @@ void InGame::render(Game& game, sf::RenderWindow& window) {
         weapon->draw(engine, nullptr);
     }
 
+    for (EnemyA* enemy : enemies){
+        enemy->render(engine.getWindow());
+    }
+
     player.draw(engine);
 
     // Mostrar el HUD
     hud.draw(window, player);
 
     engine.display();
-
 }

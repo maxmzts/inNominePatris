@@ -146,6 +146,11 @@ Estoy realizando la interaccion (que todavia no funciona al 100%) y está el lob
 ## 20250402 DavidGonzález, JorgePelegrin, EstrellaDominguez @(30 min)
 Creacion de la rama developer correctamente y creación de la estrcutura de carpetas
 
+## 20250402 DavidGonzález, JorgePelegrin, EstrellaDominguez, MáximoMartínez @(30 min)
+Definición del diagrama de clases del proyecto.
+
+## 20250402 MáximoMartínez @(1h)
+He descartado absolutamente todo lo que he hecho hasta el momento y me he puesto a ver qué puedo hacer e investigar.
 
 ## 20250402 JorgePelegrin @(1h)
 He creado varios objetos y he añadido el portal animado (la habilidad de la lanza).
@@ -168,6 +173,8 @@ He colocado las armas dentro del lobby para poder equiparlas utilizando el boton
 ## 20250402 DavidGonzález @(2h)
 He metido el mapa del mundo 1 que está en proceso. He introducido una funcion para que el jugador spawnee en la parte del mapa que se le indique
 
+## 20250408 MáximoMartínez @(4h)
+He empezado a diseñar los enemigos del videojuego creando una clase definitiva EnemyA (la "A" para no tener conflicto con la clase prototipo que no hemos eliminado todavía) con unas clases totalmente recodificadas de Hitbox y Hurtbox. Luego además he implementado como he podido el algoritmo A* para que vayan hacia el jugador. NADA DE ESTO ESTÁ TESTEADO a fecha de este log, por lo que he hecho commit pero no he pusheado por si las moscas, simplemente para dejar constancia.
 ## 20250407 EstrellaDomínguez @(4h)
 He modificado todos los códigos para aplicar correctamente el patrón State.
 Ahora hay una carpeta State con todos los estados y desde el main se controla el estado inicial.
@@ -177,5 +184,8 @@ Hay un par de fallos: La ventana del menú no se cierra cuando se abre el lobby,
 He intentado arreglar el error de las ventanas pero no he conseguido nada.
 He cambiado el main para controlar mejor algunas excepciones y he cambiado el menú configuración para que se controle con WASD en vez de Up y Down.
 
-## 20250407 JorgePelegrin @(1h 30min)
+## 20250408 JorgePelegrin @(1h 30min)
 He arreglado el error de las dos ventanas, y ahora funciona el InGame perfectamente.
+
+## 20250408 DavidGonzález @(6h)
+Interacción implementada con éxito e incluida dentro del patrón state + modificaciones en world_1 que sigue en proceso

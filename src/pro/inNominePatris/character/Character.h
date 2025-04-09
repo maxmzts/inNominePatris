@@ -38,6 +38,8 @@ public:
     void setDirection(float x, float y);
     // para spawn del jugador
     void spawnAt(const TileMap& tilemap, float x, float y);
+    void interact(TileMap& tilemap);
+
 
     // para la vida del jugador
     void setHealth(int health);
