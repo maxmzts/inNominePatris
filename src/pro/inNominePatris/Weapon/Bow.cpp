@@ -77,7 +77,7 @@ void Bow::update(float deltaTime, std::vector<Enemy>& enemies) {
     arrows.erase(std::remove_if(arrows.begin(), arrows.end(),
         [](const Arrow& arrow) {
             return arrow.isMarkedForRemoval() ||
-                   arrow.getBounds().left > 640 || arrow.getBounds().top > 480 ||
+                   arrow.getBounds().left > 800 || arrow.getBounds().top > 600 ||
                    arrow.getBounds().left + arrow.getBounds().width < 0 ||
                    arrow.getBounds().top + arrow.getBounds().height < 0;
         }),

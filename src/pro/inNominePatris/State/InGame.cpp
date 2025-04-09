@@ -37,6 +37,8 @@ InGame* InGame::getInstance(GameEngine& engine) {
     return instance;
 }
 
+std::vector<Enemy> enemies;
+
 void InGame::update(Game& game) {
     sf::RenderWindow& window = game.getWindow();
     sf::Event event;
@@ -97,11 +99,9 @@ void InGame::update(Game& game) {
         if (event.type == sf::Event::MouseButtonPressed) {
             if (event.mouseButton.button == sf::Mouse::Left) {
                 // Ataque normal
-                std::vector<Enemy> enemies; // Deberías tener una lista real de enemigos
                 player.attack(enemies);
             } else if (event.mouseButton.button == sf::Mouse::Right) {
                 // Usar habilidad especial
-                std::vector<Enemy> enemies; // Deberías tener una lista real de enemigos
                 player.useAbility(window, enemies);
             }
         }
@@ -113,6 +113,16 @@ void InGame::update(Game& game) {
 
     // Actualizar la posición de la cámara para seguir al jugador
     engine.setViewCenter(player.getPosition());
+
+    // Actualizar armas específicas si están equipadas
+    Weapon* equippedWeapon = player.getEquippedWeapon();
+    if (equippedWeapon != nullptr) {
+        if (Bow* bow = dynamic_cast<Bow*>(equippedWeapon)) {
+            bow->update(deltaTime, enemies); // Actualizar el arco
+        } else if (Lance* lance = dynamic_cast<Lance*>(equippedWeapon)) {
+            lance->PortalUpdate(deltaTime); // Actualizar la lanza
+        }
+    }
 }
 
 InGame::~InGame() {
