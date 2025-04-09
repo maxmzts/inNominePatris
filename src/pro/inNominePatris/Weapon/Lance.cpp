@@ -6,6 +6,7 @@
 
 Lance::Lance(GameEngine* engine) : Weapon(engine), isPortalDropped(false), attackRange(100.0f), PortalRange(300.0f), portal() {
     spriteFacade.loadTexture("./resources/Weapons/lance.png"); // Cargar textura usando el Façade
+    name = "Lance"; // Nombre del arma
 }
 
 void Lance::attack(Character& character, std::vector<Enemy>& enemies){

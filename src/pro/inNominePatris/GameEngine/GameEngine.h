@@ -40,4 +40,12 @@ public:
     void setViewCenter(const sf::Vector2f& center);
     void resetView();
     float getDeltaTime();
+
+    void drawRectangle(const sf::RectangleShape& rectangle) {
+        if(ownsWindow) {
+            window.draw(rectangle);
+        } else {
+            existingWindow->draw(rectangle);
+        }
+    }
 };

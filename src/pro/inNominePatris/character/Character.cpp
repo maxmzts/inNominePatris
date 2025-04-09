@@ -2,7 +2,9 @@
 #include <iostream>
 
 Character::Character(const std::string& textureFile) 
-    : speed(10.75f), acceleration(5.1f), deceleration(5.15f), equippedWeapon(nullptr), isDashing(false), dashSpeed(0.0f), dashDuration(0.0f), weapons(),  equippedIndex(0), direction(0.f, 0.f) {
+: speed(10.75f), acceleration(5.1f), deceleration(5.15f), equippedWeapon(nullptr), 
+isDashing(false), dashSpeed(0.0f), dashDuration(0.0f), weapons(), equippedIndex(0), 
+direction(0.f, 0.f), maxHealth(100), currentHealth(100) {
     
     if (!texture.loadFromFile(textureFile)) {
         std::cerr << "Error cargando la textura" << std::endl;
@@ -122,6 +124,16 @@ void Character::draw(GameEngine& engine) {
     if (equippedWeapon) {
         equippedWeapon->draw(engine, this); // Pasar el personaje para ajustar la posición del arma
     }
+
+    // Dibujar barra de vida sobre el personaje
+    sf::RectangleShape healthBar(sf::Vector2f(50, 5));
+    healthBar.setFillColor(sf::Color::Green);
+    healthBar.setPosition(sprite.getPosition().x - 25, sprite.getPosition().y - 40);
+
+    float healthPercentage = static_cast<float>(currentHealth) / maxHealth;
+    healthBar.setSize(sf::Vector2f(50 * healthPercentage, 5));
+
+    engine.drawRectangle(healthBar);
 }
 
 
@@ -265,4 +277,24 @@ Weapon* Character::removeFirstWeapon(sf::Vector2f& outOriginalPosition) {
     if (!weapons.empty()) equippedIndex = 0;
     
     return removedWeapon;
+}
+
+void Character::setHealth(int health) {
+    currentHealth = std::max(0, std::min(health, maxHealth)); // Asegura que la vida esté entre 0 y maxHealth
+}
+
+int Character::getHealth() const {
+    return currentHealth;
+}
+
+int Character::getMaxHealth() const {
+    return maxHealth;
+}
+
+void Character::takeDamage(int damage) {
+    setHealth(currentHealth - damage);
+}
+
+void Character::heal(int amount) {
+    setHealth(currentHealth + amount);
 }

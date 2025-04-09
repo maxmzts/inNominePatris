@@ -7,7 +7,7 @@
 InGame* InGame::instance = nullptr;
 
 InGame::InGame(GameEngine& engine)
-    : engine(engine), player("./resources/sprites.png") {
+    : engine(engine), player("./resources/sprites.png"), hud(800, 600) {
     // Cargar el mapa
     if (!tileMap.loadFromFile("./maps/lobby.tmx", engine)) {
         std::cerr << "Error cargando el mapa\n";
@@ -113,6 +113,8 @@ void InGame::update(Game& game) {
 
     // Actualizar la posición de la cámara para seguir al jugador
     engine.setViewCenter(player.getPosition());
+
+    hud.update(player);
 }
 
 InGame::~InGame() {
@@ -131,5 +133,10 @@ void InGame::render(Game& game, sf::RenderWindow& window) {
     }
 
     player.draw(engine);
+
+    // Mostrar el HUD
+    hud.draw(window, player);
+
     engine.display();
+
 }

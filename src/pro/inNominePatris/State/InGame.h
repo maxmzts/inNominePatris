@@ -8,6 +8,7 @@
 #include "../Weapon/Sword.h"
 #include "../Weapon/Lance.h"
 #include "../Weapon/Bow.h"
+#include "../interface/HUD.h"
 #include <SFML/Graphics.hpp>
 #include <vector>
 
@@ -22,6 +23,8 @@ private:
     sf::Clock clock;
 
     InGame(GameEngine& engine); // Constructor privado
+
+    HUD hud; // Instancia de la interfaz de usuario
 
 public:
     static InGame* getInstance(GameEngine& engine); // Método para obtener la instancia
