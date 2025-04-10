@@ -38,6 +38,15 @@ public:
     void setDirection(float x, float y);
     // para spawn del jugador
     void spawnAt(const TileMap& tilemap, float x, float y);
+    void interact(TileMap& tilemap);
+
+
+    // para la vida del jugador
+    void setHealth(int health);
+    int getHealth() const;
+    int getMaxHealth() const;
+    void takeDamage(int damage);
+    void heal(int amount);
 
     
 
@@ -50,6 +59,9 @@ private:
     float acceleration;
     float deceleration;
     sf::Vector2f direction;
+
+    int maxHealth;
+    int currentHealth;
 
     bool movingRight = false;
     bool movingLeft = false;

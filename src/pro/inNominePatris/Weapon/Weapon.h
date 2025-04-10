@@ -8,6 +8,7 @@
 class Weapon {
     protected:
         GameEngine* engine;
+        std::string name;
     
     public:
         Weapon(GameEngine* engine) : engine(engine) {}
@@ -26,6 +27,9 @@ class Weapon {
         virtual void renderOnPlayer(sf::Vector2f position, sf::Vector2f direction) = 0;
         virtual sf::Vector2f getPosition() const = 0;
         virtual void setPosition(float x, float y) = 0;
+
+        // Métodos para obtener y establecer el nombre del arma
+        const std::string& getName() const { return name; }
     };
 
 #endif // !WEAPON_H

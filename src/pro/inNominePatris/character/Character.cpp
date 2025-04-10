@@ -2,7 +2,9 @@
 #include <iostream>
 
 Character::Character(const std::string& textureFile) 
-    : speed(10.75f), acceleration(5.1f), deceleration(5.15f), equippedWeapon(nullptr), isDashing(false), dashSpeed(0.0f), dashDuration(0.0f), weapons(),  equippedIndex(0), direction(0.f, 0.f) {
+: speed(10.75f), acceleration(5.1f), deceleration(5.15f), equippedWeapon(nullptr), 
+isDashing(false), dashSpeed(0.0f), dashDuration(0.0f), weapons(), equippedIndex(0), 
+direction(0.f, 0.f), maxHealth(100), currentHealth(100) {
     
     if (!texture.loadFromFile(textureFile)) {
         std::cerr << "Error cargando la textura" << std::endl;
@@ -39,49 +41,53 @@ void Character::handleInput(const sf::Event& event) {
 void Character::update(const TileMap& tilemap, float deltaTime) {
     sf::Vector2f moveDirection(0.f, 0.f);
 
-    // Detectar entrada del usuario
-    if (movingRight) {moveDirection.x += 1; setDirection(1.0f, 0.0f);}
-    if (movingLeft) {moveDirection.x -= 1; setDirection(-1.0f, 0.0f);}
-    if (movingUp) {moveDirection.y -= 1; setDirection(0.0f, -1.0f);}
-    if (movingDown) {moveDirection.y += 1; setDirection(0.0f, 1.0f);}
+    // Detectar entrada del usuario solo si no está en dash
+    if (!isDashing) {
+        if (movingRight) { moveDirection.x += 1; setDirection(1.0f, 0.0f); }
+        if (movingLeft) { moveDirection.x -= 1; setDirection(-1.0f, 0.0f); }
+        if (movingUp) { moveDirection.y -= 1; setDirection(0.0f, -1.0f); }
+        if (movingDown) { moveDirection.y += 1; setDirection(0.0f, 1.0f); }
 
-    // Normalizar el vector de movimiento en caso de movimiento diagonal
-    if (moveDirection.x != 0 && moveDirection.y != 0) {
-        moveDirection *= 0.7071f; // sqrt(2)/2 para mantener velocidad uniforme
+        // Normalizar el vector de movimiento en caso de movimiento diagonal
+        if (moveDirection.x != 0 && moveDirection.y != 0) {
+            moveDirection *= 0.7071f; // sqrt(2)/2 para mantener velocidad uniforme
+        }
+
+        // Aplicar aceleración si hay movimiento
+        if (moveDirection.x != 0) {
+            velocity.x += moveDirection.x * acceleration * deltaTime;
+            if (velocity.x > speed) velocity.x = speed;
+            if (velocity.x < -speed) velocity.x = -speed;
+        } else {
+            // Aplicar desaceleración si no hay entrada en X
+            if (velocity.x > 0) {
+                velocity.x -= deceleration * deltaTime;
+                if (velocity.x < 0) velocity.x = 0;
+            }
+            if (velocity.x < 0) {
+                velocity.x += deceleration * deltaTime;
+                if (velocity.x > 0) velocity.x = 0;
+            }
+        }
+
+        if (moveDirection.y != 0) {
+            velocity.y += moveDirection.y * acceleration * deltaTime;
+            if (velocity.y > speed) velocity.y = speed;
+            if (velocity.y < -speed) velocity.y = -speed;
+        } else {
+            // Aplicar desaceleración si no hay entrada en Y
+            if (velocity.y > 0) {
+                velocity.y -= deceleration * deltaTime;
+                if (velocity.y < 0) velocity.y = 0;
+            }
+            if (velocity.y < 0) {
+                velocity.y += deceleration * deltaTime;
+                if (velocity.y > 0) velocity.y = 0;
+            }
+        }
     }
 
-    // Aplicar aceleración si hay movimiento
-    if (moveDirection.x != 0) {
-        velocity.x += moveDirection.x * acceleration;
-        if (velocity.x > speed) velocity.x = speed;
-        if (velocity.x < -speed) velocity.x = -speed;
-    } else {
-        // Aplicar desaceleración si no hay entrada en X
-        if (velocity.x > 0) {
-            velocity.x -= deceleration;
-            if (velocity.x < 0) velocity.x = 0;
-        }
-        if (velocity.x < 0) {
-            velocity.x += deceleration;
-            if (velocity.x > 0) velocity.x = 0;
-        }
-    }
-
-    if (moveDirection.y != 0) {
-        velocity.y += moveDirection.y * acceleration;
-        if (velocity.y > speed) velocity.y = speed;
-        if (velocity.y < -speed) velocity.y = -speed;
-    } else {
-        // Aplicar desaceleración si no hay entrada en Y
-        if (velocity.y > 0) {
-            velocity.y -= deceleration;
-            if (velocity.y < 0) velocity.y = 0;
-        }
-        if (velocity.y < 0) {
-            velocity.y += deceleration;
-            if (velocity.y > 0) velocity.y = 0;
-        }
-    }
+    // Manejar el dash
     if (isDashing) {
         if (dashTimer.getElapsedTime().asSeconds() > dashDuration) {
             isDashing = false;
@@ -92,13 +98,19 @@ void Character::update(const TileMap& tilemap, float deltaTime) {
 
     // **Comprobación de colisiones antes de mover al personaje**
     sf::FloatRect nextBounds = sprite.getGlobalBounds();
-    nextBounds.left += velocity.x;
-    nextBounds.top += velocity.y;
+    nextBounds.left += velocity.x * deltaTime;
+    nextBounds.top += velocity.y * deltaTime;
 
     if (!tilemap.isColliding(nextBounds)) {
-        sprite.move(velocity);
+        sprite.move(velocity * deltaTime);
     } else {
-        velocity = {0, 0}; // Detiene el movimiento en caso de colisión
+        if (isDashing) {
+            // Si hay colisión durante el dash, detener el dash
+            isDashing = false;
+            velocity = {0, 0};
+        } else {
+            velocity = {0, 0}; // Detiene el movimiento en caso de colisión
+        }
     }
 
     // Ajustar la textura según la dirección del movimiento
@@ -122,6 +134,16 @@ void Character::draw(GameEngine& engine) {
     if (equippedWeapon) {
         equippedWeapon->renderOnPlayer(getPosition(), getDirection()); // Pasar el posicion y direccion para ajustar la posición del arma
     }
+
+    // Dibujar barra de vida sobre el personaje
+    sf::RectangleShape healthBar(sf::Vector2f(50, 5));
+    healthBar.setFillColor(sf::Color::Green);
+    healthBar.setPosition(sprite.getPosition().x - 25, sprite.getPosition().y - 40);
+
+    float healthPercentage = static_cast<float>(currentHealth) / maxHealth;
+    healthBar.setSize(sf::Vector2f(50 * healthPercentage, 5));
+
+    engine.drawRectangle(healthBar);
 }
 
 
@@ -269,4 +291,24 @@ Weapon* Character::removeFirstWeapon(sf::Vector2f& outOriginalPosition) {
     if (!weapons.empty()) equippedIndex = 0;
     
     return removedWeapon;
+}
+
+void Character::setHealth(int health) {
+    currentHealth = std::max(0, std::min(health, maxHealth)); // Asegura que la vida esté entre 0 y maxHealth
+}
+
+int Character::getHealth() const {
+    return currentHealth;
+}
+
+int Character::getMaxHealth() const {
+    return maxHealth;
+}
+
+void Character::takeDamage(int damage) {
+    setHealth(currentHealth - damage);
+}
+
+void Character::heal(int amount) {
+    setHealth(currentHealth + amount);
 }

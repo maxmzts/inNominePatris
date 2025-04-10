@@ -184,7 +184,7 @@ Hay un par de fallos: La ventana del menú no se cierra cuando se abre el lobby,
 He intentado arreglar el error de las ventanas pero no he conseguido nada.
 He cambiado el main para controlar mejor algunas excepciones y he cambiado el menú configuración para que se controle con WASD en vez de Up y Down.
 
-## 20250407 JorgePelegrin @(1h 30min)
+## 20250408 JorgePelegrin @(1h 30min)
 He arreglado el error de las dos ventanas, y ahora funciona el InGame perfectamente.
 
 ## 20250409 MáximoMartínez @(3h)
@@ -193,3 +193,9 @@ He arreglado el error de las dos ventanas, y ahora funciona el InGame perfectame
 (1h) He conseguido aislar el problema de las referencias circulares. Las he eliminado de raíz donde era evidente que no hacían falta y la funcionalidad que se buscaba se debía gestionar a través de InGame. Las funcionalidades que no bastaba con quitar una parte y necesitan reimplementarse las he comentado.
 
 (1h) He cambiado Enemy para que use SpriteFaçade. A parte he descargado unos sprites para un enemigo murciélago y he implementado la animación de este. Nota: necesitamos un sistema global para animaciones. Olvidé hacer commit de esto último el mismo día.
+
+## 20250408 DavidGonzález @(6h)
+Interacción implementada con éxito e incluida dentro del patrón state + modificaciones en world_1 que sigue en proceso
+
+## 20250408 EstrellaDomínguez @(2h)
+He implementado el HUD. Ahora el personaje tiene barra de vida y hay un inventario que indica que arma tiene seleccionada.

@@ -14,6 +14,9 @@ public:
     
     // verificar posición de spawn válida
     sf::Vector2f getSpawnPosition(float x, float y) const;
+    bool isPlayerInteractingWithTile(const sf::FloatRect& playerBounds, int& outTileId) const;
+    void addInteractiveTile(int id, const sf::FloatRect& rect);
+
     
 private:
     struct TileSet {
@@ -27,8 +30,15 @@ private:
         const sf::Texture* tilesetTexture;
     };
 
+    struct InteractiveTile {
+        int id;             // ID del tile interactivo
+        sf::FloatRect rect; // Rectángulo de colisión
+    };
+
     std::vector<Layer> m_layers;
     std::unordered_map<int, TileSet> m_tilesets;
+    std::vector<InteractiveTile> interactiveTiles;
+
     int m_mapWidth, m_mapHeight;
 
     std::vector<sf::FloatRect> collisionBlocks; // ALMACENA LOS BLOQUES DE COLISIÓN

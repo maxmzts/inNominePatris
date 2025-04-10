@@ -7,7 +7,7 @@
 
 Bow::Bow(GameEngine* engine) : Weapon(engine), arrowSpeed(500.0f), abilityArrowCount(5), abilitySpreadAngle(45.0f) {
     spriteFacade.loadTexture("./resources/Weapons/Bow.png");
-
+    name = "Bow"; // Nombre del arma
 }
 
 void Bow::attack(sf::Vector2f position, sf::Vector2f direction) {

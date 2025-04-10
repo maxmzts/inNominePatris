@@ -9,6 +9,7 @@
 #include "Lance.h"
 #include "Bow.h"
 #include "Enemy.h"
+#include "HUD.h"
 #include <SFML/Graphics.hpp>
 #include <vector>
 
@@ -24,6 +25,8 @@ private:
     sf::Clock clock;
 
     InGame(GameEngine& engine); // Constructor privado
+
+    HUD hud; // Instancia de la interfaz de usuario
 
 public:
     static InGame* getInstance(GameEngine& engine); // Método para obtener la instancia
