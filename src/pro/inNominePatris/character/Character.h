@@ -5,6 +5,7 @@
 #include "TileMap.h" // clase TileMap para detección de colisiones
 #include "GameEngine.h" // clase GameEngine para la ventana y eventos
 #include "Weapon.h" // clase Weapon para armas
+#include "Hurtbox.h"
 #include <vector>
 #include "AbilityType.h"
 
@@ -77,8 +78,7 @@ private:
     std::vector<Weapon*> weapons; // Máximo 2 armas
     int equippedIndex = 0; // Índice del arma equipada
     std::vector<sf::Vector2f> weaponOriginalPositions; // Posiciones de las armas en el suelo
-
-    
+    Hurtbox* hurtbox;
 };
 
 #endif // CHARACTER_H

@@ -18,6 +18,8 @@ direction(0.f, 0.f), maxHealth(100), currentHealth(100) {
     sprite.setScale(0.6f, 0.6f);
 
     velocity = sf::Vector2f(0.f, 0.f);
+
+    hurtbox = new Hurtbox(sf::Vector2f(60.0f, 60.0f), sf::Vector2f(0.0f, 0.0f));
 }
 
 void Character::handleInput(const sf::Event& event) {
@@ -40,6 +42,8 @@ void Character::handleInput(const sf::Event& event) {
 
 void Character::update(const TileMap& tilemap, float deltaTime) {
     sf::Vector2f moveDirection(0.f, 0.f);
+
+    hurtbox->setPosition(getPosition());  // Centrado en la posición del enemigo
 
     // Detectar entrada del usuario solo si no está en dash
     if (!isDashing) {
@@ -127,6 +131,9 @@ void Character::update(const TileMap& tilemap, float deltaTime) {
 }
 
 void Character::draw(GameEngine& engine) {
+    /////// DEBUG
+    hurtbox->render(engine.getWindow());
+    
     // Dibujar el personaje
     engine.drawSprite(sprite);
 

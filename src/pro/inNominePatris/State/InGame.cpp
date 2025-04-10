@@ -167,6 +167,18 @@ void InGame::update(Game& game) {
             lance->PortalUpdate(deltaTime); // Actualizar la lanza
         }
     }
+
+    // TEST SISTEMA DE COMBATE
+    /**
+     * for (hitbox enemigo: enemigos){
+     *     player->hurtbox.intersect(hitbox)
+     * }
+     * for (hurtbox enemigo: enemigos){
+     *     player->arma->hitbox.intersect(hurtbox)
+     * }
+     */
+
+
     hud.update(player);
 
     //// TEST DE VISUAL EFFECTS
