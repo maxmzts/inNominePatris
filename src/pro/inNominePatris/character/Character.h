@@ -41,15 +41,14 @@ public:
     void spawnAt(const TileMap& tilemap, float x, float y);
     void interact(TileMap& tilemap);
 
-
     // para la vida del jugador
     void setHealth(int health);
     int getHealth() const;
     int getMaxHealth() const;
     void takeDamage(int damage);
     void heal(int amount);
-
-    
+    void hurt(int amount) { setHealth(currentHealth - amount); }
+    Hurtbox* getHurtbox() { return hurtbox; }
 
 private:
     sf::Texture texture;
