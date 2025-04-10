@@ -2,8 +2,8 @@
 #include <iostream>
 
 Character::Character(const std::string& textureFile) 
-: speed(10.75f), acceleration(5.1f), deceleration(5.15f), equippedWeapon(nullptr), 
-isDashing(false), dashSpeed(0.0f), dashDuration(0.0f), weapons(), equippedIndex(0), 
+: speed(200.f), acceleration(800.f), deceleration(1000.f), equippedWeapon(nullptr), 
+isDashing(false), dashSpeed(400.f), dashDuration(0.2f), weapons(), equippedIndex(0), 
 direction(0.f, 0.f), maxHealth(100), currentHealth(100) {
     
     if (!texture.loadFromFile(textureFile)) {
