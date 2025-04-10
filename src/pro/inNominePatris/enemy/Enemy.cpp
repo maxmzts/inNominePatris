@@ -28,7 +28,7 @@ Enemy::Enemy(const std::string& name, float maxHealth, float movementSpeed, cons
     m_hurtbox = new Hurtbox(sf::Vector2f(60.0f, 60.0f), sf::Vector2f(0.0f, 0.0f));
     
     // Configuración inicial del sprite
-    m_sprite.setPosition(m_position);
+    m_sprite.setPosition(m_position.x, m_position.y);
     updateHitboxes();
 }
 
@@ -39,20 +39,27 @@ Enemy::~Enemy() {
 
 void Enemy::setPosition(const sf::Vector2f& position) {
     m_position = position;
-    m_sprite.setPosition(position);
+    m_sprite.setPosition(position.x, position.y);
     updateHitboxes();
 }
 
-void Enemy::setTexture(const sf::Texture& texture) {
-    m_texture = texture;
-    m_sprite.setTexture(m_texture);
-    m_sprite.setOrigin(75.f / 2.f, 75.f / 2.f);
-    m_sprite.setTextureRect(sf::IntRect(4.6 * 75, 3.1 * 75, 75, 75));
-    m_sprite.setPosition(50, 50);
+/**
+ * Carga una textura para aplicar sobre el Façade de sf::Sprite.
+ */
+void Enemy::setTexture(const std::string& texturePath) {
+    // m_texture = texture;
+    // m_sprite.setTexture(m_texture);
+    // m_sprite.setOrigin(75.f / 2.f, 75.f / 2.f);
     
+    // m_sprite.setPosition(50, 50);
+
+    // Cargar textura usando el Façade
+    m_sprite.loadTexture(texturePath); 
+    m_sprite.setTextureRect(sf::IntRect(0, 0, 64, 64));
     // Centrar el origen del sprite
     sf::FloatRect bounds = m_sprite.getLocalBounds();
     m_sprite.setOrigin(bounds.width / 2.0f, bounds.height / 2.0f);
+    
 }
 
 void Enemy::takeDamage(float damage) {
@@ -80,6 +87,11 @@ void Enemy::takeDamage(float damage) {
     }
 }
 
+/**
+ * Para atacar el enemigo pone activa la hitbox durante un corto periodo de tiempo.
+ * El daño producido al jugador se manejará en el sistema de colisiones de InGame.
+ * Que la hitbox vuelva a estar inactiva se gestiona en el update.
+ */
 void Enemy::attack() {
     // Verificar si el ataque está en cooldown
     if (m_attackTimer > 0) {
@@ -91,9 +103,6 @@ void Enemy::attack() {
     
     // Resetear el timer de ataque
     m_attackTimer = m_attackCooldown;
-    
-    // La lógica de daño al jugador se manejará en el sistema de colisiones
-    // cuando el hitbox del enemigo colisione con el hurtbox del jugador
 }
 
 void Enemy::move(const sf::Vector2f& direction) {
@@ -156,7 +165,7 @@ void Enemy::findPathToPlayer(const Character* player, const TileMap* tileMap) {
     
     // Convertir posiciones del mundo a coordenadas de tiles
     // Suponiendo que cada tile es de 32x32 pixeles (ajustar según tu juego)
-    const int TILE_SIZE = 32;
+    const int TILE_SIZE = 16;
     
     int startX = static_cast<int>(m_position.x / TILE_SIZE);
     int startY = static_cast<int>(m_position.y / TILE_SIZE);
@@ -313,13 +322,16 @@ void Enemy::findPathToPlayer(const Character* player, const TileMap* tileMap) {
     }
 }
 
+/**
+ * Funcion de dibujado de los enemigos.
+ */
 void Enemy::render(sf::RenderWindow& window) {
-    // Dibujar el sprite del enemigo
-    window.draw(m_sprite);
-    
     // Para debugging, podemos dibujar los hitboxes y hurtboxes
-    // m_hitbox->render(window);
-    // m_hurtbox->render(window);
+    m_hitbox->render(window);
+    m_hurtbox->render(window);
+    
+    // Dibujar el sprite del enemigo
+    m_sprite.draw(window);
 }
 
 // Primero, añade estos miembros a la clase Enemy en el archivo de cabecera (Enemy.h):
@@ -364,7 +376,7 @@ void Enemy::update(float deltaTime, Character* player, const TileMap* tileMap) {
         case EnemyState::MOVING:
             // Aplicar velocidad al movimiento
             m_position += m_velocity * deltaTime;
-            m_sprite.setPosition(m_position);
+            m_sprite.setPosition(m_position.x, m_position.y);
             updateHitboxes();
             
             // Recalcular el camino periódicamente mientras nos movemos
@@ -387,9 +399,11 @@ void Enemy::update(float deltaTime, Character* player, const TileMap* tileMap) {
             break;
             
         case EnemyState::ATTACKING:
+            m_hitbox->setActive(true);
             // La animación de ataque duraría un tiempo fijo
             if (m_stateTimer >= 0.5f) {  // Duración de la animación de ataque
                 changeState(EnemyState::IDLE);
+                m_hitbox->setActive(false);
             }
             break;
             

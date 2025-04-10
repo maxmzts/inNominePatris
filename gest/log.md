@@ -191,3 +191,5 @@ He arreglado el error de las dos ventanas, y ahora funciona el InGame perfectame
 (2h) En clase de prácticas creé el test para los enemigos que creé ayer y funcionaron perfectamente. Hecho esto fui a descartar la clase antigua Enemy para usar la nueva actualizando todas las referencias. En el proceso reventó un problema que llevaba siendo arrastrado bastante tiempo que eran 3 referencias circulares: entre Enemy y Character; otra entre Enemy y Character pero a través de Weapon; y finalmente una entre Character y Weapon. Empecé a trabajar en cómo solucionar este problemón.
 
 (1h) He conseguido aislar el problema de las referencias circulares. Las he eliminado de raíz donde era evidente que no hacían falta y la funcionalidad que se buscaba se debía gestionar a través de InGame. Las funcionalidades que no bastaba con quitar una parte y necesitan reimplementarse las he comentado.
+
+(1h) He cambiado Enemy para que use SpriteFaçade. A parte he descargado unos sprites para un enemigo murciélago y he implementado la animación de este. Nota: necesitamos un sistema global para animaciones. Olvidé hacer commit de esto último el mismo día.

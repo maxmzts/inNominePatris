@@ -16,11 +16,6 @@ InGame::InGame(GameEngine& engine)
         std::cerr << "Error cargando el mapa\n";
         exit(-1);
     }
-    sf::Texture enemy_tex;
-    if (!enemy_tex.loadFromFile("resources/sprites.png")) {
-        std::cerr << "Error cargando la imagen sprites.png";
-        exit(-1);
-    }
 
     // Hacer spawn al jugador
     player.spawnAt(tileMap, 500, 600);
@@ -43,10 +38,9 @@ InGame::InGame(GameEngine& engine)
     for (size_t i = 0; i < 3; i++)
     {
         enemy = new Enemy("Goblin", 180.f, 100.f, sf::Vector2f(100.f*i,100.f*i));
-        enemy->setTexture(enemy_tex);
+        enemy->setTexture("resources/Bat.png");
         enemies.push_back(enemy);
     }
-    
 }
 
 InGame* InGame::getInstance(GameEngine& engine) {

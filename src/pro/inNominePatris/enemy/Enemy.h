@@ -8,6 +8,7 @@
 #include "Hitbox.h"    
 #include "Hurtbox.h"
 #include "Character.h"
+#include "SpriteFacade.h"
 
 // Declaraciones adelantadas para evitar dependencias circulares
 // class Hitbox;
@@ -32,8 +33,9 @@ private:
     sf::Vector2f m_position;
     sf::Vector2f m_velocity;
     
-    sf::Sprite m_sprite;
-    sf::Texture m_texture;
+    // Visuales
+    SpriteFacade m_sprite;
+    
     
     // Estados del enemigo
     enum class EnemyState {
@@ -72,7 +74,7 @@ public:
     sf::Vector2f getPosition() const { return m_position; }
     
     void setPosition(const sf::Vector2f& position);
-    void setTexture(const sf::Texture& texture);
+    void setTexture(const std::string& texturePath);
     
     // Funciones requeridas
     void takeDamage(float damage);

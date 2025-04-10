@@ -157,8 +157,8 @@ void Lance::increasePortalRange(float range) {
 }
 
 /**
- * Ajusta el arco en la posicion y con la direccion del jugador.
- * Luego llama a render para dibujar el arco.
+ * Ajusta la lanza en la posicion y con la direccion del jugador.
+ * Luego llama a render para dibujar la lanza.
  */
 void Lance::renderOnPlayer(sf::Vector2f position, sf::Vector2f direction) {
     // Ajustar la posición del arma en función de la dirección
@@ -180,9 +180,12 @@ void Lance::renderOnPlayer(sf::Vector2f position, sf::Vector2f direction) {
 }
 
 /**
- * Dibuja el arco en la posicion y con la direccion que tiene su sprite por defecto.
+ * Dibuja la lanza en la posicion y con la direccion que tiene su sprite por defecto.
  */
 void Lance::render(){
     // Dibujar el sprite del arma
     spriteFacade.draw(engine->getWindow());
+    if (isPortalDropped) {
+        portal.draw(engine->getWindow());
+    }
 }
