@@ -38,7 +38,7 @@ InGame::InGame(GameEngine& engine)
     //cargar enemigos
     for (size_t i = 0; i < 3; i++)
     {
-        enemy = new Enemy("Goblin", 180.f, 100.f, sf::Vector2f(100.f*i,100.f*i));
+        enemy = new Enemy("Bat", 180.f, 100.f, sf::Vector2f(100.f*i,100.f*i));
         enemy->setTexture("resources/Bat.png");
         enemies.push_back(enemy);
     }
@@ -168,6 +168,21 @@ void InGame::update(Game& game) {
         }
     }
     hud.update(player);
+
+    //// TEST DE VISUAL EFFECTS
+    effectTimer += deltaTime;
+    if (effectTimer >= 5.0f) {
+        effectTimer = 0.0f;
+        vfxManager.addEffect(
+            "./resources/explosion.png",
+            {player.getPosition().x, player.getPosition().y},          // posición de prueba
+            {64 , 64},           // tamaño de frame
+            16,                  // cantidad de frames
+            16.f                 // FPS
+        );
+    }
+
+    vfxManager.update(deltaTime);
 }
 
 InGame::~InGame() {
@@ -193,6 +208,8 @@ void InGame::render(Game& game, sf::RenderWindow& window) {
     }
 
     player.draw(engine);
+
+    vfxManager.draw(window);
 
     // Mostrar el HUD
     hud.draw(window, player);

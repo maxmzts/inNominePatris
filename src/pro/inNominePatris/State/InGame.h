@@ -12,11 +12,16 @@
 #include "HUD.h"
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include <VFXManager.h>
 
 class InGame : public State {
 private:
     static InGame* instance;
     GameEngine& engine; // Puntero al GameEngine
+
+    //Managers
+    VFXManager vfxManager;
+    float effectTimer = 0.0f;
 
     TileMap tileMap;
     Character player;
