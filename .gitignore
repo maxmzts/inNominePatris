@@ -7,3 +7,6 @@ src/pro/Davinson/build
 .vscode/c_cpp_properties.json
 .vscode/launch.json
 src/pro/multimax/MiJuego
+
+src/pro/inNominePatris/build
+src/pro/inNominePatris/MiJuego
