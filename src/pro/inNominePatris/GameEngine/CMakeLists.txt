@@ -2,6 +2,7 @@
 target_sources(libModulos PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/GameEngine.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/SpriteFacade.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/AnimatedSprite.cpp"
 )
 
 #Y donde se encuentran los .h
