@@ -9,6 +9,7 @@
 #include "Hurtbox.h"
 #include "Character.h"
 #include "SpriteFacade.h"
+#include "AnimatedSprite.h"
 
 // Declaraciones adelantadas para evitar dependencias circulares
 // class Hitbox;
@@ -35,7 +36,9 @@ private:
     
     // Visuales
     SpriteFacade m_sprite;
-    
+    AnimatedSprite* m_animator;
+    bool m_animationsLoaded;
+    bool m_facingRight;
     
     // Estados del enemigo
     enum class EnemyState {
@@ -60,7 +63,7 @@ private:
     int m_currentPathIndex;   // Índice actual en el camino
     float m_pathUpdateTimer = 0.0f;  // Tiempo desde la última actualización del camino
     float m_pathUpdateInterval = 0.5f; // Intervalo para recalcular el camino (en segundos)
-    
+
 public:
     // Constructor y destructor
     Enemy(const std::string& name, float maxHealth, float movementSpeed, const sf::Vector2f& startPosition);
@@ -75,6 +78,8 @@ public:
     
     void setPosition(const sf::Vector2f& position);
     void setTexture(const std::string& texturePath);
+    void loadAnimations();
+    void changeAnimation(EnemyState newState);
     
     // Funciones requeridas
     void takeDamage(float damage);
@@ -102,7 +107,6 @@ public:
     // Cambio de estados
     void changeState(EnemyState newState);
     EnemyState getCurrentState() const { return m_currentState; }
-    
     // Actualizar el intervalo de recálculo del camino
     void setPathUpdateInterval(float interval) { m_pathUpdateInterval = interval; }
 };

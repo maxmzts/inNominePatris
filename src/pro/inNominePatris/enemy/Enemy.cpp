@@ -21,20 +21,25 @@ Enemy::Enemy(const std::string& name, float maxHealth, float movementSpeed, cons
     , m_attackTimer(0.0f)
     , m_detectionRadius(300.0f)      // Detecta al jugador a 300 unidades
     , m_velocity(0.0f, 0.0f)
+    , m_facingRight(false)
 {
     // Creamos los hitboxes y hurtboxes
     // Los tamaños y offsets deben ajustarse según el sprite
     m_hitbox = new Hitbox(sf::Vector2f(40.0f, 40.0f), sf::Vector2f(10.0f, 10.0f));
     m_hurtbox = new Hurtbox(sf::Vector2f(60.0f, 60.0f), sf::Vector2f(0.0f, 0.0f));
     
-    // Configuración inicial del sprite
+    // Configuración inicial del sprite animado
     m_sprite.setPosition(m_position.x, m_position.y);
+    m_animator = new AnimatedSprite(m_sprite);
+    loadAnimations();
+
     updateHitboxes();
 }
 
 Enemy::~Enemy() {
     delete m_hitbox;
     delete m_hurtbox;
+    delete m_animator;
 }
 
 void Enemy::setPosition(const sf::Vector2f& position) {
@@ -47,19 +52,59 @@ void Enemy::setPosition(const sf::Vector2f& position) {
  * Carga una textura para aplicar sobre el Façade de sf::Sprite.
  */
 void Enemy::setTexture(const std::string& texturePath) {
-    // m_texture = texture;
-    // m_sprite.setTexture(m_texture);
-    // m_sprite.setOrigin(75.f / 2.f, 75.f / 2.f);
-    
-    // m_sprite.setPosition(50, 50);
-
-    // Cargar textura usando el Façade
     m_sprite.loadTexture(texturePath); 
     m_sprite.setTextureRect(sf::IntRect(0, 0, 64, 64));
-    // Centrar el origen del sprite
+    
     sf::FloatRect bounds = m_sprite.getLocalBounds();
     m_sprite.setOrigin(bounds.width / 2.0f, bounds.height / 2.0f);
     
+    changeAnimation(m_currentState);
+}
+
+void Enemy::loadAnimations() {
+    std::cout << "Cargo animación\n"; 
+    // Animación de vuelo (4 frames en una fila)
+    // Parámetros: nombre, frameCount, startPosition(x,y), frameSize(width,height), loop
+    m_animator->addAnimation("idle", 4, sf::Vector2i(0, 0), sf::Vector2i(64, 64), true);
+    m_animator->addAnimation("moving", 4, sf::Vector2i(0, 0), sf::Vector2i(64, 64), true);
+    m_animator->addAnimation("attacking", 4, sf::Vector2i(0, 0), sf::Vector2i(64, 64), true);
+    
+    // Si hay más animaciones específicas para otros estados, se agregarían aquí
+    // Por ejemplo, si hay frames diferentes para el ataque o para recibir daño
+    
+    // // Configurar callback para cuando termine la animación (si es necesario)
+    // m_animator->setAnimationEndCallback([this]() {
+    //     // Por ejemplo, si la animación de ataque termina, volver a IDLE
+    //     if (m_currentState == ATTACKING) {
+    //         changeAnimation(IDLE);
+    //     }
+    // });
+}
+
+/**
+ * Cambia la animación según el estado actual
+ */
+void Enemy::changeAnimation(EnemyState newState) {
+    m_currentState = newState;
+    m_stateTimer = 0.0f;
+    
+    switch (newState) {
+        case EnemyState::IDLE:
+            m_animator->play("idle", 8.0f); // 8 FPS para idle
+            break;
+        case EnemyState::MOVING:
+            m_animator->play("moving", 10.0f); // 10 FPS para movimiento
+            break;
+        case EnemyState::ATTACKING:
+            m_animator->play("attacking", 12.0f, false); // Animación de ataque no en bucle
+            break;
+        case EnemyState::HURT:
+            m_animator->play("idle", 1.0f);
+            break;
+        case EnemyState::DYING:
+            m_animator->play("idle", 1.0f);
+            break;
+    }
 }
 
 void Enemy::takeDamage(float damage) {
@@ -111,6 +156,15 @@ void Enemy::move(const sf::Vector2f& direction) {
     if (length > 0) {
         sf::Vector2f normalizedDir = direction / length;
         m_velocity = normalizedDir * m_movementSpeed;
+
+        // Ajusta la dirección del sprite
+        if (direction.x > 0 && !m_facingRight) {
+            m_sprite.setScale(1.f, 1.f);
+            m_facingRight = true;
+        } else if (direction.x < 0 && m_facingRight) {
+            m_sprite.setScale(-1.f, 1.f);
+            m_facingRight = false;
+        }
     } else {
         m_velocity = sf::Vector2f(0.0f, 0.0f);
     }
@@ -354,6 +408,8 @@ void Enemy::update(float deltaTime, Character* player, const TileMap* tileMap) {
     
     // Actualizar el timer para recalcular el camino
     m_pathUpdateTimer += deltaTime;
+
+    m_animator->update(deltaTime);
     
     // Lógica basada en el estado actual
     switch (m_currentState) {
@@ -450,7 +506,7 @@ void Enemy::changeState(EnemyState newState) {
     if (m_currentState != newState) {
         m_currentState = newState;
         m_stateTimer = 0.0f;
-        
+        changeAnimation(newState);
         // Acciones específicas al cambiar de estado podrían ir aquí
         // Por ejemplo, cambiar la animación según el estado
     }
