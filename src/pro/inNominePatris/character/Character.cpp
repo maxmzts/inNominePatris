@@ -2,7 +2,9 @@
 #include <iostream>
 
 Character::Character(const std::string& textureFile) 
-    : speed(200.0f), acceleration(800.0f), deceleration(600.0f), equippedWeapon(nullptr), isDashing(false), dashSpeed(400.0f), dashDuration(0.2f), weapons(),  equippedIndex(0), direction(0.f, 0.f) {
+: speed(10.75f), acceleration(5.1f), deceleration(5.15f), equippedWeapon(nullptr), 
+isDashing(false), dashSpeed(0.0f), dashDuration(0.0f), weapons(), equippedIndex(0), 
+direction(0.f, 0.f), maxHealth(100), currentHealth(100) {
     
     if (!texture.loadFromFile(textureFile)) {
         std::cerr << "Error cargando la textura" << std::endl;
@@ -130,8 +132,18 @@ void Character::draw(GameEngine& engine) {
 
     // Dibujar el arma equipada
     if (equippedWeapon) {
-        equippedWeapon->draw(engine, this); // Pasar el personaje para ajustar la posición del arma
+        equippedWeapon->renderOnPlayer(getPosition(), getDirection()); // Pasar el posicion y direccion para ajustar la posición del arma
     }
+
+    // Dibujar barra de vida sobre el personaje
+    sf::RectangleShape healthBar(sf::Vector2f(50, 5));
+    healthBar.setFillColor(sf::Color::Green);
+    healthBar.setPosition(sprite.getPosition().x - 25, sprite.getPosition().y - 40);
+
+    float healthPercentage = static_cast<float>(currentHealth) / maxHealth;
+    healthBar.setSize(sf::Vector2f(50 * healthPercentage, 5));
+
+    engine.drawRectangle(healthBar);
 }
 
 
@@ -174,20 +186,24 @@ void Character::equipWeapon() {
     equippedWeapon = weapons[equippedIndex];
 }
 
-void Character::attack(std::vector<Enemy>& enemies) {
-    if (equippedWeapon) equippedWeapon->attack(*this, enemies);
-}
+// ESTO HAY QUE CAMBIARLO
+// lo que debería hacer es activar la hitbox y dejar que el InGame gestione las intersecciones
+// crea una referencia circular al enemigo 
+//
+// void Character::attack(std::vector<Enemy>& enemies) {
+//     if (equippedWeapon) equippedWeapon->attack(*this, enemies);
+// }
 
-void Character::useAbility(sf::RenderWindow& window, std::vector<Enemy>& enemies) {
-    if (equippedWeapon) {
-        if (equippedWeapon->getAbilityType() == AbilityType::Dash)
-            equippedWeapon->useAbility(*this);
-        else if (equippedWeapon->getAbilityType() == AbilityType::Teleport)  
-            equippedWeapon->useAbility(*this, window);
-        else if (equippedWeapon->getAbilityType() == AbilityType::Shot)
-            equippedWeapon->useAbility(*this, enemies);
-    }
-}
+// void Character::useAbility(sf::RenderWindow& window, std::vector<Enemy>& enemies) {
+//     if (equippedWeapon) {
+//         if (equippedWeapon->getAbilityType() == AbilityType::Dash)
+//             equippedWeapon->useAbility(*this);
+//         else if (equippedWeapon->getAbilityType() == AbilityType::Teleport)  
+//             equippedWeapon->useAbility(*this, window);
+//         else if (equippedWeapon->getAbilityType() == AbilityType::Shot)
+//             equippedWeapon->useAbility(*this, enemies);
+//     }
+// }
 
 void Character::startDash(float speed, float duration) {
     if (!isDashing) {
@@ -316,4 +332,24 @@ void Character::interact(TileMap& tilemap) {
     } else {
         std::cout << "No hay nada con lo que interactuar aquí." << std::endl;
     }
+}
+
+void Character::setHealth(int health) {
+    currentHealth = std::max(0, std::min(health, maxHealth)); // Asegura que la vida esté entre 0 y maxHealth
+}
+
+int Character::getHealth() const {
+    return currentHealth;
+}
+
+int Character::getMaxHealth() const {
+    return maxHealth;
+}
+
+void Character::takeDamage(int damage) {
+    setHealth(currentHealth - damage);
+}
+
+void Character::heal(int amount) {
+    setHealth(currentHealth + amount);
 }

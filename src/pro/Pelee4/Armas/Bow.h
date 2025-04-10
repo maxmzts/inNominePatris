@@ -11,7 +11,7 @@
 class Bow : public Weapon {
 public:
     Bow();
-    void attack(Character& character, std::vector<Enemy>& enemies) override;
+    void attack(sf::Vector2f position, sf::Vector2f direction std::vector<Enemy>& enemies) override;
     void useAbility(Character& character, std::vector<Enemy>& enemies) override;
     void useAbility(Character& character) override {}
     void useAbility(Character& character, sf::RenderWindow& window) override {}

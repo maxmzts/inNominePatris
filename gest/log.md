@@ -184,11 +184,21 @@ Hay un par de fallos: La ventana del menú no se cierra cuando se abre el lobby,
 He intentado arreglar el error de las ventanas pero no he conseguido nada.
 He cambiado el main para controlar mejor algunas excepciones y he cambiado el menú configuración para que se controle con WASD en vez de Up y Down.
 
-## 20250407 JorgePelegrin @(1h 30min)
+## 20250408 JorgePelegrin @(1h 30min)
 He arreglado el error de las dos ventanas, y ahora funciona el InGame perfectamente.
 
-## 20250402 DavidGonzález @(6h)
+## 20250409 MáximoMartínez @(3h)
+(2h) En clase de prácticas creé el test para los enemigos que creé ayer y funcionaron perfectamente. Hecho esto fui a descartar la clase antigua Enemy para usar la nueva actualizando todas las referencias. En el proceso reventó un problema que llevaba siendo arrastrado bastante tiempo que eran 3 referencias circulares: entre Enemy y Character; otra entre Enemy y Character pero a través de Weapon; y finalmente una entre Character y Weapon. Empecé a trabajar en cómo solucionar este problemón.
+
+(1h) He conseguido aislar el problema de las referencias circulares. Las he eliminado de raíz donde era evidente que no hacían falta y la funcionalidad que se buscaba se debía gestionar a través de InGame. Las funcionalidades que no bastaba con quitar una parte y necesitan reimplementarse las he comentado.
+
+(1h) He cambiado Enemy para que use SpriteFaçade. A parte he descargado unos sprites para un enemigo murciélago y he implementado la animación de este. Nota: necesitamos un sistema global para animaciones. Olvidé hacer commit de esto último el mismo día.
+
+## 20250408 DavidGonzález @(6h)
 Interacción implementada con éxito e incluida dentro del patrón state + modificaciones en world_1 que sigue en proceso
 
 ## 20250402 DavidGonzález @(3h 30 min)
 Imlementación de funcion de cambio de tiles de capa in game (para obtener input visuales y cambiar mapa in game).
+
+## 20250408 EstrellaDomínguez @(2h)
+He implementado el HUD. Ahora el personaje tiene barra de vida y hay un inventario que indica que arma tiene seleccionada.

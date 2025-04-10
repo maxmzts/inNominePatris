@@ -1,15 +1,11 @@
-#include "EnemyA.h"
-#include "TileMap.h"
-#include "Hitbox.h"    
-#include "Hurtbox.h"
-#include "Character.h"
+#include "Enemy.h"
 #include <vector>
 #include <queue>
 #include <unordered_map>
 #include <cmath>
 #include <algorithm>
 
-EnemyA::EnemyA(const std::string& name, float maxHealth, float movementSpeed, const sf::Vector2f& startPosition)
+Enemy::Enemy(const std::string& name, float maxHealth, float movementSpeed, const sf::Vector2f& startPosition)
     : m_name(name)
     , m_maxHealth(maxHealth)
     , m_currentHealth(maxHealth)
@@ -32,34 +28,41 @@ EnemyA::EnemyA(const std::string& name, float maxHealth, float movementSpeed, co
     m_hurtbox = new Hurtbox(sf::Vector2f(60.0f, 60.0f), sf::Vector2f(0.0f, 0.0f));
     
     // Configuración inicial del sprite
-    m_sprite.setPosition(m_position);
+    m_sprite.setPosition(m_position.x, m_position.y);
     updateHitboxes();
 }
 
-EnemyA::~EnemyA() {
+Enemy::~Enemy() {
     delete m_hitbox;
     delete m_hurtbox;
 }
 
-void EnemyA::setPosition(const sf::Vector2f& position) {
+void Enemy::setPosition(const sf::Vector2f& position) {
     m_position = position;
-    m_sprite.setPosition(position);
+    m_sprite.setPosition(position.x, position.y);
     updateHitboxes();
 }
 
-void EnemyA::setTexture(const sf::Texture& texture) {
-    m_texture = texture;
-    m_sprite.setTexture(m_texture);
-    m_sprite.setOrigin(75.f / 2.f, 75.f / 2.f);
-    m_sprite.setTextureRect(sf::IntRect(4.6 * 75, 3.1 * 75, 75, 75));
-    m_sprite.setPosition(50, 50);
+/**
+ * Carga una textura para aplicar sobre el Façade de sf::Sprite.
+ */
+void Enemy::setTexture(const std::string& texturePath) {
+    // m_texture = texture;
+    // m_sprite.setTexture(m_texture);
+    // m_sprite.setOrigin(75.f / 2.f, 75.f / 2.f);
     
+    // m_sprite.setPosition(50, 50);
+
+    // Cargar textura usando el Façade
+    m_sprite.loadTexture(texturePath); 
+    m_sprite.setTextureRect(sf::IntRect(0, 0, 64, 64));
     // Centrar el origen del sprite
     sf::FloatRect bounds = m_sprite.getLocalBounds();
     m_sprite.setOrigin(bounds.width / 2.0f, bounds.height / 2.0f);
+    
 }
 
-void EnemyA::takeDamage(float damage) {
+void Enemy::takeDamage(float damage) {
     // Si está invencible, ignorar el daño
     if (m_isInvincible) {
         return;
@@ -84,7 +87,12 @@ void EnemyA::takeDamage(float damage) {
     }
 }
 
-void EnemyA::attack(Character* player) {
+/**
+ * Para atacar el enemigo pone activa la hitbox durante un corto periodo de tiempo.
+ * El daño producido al jugador se manejará en el sistema de colisiones de InGame.
+ * Que la hitbox vuelva a estar inactiva se gestiona en el update.
+ */
+void Enemy::attack() {
     // Verificar si el ataque está en cooldown
     if (m_attackTimer > 0) {
         return;
@@ -95,12 +103,9 @@ void EnemyA::attack(Character* player) {
     
     // Resetear el timer de ataque
     m_attackTimer = m_attackCooldown;
-    
-    // La lógica de daño al jugador se manejará en el sistema de colisiones
-    // cuando el hitbox del enemigo colisione con el hurtbox del jugador
 }
 
-void EnemyA::move(const sf::Vector2f& direction) {
+void Enemy::move(const sf::Vector2f& direction) {
     // Normalizar el vector de dirección si no es cero
     float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
     if (length > 0) {
@@ -149,8 +154,8 @@ float calculateHeuristic(int x1, int y1, int x2, int y2) {
     return std::abs(x1 - x2) + std::abs(y1 - y2);
 }
 
-// Esta función reemplaza la versión básica en EnemyA.cpp
-void EnemyA::findPathToPlayer(const Character* player, const TileMap* tileMap) {
+// Esta función reemplaza la versión básica en Enemy.cpp
+void Enemy::findPathToPlayer(const Character* player, const TileMap* tileMap) {
     if (!player || !tileMap) {
         return;
     }
@@ -160,7 +165,7 @@ void EnemyA::findPathToPlayer(const Character* player, const TileMap* tileMap) {
     
     // Convertir posiciones del mundo a coordenadas de tiles
     // Suponiendo que cada tile es de 32x32 pixeles (ajustar según tu juego)
-    const int TILE_SIZE = 32;
+    const int TILE_SIZE = 16;
     
     int startX = static_cast<int>(m_position.x / TILE_SIZE);
     int startY = static_cast<int>(m_position.y / TILE_SIZE);
@@ -317,18 +322,21 @@ void EnemyA::findPathToPlayer(const Character* player, const TileMap* tileMap) {
     }
 }
 
-void EnemyA::render(sf::RenderWindow& window) {
-    // Dibujar el sprite del enemigo
-    window.draw(m_sprite);
-    
+/**
+ * Funcion de dibujado de los enemigos.
+ */
+void Enemy::render(sf::RenderWindow& window) {
     // Para debugging, podemos dibujar los hitboxes y hurtboxes
-    // m_hitbox->render(window);
-    // m_hurtbox->render(window);
+    m_hitbox->render(window);
+    m_hurtbox->render(window);
+    
+    // Dibujar el sprite del enemigo
+    m_sprite.draw(window);
 }
 
-// Primero, añade estos miembros a la clase EnemyA en el archivo de cabecera (EnemyA.h):
+// Primero, añade estos miembros a la clase Enemy en el archivo de cabecera (Enemy.h):
 
-void EnemyA::update(float deltaTime, Character* player, const TileMap* tileMap) {
+void Enemy::update(float deltaTime, Character* player, const TileMap* tileMap) {
     // Actualizar los timers
     if (m_invincibilityTimer > 0) {
         m_invincibilityTimer -= deltaTime;
@@ -368,7 +376,7 @@ void EnemyA::update(float deltaTime, Character* player, const TileMap* tileMap) 
         case EnemyState::MOVING:
             // Aplicar velocidad al movimiento
             m_position += m_velocity * deltaTime;
-            m_sprite.setPosition(m_position);
+            m_sprite.setPosition(m_position.x, m_position.y);
             updateHitboxes();
             
             // Recalcular el camino periódicamente mientras nos movemos
@@ -385,15 +393,17 @@ void EnemyA::update(float deltaTime, Character* player, const TileMap* tileMap) 
                 
                 // Si estamos lo suficientemente cerca y el ataque no está en cooldown
                 if (distance < 50.0f && m_attackTimer <= 0) {
-                    attack(player);
+                    attack();
                 }
             }
             break;
             
         case EnemyState::ATTACKING:
+            m_hitbox->setActive(true);
             // La animación de ataque duraría un tiempo fijo
             if (m_stateTimer >= 0.5f) {  // Duración de la animación de ataque
                 changeState(EnemyState::IDLE);
+                m_hitbox->setActive(false);
             }
             break;
             
@@ -412,7 +422,7 @@ void EnemyA::update(float deltaTime, Character* player, const TileMap* tileMap) 
     }
 }
 
-void EnemyA::setInvincible(bool invincible) {
+void Enemy::setInvincible(bool invincible) {
     m_isInvincible = invincible;
     if (invincible) {
         m_invincibilityTimer = m_invincibilityDuration;
@@ -424,7 +434,7 @@ void EnemyA::setInvincible(bool invincible) {
     }
 }
 
-void EnemyA::updateHitboxes() {
+void Enemy::updateHitboxes() {
     // Actualizar las posiciones de los hitboxes y hurtboxes
     if (m_hitbox) {
         m_hitbox->setPosition(m_position + sf::Vector2f(10.0f, 10.0f));  // Ajustar según el sprite
@@ -435,7 +445,7 @@ void EnemyA::updateHitboxes() {
     }
 }
 
-void EnemyA::changeState(EnemyState newState) {
+void Enemy::changeState(EnemyState newState) {
     // Si estamos cambiando a un nuevo estado, reiniciar el timer
     if (m_currentState != newState) {
         m_currentState = newState;

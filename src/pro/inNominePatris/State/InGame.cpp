@@ -1,6 +1,7 @@
 #include "InGame.h"
 #include "../Game.h"
 #include "../character/Character.h"
+#include "../interface/HUD.h"
 #include <iostream>
 #include <algorithm> // Para std::remove_if
 
@@ -10,15 +11,10 @@ InGame* InGame::instance = nullptr;
  * Constructor de InGame. Carga el motor y el lobby con el jugador.
  */
 InGame::InGame(GameEngine& engine)
-    : engine(engine), player("./resources/sprites.png") {
+    : engine(engine), player("./resources/sprites.png"), hud(800, 600) {
     // Cargar el mapa
     if (!tileMap.loadFromFile("./maps/world_1.tmx", engine)) {
         std::cerr << "Error cargando el mapa\n";
-        exit(-1);
-    }
-    sf::Texture enemy_tex;
-    if (!enemy_tex.loadFromFile("resources/sprites.png")) {
-        std::cerr << "Error cargando la imagen sprites.png";
         exit(-1);
     }
 
@@ -38,15 +34,14 @@ InGame::InGame(GameEngine& engine)
     bow->setPosition(163, 578);
 
     //TESTS ENEMIGOS
-    EnemyA* enemy = nullptr;
+    Enemy* enemy = nullptr;
     //cargar enemigos
     for (size_t i = 0; i < 3; i++)
     {
-        enemy = new EnemyA("Goblin", 180.f, 100.f, sf::Vector2f(100.f*i,100.f*i));
-        enemy->setTexture(enemy_tex);
+        enemy = new Enemy("Goblin", 180.f, 100.f, sf::Vector2f(100.f*i,100.f*i));
+        enemy->setTexture("resources/Bat.png");
         enemies.push_back(enemy);
     }
-    
 }
 
 InGame* InGame::getInstance(GameEngine& engine) {
@@ -156,7 +151,7 @@ void InGame::update(Game& game) {
     // Actualizar el jugador y otros elementos
     float deltaTime = engine.getDeltaTime();
     player.update(tileMap, deltaTime);
-    for(EnemyA* enemy : enemies){
+    for(Enemy* enemy : enemies){
         enemy->update(deltaTime,&player,&tileMap);
     }
 
@@ -172,6 +167,7 @@ void InGame::update(Game& game) {
             lance->PortalUpdate(deltaTime); // Actualizar la lanza
         }
     }
+    hud.update(player);
 }
 
 InGame::~InGame() {
@@ -189,13 +185,17 @@ void InGame::render(Game& game, sf::RenderWindow& window) {
     tileMap.draw(engine);
 
     for (Weapon* weapon : weaponsOnGround) {
-        weapon->draw(engine, nullptr);
+        weapon->render();
     }
 
-    for (EnemyA* enemy : enemies){
+    for (Enemy* enemy : enemies){
         enemy->render(engine.getWindow());
     }
 
     player.draw(engine);
+
+    // Mostrar el HUD
+    hud.draw(window, player);
+
     engine.display();
 }

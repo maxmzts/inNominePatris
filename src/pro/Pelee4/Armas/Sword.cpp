@@ -6,12 +6,10 @@
 
 Sword::Sword() : attackRange(50.0f), dashSpeed(500.0f), abilityCooldown(1.5f), lastAbilityTime(-abilityCooldown){}
 
-void Sword::attack(Character& character, std::vector<Enemy>& enemies) {
+void Sword::attack(sf::Vector2f position, sf::Vector2f direction std::vector<Enemy>& enemies) {
     std::cout << "Sword attack!" << std::endl;
 
-    // Obtiene la posición y dirección del personaje
-    sf::Vector2f position = character.getPosition();
-    sf::Vector2f direction = character.getDirection(); // Detecta si el personaje mira a la izquierda o derecha
+    
 
     // Define una hitbox dependiendo de la dirección
     sf::FloatRect hitbox;

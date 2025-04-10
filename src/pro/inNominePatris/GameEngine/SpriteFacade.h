@@ -25,6 +25,8 @@ public:
 
     void setRotation(float angle);
 
+    void setTextureRect(sf::IntRect rect);
+
     // Obtener la posición del sprite
     sf::Vector2f getPosition() const;
 
@@ -42,6 +44,9 @@ public:
 
     // Obtener el tamaño global del sprite
     sf::FloatRect getGlobalBounds() const;
+
+    // Obtener el tamaño local del sprite
+    sf::FloatRect getLocalBounds() const;
 
     // Establecer el color del sprite
     void setColor(const sf::Color& color);

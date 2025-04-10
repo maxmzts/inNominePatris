@@ -3,7 +3,7 @@
 Hitbox::Hitbox(const sf::Vector2f& size, const sf::Vector2f& offset, const sf::Color& color)
     : m_offset(offset)
     , m_position(0.0f, 0.0f)
-    , m_active(true)
+    , m_active(false)
 {
     // Inicializar la forma rectangular
     m_shape.setSize(size);

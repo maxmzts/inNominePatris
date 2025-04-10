@@ -27,6 +27,10 @@ void SpriteFacade::setRotation(float angle) {
     sprite.setRotation(angle);
 }
 
+void SpriteFacade::setTextureRect(sf::IntRect rect){
+    sprite.setTextureRect(rect);
+}
+
 // Obtener la posición del sprite
 sf::Vector2f SpriteFacade::getPosition() const {
     return sprite.getPosition();
@@ -55,6 +59,11 @@ void SpriteFacade::draw(sf::RenderWindow& window) const {
 // Obtener el tamaño global del sprite
 sf::FloatRect SpriteFacade::getGlobalBounds() const {
     return sprite.getGlobalBounds();
+}
+
+// Obtener el tamaño global del sprite
+sf::FloatRect SpriteFacade::getLocalBounds() const {
+    return sprite.getLocalBounds();
 }
 
 // Establecer el color del sprite

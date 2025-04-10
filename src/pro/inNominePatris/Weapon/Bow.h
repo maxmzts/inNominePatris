@@ -14,12 +14,15 @@
 class Bow : public Weapon {
 public:
     Bow(GameEngine* gameEngine);
-    void attack(Character& character, std::vector<Enemy>& enemies) override;
-    void useAbility(Character& character, std::vector<Enemy>& enemies) override;
-    void useAbility(Character& character) override {}
-    void useAbility(Character& character, sf::RenderWindow& window) override {}
-    void update(float deltaTime,std::vector<Enemy>& enemies);
-    void draw(GameEngine& engine, const Character* character) override;
+    void attack(sf::Vector2f position, sf::Vector2f direction) override;
+    // REIMPLEMENTAR
+    // void useAbility(Character& character, std::vector<Enemy>& enemies) override;
+    // void useAbility(Character& character) override {}
+    // void useAbility(Character& character, sf::RenderWindow& window) override {}
+    void update(float deltaTime);
+    // void draw(GameEngine& engine, sf::Vector2f position, sf::Vector2f direction) override;
+    void render() override;
+    void renderOnPlayer(sf::Vector2f position, sf::Vector2f direction) override;
     void setPosition(float x, float y) override { spriteFacade.setPosition(x, y); };
     sf::Vector2f getPosition() const override { return spriteFacade.getPosition(); };
     AbilityType getAbilityType() const override { return AbilityType::Shot; };

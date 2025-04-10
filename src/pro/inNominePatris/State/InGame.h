@@ -8,7 +8,8 @@
 #include "Sword.h"
 #include "Lance.h"
 #include "Bow.h"
-#include "EnemyA.h"
+#include "Enemy.h"
+#include "HUD.h"
 #include <SFML/Graphics.hpp>
 #include <vector>
 
@@ -20,10 +21,12 @@ private:
     TileMap tileMap;
     Character player;
     std::vector<Weapon*> weaponsOnGround;
-    std::vector<EnemyA*> enemies;
+    std::vector<Enemy*> enemies;
     sf::Clock clock;
 
     InGame(GameEngine& engine); // Constructor privado
+
+    HUD hud; // Instancia de la interfaz de usuario
 
 public:
     static InGame* getInstance(GameEngine& engine); // Método para obtener la instancia
