@@ -189,3 +189,6 @@ He arreglado el error de las dos ventanas, y ahora funciona el InGame perfectame
 
 ## 20250402 DavidGonzález @(6h)
 Interacción implementada con éxito e incluida dentro del patrón state + modificaciones en world_1 que sigue en proceso
+
+## 20250402 DavidGonzález @(3h 30 min)
+Imlementación de funcion de cambio de tiles de capa in game (para obtener input visuales y cambiar mapa in game).

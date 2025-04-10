@@ -23,7 +23,7 @@ InGame::InGame(GameEngine& engine)
     }
 
     // Hacer spawn al jugador
-    player.spawnAt(tileMap, 500, 600);
+    player.spawnAt(tileMap, 30, 44);
 
     // Crear las armas y colocarlas en los pilares
     Sword* sword = new Sword(&engine);

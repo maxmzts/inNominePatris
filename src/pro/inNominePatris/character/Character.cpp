@@ -137,7 +137,7 @@ void Character::draw(GameEngine& engine) {
 
 void Character::spawnAt(const TileMap& tilemap, float x, float y) {
     // Obtiene una posición de spawn válida
-    sf::Vector2f spawnPos = tilemap.getSpawnPosition(x, y);
+    sf::Vector2f spawnPos = tilemap.getSpawnPosition(x * 16, y * 16);  //la casilla pasada por parametro multiplicada por los pixeles a los que equivale un tile (16*16)
     
     // Establece la posición del jugador
     setPosition(spawnPos.x, spawnPos.y);
@@ -286,14 +286,27 @@ void Character::interact(TileMap& tilemap) {
     if (tilemap.isPlayerInteractingWithTile(playerBounds, tileId)) {
         // Acciones según el ID del tile
         switch (tileId) {
-            case 772:
-                std::cout << "Interactuando con tile 772 (puerta)" << std::endl;
-                break;
             case 773:
-                std::cout << "Interactuando con tile 773 (cofre)" << std::endl;
+                std::cout << "Interactuando con tile 773 (boton abajo)" << std::endl;
+                // Modificar la capa de decoración
+                tilemap.setLocalTile("deco", 29, 29, 64);  // Coloca el tile ID 65 en (30,29)
+                tilemap.setLocalTile("deco", 30, 29, 65);  // Coloca el tile ID 65 en (30,29)
+                tilemap.setLocalTile("deco", 31, 29, 66);  // Coloca el tile ID 65 en (30,29)
+                tilemap.setLocalTile("deco", 29, 30, 80);  // Coloca el tile ID 65 en (30,29)
+                tilemap.setLocalTile("deco", 30, 30, 81);  // Coloca el tile ID 65 en (30,29)
+                tilemap.setLocalTile("deco", 31, 30, 82);  // Coloca el tile ID 65 en (30,29)
+                
+                
+                // tilemap.setTile("deco", 5, 8, 0);   // Elimina el tile en (5,8)
+
                 break;
             case 774:
-                std::cout << "Interactuando con tile 774 (palanca)" << std::endl;
+                std::cout << "Interactuando con tile 774 (izq)" << std::endl;
+                tilemap.setTile("deco", 30, 29, 65);  // Coloca el tile ID 65 en (30,29)
+
+                break;
+            case 775:
+                std::cout << "Interactuando con tile 775 (dcha)" << std::endl;
                 break;
             // Puedes agregar más casos según necesites
             default:

@@ -2,7 +2,6 @@
 #include <iostream>
 #include <sstream>
 
-
 bool TileMap::loadFromFile(const std::string& filename, GameEngine& engine) {
     tinyxml2::XMLDocument doc;
     if (doc.LoadFile(filename.c_str()) != tinyxml2::XML_SUCCESS) {
@@ -38,6 +37,11 @@ bool TileMap::loadFromFile(const std::string& filename, GameEngine& engine) {
         tilesetElement->QueryIntAttribute("tileheight", &tileset.tileHeight);
         tileset.columns = tileset.texture.getSize().x / tileset.tileWidth;
 
+        std::cout << "Cargado tileset con firstGid=" << firstGid 
+                  << ", tileWidth=" << tileset.tileWidth 
+                  << ", tileHeight=" << tileset.tileHeight 
+                  << ", columns=" << tileset.columns << std::endl;
+
         m_tilesets[firstGid] = tileset;
 
         if (!mainTileset) {
@@ -47,13 +51,19 @@ bool TileMap::loadFromFile(const std::string& filename, GameEngine& engine) {
         }
     }
 
+    int layerIndex = 0;
+    
     for (tinyxml2::XMLElement* layerElement = mapElement->FirstChildElement("layer");
          layerElement; layerElement = layerElement->NextSiblingElement("layer")) {
         
         const char* layerName = layerElement->Attribute("name");
-        bool isDecoLayer = (layerName && std::string(layerName) == "deco");
-        bool isBoundsLayer = (layerName && std::string(layerName) == "bounds");
-        bool isInteractiveLayer = (layerName && std::string(layerName) == "interaction");
+        if (!layerName) continue;
+        
+        std::string layerNameStr(layerName);
+        bool isBoundsLayer = (layerNameStr == "bounds");
+        bool isInteractiveLayer = (layerNameStr == "interaction");
+
+        std::cout << "Procesando capa: " << layerNameStr << std::endl;
 
         tinyxml2::XMLElement* dataElement = layerElement->FirstChildElement("data");
         if (!dataElement) continue;
@@ -66,17 +76,18 @@ bool TileMap::loadFromFile(const std::string& filename, GameEngine& engine) {
         while (std::getline(ss, tileID, ',')) {
             tiles.push_back(std::stoi(tileID));
         }
-
+        
         if (isBoundsLayer) {
-            for (int y = 0; y < m_mapHeight; ++y) {
-                for (int x = 0; x < m_mapWidth; ++x) {
-                    int tileNumber = tiles[y * m_mapWidth + x];
-                    if (tileNumber != 0) {
-                        collisionBlocks.push_back(sf::FloatRect(x * mainTileset->tileWidth, y * mainTileset->tileHeight,
-                                                                mainTileset->tileWidth, mainTileset->tileHeight));
-                    }
-                }
-            }
+            // Guardar los tiles de la capa de colisiones
+            m_boundsTiles = tiles;
+            
+            // Actualizar los bloques de colisión
+            updateCollisionBlocks(mainTileset);
+            
+            // Registramos el bounds layer en m_layerIndices con un índice especial, por ejemplo -1
+            // para indicar que es un caso especial que no está en m_layers
+            m_layerIndices[layerNameStr] = -1;
+            std::cout << "Capa de bounds registrada con índice especial -1" << std::endl;
             continue; 
         }
         
@@ -95,46 +106,306 @@ bool TileMap::loadFromFile(const std::string& filename, GameEngine& engine) {
                     }
                 }
             }
+            
+            // Registramos el interactive layer en m_layerIndices con un índice especial, por ejemplo -2
+            m_layerIndices[layerNameStr] = -2;
+            std::cout << "Capa de interacción registrada con índice especial -2" << std::endl;
             continue; // Saltar al siguiente layer
         }
 
         Layer layer;
         layer.vertices.setPrimitiveType(sf::Quads);
         layer.vertices.resize(m_mapWidth * m_mapHeight * 4);
+        layer.tiles = tiles; // Guardar los IDs de los tiles
+        layer.name = layerNameStr; // Guardar el nombre de la capa
+        
+        // Determinar qué tileset usar para esta capa
+        bool isDecoLayer = (layerNameStr == "deco");
+        TileSet* tilesetToUse = isDecoLayer ? decoTileset : mainTileset;
+        
+        // Poblar los vértices para renderizado
+        updateLayerVertices(layer, tilesetToUse);
 
-        for (int y = 0; y < m_mapHeight; ++y) {
-            for (int x = 0; x < m_mapWidth; ++x) {
-                int tileNumber = tiles[y * m_mapWidth + x];
-                if (tileNumber == 0) continue;
-
-                TileSet* tileset = isDecoLayer ? decoTileset : mainTileset;
-                if (!tileset) continue;
-
-                int relativeTileID = tileNumber - tileset->firstGid;
-                int tu = relativeTileID % tileset->columns;
-                int tv = relativeTileID / tileset->columns;
-
-                sf::Vertex* quad = &layer.vertices[(x + y * m_mapWidth) * 4];
-
-                quad[0].position = sf::Vector2f(x * tileset->tileWidth, y * tileset->tileHeight);
-                quad[1].position = sf::Vector2f((x + 1) * tileset->tileWidth, y * tileset->tileHeight);
-                quad[2].position = sf::Vector2f((x + 1) * tileset->tileWidth, (y + 1) * tileset->tileHeight);
-                quad[3].position = sf::Vector2f(x * tileset->tileWidth, (y + 1) * tileset->tileHeight);
-
-                quad[0].texCoords = sf::Vector2f(tu * tileset->tileWidth, tv * tileset->tileHeight);
-                quad[1].texCoords = sf::Vector2f((tu + 1) * tileset->tileWidth, tv * tileset->tileHeight);
-                quad[2].texCoords = sf::Vector2f((tu + 1) * tileset->tileWidth, (tv + 1) * tileset->tileHeight);
-                quad[3].texCoords = sf::Vector2f(tu * tileset->tileWidth, (tv + 1) * tileset->tileHeight);
-            }
-        }
-
-        layer.tilesetTexture = isDecoLayer ? &decoTileset->texture : &mainTileset->texture;
+        layer.tilesetTexture = tilesetToUse ? &tilesetToUse->texture : nullptr;
+        layer.tileset = tilesetToUse;
+        
+        // Guardar el nombre de la capa y su índice DESPUÉS de añadir la capa a m_layers
+        m_layerIndices[layerNameStr] = layerIndex;
         m_layers.push_back(layer);
+        
+        std::cout << "Capa '" << layerNameStr << "' registrada con índice " << layerIndex 
+                  << ", usando tileset con firstGid=" << (tilesetToUse ? tilesetToUse->firstGid : 0) << std::endl;
+        
+        layerIndex++;
     }
 
     return true;
 }
 
+void TileMap::updateLayerVertices(Layer& layer, TileSet* tileset) {
+    if (!tileset) return;
+    
+    std::cout << "Actualizando vértices para la capa '" << layer.name 
+              << "' con tileset firstGid=" << tileset->firstGid << std::endl;
+    
+    layer.vertices.clear();
+    layer.vertices.setPrimitiveType(sf::Quads);
+    layer.vertices.resize(m_mapWidth * m_mapHeight * 4);
+
+    for (int y = 0; y < m_mapHeight; ++y) {
+        for (int x = 0; x < m_mapWidth; ++x) {
+            int tileNumber = layer.tiles[y * m_mapWidth + x];
+            if (tileNumber == 0) continue;
+
+            int relativeTileID = tileNumber - tileset->firstGid;
+            if (relativeTileID < 0) {
+                std::cerr << "ERROR: TileID " << tileNumber << " menor que firstGid " 
+                          << tileset->firstGid << " en capa '" << layer.name 
+                          << "' en posición (" << x << "," << y << ")" << std::endl;
+                continue;
+            }
+            
+            int tu = relativeTileID % tileset->columns;
+            int tv = relativeTileID / tileset->columns;
+
+            sf::Vertex* quad = &layer.vertices[(x + y * m_mapWidth) * 4];
+
+            quad[0].position = sf::Vector2f(x * tileset->tileWidth, y * tileset->tileHeight);
+            quad[1].position = sf::Vector2f((x + 1) * tileset->tileWidth, y * tileset->tileHeight);
+            quad[2].position = sf::Vector2f((x + 1) * tileset->tileWidth, (y + 1) * tileset->tileHeight);
+            quad[3].position = sf::Vector2f(x * tileset->tileWidth, (y + 1) * tileset->tileHeight);
+
+            quad[0].texCoords = sf::Vector2f(tu * tileset->tileWidth, tv * tileset->tileHeight);
+            quad[1].texCoords = sf::Vector2f((tu + 1) * tileset->tileWidth, tv * tileset->tileHeight);
+            quad[2].texCoords = sf::Vector2f((tu + 1) * tileset->tileWidth, (tv + 1) * tileset->tileHeight);
+            quad[3].texCoords = sf::Vector2f(tu * tileset->tileWidth, (tv + 1) * tileset->tileHeight);
+        }
+    }
+}
+
+void TileMap::updateCollisionBlocks(TileSet* tileset) {
+    if (!tileset) return;
+    
+    std::cout << "Actualizando bloques de colisión..." << std::endl;
+    
+    collisionBlocks.clear();
+    
+    if (m_boundsTiles.empty()) return;
+    
+    for (int y = 0; y < m_mapHeight; ++y) {
+        for (int x = 0; x < m_mapWidth; ++x) {
+            int tileNumber = m_boundsTiles[y * m_mapWidth + x];
+            if (tileNumber != 0) {
+                collisionBlocks.push_back(sf::FloatRect(
+                    x * tileset->tileWidth, 
+                    y * tileset->tileHeight,
+                    tileset->tileWidth, 
+                    tileset->tileHeight
+                ));
+            }
+        }
+    }
+    
+    std::cout << "Total de bloques de colisión: " << collisionBlocks.size() << std::endl;
+}
+
+bool TileMap::setTile(const std::string& layerName, int x, int y, int tileId) {
+    // Verificar que las coordenadas estén dentro del mapa
+    if (x < 0 || x >= m_mapWidth || y < 0 || y >= m_mapHeight) {
+        std::cerr << "setTile: Coordenadas (" << x << ", " << y << ") fuera del mapa." << std::endl;
+        return false;
+    }
+    
+    std::cout << "Estableciendo tile en capa '" << layerName << "' en (" << x << "," << y 
+              << ") con ID=" << tileId << std::endl;
+    
+    // Para otras capas, buscar por nombre
+    auto layerIndexIt = m_layerIndices.find(layerName);
+    if (layerIndexIt == m_layerIndices.end()) {
+        std::cerr << "setTile: No se encontró la capa '" << layerName << "'" << std::endl;
+        return false;
+    }
+    
+    int layerIndex = layerIndexIt->second;
+    std::cout << "Índice de capa encontrado: " << layerIndex << std::endl;
+    
+    // Caso especial para la capa de colisiones
+    if (layerName == "bounds" || layerIndex == -1) {
+        // Verificar que tengamos datos de bounds
+        if (m_boundsTiles.size() != m_mapWidth * m_mapHeight) {
+            std::cerr << "setTile: Datos de bounds no inicializados correctamente." << std::endl;
+            return false;
+        }
+        
+        // Actualizar el tile de colisión
+        m_boundsTiles[y * m_mapWidth + x] = tileId;
+        
+        // Obtener el tileset principal
+        TileSet* mainTileset = nullptr;
+        if (!m_tilesets.empty()) {
+            mainTileset = &m_tilesets.begin()->second;
+        }
+        
+        if (!mainTileset) {
+            std::cerr << "setTile: No se encontró tileset para bounds." << std::endl;
+            return false;
+        }
+        
+        // Actualizar las colisiones
+        updateCollisionBlocks(mainTileset);
+        std::cout << "Tile de colisión actualizado en (" << x << ", " << y << ") a ID " << tileId << std::endl;
+        return true;
+    }
+    
+    // Caso especial para la capa de interacción
+    if (layerName == "interaction" || layerIndex == -2) {
+        // Simplemente eliminamos cualquier tile interactivo en esa posición y añadimos uno nuevo si tileId != 0
+        
+        // Calcular las coordenadas del mundo para esta posición de tile
+        TileSet* mainTileset = nullptr;
+        if (!m_tilesets.empty()) {
+            mainTileset = &m_tilesets.begin()->second;
+        }
+        
+        if (!mainTileset) {
+            std::cerr << "setTile: No se encontró tileset para interaction." << std::endl;
+            return false;
+        }
+        
+        float worldX = x * mainTileset->tileWidth;
+        float worldY = y * mainTileset->tileHeight;
+        
+        // Eliminar cualquier tile interactivo en esta posición
+        auto it = interactiveTiles.begin();
+        while (it != interactiveTiles.end()) {
+            if (it->rect.left == worldX && it->rect.top == worldY) {
+                it = interactiveTiles.erase(it);
+            } else {
+                ++it;
+            }
+        }
+        
+        // Añadir nuevo tile interactivo si tileId != 0
+        if (tileId != 0) {
+            addInteractiveTile(tileId, sf::FloatRect(
+                worldX, worldY,
+                mainTileset->tileWidth, mainTileset->tileHeight
+            ));
+        }
+        
+        std::cout << "Tile de interacción actualizado en (" << x << ", " << y << ") a ID " << tileId << std::endl;
+        return true;
+    }
+    
+    // Caso normal para capas regulares
+    if (layerIndex < 0 || layerIndex >= m_layers.size()) {
+        std::cerr << "setTile: Índice de capa fuera de rango: " << layerIndex << " (m_layers.size = " 
+                  << m_layers.size() << ")" << std::endl;
+        return false;
+    }
+    
+    // Obtener la capa
+    Layer& layer = m_layers[layerIndex];
+    
+    // Verificar que tengamos datos de tiles
+    if (layer.tiles.size() != m_mapWidth * m_mapHeight) {
+        std::cerr << "setTile: Datos de tiles no inicializados correctamente para la capa '" 
+                  << layerName << "'" << std::endl;
+        return false;
+    }
+    
+    // Obtener el tileset asociado a esta capa
+    if (!layer.tileset) {
+        std::cerr << "setTile: No hay tileset asociado a la capa '" << layerName << "'" << std::endl;
+        return false;
+    }
+    
+    // Actualizar el ID del tile
+    int tileIndex = y * m_mapWidth + x;
+    int oldTileId = layer.tiles[tileIndex];
+    layer.tiles[tileIndex] = tileId;
+    
+    // Actualizar solo el quad específico en lugar de regenerar todos los vértices
+    updateSingleTile(layer, x, y, oldTileId, tileId);
+    
+    std::cout << "Tile actualizado en capa '" << layerName << "' en (" 
+              << x << ", " << y << ") de ID " << oldTileId << " a ID " << tileId << std::endl;
+    return true;
+}
+
+void TileMap::updateSingleTile(Layer& layer, int x, int y, int oldTileId, int newTileId) {
+    if (!layer.tileset) {
+        std::cerr << "updateSingleTile: No hay tileset asociado a la capa '" << layer.name << "'" << std::endl;
+        return;
+    }
+    
+    // Índice del quad en el array de vértices
+    int quadIndex = (x + y * m_mapWidth) * 4;
+    
+    std::cout << "Actualizando tile en (" << x << "," << y << ") de ID=" << oldTileId 
+              << " a ID=" << newTileId << " en capa '" << layer.name 
+              << "' (tileset firstGid=" << layer.tileset->firstGid << ")" << std::endl;
+    
+    // Si el nuevo ID es 0, hacemos el quad invisible estableciendo alfa a 0
+    if (newTileId == 0) {
+        for (int i = 0; i < 4; i++) {
+            if (quadIndex + i < layer.vertices.getVertexCount()) {
+                layer.vertices[quadIndex + i].color.a = 0;
+            }
+        }
+        std::cout << "Tile establecido como invisible (ID=0)" << std::endl;
+        return;
+    }
+    
+    // Verificar que el newTileId sea válido para este tileset
+    if (newTileId < layer.tileset->firstGid) {
+        std::cerr << "ERROR: Tile ID " << newTileId << " inválido para este tileset (firstGid = " 
+                  << layer.tileset->firstGid << ")" << std::endl;
+        return;
+    }
+    
+    // Si el quad no existe o estaba vacío (ID = 0), necesitamos crear/restaurar el quad
+    bool needsFullUpdate = (oldTileId == 0 || quadIndex + 3 >= layer.vertices.getVertexCount());
+    
+    // Si necesitamos una actualización completa, aseguramos que el array tenga el tamaño correcto
+    if (needsFullUpdate) {
+        // Si el array de vértices no es lo suficientemente grande, ajustamos su tamaño
+        if (layer.vertices.getVertexCount() < (m_mapWidth * m_mapHeight * 4)) {
+            std::cout << "Redimensionando array de vértices a " << (m_mapWidth * m_mapHeight * 4) << std::endl;
+            layer.vertices.resize(m_mapWidth * m_mapHeight * 4);
+        }
+    }
+    
+    // Calcular las coordenadas de textura para el nuevo tile
+    int relativeTileID = newTileId - layer.tileset->firstGid;
+    int tu = relativeTileID % layer.tileset->columns;
+    int tv = relativeTileID / layer.tileset->columns;
+    
+    std::cout << "relativeTileID=" << relativeTileID << ", tu=" << tu << ", tv=" << tv 
+              << ", columns=" << layer.tileset->columns << std::endl;
+    
+    // Actualizar las posiciones y coordenadas de textura del quad
+    sf::Vertex* quad = &layer.vertices[quadIndex];
+    
+    // Posiciones de los vértices
+    quad[0].position = sf::Vector2f(x * layer.tileset->tileWidth, y * layer.tileset->tileHeight);
+    quad[1].position = sf::Vector2f((x + 1) * layer.tileset->tileWidth, y * layer.tileset->tileHeight);
+    quad[2].position = sf::Vector2f((x + 1) * layer.tileset->tileWidth, (y + 1) * layer.tileset->tileHeight);
+    quad[3].position = sf::Vector2f(x * layer.tileset->tileWidth, (y + 1) * layer.tileset->tileHeight);
+    
+    // Coordenadas de textura
+    quad[0].texCoords = sf::Vector2f(tu * layer.tileset->tileWidth, tv * layer.tileset->tileHeight);
+    quad[1].texCoords = sf::Vector2f((tu + 1) * layer.tileset->tileWidth, tv * layer.tileset->tileHeight);
+    quad[2].texCoords = sf::Vector2f((tu + 1) * layer.tileset->tileWidth, (tv + 1) * layer.tileset->tileHeight);
+    quad[3].texCoords = sf::Vector2f(tu * layer.tileset->tileWidth, (tv + 1) * layer.tileset->tileHeight);
+    
+    // Restaurar el color para asegurar que es visible
+    for (int i = 0; i < 4; i++) {
+        quad[i].color = sf::Color::White;
+    }
+    
+    std::cout << "Vértices actualizados correctamente para el nuevo tile" << std::endl;
+}
 
 bool TileMap::isColliding(const sf::FloatRect& playerBounds) const {
     for (const auto& block : collisionBlocks) {
@@ -227,4 +498,28 @@ bool TileMap::isPlayerInteractingWithTile(const sf::FloatRect& playerBounds, int
 
 void TileMap::addInteractiveTile(int id, const sf::FloatRect& rect) {
     interactiveTiles.push_back({id, rect});
+    std::cout << "Añadido tile interactivo con ID=" << id 
+              << " en posición (" << rect.left << "," << rect.top << ")" << std::endl;
+}
+
+bool TileMap::setLocalTile(const std::string& layerName, int x, int y, int localTileId) {
+    // Buscar la capa
+    auto layerIndexIt = m_layerIndices.find(layerName);
+    if (layerIndexIt == m_layerIndices.end() || layerIndexIt->second < 0 || layerIndexIt->second >= m_layers.size()) {
+        std::cerr << "setLocalTile: No se encontró la capa '" << layerName << "'" << std::endl;
+        return false;
+    }
+    
+    // Obtener la capa y su tileset
+    Layer& layer = m_layers[layerIndexIt->second];
+    if (!layer.tileset) {
+        std::cerr << "setLocalTile: No hay tileset asociado a la capa '" << layerName << "'" << std::endl;
+        return false;
+    }
+    
+    // Convertir ID local a ID global
+    int globalTileId = (localTileId > 0) ? (layer.tileset->firstGid + (localTileId )) : 0;
+    
+    // Usar la función existente para establecer el tile
+    return setTile(layerName, x, y, globalTileId);
 }
