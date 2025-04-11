@@ -50,6 +50,9 @@ public:
     void hurt(int amount) { setHealth(currentHealth - amount); }
     Hurtbox* getHurtbox() { return hurtbox; }
 
+    // para interaccion
+    void InteractionCage(TileMap& tilemap, int centerX, int centerY);
+
 private:
     sf::Texture texture;
     sf::Sprite sprite;

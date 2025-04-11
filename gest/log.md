@@ -213,3 +213,6 @@ He implementado el HUD. Ahora el personaje tiene barra de vida y hay un inventar
 
 ## 20250410 JorgePelegrin @(3h)
 Arregladas todas las referencias circulares, mejorando el sistema de combate y añadiendo cooldown a todos los ataques y habilidades. He empezado a añadir varios items.
+
+## 200250411 EstrellaDominguez @(1h)
+Implementado los recursos en la nube mediante el archivo setup.sh y Dropbox.

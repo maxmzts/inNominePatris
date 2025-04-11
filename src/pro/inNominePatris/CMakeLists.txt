@@ -17,7 +17,7 @@ add_subdirectory(enemy)
 add_subdirectory(State)
 add_subdirectory(interface)
 add_subdirectory(managers)
-add_subdirectory(item)
+add_subdirectory(Item)
 
 # Añadir Game.cpp al target libModulos para patron State
 target_sources(libModulos PRIVATE
