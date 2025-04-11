@@ -4,7 +4,7 @@
 // #include "Character.h" SE DEBE QUITAR
 #include "Enemy.h"
 
-Sword::Sword(GameEngine* engine) : Weapon(engine), attackRange(50.0f), dashSpeed(600.0f), abilityCooldown(1.5f), lastAbilityTime(-abilityCooldown) {
+Sword::Sword(GameEngine* engine) : Weapon(engine),attackHitbox(sf::Vector2f(80.f, 100.f), sf::Vector2f(0.f, 0.f), sf::Color(255, 0, 0, 128)), attackCooldown(0.8f), attackTimer(0.f), dashSpeed(600.0f), abilityCooldown(2.f), lastAbilityTime(-abilityCooldown) {
     spriteFacade.loadTexture("./resources/Weapons/sword.png"); // Cargar textura usando el Façade
     spriteFacade.setOrigin(16.0f, 16.0f);           // Establecer el origen
     name = "Sword"; // Nombre del arma
@@ -14,58 +14,45 @@ Sword::Sword(GameEngine* engine) : Weapon(engine), attackRange(50.0f), dashSpeed
  * Crea la hitbox para del arma para representar el ataque en el mundo del juego.
  */
 void Sword::attack(sf::Vector2f position, sf::Vector2f direction) {
-    std::cout << "Sword attack!" << std::endl;
+    if(attackTimer <= 0.f) {
+        createHitbox(position, direction);
+        attackTimer = attackCooldown; // Reiniciar el temporizador de ataque
+    }
+}
 
-    // Define una hitbox dependiendo de la dirección
-    sf::FloatRect hitbox;
-    float attackWidth = attackRange * 1.5f;  // Ancho del ataque
-    float attackHeight = attackRange * 0.5f; // Altura del ataque
+void Sword::createHitbox(sf::Vector2f position, sf::Vector2f direction) {
+    sf::Vector2f offset;
+    sf::Vector2f size;
 
-    if (direction.x > 0) {  // Mirando a la derecha
-        hitbox = sf::FloatRect(position.x + 40, position.y - attackHeight / 2, attackWidth, attackHeight);
-    } else if (direction.x < 0) {  // Mirando a la izquierda
-        hitbox = sf::FloatRect(position.x - attackWidth - 40, position.y - attackHeight / 2, attackWidth, attackHeight);
-    } else if (direction.y < 0) {  // Mirando hacia arriba
-        hitbox = sf::FloatRect(position.x - attackWidth / 2, position.y - attackHeight - 40, attackWidth, attackHeight);
-    } else if (direction.y > 0) {  // Mirando hacia abajo
-        hitbox = sf::FloatRect(position.x - attackWidth / 2, position.y + 40, attackWidth, attackHeight);
-    } else { //hitbox estándar
-        hitbox = sf::FloatRect(position.x, position.y, attackWidth, attackHeight);
+    if (direction.x > 0) { // Derecha
+        offset = sf::Vector2f(40.f, 0.f);
+        size = sf::Vector2f(100.f, 50.f); // Hitbox horizontal
+    } else if (direction.x < 0) { // Izquierda
+        offset = sf::Vector2f(-40.f, 0.f);
+        size = sf::Vector2f(100.f, 50.f); // Hitbox horizontal
+    } else if (direction.y > 0) { // Abajo
+        offset = sf::Vector2f(0.f, 40.f);
+        size = sf::Vector2f(50.f, 100.f); // Hitbox vertical
+    } else if (direction.y < 0) { // Arriba
+        offset = sf::Vector2f(0.f, -40.f);
+        size = sf::Vector2f(50.f, 100.f); // Hitbox vertical
     }
 
-    // ESTO LO DEBERÍA HACER EL UPDATE DE INGAME
-    // Verifica colisiones con hutboxes
-    // for (Enemy& enemy : enemies) {
-    //     if (hitbox.intersects(enemy.getHurtbox()->getGlobalBounds())) {
-    //         std::cout << "Enemigo golpeado!" << std::endl;
-    //         enemy.takeDamage(10);
-    //     }
-    // }
+    attackHitbox.setSize(size); // Ajustar el tamaño de la hitbox
+    attackHitbox.setPosition(position + offset); // Ajustar la posición de la hitbox
+    attackHitbox.setActive(true); // Activar la hitbox
 }
 
-// CAMBIAR, CREA DEPENDENCIA CIRCULAR
-// void Sword::useAbility(Character& character) {
-//     static sf::Clock clock;
-//     float elapsedTime = clock.getElapsedTime().asSeconds();
-//     if(elapsedTime - lastAbilityTime < abilityCooldown) {
-//         std::cout << "Ability on cooldown!" << std::endl;
-//         return;
-//     }
+void Sword::useAbility() {
+    static sf::Clock clock;
+    float elapsedTime = clock.getElapsedTime().asSeconds();
+    if(elapsedTime - lastAbilityTime < abilityCooldown) {
+        std::cout << "Ability on cooldown!" << std::endl;
+        return;
+    }
 
-//     lastAbilityTime = elapsedTime;
-//     std::cout << "Sword ability!" << std::endl;
-//     character.startDash(dashSpeed, 0.2f);
-//     //Aqui llama al metodo de la clase character para que haga el dash
-// }
-
-void Sword::increaseDashSpeed(float speed) {
-    std::cout << "Dash speed increased!" << std::endl;
-    dashSpeed += speed;
-}
-
-void Sword::increaseAttackRange(float range) {
-    std::cout << "Attack range increased!" << std::endl;
-    attackRange += range;
+    lastAbilityTime = elapsedTime;
+    std::cout << "Sword ability!" << std::endl;
 }
 
 /**
@@ -97,4 +84,40 @@ void Sword::renderOnPlayer(sf::Vector2f position, sf::Vector2f direction) {
 void Sword::render(){
     // Dibujar el sprite del arma
     spriteFacade.draw(engine->getWindow());
+    attackHitbox.render(engine->getWindow()); // Dibujar la hitbox de ataque
+}
+
+void Sword::update(float deltaTime) {
+    // Actualizar el temporizador de ataque
+    if (attackTimer > 0.f) {
+        attackTimer -= deltaTime;
+        if(attackTimer < 0.f) {
+            attackHitbox.setActive(false); // Desactivar la hitbox después de un tiempo
+            dealtDamage = false;
+        }
+    } 
+}
+
+Hitbox Sword::getAttackHitbox() const {
+    return attackHitbox;
+}
+
+void Sword::increaseDashSpeed(float speed) {
+    std::cout << "Dash speed increased!" << std::endl;
+    dashSpeed += speed;
+}
+
+void Sword::decreaseDashCooldown(float cooldown) {
+    std::cout << "Dash cooldown decreased!" << std::endl;
+    abilityCooldown -= cooldown;
+}
+
+void Sword::decreaseAttackCooldown(float cooldown) {
+    std::cout << "Attack cooldown decreased!" << std::endl;
+    attackCooldown -= cooldown;
+}
+
+void Sword::increaseAttackDamage(float damage) {
+    std::cout << "Attack damage increased!" << std::endl;
+    attackDamage += damage;
 }

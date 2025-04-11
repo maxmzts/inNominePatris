@@ -4,67 +4,74 @@
 #include <SFML/Window/Mouse.hpp>
 #include <cmath>
 
-Lance::Lance(GameEngine* engine) : Weapon(engine), isPortalDropped(false), attackRange(100.0f), PortalRange(300.0f), portal() {
+Lance::Lance(GameEngine* engine) : Weapon(engine), attackHitbox(sf::Vector2f(30.f, 200.f), sf::Vector2f(0.f, 0.f), sf::Color(255, 0, 0, 128)), attackCooldown(0.7f), attackTimer(0.f), isPortalDropped(false), PortalRange(300.0f), portal() {
     spriteFacade.loadTexture("./resources/Weapons/lance.png"); // Cargar textura usando el Façade
     name = "Lance"; // Nombre del arma
 }
 
-void Lance::attack(sf::Vector2f position, sf::Vector2f direction){
-    std::cout << "Lance attack!" << std::endl;
-    
+void Lance::createHitbox(sf::Vector2f position, sf::Vector2f direction) {
+    sf::Vector2f offset;
+    sf::Vector2f size;
 
-    // Define una hitbox dependiendo de la dirección
-    sf::FloatRect hitbox;
-    float attackWidth = attackRange * 0.5f;  // Ancho del ataque
-    float attackHeight = attackRange * 1.5f; // Altura del ataque
-
-    if (direction.x > 0) {  // Mirando a la derecha
-        hitbox = sf::FloatRect(position.x + 40, position.y - attackHeight / 2, attackWidth, attackHeight);
-    } else if (direction.x < 0) {  // Mirando a la izquierda
-        hitbox = sf::FloatRect(position.x - attackWidth - 40, position.y - attackHeight / 2, attackWidth, attackHeight);
-    } else if (direction.y < 0) {  // Mirando hacia arriba
-        hitbox = sf::FloatRect(position.x - attackWidth / 2, position.y - attackHeight - 40, attackWidth, attackHeight);
-    } else if (direction.y > 0) {  // Mirando hacia abajo
-        hitbox = sf::FloatRect(position.x - attackWidth / 2, position.y + 40, attackWidth, attackHeight);
-    } else { //hitbox estándar
-        hitbox = sf::FloatRect(position.x, position.y, attackWidth, attackHeight);
+    if (direction.x > 0) { // Derecha
+        offset = sf::Vector2f(70.f, 0.f);
+        size = sf::Vector2f(200.f, 30.f); // Hitbox horizontal
+    } else if (direction.x < 0) { // Izquierda
+        offset = sf::Vector2f(-70.f, 0.f);
+        size = sf::Vector2f(200.f, 30.f); // Hitbox horizontal
+    } else if (direction.y > 0) { // Abajo
+        offset = sf::Vector2f(0.f, 70.f);
+        size = sf::Vector2f(30.f, 200.f); // Hitbox vertical
+    } else if (direction.y < 0) { // Arriba
+        offset = sf::Vector2f(0.f, -70.f);
+        size = sf::Vector2f(30.f, 200.f); // Hitbox vertical
     }
 
-    // ESTO LO HACE INGAME
-    // Verifica colisiones con enemigos
-    // for (Enemy& enemy : enemies) {
-    //     if (hitbox.intersects(enemy.getHurtbox()->getGlobalBounds())) {
-    //         std::cout << "Enemigo golpeado!" << std::endl;
-    //         enemy.takeDamage(10);
-    //     }
-    // }
+    attackHitbox.setSize(size); // Ajustar el tamaño de la hitbox
+    attackHitbox.setPosition(position + offset); // Ajustar la posición de la hitbox
+    attackHitbox.setActive(true); // Activar la hitbox
+}
+
+void Lance::attack(sf::Vector2f position, sf::Vector2f direction){
+    if(attackTimer <= 0.f) {
+        createHitbox(position, direction);
+        attackTimer = attackCooldown; // Reiniciar el temporizador de ataque
+    }
 }
 
 // REIMPLEMENTAR
-// void Lance::useAbility(Character& character,  sf::RenderWindow& window){
-//     if (!isPortalDropped) {
-//         sf::Vector2i mousePosition = sf::Mouse::getPosition(window); // Posición del ratón en pantalla
-//         sf::Vector2f worldMousePos = window.mapPixelToCoords(mousePosition);
-        
-//         // Calcular la distancia entre el personaje y la posición del ratón
-//         float distance = std::sqrt(std::pow(worldMousePos.x - character.getPosition().x, 2) + 
-//                                    std::pow(worldMousePos.y - character.getPosition().y, 2));
-        
-//         if (distance <= PortalRange) {
-//             std::cout << "Dropping Portal at: " << worldMousePos.x << ", " << worldMousePos.y << std::endl;
-//             portal.setPosition(worldMousePos);
-//             portal.setVisible(true);
-//             isPortalDropped = true;
-//         } else {
-//             std::cout << "Portal placement out of range!" << "Distance - PortalRange" << distance << "-" << PortalRange << std::endl;
-//         }
-//     } else {
-//         std::cout << "Teleporting to Portal!" << std::endl;
-//         character.setPosition(portal.getPosition().x, portal.getPosition().y);
-//         portal.setVisible(false);
-//         isPortalDropped = false;
-//     }
-// }
+void Lance::useAbility(sf::Vector2f characterPosition, sf::Vector2f mousePosition) {
+    if (abilityTimer > 0.f) {
+        std::cout << "Ability on cooldown! Time remaining: " << abilityTimer << " seconds" << std::endl;
+        return;
+    }
+
+    if (!isPortalDropped) {
+        // Calcular la distancia entre el personaje y la posición del ratón
+        float distance = std::sqrt(std::pow(mousePosition.x - characterPosition.x, 2) +
+                                   std::pow(mousePosition.y - characterPosition.y, 2));
+
+        if (distance <= PortalRange) {
+            std::cout << "Dropping Portal at: " << mousePosition.x << ", " << mousePosition.y << std::endl;
+            portal.setPosition(mousePosition);
+            portal.setVisible(true);
+            isPortalDropped = true;
+
+            // Reiniciar el cooldown
+            abilityTimer = abilityCooldown;
+        } else {
+            std::cout << "Portal placement out of range! Distance: " << distance << " - PortalRange: " << PortalRange << std::endl;
+        }
+    } else {
+        std::cout << "Portal already placed. Ready to teleport!" << std::endl;
+    }
+}
+
+const sf::Vector2f& Lance::teleportToPortal() {
+    portal.setVisible(false);
+    isPortalDropped = false;
+    return portal.getPosition();
+}
 
 Portal::Portal() : position(0.f, 0.f), visible(false) {
     loadAnimationFrames();
@@ -103,6 +110,21 @@ void Portal::draw(sf::RenderWindow& window) {
 
 void Lance::DrawPortal(sf::RenderWindow& window) {
     portal.draw(window);
+}
+
+void Lance::update(float deltaTime) {
+    if (attackTimer > 0.f) {
+        attackTimer -= deltaTime;
+        if (attackTimer <= 0.f) {
+            attackHitbox.setActive(false); // Desactivar la hitbox después de un ataque
+            dealtDamage = false;          // Reiniciar el estado de daño
+        }
+    }
+
+    // Reducir el temporizador de la habilidad
+    if (abilityTimer > 0.f) {
+        abilityTimer -= deltaTime;
+    }
 }
 
 void Lance::PortalUpdate(float deltaTime) {
@@ -147,15 +169,6 @@ void Portal::update(float deltaTime) {
     }
 }
 
-void Lance::increaseAttackRange(float range) {
-    attackRange += range;
-    std::cout << "Attack range increased!" << std::endl;
-}
-
-void Lance::increasePortalRange(float range) {
-    PortalRange += range;
-    std::cout << "Portal range increased!" << std::endl;
-}
 
 /**
  * Ajusta la lanza en la posicion y con la direccion del jugador.
@@ -186,7 +199,28 @@ void Lance::renderOnPlayer(sf::Vector2f position, sf::Vector2f direction) {
 void Lance::render(){
     // Dibujar el sprite del arma
     spriteFacade.draw(engine->getWindow());
+    attackHitbox.render(engine->getWindow()); // Dibujar la hitbox de ataque
     if (isPortalDropped) {
         portal.draw(engine->getWindow());
     }
+}
+
+Hitbox Lance::getAttackHitbox() const {
+    return attackHitbox;
+}
+
+void Lance::increasePortalRange(float range) {
+    PortalRange += range;
+    std::cout << "Portal range increased!" << std::endl;
+}
+
+void Lance::decreaseAttackCooldown(float cooldown) {
+    attackCooldown -= cooldown;
+    if (attackCooldown < 0.1f) attackCooldown = 0.1f; // Limitar el cooldown mínimo
+    std::cout << "Attack cooldown decreased!" << std::endl;
+}
+
+void Lance::increaseAttackDamage(float damage) {
+    attackDamage += damage;
+    std::cout << "Attack damage increased!" << std::endl;
 }

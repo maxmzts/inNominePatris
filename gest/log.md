@@ -206,3 +206,6 @@ He implementado el HUD. Ahora el personaje tiene barra de vida y hay un inventar
 
 ## 20250410 MáximoMartínez @(1h 30min)
 (1h 30min) He implementado una clase ```AnimatedSprite``` para poder usar animaciones de spritesheets con la fachada de sprite. Permite cargar varias animaciones que se identifican por un nombre y elegir los FPS de la reproducción. La he añadido a la clase ```Enemy``` para probarlo.
+
+## 20250410 JorgePelegrin @(3h)
+Arregladas todas las referencias circulares, mejorando el sistema de combate y añadiendo cooldown a todos los ataques y habilidades. He empezado a añadir varios items.

@@ -11,73 +11,80 @@ Bow::Bow(GameEngine* engine) : Weapon(engine), arrowSpeed(500.0f), abilityArrowC
 }
 
 void Bow::attack(sf::Vector2f position, sf::Vector2f direction) {
-    std::cout << "Bow attack: Shooting an arrow!" << std::endl;
+    if (attackTimer <= 0.f) { // Verificar si el cooldown ha terminado
+        std::cout << "Bow attack: Shooting an arrow!" << std::endl;
 
-    // Crear una flecha y añadirla al contenedor
-    arrows.emplace_back(position, direction, arrowSpeed);
+        // Crear una flecha y añadirla al contenedor
+        arrows.emplace_back(position, direction, arrowSpeed);
+
+        // Reiniciar el cooldown
+        attackTimer = attackCooldown;
+    } else {
+        std::cout << "Attack on cooldown! Time remaining: " << attackTimer << " seconds" << std::endl;
+    }
 }
 
-// REIMPLEMENTAR
-// void Bow::useAbility(Character& character, std::vector<Enemy>& enemies) {
-//     std::cout << "Bow ability: Shooting multiple arrows in an arc!" << std::endl;
 
-//     // Obtener la posición del personaje
-//     sf::Vector2f position = character.getPosition();
-//     sf::Vector2f direction = character.getDirection();
+void Bow::useAbility(sf::Vector2f position, sf::Vector2f direction) {
+    if (abilityTimer <= 0.f) { // Verificar si el cooldown ha terminado
+        std::cout << "Bow ability: Shooting multiple arrows in an arc!" << std::endl;
 
-//     // Asegurarse de que la dirección esté normalizada
-//     float magnitude = std::sqrt(direction.x * direction.x + direction.y * direction.y);
-//     if (magnitude != 0) {
-//         direction /= magnitude;
-//     }
+        // Asegurarse de que la dirección esté normalizada
+        float magnitude = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+        if (magnitude != 0) {
+            direction /= magnitude;
+        }
 
-//     // Convertir el ángulo de dispersión a radianes
-//     float spreadAngleRadians = abilitySpreadAngle * (M_PI / 180.0f);
+        // Convertir el ángulo de dispersión a radianes
+        float spreadAngleRadians = abilitySpreadAngle * (M_PI / 180.0f);
 
-//     // Calcular el ángulo inicial y el incremento entre flechas
-//     float startAngle = -spreadAngleRadians / 2.0f; // Ángulo inicial (mitad negativa del arco)
-//     float angleIncrement = spreadAngleRadians / (abilityArrowCount - 1); // Incremento entre flechas
+        // Calcular el ángulo inicial y el incremento entre flechas
+        float startAngle = -spreadAngleRadians / 2.0f; // Ángulo inicial (mitad negativa del arco)
+        float angleIncrement = spreadAngleRadians / (abilityArrowCount - 1); // Incremento entre flechas
 
-//     for (int i = 0; i < abilityArrowCount; ++i) {
-//         float angle = startAngle + i * angleIncrement; // Ángulo para esta flecha
+        for (int i = 0; i < abilityArrowCount; ++i) {
+            float angle = startAngle + i * angleIncrement; // Ángulo para esta flecha
 
-//         // Rotar la dirección base del personaje según el ángulo
-//         sf::Vector2f arrowDirection(
-//             direction.x * std::cos(angle) - direction.y * std::sin(angle),
-//             direction.x * std::sin(angle) + direction.y * std::cos(angle)
-//         );
+            // Rotar la dirección base del personaje según el ángulo
+            sf::Vector2f arrowDirection(
+                direction.x * std::cos(angle) - direction.y * std::sin(angle),
+                direction.x * std::sin(angle) + direction.y * std::cos(angle)
+            );
 
-//         // Crear una flecha y añadirla al contenedor
-//         arrows.emplace_back(position, arrowDirection, arrowSpeed);
-//     }
-// }
+            // Crear una flecha y añadirla al contenedor
+            arrows.emplace_back(position, arrowDirection, arrowSpeed);
+        }
 
-void Bow::update(float deltaTime) {
+        // Reiniciar el cooldown
+        abilityTimer = abilityCooldown;
+    } else {
+        std::cout << "Ability on cooldown! Time remaining: " << abilityTimer << " seconds" << std::endl;
+    }
+}
+
+void Bow::update(float deltaTime, const TileMap& tileMap) {
+    // Reducir los temporizadores de cooldown
+    if (attackTimer > 0.f) {
+        attackTimer -= deltaTime;
+    }
+    if (abilityTimer > 0.f) {
+        abilityTimer -= deltaTime;
+    }
+
     // Actualizar todas las flechas activas
     for (auto& arrow : arrows) {
         arrow.update(deltaTime);
+
+        // Verificar colisión con elementos sólidos del mapa
+        if (tileMap.isColliding(arrow.getBounds())) {
+            arrow.markforRemoval(); // Marcar la flecha para eliminación si colisiona
+        }
     }
 
-    // ESTO LO DEBE HACER INGAME
-    // // Verificar colisiones con enemigos
-    // for (auto& arrow : arrows ) {
-    //     for (auto& enemy : enemies) {
-    //         if (arrow.getBounds().intersects(enemy.getBounds())) {
-    //             std::cout << "Enemy hit by arrow!" << std::endl;
-    //             enemy.takeDamage(15); // Daño de la flecha
-    //             arrow.markforRemoval(); // Marcar la flecha para ser eliminada
-    //             break;
-    //         }
-    //     }
-    // }
-
-    // Eliminar flechas que salgan de la pantalla o estén marcadas para eliminación
+    // Eliminar flechas que estén marcadas para eliminación
     arrows.erase(std::remove_if(arrows.begin(), arrows.end(),
         [](const Arrow& arrow) {
-            return arrow.isMarkedForRemoval() ||
-                   arrow.getBounds().left > 800 || arrow.getBounds().top > 600 ||
-                   arrow.getBounds().left + arrow.getBounds().width < 0 ||
-                   arrow.getBounds().top + arrow.getBounds().height < 0;
+            return arrow.isMarkedForRemoval();
         }),
         arrows.end());
 }

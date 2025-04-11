@@ -139,11 +139,37 @@ void InGame::update(Game& game) {
         // Ataques con el ratón
         if (event.type == sf::Event::MouseButtonPressed) {
             if (event.mouseButton.button == sf::Mouse::Left) {
-                // Ataque normal
-                ///////////////////////////////////////////////////////////player.attack(enemies);
+                //crear aqui la hitbox
+                if (Weapon* equippedWeapon = player.getEquippedWeapon()) {
+                    // Crear la hitbox del ataque
+                    equippedWeapon->attack(player.getPosition(), player.getDirection());
+                }
             } else if (event.mouseButton.button == sf::Mouse::Right) {
                 // Usar habilidad especial
-                //////////////////////////////////////////////////////////player.useAbility(window, enemies);
+                if (Sword* sword = dynamic_cast<Sword*>(player.getEquippedWeapon())) {
+                    sword->useAbility();
+            
+                    // Iniciar el dash en el personaje
+                    player.startDash(sword->getDashSpeed(), 0.2f); // Usa los valores de la espada
+                } else if (Lance* lance = dynamic_cast<Lance*>(player.getEquippedWeapon())) {
+                    // Usar habilidad de la lanza
+                    sf::Vector2i mousePosition = sf::Mouse::getPosition(engine.getWindow());
+                    sf::Vector2f worldMousePos = engine.getWindow().mapPixelToCoords(mousePosition);
+
+                    if (!lance->getIsPortalDropped()) {
+                        // Colocar el portal
+                        lance->useAbility(player.getPosition(), worldMousePos);
+                    } else {
+                        // Teletransportar al portal
+                        sf::Vector2f playerPosition = player.getPosition();
+                        playerPosition = lance->teleportToPortal();
+                        player.setPosition(playerPosition.x, playerPosition.y);
+                    }
+                } else if (Bow* bow = dynamic_cast<Bow*>(player.getEquippedWeapon())) {
+                    // Usar habilidad del arco
+                    bow->useAbility(player.getPosition(), player.getDirection());
+                }
+                //player.useAbility(window, enemies);
             }
         }
     }
@@ -155,6 +181,39 @@ void InGame::update(Game& game) {
         enemy->update(deltaTime,&player,&tileMap);
     }
 
+    if (Weapon* equippedWeapon = player.getEquippedWeapon()) {
+        // Excluir el arco del procesamiento de la hitbox
+        if (dynamic_cast<Bow*>(equippedWeapon) == nullptr) {
+            // Actualizar la hitbox de ataque si el arma no es un arco
+            if (equippedWeapon->getAttackHitbox().isActive()) {
+                // Solo infligir daño si es el primer frame en el que la hitbox está activa
+                if (!equippedWeapon->hasDealtDamage()) {
+                    for (Enemy* enemy : enemies) {
+                        if (equippedWeapon->getAttackHitbox().getGlobalBounds().intersects(enemy->getHurtbox()->getGlobalBounds())) {
+                            std::cout << "Enemigo golpeado!" << std::endl;
+                            enemy->takeDamage(equippedWeapon->getAttackDamage()); // Infligir daño al enemigo
+                        }
+                    }
+                    // Marcar que el daño ya se ha aplicado
+                    equippedWeapon->setDealtDamage(true);
+                }
+            }
+        }
+    }
+
+    if (Bow* bow = dynamic_cast<Bow*>(player.getEquippedWeapon())) {
+        for (Arrow& arrow : bow->getArrows()) {
+            for (Enemy* enemy : enemies) {
+                if (arrow.getBounds().intersects(enemy->getHurtbox()->getGlobalBounds())) {
+                    std::cout << "Enemy hit by arrow!" << std::endl;
+                    enemy->takeDamage(15); // Infligir daño al enemigo
+                    arrow.markforRemoval(); // Marcar la flecha para eliminación
+                    break; // Salir del bucle para evitar múltiples colisiones con la misma flecha
+                }
+            }
+        }
+    }
+
     // Actualizar la posición de la cámara para seguir al jugador
     engine.setViewCenter(player.getPosition());
 
@@ -162,9 +221,12 @@ void InGame::update(Game& game) {
     Weapon* equippedWeapon = player.getEquippedWeapon();
     if (equippedWeapon != nullptr) {
         if (Bow* bow = dynamic_cast<Bow*>(equippedWeapon)) {
-            ////////////////////////////////////////////////////////bow->update(deltaTime, enemies); // Actualizar el arco
+            bow->update(deltaTime, tileMap); // Actualizar el arco
         } else if (Lance* lance = dynamic_cast<Lance*>(equippedWeapon)) {
             lance->PortalUpdate(deltaTime); // Actualizar la lanza
+            lance->update(deltaTime); // Actualizar la lanza
+        } else if (Sword* sword = dynamic_cast<Sword*>(equippedWeapon)) {
+            sword->update(deltaTime); // Actualizar la espada
         }
     }
     hud.update(player);
