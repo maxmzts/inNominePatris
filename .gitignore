@@ -10,3 +10,5 @@ src/pro/multimax/MiJuego
 
 src/pro/inNominePatris/build
 src/pro/inNominePatris/MiJuego
+src/pro/inNominePatris/recursos
+!src/pro/inNominePatris/recursos/lista-de-atribuciones.md
