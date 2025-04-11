@@ -4,7 +4,14 @@
 // #include "Character.h" SE DEBE QUITAR
 #include "Enemy.h"
 
-Sword::Sword(GameEngine* engine) : Weapon(engine),attackHitbox(sf::Vector2f(80.f, 100.f), sf::Vector2f(0.f, 0.f), sf::Color(255, 0, 0, 128)), attackCooldown(0.8f), attackTimer(0.f), dashSpeed(600.0f), abilityCooldown(2.f), lastAbilityTime(-abilityCooldown) {
+Sword::Sword(GameEngine* engine) 
+:   Weapon(engine),
+    attackHitbox( std::make_shared<Hitbox>(sf::Vector2f(80.f, 100.f), sf::Vector2f(0.f, 0.f) )),
+    attackCooldown(0.8f), 
+    attackTimer(0.f), 
+    dashSpeed(600.0f), 
+    abilityCooldown(2.f), 
+    lastAbilityTime(-abilityCooldown) {
     spriteFacade.loadTexture("./resources/Weapons/sword.png"); // Cargar textura usando el Façade
     spriteFacade.setOrigin(16.0f, 16.0f);           // Establecer el origen
     name = "Sword"; // Nombre del arma
@@ -38,9 +45,9 @@ void Sword::createHitbox(sf::Vector2f position, sf::Vector2f direction) {
         size = sf::Vector2f(50.f, 100.f); // Hitbox vertical
     }
 
-    attackHitbox.setSize(size); // Ajustar el tamaño de la hitbox
-    attackHitbox.setPosition(position + offset); // Ajustar la posición de la hitbox
-    attackHitbox.setActive(true); // Activar la hitbox
+    attackHitbox->setSize(size); // Ajustar el tamaño de la hitbox
+    attackHitbox->setPosition(position + offset); // Ajustar la posición de la hitbox
+    attackHitbox->setActive(true); // Activar la hitbox
 }
 
 bool Sword::useAbility() {
@@ -85,7 +92,7 @@ void Sword::renderOnPlayer(sf::Vector2f position, sf::Vector2f direction) {
 void Sword::render(){
     // Dibujar el sprite del arma
     spriteFacade.draw(engine->getWindow());
-    attackHitbox.render(engine->getWindow()); // Dibujar la hitbox de ataque
+    attackHitbox->render(engine->getWindow()); // Dibujar la hitbox de ataque
 }
 
 void Sword::update(float deltaTime) {
@@ -93,7 +100,7 @@ void Sword::update(float deltaTime) {
     if (attackTimer > 0.f) {
         attackTimer -= deltaTime;
         if(attackTimer < 0.f) {
-            attackHitbox.setActive(false); // Desactivar la hitbox después de un tiempo
+            attackHitbox->setActive(false); // Desactivar la hitbox después de un tiempo
             dealtDamage = false;
         }
     }
@@ -107,7 +114,7 @@ void Sword::update(float deltaTime) {
 
 }
 
-Hitbox Sword::getAttackHitbox() const {
+std::shared_ptr<Hitbox> Sword::getAttackHitbox() const {
     return attackHitbox;
 }
 

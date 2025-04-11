@@ -4,7 +4,7 @@
 Character::Character(const std::string& textureFile) 
 : speed(200.f), acceleration(800.f), deceleration(1000.f), equippedWeapon(nullptr), 
 isDashing(false), dashSpeed(400.f), dashDuration(0.2f), weapons(), equippedIndex(0), 
-direction(0.f, 0.f), maxHealth(100), currentHealth(100) {
+direction(0.f, 0.f), maxHealth(100), currentHealth(100), isInvencible(false) {
     
     if (!texture.loadFromFile(textureFile)) {
         std::cerr << "Error cargando la textura" << std::endl;
@@ -42,7 +42,7 @@ void Character::handleInput(const sf::Event& event) {
 
 void Character::update(const TileMap& tilemap, float deltaTime) {
     sf::Vector2f moveDirection(0.f, 0.f);
-
+    updateInvencibility(deltaTime);
     hurtbox->setPosition(getPosition());  // Centrado en la posición del enemigo
 
     // Detectar entrada del usuario solo si no está en dash
@@ -359,4 +359,20 @@ void Character::takeDamage(int damage) {
 
 void Character::heal(int amount) {
     setHealth(currentHealth + amount);
+}
+
+void Character::hurt(int amount){
+    if(!isInvencible){
+        setHealth(currentHealth - amount);
+        isInvencible = true;
+    }
+}
+
+void Character::updateInvencibility(float deltaTime){
+    if(isInvencible)
+        invencibilityTimer += deltaTime;
+    if(invencibilityTimer > 1){
+        isInvencible = false;
+        invencibilityTimer = 0;
+    }
 }

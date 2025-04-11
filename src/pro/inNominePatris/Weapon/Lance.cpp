@@ -4,7 +4,14 @@
 #include <SFML/Window/Mouse.hpp>
 #include <cmath>
 
-Lance::Lance(GameEngine* engine) : Weapon(engine), attackHitbox(sf::Vector2f(30.f, 200.f), sf::Vector2f(0.f, 0.f), sf::Color(255, 0, 0, 128)), attackCooldown(0.7f), attackTimer(0.f), isPortalDropped(false), PortalRange(300.0f), portal() {
+Lance::Lance(GameEngine* engine) 
+:   Weapon(engine), 
+    attackHitbox(std::make_shared<Hitbox>(sf::Vector2f(200.f, 30.f), sf::Vector2f(0.f, 0.f) )), 
+    attackCooldown(0.7f), 
+    attackTimer(0.f), 
+    isPortalDropped(false), 
+    PortalRange(300.0f), 
+    portal() {
     spriteFacade.loadTexture("./resources/Weapons/lance.png"); // Cargar textura usando el Façade
     name = "Lance"; // Nombre del arma
 }
@@ -26,10 +33,9 @@ void Lance::createHitbox(sf::Vector2f position, sf::Vector2f direction) {
         offset = sf::Vector2f(0.f, -70.f);
         size = sf::Vector2f(30.f, 200.f); // Hitbox vertical
     }
-
-    attackHitbox.setSize(size); // Ajustar el tamaño de la hitbox
-    attackHitbox.setPosition(position + offset); // Ajustar la posición de la hitbox
-    attackHitbox.setActive(true); // Activar la hitbox
+    attackHitbox->setSize(size); // Ajustar el tamaño de la hitbox
+    attackHitbox->setPosition(position + offset); // Ajustar la posición de la hitbox
+    attackHitbox->setActive(true); // Activar la hitbox
 }
 
 void Lance::attack(sf::Vector2f position, sf::Vector2f direction){
@@ -116,7 +122,7 @@ void Lance::update(float deltaTime) {
     if (attackTimer > 0.f) {
         attackTimer -= deltaTime;
         if (attackTimer <= 0.f) {
-            attackHitbox.setActive(false); // Desactivar la hitbox después de un ataque
+            attackHitbox->setActive(false); // Desactivar la hitbox después de un ataque
             dealtDamage = false;          // Reiniciar el estado de daño
         }
     }
@@ -199,13 +205,13 @@ void Lance::renderOnPlayer(sf::Vector2f position, sf::Vector2f direction) {
 void Lance::render(){
     // Dibujar el sprite del arma
     spriteFacade.draw(engine->getWindow());
-    attackHitbox.render(engine->getWindow()); // Dibujar la hitbox de ataque
+    attackHitbox->render(engine->getWindow()); // Dibujar la hitbox de ataque
     if (isPortalDropped) {
         portal.draw(engine->getWindow());
     }
 }
 
-Hitbox Lance::getAttackHitbox() const {
+std::shared_ptr<Hitbox> Lance::getAttackHitbox() const {
     return attackHitbox;
 }
 

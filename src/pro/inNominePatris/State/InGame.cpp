@@ -184,11 +184,11 @@ void InGame::update(Game& game) {
         // Excluir el arco del procesamiento de la hitbox
         if (dynamic_cast<Bow*>(equippedWeapon) == nullptr) {
             // Actualizar la hitbox de ataque si el arma no es un arco
-            if (equippedWeapon->getAttackHitbox().isActive()) {
+            if (equippedWeapon->getAttackHitbox()->isActive()) {
                 // Solo infligir daño si es el primer frame en el que la hitbox está activa
                 if (!equippedWeapon->hasDealtDamage()) {
                     for (Enemy* enemy : enemies) {
-                        if (equippedWeapon->getAttackHitbox().getGlobalBounds().intersects(enemy->getHurtbox()->getGlobalBounds())) {
+                        if (equippedWeapon->getAttackHitbox()->getGlobalBounds().intersects(enemy->getHurtbox()->getGlobalBounds())) {
                             std::cout << "Enemigo golpeado!" << std::endl;
                             enemy->takeDamage(equippedWeapon->getAttackDamage()); // Infligir daño al enemigo
                         }
@@ -240,30 +240,23 @@ void InGame::update(Game& game) {
      */
 
     // Comprobar que el jugador recibe daño
-    for(auto enemie : enemies){
-        if(enemie->getHitbox()->isActive() && player.getHurtbox()->getGlobalBounds().intersects(enemie->getHitbox()->getGlobalBounds()))
-            player.hurt(10);
+    
+    if(!player.getIsInvencible()){
+        for(auto enemy : enemies){
+            if(enemy->getHitbox()->isActive() && checkPlayerWasHit(player, enemy))
+                player.hurt(enemy->getAttackDamage());
+        }
     }
 
     // Comprobar que algún enemigo recibe daño
-
+    for(auto enemy : enemies){
+        if(enemy->getisInvincible() && checkEnemyWasHit(enemy, player))
+            enemy->takeDamage(player.getEquippedWeapon()->getAttackDamage());
+    }
 
     hud.update(player);
 
-    //// TEST DE VISUAL EFFECTS
-    effectTimer += deltaTime;
-    if (effectTimer >= 5.0f) {
-        effectTimer = 0.0f;
-        vfxManager.addEffect(
-            "./resources/explosion.png",
-            {player.getPosition().x, player.getPosition().y},          // posición de prueba
-            {64 , 64},           // tamaño de frame
-            16,                  // cantidad de frames
-            16.f                 // FPS
-        );
-    }
-
-    vfxManager.update(deltaTime);
+    VFXManager::getInstance().update(deltaTime);
 }
 
 InGame::~InGame() {
@@ -285,15 +278,24 @@ void InGame::render(Game& game, sf::RenderWindow& window) {
     }
 
     for (Enemy* enemy : enemies){
-        enemy->render(engine.getWindow());
+        enemy->render(window);
     }
 
     player.draw(engine);
 
-    vfxManager.draw(window);
+    VFXManager::getInstance().render(window);
 
     // Mostrar el HUD
     hud.draw(window, player);
 
     engine.display();
+}
+
+bool InGame::checkEnemyWasHit(Enemy* enemy, Character player){
+    if(player.getEquippedWeapon()->getAttackHitbox()->isActive())
+        return enemy->getHurtbox()->getGlobalBounds().intersects(player.getEquippedWeapon()->getAttackHitbox()->getGlobalBounds());
+}
+
+bool InGame::checkPlayerWasHit(Character player, Enemy* enemy){
+    return player.getHurtbox()->getGlobalBounds().intersects(enemy->getHitbox()->getGlobalBounds());
 }

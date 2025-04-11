@@ -19,10 +19,6 @@ private:
     static InGame* instance;
     GameEngine& engine; // Puntero al GameEngine
 
-    //Managers
-    VFXManager vfxManager;
-    float effectTimer = 0.0f;
-
     TileMap tileMap;
     Character player;
     std::vector<Weapon*> weaponsOnGround;
@@ -39,6 +35,9 @@ public:
 
     void update(Game& game) override;
     void render(Game& game, sf::RenderWindow& window) override;
+
+    bool checkEnemyWasHit(Enemy* enemy, Character player);
+    bool checkPlayerWasHit(Character player, Enemy* enemy);
 };
 
 #endif // INGAME_H

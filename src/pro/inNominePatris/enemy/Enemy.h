@@ -19,26 +19,26 @@
 
 class Enemy {
 private:
-    std::string m_name;
-    float m_maxHealth;
-    float m_currentHealth;
-    float m_movementSpeed;
+    std::string name;
+    float maxHealth;
+    float currentHealth;
+    float movementSpeed;
     
-    Hitbox* m_hitbox;         // Para hacer daño
-    Hurtbox* m_hurtbox;       // Para recibir daño
+    Hitbox* hitbox;         // Para hacer daño
+    Hurtbox* hurtbox;       // Para recibir daño
     
-    bool m_isInvincible;      // Estado de invencibilidad
-    float m_invincibilityTimer; // Contador de invencibilidad
-    float m_invincibilityDuration; // Duración máxima de invencibilidad
+    bool isInvincible;      // Estado de invencibilidad
+    float invincibilityTimer; // Contador de invencibilidad
+    float invincibilityDuration; // Duración máxima de invencibilidad
     
-    sf::Vector2f m_position;
-    sf::Vector2f m_velocity;
+    sf::Vector2f position;
+    sf::Vector2f velocity;
     
     // Visuales
-    SpriteFacade m_sprite;
-    AnimatedSprite* m_animator;
-    bool m_animationsLoaded;
-    bool m_facingRight;
+    SpriteFacade sprite;
+    AnimatedSprite* animator;
+    bool animationsLoaded;
+    bool facingRight;
     
     // Estados del enemigo
     enum class EnemyState {
@@ -49,20 +49,20 @@ private:
         DYING
     };
     
-    EnemyState m_currentState;
-    float m_stateTimer;       // Tiempo en el estado actual
+    EnemyState currentState;
+    float stateTimer;       // Tiempo en el estado actual
     
     // Atributos adicionales
-    float m_attackDamage;
-    float m_attackCooldown;
-    float m_attackTimer;
-    float m_detectionRadius;  // Radio para detectar al jugador
+    int attackDamage;
+    float attackCooldown;
+    float attackTimer;
+    float detectionRadius;  // Radio para detectar al jugador
     
     // Path finding
-    std::vector<sf::Vector2f> m_path; // Camino calculado hacia el jugador
-    int m_currentPathIndex;   // Índice actual en el camino
-    float m_pathUpdateTimer = 0.0f;  // Tiempo desde la última actualización del camino
-    float m_pathUpdateInterval = 0.5f; // Intervalo para recalcular el camino (en segundos)
+    std::vector<sf::Vector2f> path; // Camino calculado hacia el jugador
+    int currentPathIndex;   // Índice actual en el camino
+    float pathUpdateTimer = 0.0f;  // Tiempo desde la última actualización del camino
+    float pathUpdateInterval = 0.5f; // Intervalo para recalcular el camino (en segundos)
 
 public:
     // Constructor y destructor
@@ -70,11 +70,11 @@ public:
     ~Enemy();
     
     // Getters y setters básicos
-    std::string getName() const { return m_name; }
-    float getMaxHealth() const { return m_maxHealth; }
-    float getCurrentHealth() const { return m_currentHealth; }
-    float getMovementSpeed() const { return m_movementSpeed; }
-    sf::Vector2f getPosition() const { return m_position; }
+    std::string getName() const { return name; }
+    float getMaxHealth() const { return maxHealth; }
+    float getCurrentHealth() const { return currentHealth; }
+    float getMovementSpeed() const { return movementSpeed; }
+    sf::Vector2f getPosition() const { return position; }
     
     void setPosition(const sf::Vector2f& position);
     void setTexture(const std::string& texturePath);
@@ -94,19 +94,19 @@ public:
     
     // Funciones adicionales útiles
     void setInvincible(bool invincible);
-    bool isInvincible() const { return m_isInvincible; }
-    bool isAlive() const { return m_currentHealth > 0; }
+    bool getisInvincible() const { return isInvincible; }
+    bool isAlive() const { return currentHealth > 0; }
     void updateHitboxes();
-    float getAttackDamage() const { return m_attackDamage; }
-    void setAttackDamage(float damage) { m_attackDamage = damage; }
+    int getAttackDamage() const { return attackDamage; }
+    void setAttackDamage(float damage) { attackDamage = damage; }
     
     // Para la detección de colisiones
-    Hitbox* getHitbox() const { return m_hitbox; }
-    Hurtbox* getHurtbox() const { return m_hurtbox; }
+    Hitbox* getHitbox() const { return hitbox; }
+    Hurtbox* getHurtbox() const { return hurtbox; }
     
     // Cambio de estados
     void changeState(EnemyState newState);
-    EnemyState getCurrentState() const { return m_currentState; }
+    EnemyState getCurrentState() const { return currentState; }
     // Actualizar el intervalo de recálculo del camino
-    void setPathUpdateInterval(float interval) { m_pathUpdateInterval = interval; }
+    void setPathUpdateInterval(float interval) { pathUpdateInterval = interval; }
 };

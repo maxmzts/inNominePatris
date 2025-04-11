@@ -28,7 +28,7 @@ public:
     void setPosition(float x, float y) override { spriteFacade.setPosition(x, y); };
     sf::Vector2f getPosition() const override { return spriteFacade.getPosition(); };
     AbilityType getAbilityType() const override { return AbilityType::Shot; };
-    Hitbox getAttackHitbox() const override{}
+    std::shared_ptr<Hitbox> getAttackHitbox() const override{}
     void increaseArrowSpeed(float speed);
     void increaseAbilityArrowCount(int count);
     float getAttackDamage() const override { return attackDamage; }

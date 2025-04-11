@@ -1,4 +1,6 @@
-Itch.io free assets
-[Rogue Fantasy Catacombs](https://szadiart.itch.io/rogue-fantasy-catacombs) by Szadi art.
-[Zombie - simple, becomes projectile](https://ironnbutterfly.itch.io/zombie-sprite) by IronnButterfly.
-[Bat](https://papoycore.itch.io/bat) by Papoy Core.
+# Itch.io free assets
+- [Rogue Fantasy Catacombs](https://szadiart.itch.io/rogue-fantasy-catacombs) by Szadi art.
+- [Zombie - simple, becomes projectile](https://ironnbutterfly.itch.io/zombie-sprite) by IronnButterfly.
+- [Bat](https://papoycore.itch.io/bat) by Papoy Core.
+- [Battle VFX: Slashes and Thrusts](https://pimen.itch.io/battle-vfx-slashes-and-thrusts) by pimen.
+- [Claw Scratch](https://nyknck.itch.io/clawsct) by NYKNCK.
