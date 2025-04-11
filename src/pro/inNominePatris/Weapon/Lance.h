@@ -37,7 +37,7 @@ class Lance : public Weapon {
         Lance(GameEngine* engine);
         void attack(sf::Vector2f position, sf::Vector2f direction) override;
         void createHitbox(sf::Vector2f position, sf::Vector2f direction);
-        void useAbility() override {}
+        bool useAbility() override {}
         void useAbility(sf::Vector2f characterPosition, sf::Vector2f mousePosition);
         const sf::Vector2f& teleportToPortal();
         void DrawPortal(sf::RenderWindow& window);

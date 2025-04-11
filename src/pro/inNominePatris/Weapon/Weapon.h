@@ -18,7 +18,7 @@ class Weapon {
         
         virtual void attack(sf::Vector2f position, sf::Vector2f direction) = 0;
         // REIMPLEMENTAR PORQUE CAUSA REFERENCIAS CIRCULARES POR TODOS LADOS
-        virtual void useAbility() = 0;
+        virtual bool useAbility() = 0;
         virtual void useAbility(sf::Vector2f characterPosition, sf::Vector2f mousePosition) = 0;
         virtual AbilityType getAbilityType() const = 0;
 

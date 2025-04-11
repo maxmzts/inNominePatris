@@ -147,10 +147,9 @@ void InGame::update(Game& game) {
             } else if (event.mouseButton.button == sf::Mouse::Right) {
                 // Usar habilidad especial
                 if (Sword* sword = dynamic_cast<Sword*>(player.getEquippedWeapon())) {
-                    sword->useAbility();
-            
-                    // Iniciar el dash en el personaje
-                    player.startDash(sword->getDashSpeed(), 0.2f); // Usa los valores de la espada
+                    bool Dash = sword->useAbility();
+                    if(Dash)
+                        player.startDash(sword->getDashSpeed(), 0.2f); // Usa los valores de la espada
                 } else if (Lance* lance = dynamic_cast<Lance*>(player.getEquippedWeapon())) {
                     // Usar habilidad de la lanza
                     sf::Vector2i mousePosition = sf::Mouse::getPosition(engine.getWindow());

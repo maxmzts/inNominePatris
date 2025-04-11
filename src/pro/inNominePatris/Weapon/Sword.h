@@ -10,7 +10,7 @@ public:
     Sword(GameEngine* engine);
     void attack(sf::Vector2f position, sf::Vector2f direction) override;
     // REIMPLEMENTAR
-    void useAbility() override;
+    bool useAbility() override;
     void useAbility(sf::Vector2f characterPosition, sf::Vector2f mousePosition) override {}
     void increaseDashSpeed(float speed);
     void decreaseDashCooldown(float cooldown);

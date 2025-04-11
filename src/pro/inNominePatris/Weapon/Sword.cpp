@@ -43,16 +43,17 @@ void Sword::createHitbox(sf::Vector2f position, sf::Vector2f direction) {
     attackHitbox.setActive(true); // Activar la hitbox
 }
 
-void Sword::useAbility() {
+bool Sword::useAbility() {
     static sf::Clock clock;
     float elapsedTime = clock.getElapsedTime().asSeconds();
     if(elapsedTime - lastAbilityTime < abilityCooldown) {
         std::cout << "Ability on cooldown!" << std::endl;
-        return;
+        return false;
     }
 
     lastAbilityTime = elapsedTime;
     std::cout << "Sword ability!" << std::endl;
+    return true;
 }
 
 /**
@@ -95,7 +96,15 @@ void Sword::update(float deltaTime) {
             attackHitbox.setActive(false); // Desactivar la hitbox después de un tiempo
             dealtDamage = false;
         }
-    } 
+    }
+    // Actualizar el temporizador de habilidad
+    if (lastAbilityTime > 0.f) {
+        lastAbilityTime -= deltaTime;
+        if(lastAbilityTime < 0.f) {
+            lastAbilityTime = -abilityCooldown; // Reiniciar el temporizador de habilidad
+        }
+    }
+
 }
 
 Hitbox Sword::getAttackHitbox() const {

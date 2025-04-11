@@ -17,7 +17,7 @@ public:
     Bow(GameEngine* gameEngine);
     void attack(sf::Vector2f position, sf::Vector2f direction) override;
     // REIMPLEMENTAR
-    void useAbility() {}
+    bool useAbility() {}
     void useAbility(sf::Vector2f position, sf::Vector2f direction) override;
     void update(float deltaTime, const TileMap& tileMap);
     void update(float deltaTime) override {}
