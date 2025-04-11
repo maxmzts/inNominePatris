@@ -2,6 +2,7 @@
 #include "../Game.h"
 #include "../character/Character.h"
 #include "../interface/HUD.h"
+#include "../hboxes/Hitbox.h"
 #include <iostream>
 #include <algorithm> // Para std::remove_if
 

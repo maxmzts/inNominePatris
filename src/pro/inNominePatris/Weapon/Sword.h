@@ -4,6 +4,7 @@
 #include "Weapon.h"
 #include "SpriteFacade.h"
 #include "Hitbox.h"
+#include "AnimatedSprite.h"
 
 class Sword : public Weapon {
 public:
@@ -41,6 +42,10 @@ private:
     std::shared_ptr<Hitbox> attackHitbox;
     float attackCooldown;
     float attackTimer;
+
+    SpriteFacade slashSpriteFacade;
+    AnimatedSprite slashAnimation; // Animación de ataque
+    bool isAnimating = false; // Indica si la animación está en curso
 };
 
 #endif // !SWORD_H

@@ -51,6 +51,9 @@ public:
     void hurt(int amount);
     Hurtbox* getHurtbox() { return hurtbox; }
 
+    // para interaccion
+    void InteractionCage(TileMap& tilemap, int centerX, int centerY);
+
 private:
     sf::Texture texture;
     sf::Sprite sprite;

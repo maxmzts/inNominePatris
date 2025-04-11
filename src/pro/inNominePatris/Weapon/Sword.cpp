@@ -11,19 +11,58 @@ Sword::Sword(GameEngine* engine)
     attackTimer(0.f), 
     dashSpeed(600.0f), 
     abilityCooldown(2.f), 
-    lastAbilityTime(-abilityCooldown) {
+    lastAbilityTime(-abilityCooldown),
+    slashSpriteFacade("./resources/Horizontal_Slash_Sword.png"),
+    slashAnimation(slashSpriteFacade) 
+{    
     spriteFacade.loadTexture("./resources/Weapons/sword.png"); // Cargar textura usando el Façade
     spriteFacade.setOrigin(16.0f, 16.0f);           // Establecer el origen
     name = "Sword"; // Nombre del arma
+    
+    slashAnimation.addAnimation(
+        "slash",
+        5,
+        sf::Vector2i(0,0),
+        sf::Vector2i(64, 64),
+        false
+    );
+    slashAnimation.setAnimationEndCallback([this](){
+        isAnimating = false; // Desactivar la animación al finalizar
+    });
 }
 
 /**
  * Crea la hitbox para del arma para representar el ataque en el mundo del juego.
  */
 void Sword::attack(sf::Vector2f position, sf::Vector2f direction) {
-    if(attackTimer <= 0.f) {
-        createHitbox(position, direction);
-        attackTimer = attackCooldown; // Reiniciar el temporizador de ataque
+    if (attackTimer <= 0.f) {
+        createHitbox(position, direction); // Crear la hitbox del ataque
+        attackTimer = attackCooldown;     // Reiniciar el temporizador de ataque
+
+        // Configurar la posición inicial del slash
+        sf::Vector2f slashOffset;
+        float rotation = 0.f;
+
+        if (direction.x > 0) { // Derecha
+            slashOffset = sf::Vector2f(25.f, -20.f); // Desplazar hacia la derecha
+            rotation = 0.f;
+        } else if (direction.x < 0) { // Izquierda
+            slashOffset = sf::Vector2f(-25.f, 20.f); // Desplazar hacia la izquierda
+            rotation = 180.f;
+        } else if (direction.y > 0) { // Abajo
+            slashOffset = sf::Vector2f(20.f, 25.f); // Desplazar hacia abajo
+            rotation = 90.f;
+        } else if (direction.y < 0) { // Arriba
+            slashOffset = sf::Vector2f(-20.f, -25.f); // Desplazar hacia arriba
+            rotation = -90.f;
+        }
+
+        slashSpriteFacade.setPosition(position.x + slashOffset.x, position.y + slashOffset.y); // Ajustar la posición del slash
+        slashSpriteFacade.setRotation(rotation);
+
+        // Reproducir la animación del slash
+        slashAnimation.play("slash", 12.0f, false); // 12 FPS, no en bucle
+        isAnimating = true;
     }
 }
 
@@ -32,17 +71,17 @@ void Sword::createHitbox(sf::Vector2f position, sf::Vector2f direction) {
     sf::Vector2f size;
 
     if (direction.x > 0) { // Derecha
-        offset = sf::Vector2f(40.f, 0.f);
-        size = sf::Vector2f(100.f, 50.f); // Hitbox horizontal
+        offset = sf::Vector2f(60.f, 0.f);
+        size = sf::Vector2f(80.f, 50.f); // Hitbox horizontal
     } else if (direction.x < 0) { // Izquierda
-        offset = sf::Vector2f(-40.f, 0.f);
-        size = sf::Vector2f(100.f, 50.f); // Hitbox horizontal
+        offset = sf::Vector2f(-60.f, 0.f);
+        size = sf::Vector2f(80.f, 50.f); // Hitbox horizontal
     } else if (direction.y > 0) { // Abajo
-        offset = sf::Vector2f(0.f, 40.f);
-        size = sf::Vector2f(50.f, 100.f); // Hitbox vertical
+        offset = sf::Vector2f(0.f, 60.f);
+        size = sf::Vector2f(50.f, 80.f); // Hitbox vertical
     } else if (direction.y < 0) { // Arriba
-        offset = sf::Vector2f(0.f, -40.f);
-        size = sf::Vector2f(50.f, 100.f); // Hitbox vertical
+        offset = sf::Vector2f(0.f, -60.f);
+        size = sf::Vector2f(50.f, 80.f); // Hitbox vertical
     }
 
     attackHitbox->setSize(size); // Ajustar el tamaño de la hitbox
@@ -92,7 +131,10 @@ void Sword::renderOnPlayer(sf::Vector2f position, sf::Vector2f direction) {
 void Sword::render(){
     // Dibujar el sprite del arma
     spriteFacade.draw(engine->getWindow());
-    attackHitbox->render(engine->getWindow()); // Dibujar la hitbox de ataque
+    //attackHitbox.render(engine->getWindow()); // Dibujar la hitbox de ataque
+    if(isAnimating) {
+        slashSpriteFacade.draw(engine->getWindow()); // Dibujar la animación de ataque
+    }
 }
 
 void Sword::update(float deltaTime) {
@@ -112,6 +154,9 @@ void Sword::update(float deltaTime) {
         }
     }
 
+    if(isAnimating){
+        slashAnimation.update(deltaTime); // Actualizar la animación
+    }
 }
 
 std::shared_ptr<Hitbox> Sword::getAttackHitbox() const {

@@ -300,24 +300,73 @@ Weapon* Character::removeFirstWeapon(sf::Vector2f& outOriginalPosition) {
     return removedWeapon;
 }
 
+
+
+
+
+
+
+
+// HEALTH STUFF-------------------------------------------------------------------------------------------------------------------------------------
+
+void Character::setHealth(int health) {
+    currentHealth = std::max(0, std::min(health, maxHealth)); // Asegura que la vida esté entre 0 y maxHealth
+}
+
+int Character::getHealth() const {
+    return currentHealth;
+}
+
+int Character::getMaxHealth() const {
+    return maxHealth;
+}
+
+void Character::takeDamage(int damage) {
+    setHealth(currentHealth - damage);
+}
+
+void Character::heal(int amount) {
+    setHealth(currentHealth + amount);
+}
+
+
+
+
+
+
+
+
+
+// INTERACTION STUFF-------------------------------------------------------------------------------------------------------------------------------
+
+void Character::InteractionCage(TileMap& tilemap, int centerX, int centerY) {
+    // Coordenadas relativas desde el centro
+    tilemap.setLocalTile("deco", centerX - 2, centerY, 64); // izquierda
+    tilemap.setLocalTile("deco", centerX - 1, centerY, 65); // centro
+    tilemap.setLocalTile("deco", centerX,     centerY, 66); // derecha
+    tilemap.setLocalTile("deco", centerX - 2, centerY + 1, 80); // izquierda abajo
+    tilemap.setLocalTile("deco", centerX - 1, centerY + 1, 81); // centro abajo
+    tilemap.setLocalTile("deco", centerX,     centerY + 1, 82); // derecha abajo
+}
+
+
 void Character::interact(TileMap& tilemap) {
     // Obtener el hitbox del jugador
     sf::FloatRect playerBounds = sprite.getGlobalBounds();
     
     // Comprobar si está interactuando con algún tile
     int tileId = -1;
+    bool button1 = false;
+    bool button2 = false;
+    bool button3 = false;
     if (tilemap.isPlayerInteractingWithTile(playerBounds, tileId)) {
         // Acciones según el ID del tile
         switch (tileId) {
             case 773:
                 std::cout << "Interactuando con tile 773 (boton abajo)" << std::endl;
                 // Modificar la capa de decoración
-                tilemap.setLocalTile("deco", 29, 29, 64);  // Coloca el tile ID 65 en (30,29)
-                tilemap.setLocalTile("deco", 30, 29, 65);  // Coloca el tile ID 65 en (30,29)
-                tilemap.setLocalTile("deco", 31, 29, 66);  // Coloca el tile ID 65 en (30,29)
-                tilemap.setLocalTile("deco", 29, 30, 80);  // Coloca el tile ID 65 en (30,29)
-                tilemap.setLocalTile("deco", 30, 30, 81);  // Coloca el tile ID 65 en (30,29)
-                tilemap.setLocalTile("deco", 31, 30, 82);  // Coloca el tile ID 65 en (30,29)
+                InteractionCage(tilemap, 31, 29);
+                button1 = true;
                 
                 
                 // tilemap.setTile("deco", 5, 8, 0);   // Elimina el tile en (5,8)
@@ -325,11 +374,15 @@ void Character::interact(TileMap& tilemap) {
                 break;
             case 774:
                 std::cout << "Interactuando con tile 774 (izq)" << std::endl;
-                tilemap.setTile("deco", 30, 29, 65);  // Coloca el tile ID 65 en (30,29)
+                InteractionCage(tilemap, 17, 20);
+                button2 = true;
 
                 break;
             case 775:
                 std::cout << "Interactuando con tile 775 (dcha)" << std::endl;
+                InteractionCage(tilemap, 44, 20);
+                button3 = true;
+
                 break;
             // Puedes agregar más casos según necesites
             default:

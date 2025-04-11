@@ -11,9 +11,23 @@ Lance::Lance(GameEngine* engine)
     attackTimer(0.f), 
     isPortalDropped(false), 
     PortalRange(300.0f), 
-    portal() {
+    portal(), 
+    pinchSprite("./resources/Pinch_Animation_Lance.png"),
+    pinchAnimation(pinchSprite) 
+{
     spriteFacade.loadTexture("./resources/Weapons/lance.png"); // Cargar textura usando el Façade
     name = "Lance"; // Nombre del arma
+
+    pinchAnimation.addAnimation(
+        "pinch",
+        5,
+        sf::Vector2i(0, 0),
+        sf::Vector2i(96, 32),
+        false
+    );
+    pinchAnimation.setAnimationEndCallback([this]() {
+        isAnimating = false; // Desactivar la animación al finalizar
+    });
 }
 
 void Lance::createHitbox(sf::Vector2f position, sf::Vector2f direction) {
@@ -22,26 +36,52 @@ void Lance::createHitbox(sf::Vector2f position, sf::Vector2f direction) {
 
     if (direction.x > 0) { // Derecha
         offset = sf::Vector2f(70.f, 0.f);
-        size = sf::Vector2f(200.f, 30.f); // Hitbox horizontal
+        size = sf::Vector2f(110.f, 30.f); // Hitbox horizontal
     } else if (direction.x < 0) { // Izquierda
         offset = sf::Vector2f(-70.f, 0.f);
-        size = sf::Vector2f(200.f, 30.f); // Hitbox horizontal
+        size = sf::Vector2f(110.f, 30.f); // Hitbox horizontal
     } else if (direction.y > 0) { // Abajo
         offset = sf::Vector2f(0.f, 70.f);
-        size = sf::Vector2f(30.f, 200.f); // Hitbox vertical
+        size = sf::Vector2f(30.f, 110.f); // Hitbox vertical
     } else if (direction.y < 0) { // Arriba
         offset = sf::Vector2f(0.f, -70.f);
-        size = sf::Vector2f(30.f, 200.f); // Hitbox vertical
+        size = sf::Vector2f(30.f, 110.f); // Hitbox vertical
     }
     attackHitbox->setSize(size); // Ajustar el tamaño de la hitbox
     attackHitbox->setPosition(position + offset); // Ajustar la posición de la hitbox
     attackHitbox->setActive(true); // Activar la hitbox
 }
 
-void Lance::attack(sf::Vector2f position, sf::Vector2f direction){
-    if(attackTimer <= 0.f) {
-        createHitbox(position, direction);
-        attackTimer = attackCooldown; // Reiniciar el temporizador de ataque
+void Lance::attack(sf::Vector2f position, sf::Vector2f direction) {
+    if (attackTimer <= 0.f) {
+        createHitbox(position, direction); // Crear la hitbox del ataque
+        attackTimer = attackCooldown;     // Reiniciar el temporizador de ataque
+
+        // Configurar la posición inicial del ataque
+        sf::Vector2f pinchOffset;
+        float rotation = 0.f;
+
+        if (direction.x > 0) { // Derecha
+            pinchOffset = sf::Vector2f(30.f, -15.f); // Desplazar hacia la derecha
+            rotation = 0.f;
+        } else if (direction.x < 0) { // Izquierda
+            pinchOffset = sf::Vector2f(-30.f, 15.f); // Desplazar hacia la izquierda
+            rotation = 180.f;
+        } else if (direction.y > 0) { // Abajo
+            pinchOffset = sf::Vector2f(15.f, 30.f); // Desplazar hacia abajo
+            rotation = 90.f;
+        } else if (direction.y < 0) { // Arriba
+            pinchOffset = sf::Vector2f(-15.f, -30.f); // Desplazar hacia arriba
+            rotation = -90.f;
+        }
+
+        // Configurar la posición y rotación del ataque
+        pinchSprite.setPosition(position.x + pinchOffset.x, position.y + pinchOffset.y);
+        pinchSprite.setRotation(rotation);
+
+        // Reproducir la animación del ataque
+        pinchAnimation.play("pinch", 12.0f, false); // 12 FPS, no en bucle
+        isAnimating = true;
     }
 }
 
@@ -131,6 +171,10 @@ void Lance::update(float deltaTime) {
     if (abilityTimer > 0.f) {
         abilityTimer -= deltaTime;
     }
+
+    if(isAnimating){
+        pinchAnimation.update(deltaTime);
+    }
 }
 
 void Lance::PortalUpdate(float deltaTime) {
@@ -205,9 +249,13 @@ void Lance::renderOnPlayer(sf::Vector2f position, sf::Vector2f direction) {
 void Lance::render(){
     // Dibujar el sprite del arma
     spriteFacade.draw(engine->getWindow());
-    attackHitbox->render(engine->getWindow()); // Dibujar la hitbox de ataque
+    //attackHitbox.render(engine->getWindow()); // Dibujar la hitbox de ataque
     if (isPortalDropped) {
         portal.draw(engine->getWindow());
+    }
+
+    if (isAnimating) {
+        pinchSprite.draw(engine->getWindow());
     }
 }
 
