@@ -5,6 +5,7 @@
 #include "SpriteFacade.h"
 #include "Weapon.h"
 #include "Hitbox.h"
+#include "AnimatedSprite.h"
 
 class Portal {
     public:
@@ -68,6 +69,10 @@ class Lance : public Weapon {
         Hitbox attackHitbox;
         float attackCooldown;
         float attackTimer;
+
+        SpriteFacade pinchSprite;
+        AnimatedSprite pinchAnimation;
+        bool isAnimating = false;
 };
 
 

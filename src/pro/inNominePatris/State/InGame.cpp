@@ -242,7 +242,7 @@ void InGame::update(Game& game) {
     // Comprobar que el jugador recibe daño
     for(auto enemie : enemies){
         if(enemie->getHitbox()->isActive() && player.getHurtbox()->getGlobalBounds().intersects(enemie->getHitbox()->getGlobalBounds()))
-            player.hurt(10);
+            player.hurt(10); // Infligir daño al jugador
     }
 
     // Comprobar que algún enemigo recibe daño
