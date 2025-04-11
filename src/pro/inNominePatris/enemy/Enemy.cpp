@@ -5,6 +5,7 @@
 #include <cmath>
 #include <algorithm>
 #include <VFXManager.h>
+#include <unordered_set>
 
 Enemy::Enemy(const std::string& name, float maxHealth, float movementSpeed, const sf::Vector2f& startPosition)
     : name(name)
@@ -97,13 +98,13 @@ void Enemy::changeAnimation(EnemyState newState) {
             animator->play("moving", 12.0f); // 10 FPS para movimiento
             break;
         case EnemyState::ATTACKING:
-            animator->play("attacking", 24.0f, false); // Animación de ataque no en bucle
+            animator->play("attacking", 32.0f, false); // Animación de ataque no en bucle
             break;
         case EnemyState::HURT:
             animator->play("idle", 1.0f);
             break;
         case EnemyState::DYING:
-            animator->play("idle", 1.0f);
+            animator->play("idle", 0.0f);
             break;
     }
 }
@@ -173,44 +174,46 @@ void Enemy::move(const sf::Vector2f& direction) {
     // El movimiento real se aplica en update
 }
 
+
+/***********************************************************/
+//          PATHFINDING                                    //
+/***********************************************************/
+
 // Estructura para representar un nodo en el algoritmo A*
 struct PathNode {
     int x, y;           // Coordenadas del nodo en el mapa de tiles
     float g;            // Costo desde el inicio hasta este nodo
     float h;            // Heurística (estimación del costo hasta el objetivo)
     float f;            // Costo total (g + h)
-    PathNode* parent;   // Nodo padre en el camino óptimo
+    int parentKey;      // Clave del nodo padre en el camino óptimo
+    bool hasParent;     // Indica si el nodo tiene un padre
 
-    PathNode(int _x, int _y) : x(_x), y(_y), g(0), h(0), f(0), parent(nullptr) {}
+    PathNode() : x(0), y(0), g(0), h(0), f(0), parentKey(0), hasParent(false) {}
+    PathNode(int _x, int _y) : x(_x), y(_y), g(0), h(0), f(0), parentKey(0), hasParent(false) {}
     
     // Para comparar nodos en la cola de prioridad
     bool operator < (const PathNode& other) const {
         return f > other.f; // Mayor f significa menor prioridad
     }
-    
-    // Para comparar si dos nodos son iguales (misma posición)
-    bool operator == (const PathNode& other) const {
-        return x == other.x && y == other.y;
-    }
-    bool operator != (const PathNode& other) const {
-        return !(*this == other);
-    }
 };
 
-// Función hash para PathNode para usarlo en unordered_map
-struct PathNodeHash {
-    std::size_t operator()(const PathNode& node) const {
-        return std::hash<int>()(node.x) ^ (std::hash<int>()(node.y) << 1);
-    }
-};
+// Función para calcular la distancia heurística entre dos puntos (distancia Euclídea)
+inline float calculateHeuristic(int x1, int y1, int x2, int y2) {
+    // Utilizamos una aproximación más rápida de la distancia euclídea
+    int dx = x2 - x1;
+    int dy = y2 - y1;
+    return std::sqrt(dx * dx + dy * dy);
+}
 
-// Función para calcular la distancia heurística entre dos puntos (distancia Manhattan)
-float calculateHeuristic(int x1, int y1, int x2, int y2) {
-    return std::abs(x1 - x2) + std::abs(y1 - y2);
+// Función para calcular un índice único para cada posición
+inline int getNodeKey(int x, int y) {
+    return (x << 16) | (y & 0xFFFF);
 }
 
 // Esta función reemplaza la versión básica en Enemy.cpp
 void Enemy::findPathToPlayer(const Character* player, const TileMap* tileMap) {
+    sf::Clock totalClock; // Reloj para medir el tiempo total
+    
     if (!player || !tileMap) {
         return;
     }
@@ -219,7 +222,6 @@ void Enemy::findPathToPlayer(const Character* player, const TileMap* tileMap) {
     sf::Vector2f playerPos = player->getPosition();
     
     // Convertir posiciones del mundo a coordenadas de tiles
-    // Suponiendo que cada tile es de 32x32 pixeles (ajustar según tu juego)
     const int TILE_SIZE = 16;
     
     int startX = static_cast<int>(position.x / TILE_SIZE);
@@ -227,45 +229,107 @@ void Enemy::findPathToPlayer(const Character* player, const TileMap* tileMap) {
     int targetX = static_cast<int>(playerPos.x / TILE_SIZE);
     int targetY = static_cast<int>(playerPos.y / TILE_SIZE);
     
-    // Crear nodos de inicio y objetivo
-    PathNode startNode(startX, startY);
-    PathNode targetNode(targetX, targetY);
-    
+    sf::Clock initClock;
     // Si el enemigo y el jugador están en el mismo tile, moverse directamente
     if (startX == targetX && startY == targetY) {
         sf::Vector2f direction = playerPos - position;
         move(direction);
+        std::cout << "Inicialización completada: " << initClock.getElapsedTime().asMicroseconds() << " microsegundos" << std::endl;
         return;
     }
+    std::cout << "Inicialización completada: " << initClock.getElapsedTime().asMicroseconds() << " microsegundos" << std::endl;
     
-    // Conjunto de nodos abiertos (por explorar)
+    // Verificar si hay línea de visión directa (optimización temprana)
+    sf::Clock lineOfSightClock;
+    sf::Vector2f directDirection = playerPos - position;
+    float distanceToPlayer = std::sqrt(directDirection.x * directDirection.x + directDirection.y * directDirection.y);
+    
+    // Solo hacemos raycast si el jugador está relativamente cerca
+    if (distanceToPlayer < TILE_SIZE * 60.f) {
+        bool lineOfSight = true;
+        float stepSize = TILE_SIZE * 2.f;
+        sf::Vector2f rayPos = position;
+        sf::Vector2f normalizedDir;
+        
+        if (distanceToPlayer > 0) {
+            normalizedDir = directDirection / distanceToPlayer;
+        }
+        
+        for (float step = 0; step < distanceToPlayer; step += stepSize) {
+            rayPos += normalizedDir * stepSize;
+            sf::FloatRect pointRect(rayPos.x - 1, rayPos.y - 1, 2, 2);
+            
+            if (tileMap->isColliding(pointRect)) {
+                lineOfSight = false;
+                break;
+            }
+        }
+        
+        // Si hay línea de visión, moverse directamente sin calcular camino
+        if (lineOfSight) {
+            move(normalizedDir);
+            std::cout << "Verificación de línea de visión completada: " << lineOfSightClock.getElapsedTime().asMicroseconds() << " microsegundos" << std::endl;
+            std::cout << "Tiempo total de pathfinding: " << totalClock.getElapsedTime().asMicroseconds() << " microsegundos (" 
+                      << totalClock.getElapsedTime().asMicroseconds() / 16667.0f << " frames a 60 FPS)" << std::endl;
+            return;
+        }
+    }
+    std::cout << "Verificación de línea de visión completada: " << lineOfSightClock.getElapsedTime().asMicroseconds() << " microsegundos" << std::endl;
+    
+    // Limitar el área de búsqueda para mejorar el rendimiento
+    sf::Clock distanceCheckClock;
+    const int MAX_SEARCH_RADIUS = 20; // Limitar la búsqueda a un radio razonable
+    
+    // Comprobar si el objetivo está demasiado lejos para buscar
+    float distanceToTargetTile = calculateHeuristic(startX, startY, targetX, targetY);
+    if (distanceToTargetTile > MAX_SEARCH_RADIUS) {
+        // Si está demasiado lejos, moverse en la dirección general
+        float angle = std::atan2(targetY - startY, targetX - startX);
+        sf::Vector2f direction(std::cos(angle), std::sin(angle));
+        move(direction);
+        std::cout << "Verificación de distancia máxima completada: " << distanceCheckClock.getElapsedTime().asMicroseconds() << " microsegundos" << std::endl;
+        std::cout << "Tiempo total de pathfinding: " << totalClock.getElapsedTime().asMicroseconds() << " microsegundos (" 
+                  << totalClock.getElapsedTime().asMicroseconds() / 16667.0f << " frames a 60 FPS)" << std::endl;
+        return;
+    }
+    std::cout << "Verificación de distancia máxima completada: " << distanceCheckClock.getElapsedTime().asMicroseconds() << " microsegundos" << std::endl;
+    
+    // Inicializar estructuras para A*
+    sf::Clock aStarInitClock;
     std::priority_queue<PathNode> openSet;
+    std::unordered_set<int> closedSet;
+    std::unordered_map<int, PathNode> allNodes;
     
-    // Conjunto de nodos ya explorados
-    std::unordered_map<PathNode, bool, PathNodeHash> closedSet;
-    
-    // Mapa de nodos para reconstruir el camino
-    std::unordered_map<PathNode, PathNode*, PathNodeHash> cameFrom;
+    // Direcciones posibles de movimiento (8 direcciones: incluye diagonales)
+    const int dx[8] = {0, 1, 1, 1, 0, -1, -1, -1};
+    const int dy[8] = {-1, -1, 0, 1, 1, 1, 0, -1};
     
     // Inicializar el nodo de inicio
+    PathNode startNode(startX, startY);
     startNode.g = 0;
     startNode.h = calculateHeuristic(startX, startY, targetX, targetY);
     startNode.f = startNode.g + startNode.h;
     
-    // Añadir el nodo de inicio a la lista abierta
+    // Añadir el nodo de inicio
+    int startKey = getNodeKey(startX, startY);
+    allNodes[startKey] = startNode;
     openSet.push(startNode);
-    
-    // Direcciones posibles de movimiento (4 direcciones: arriba, derecha, abajo, izquierda)
-    const int dx[4] = {0, 1, 0, -1};
-    const int dy[4] = {-1, 0, 1, 0};
     
     // Vector para almacenar el camino final
     std::vector<sf::Vector2f> path;
     
-    // Límite máximo de iteraciones para evitar bucles infinitos
-    const int MAX_ITERATIONS = 1000;
+    // Límites para evitar cálculos excesivos
+    const int MAX_ITERATIONS = 300; // Reducido para mejor rendimiento
+    const int targetKey = getNodeKey(targetX, targetY);
     int iterations = 0;
+    bool pathFound = false;
     
+    // Matriz precalculada para costos de movimiento
+    const float moveCosts[8] = {1.0f, 1.414f, 1.0f, 1.414f, 1.0f, 1.414f, 1.0f, 1.414f};
+    std::cout << "Inicialización de A* completada: " << aStarInitClock.getElapsedTime().asMicroseconds() << " microsegundos" << std::endl;
+    
+    // Bucle principal del algoritmo A*
+    sf::Clock aStarMainLoopClock;
     while (!openSet.empty() && iterations < MAX_ITERATIONS) {
         iterations++;
         
@@ -273,108 +337,178 @@ void Enemy::findPathToPlayer(const Character* player, const TileMap* tileMap) {
         PathNode current = openSet.top();
         openSet.pop();
         
-        // Si hemos llegado al objetivo, reconstruir el camino
-        if (current == targetNode) {
-            // Reconstruir el camino
-            PathNode* currentPtr = cameFrom[current];
-            while (currentPtr != nullptr) {
-                if (*currentPtr == startNode) break;
-                
-                // Convertir de coordenadas de tiles a coordenadas del mundo
-                path.push_back(sf::Vector2f(currentPtr->x * TILE_SIZE + TILE_SIZE/2, 
-                                           currentPtr->y * TILE_SIZE + TILE_SIZE/2));
-                
-                auto it = cameFrom.find(*currentPtr);
-                if (it == cameFrom.end()) break;  // Salir si no hay más camino
-                currentPtr = it->second;
-            }
-            
-            // Invertir el camino para que vaya desde el inicio hasta el objetivo
-            std::reverse(path.begin(), path.end());
+        int currentKey = getNodeKey(current.x, current.y);
+        
+        // Evitar procesar nodos ya visitados
+        if (closedSet.find(currentKey) != closedSet.end()) {
+            continue;
+        }
+        
+        // Si hemos llegado al objetivo
+        if (currentKey == targetKey) {
+            pathFound = true;
             break;
         }
         
-        // Marcar el nodo actual como visitado
-        closedSet[current] = true;
+        // Marcar como visitado
+        closedSet.insert(currentKey);
         
         // Explorar vecinos
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 8; i++) {
             int newX = current.x + dx[i];
             int newY = current.y + dy[i];
             
-            // Crear el nuevo nodo vecino
-            PathNode neighbor(newX, newY);
+            // Comprobar límites del mapa si es necesario (implementación opcional)
+            // if (newX < 0 || newY < 0 || newX >= mapWidth || newY >= mapHeight) continue;
             
-            // Saltar este vecino si ya ha sido explorado
-            if (closedSet.find(neighbor) != closedSet.end()) {
+            int neighborKey = getNodeKey(newX, newY);
+            
+            // Saltar nodos ya visitados
+            if (closedSet.find(neighborKey) != closedSet.end()) {
                 continue;
             }
             
-            // Verificar si el tile es transitable
+            // Verificar colisiones sólo si es necesario
             sf::FloatRect tileRect(newX * TILE_SIZE, newY * TILE_SIZE, TILE_SIZE, TILE_SIZE);
             if (tileMap->isColliding(tileRect)) {
-                // Este tile tiene colisión, no es transitable
-                closedSet[neighbor] = true;
+                closedSet.insert(neighborKey);  // Marcarlo como cerrado para no revisarlo de nuevo
                 continue;
             }
             
-            // Calcular el costo g para este vecino
-            float tentativeG = current.g + 1.0f; // Costo de moverse a un tile adyacente
-            
-            // Comprobar si este vecino ya está en la lista abierta
-            bool isInOpenSet = false;
-            std::priority_queue<PathNode> tempQueue = openSet;
-            while (!tempQueue.empty()) {
-                if (tempQueue.top() == neighbor) {
-                    isInOpenSet = true;
-                    break;
+            // Para movimientos diagonales, verificar que no haya corte de esquinas
+            if (i == 1 || i == 3 || i == 5 || i == 7) {
+                int horizontal = (i == 1 || i == 3) ? 1 : -1;
+                int vertical = (i == 1 || i == 7) ? -1 : 1;
+                
+                sf::FloatRect rect1((current.x + horizontal) * TILE_SIZE, current.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                sf::FloatRect rect2(current.x * TILE_SIZE, (current.y + vertical) * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                
+                if (tileMap->isColliding(rect1) || tileMap->isColliding(rect2)) {
+                    continue;
                 }
-                tempQueue.pop();
             }
             
-            if (!isInOpenSet || tentativeG < neighbor.g) {
-                // Este camino al vecino es mejor, actualizar información
+            // Calcular costo del camino
+            float tentativeG = current.g + moveCosts[i];
+            
+            // Obtener o crear el nodo vecino
+            auto nodeIt = allNodes.find(neighborKey);
+            bool isNewNode = nodeIt == allNodes.end();
+            
+            if (isNewNode) {
+                PathNode neighbor(newX, newY);
                 neighbor.g = tentativeG;
                 neighbor.h = calculateHeuristic(newX, newY, targetX, targetY);
                 neighbor.f = neighbor.g + neighbor.h;
+                neighbor.parentKey = currentKey;
+                neighbor.hasParent = true;
                 
-                // Guardar el padre para reconstruir el camino después
-                PathNode* neighborPtr = new PathNode(newX, newY);
-                *neighborPtr = neighbor;
-                PathNode* currentPtr = new PathNode(current.x, current.y);
-                *currentPtr = current;
+                allNodes[neighborKey] = neighbor;
+                openSet.push(neighbor);
+            } else if (tentativeG < nodeIt->second.g) {
+                // Actualizar el nodo existente con un mejor camino
+                nodeIt->second.g = tentativeG;
+                nodeIt->second.f = tentativeG + nodeIt->second.h;
+                nodeIt->second.parentKey = currentKey;
+                nodeIt->second.hasParent = true;
                 
-                cameFrom[neighbor] = currentPtr;
-                
-                // Añadir a la lista abierta si no estaba ya
-                if (!isInOpenSet) {
-                    openSet.push(neighbor);
-                }
+                // Necesitamos volver a añadirlo a la cola para reconsiderar
+                openSet.push(nodeIt->second);
             }
         }
     }
+    std::cout << "Bucle principal de A* completado: " << aStarMainLoopClock.getElapsedTime().asMicroseconds() 
+              << " microsegundos (iteraciones: " << iterations << ")" << std::endl;
     
-    // Si tenemos un camino, moverse hacia el siguiente punto
+    // Reconstruir el camino si se encontró uno
+    sf::Clock pathReconstructionClock;
+    if (pathFound) {
+        // Reconstruir desde el objetivo hacia atrás
+        std::vector<sf::Vector2f> reversePath;
+        int currentKey = targetKey;
+        
+        // Sólo necesitamos el primer punto del camino para movernos
+        int steps = 0;
+        const int MAX_PATH_STEPS = 2; // Limitar la reconstrucción para mejorar rendimiento
+        
+        while (currentKey != startKey && steps < MAX_PATH_STEPS) {
+            auto it = allNodes.find(currentKey);
+            if (it == allNodes.end() || !it->second.hasParent) break;
+            
+            PathNode& node = it->second;
+            currentKey = node.parentKey;
+            
+            if (currentKey != startKey) {
+                auto parentIt = allNodes.find(currentKey);
+                if (parentIt != allNodes.end()) {
+                    PathNode& parentNode = parentIt->second;
+                    reversePath.push_back(sf::Vector2f(
+                        parentNode.x * TILE_SIZE + TILE_SIZE/2,
+                        parentNode.y * TILE_SIZE + TILE_SIZE/2
+                    ));
+                }
+            }
+            
+            steps++;
+        }
+        
+        // Invertir para obtener el camino correcto
+        path.assign(reversePath.rbegin(), reversePath.rend());
+    }
+    std::cout << "Reconstrucción del camino completada: " << pathReconstructionClock.getElapsedTime().asMicroseconds() << " microsegundos" << std::endl;
+    
+    // Decidir cómo moverse
+    sf::Clock movementClock;
     if (!path.empty()) {
-        // Tomar el primer punto del camino
+        // Moverse al primer punto del camino
         sf::Vector2f nextPoint = path[0];
-        
-        // Calcular la dirección hacia ese punto
         sf::Vector2f direction = nextPoint - position;
+        float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
         
-        // Moverse en esa dirección
+        if (length > 0) {
+            direction /= length;
+        }
+        
         move(direction);
     } else {
-        // Si no hay camino disponible, intentar un movimiento directo
-        // (podría ser bloqueado por obstáculos, pero es mejor que no moverse)
-        sf::Vector2f direction = playerPos - position;
-        move(direction);
+        // No se encontró camino o el objetivo está demasiado lejos
+        // Usar un movimiento aleatorio para evitar quedarse atascado
+        static int stuckCounter = 0;
+        stuckCounter++;
+        
+        if (stuckCounter > 5) {
+            int randomDir = rand() % 8;
+            sf::Vector2f randomDirection(dx[randomDir], dy[randomDir]);
+            float length = std::sqrt(randomDirection.x * randomDirection.x + randomDirection.y * randomDirection.y);
+            
+            if (length > 0) {
+                randomDirection /= length;
+            }
+            
+            move(randomDirection);
+            stuckCounter = 0;
+        } else {
+            // Intentar moverse hacia el jugador de todas formas
+            sf::Vector2f direction = playerPos - position;
+            float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+            
+            if (length > 0) {
+                direction /= length;
+            }
+            
+            move(direction);
+        }
     }
+    std::cout << "Cálculo de movimiento completado: " << movementClock.getElapsedTime().asMicroseconds() << " microsegundos" << std::endl;
     
-    // Limpiar la memoria asignada dinámicamente
-    for (auto& pair : cameFrom) {
-        delete pair.second;
-    }
+    // Tiempo total del algoritmo
+    sf::Int64 totalTime = totalClock.getElapsedTime().asMicroseconds();
+    float framesAt60FPS = totalTime / 16667.0f; // 1000000 / 60 = 16667 microsegundos por frame a 60 FPS
+    
+    std::cout << "Tiempo total de pathfinding: " << totalTime << " microsegundos (" 
+              << framesAt60FPS << " frames a 60 FPS)" << std::endl 
+              << "---------------------------------------------------------------------------------------"
+              << std::endl;
 }
 
 /**
@@ -473,6 +607,8 @@ void Enemy::update(float deltaTime, Character* player, const TileMap* tileMap) {
             break;
             
         case EnemyState::HURT:
+            if(hitbox->isActive())
+                hitbox->setActive(false);
             setInvincible(true);
             // La animación de daño duraría un tiempo fijo
             if (stateTimer >= 0.3f) {  // Duración de la animación de daño
@@ -482,6 +618,9 @@ void Enemy::update(float deltaTime, Character* player, const TileMap* tileMap) {
             break;
             
         case EnemyState::DYING:
+            if(hitbox->isActive())
+                hitbox->setActive(false);
+            hurtbox->setActive(false);
             // La animación de muerte duraría un tiempo fijo
             // Después de ese tiempo, el enemigo debería ser eliminado del juego
             // Esto se manejaría desde el gestor de enemigos

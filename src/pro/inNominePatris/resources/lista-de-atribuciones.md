@@ -4,3 +4,4 @@
 - [Bat](https://papoycore.itch.io/bat) by Papoy Core.
 - [Battle VFX: Slashes and Thrusts](https://pimen.itch.io/battle-vfx-slashes-and-thrusts) by pimen.
 - [Claw Scratch](https://nyknck.itch.io/clawsct) by NYKNCK.
+- [Necromancer](https://creativekind.itch.io/necromancer-free) by CreativeKind.

@@ -37,7 +37,7 @@ InGame::InGame(GameEngine& engine)
     //TESTS ENEMIGOS
     Enemy* enemy = nullptr;
     //cargar enemigos
-    for (size_t i = 0; i < 3; i++)
+    for (size_t i = 0; i < 1; i++)
     {
         enemy = new Enemy("Bat", 180.f, 100.f, sf::Vector2f(100.f*i,100.f*i));
         enemy->setTexture("resources/Bat.png");
