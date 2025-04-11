@@ -216,3 +216,7 @@ Arregladas todas las referencias circulares, mejorando el sistema de combate y a
 
 ## 200250411 EstrellaDominguez @(1h)
 Implementado los recursos en la nube mediante el archivo setup.sh y Dropbox.
+
+## 200250411 MáximoMartínez @(2h 20min)
+
+(2h 20min) He puesto un efecto al ataque de los enemigos. He arreglado cómo recibe daño el jugador con un estado de invencibilidad. He conseguido que los enemigos reciban daño. En ese proceso he arreglaod una "Illegal expression" que surgía al obtener la hitbox del arma porque no estaba planteada como un puntero. Al cambiarlo se ha solucionado. También he invertido tiempo en buscar y preparar más assets que añadir al juego.  

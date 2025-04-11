@@ -322,7 +322,10 @@ int Character::getMaxHealth() const {
 }
 
 void Character::takeDamage(int damage) {
-    setHealth(currentHealth - damage);
+    if(!isInvencible){
+        setHealth(currentHealth - damage);
+        isInvencible = true;
+    };
 }
 
 void Character::heal(int amount) {
@@ -391,33 +394,6 @@ void Character::interact(TileMap& tilemap) {
         }
     } else {
         std::cout << "No hay nada con lo que interactuar aquí." << std::endl;
-    }
-}
-
-void Character::setHealth(int health) {
-    currentHealth = std::max(0, std::min(health, maxHealth)); // Asegura que la vida esté entre 0 y maxHealth
-}
-
-int Character::getHealth() const {
-    return currentHealth;
-}
-
-int Character::getMaxHealth() const {
-    return maxHealth;
-}
-
-void Character::takeDamage(int damage) {
-    setHealth(currentHealth - damage);
-}
-
-void Character::heal(int amount) {
-    setHealth(currentHealth + amount);
-}
-
-void Character::hurt(int amount){
-    if(!isInvencible){
-        setHealth(currentHealth - amount);
-        isInvencible = true;
     }
 }
 

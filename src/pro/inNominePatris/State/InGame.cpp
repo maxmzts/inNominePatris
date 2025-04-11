@@ -245,7 +245,7 @@ void InGame::update(Game& game) {
     if(!player.getIsInvencible()){
         for(auto enemy : enemies){
             if(enemy->getHitbox()->isActive() && checkPlayerWasHit(player, enemy))
-                player.hurt(enemy->getAttackDamage());
+                player.takeDamage(enemy->getAttackDamage());
         }
     }
 
