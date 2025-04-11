@@ -97,4 +97,6 @@ public:
      * @return Rectángulo con las coordenadas globales
      */
     sf::FloatRect getGlobalBounds() const;
+
+    //bool intersects()
 };

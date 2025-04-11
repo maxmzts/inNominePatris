@@ -5,6 +5,7 @@
 #include "TileMap.h" // clase TileMap para detección de colisiones
 #include "GameEngine.h" // clase GameEngine para la ventana y eventos
 #include "Weapon.h" // clase Weapon para armas
+#include "Hurtbox.h"
 #include <vector>
 #include "AbilityType.h"
 
@@ -40,15 +41,14 @@ public:
     void spawnAt(const TileMap& tilemap, float x, float y);
     void interact(TileMap& tilemap);
 
-
     // para la vida del jugador
     void setHealth(int health);
     int getHealth() const;
     int getMaxHealth() const;
     void takeDamage(int damage);
     void heal(int amount);
-
-    
+    void hurt(int amount) { setHealth(currentHealth - amount); }
+    Hurtbox* getHurtbox() { return hurtbox; }
 
 private:
     sf::Texture texture;
@@ -77,8 +77,7 @@ private:
     std::vector<Weapon*> weapons; // Máximo 2 armas
     int equippedIndex = 0; // Índice del arma equipada
     std::vector<sf::Vector2f> weaponOriginalPositions; // Posiciones de las armas en el suelo
-
-    
+    Hurtbox* hurtbox;
 };
 
 #endif // CHARACTER_H

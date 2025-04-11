@@ -204,8 +204,12 @@ He implementado el HUD. Ahora el personaje tiene barra de vida y hay un inventar
 
 (1h) He cambiado ```Enemy``` para que use SpriteFaçade. A parte he descargado unos sprites para un enemigo murciélago y he implementado la animación de este. Nota: necesitamos un sistema global para animaciones. Olvidé hacer commit de esto último el mismo día.
 
-## 20250410 MáximoMartínez @(1h 30min)
+## 20250410 MáximoMartínez @(4h)
 (1h 30min) He implementado una clase ```AnimatedSprite``` para poder usar animaciones de spritesheets con la fachada de sprite. Permite cargar varias animaciones que se identifican por un nombre y elegir los FPS de la reproducción. La he añadido a la clase ```Enemy``` para probarlo.
+
+(1h) He creado la clase ```VisualEffect``` para los futuros efectos visuales que querramos añadir. Hace uso de la clase ```AnimatedSprite``` que hice hace nada. Para manejar los en ```InGame``` más fácilmente he creado la clase ```VFXManager```. He hecho un test y funciona perfectamente.
+
+(1h) He empezado a implementar aquello que descartamos por las referencias circulares (sistema de combate). El jugador tiene ```Hurtbox```, ```InGame``` comprueba si alguna hitbox colisiona con él y recibe daño si eso ocurre.
 
 ## 20250410 JorgePelegrin @(3h)
 Arregladas todas las referencias circulares, mejorando el sistema de combate y añadiendo cooldown a todos los ataques y habilidades. He empezado a añadir varios items.

@@ -229,6 +229,26 @@ void InGame::update(Game& game) {
             sword->update(deltaTime); // Actualizar la espada
         }
     }
+
+    // TEST SISTEMA DE COMBATE
+    /**
+     * for (hitbox enemigo: enemigos){
+     *     player->hurtbox.intersect(hitbox)
+     * }
+     * for (hurtbox enemigo: enemigos){
+     *     player->arma->hitbox.intersect(hurtbox)
+     * }
+     */
+
+    // Comprobar que el jugador recibe daño
+    for(auto enemie : enemies){
+        if(enemie->getHitbox()->isActive() && player.getHurtbox()->getGlobalBounds().intersects(enemie->getHitbox()->getGlobalBounds()))
+            player.hurt(10);
+    }
+
+    // Comprobar que algún enemigo recibe daño
+
+
     hud.update(player);
 
     //// TEST DE VISUAL EFFECTS
