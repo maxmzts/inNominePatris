@@ -213,3 +213,6 @@ He implementado el HUD. Ahora el personaje tiene barra de vida y hay un inventar
 
 ## 20250410 JorgePelegrin @(3h)
 Arregladas todas las referencias circulares, mejorando el sistema de combate y añadiendo cooldown a todos los ataques y habilidades. He empezado a añadir varios items.
+
+## 20250402 DavidGonzález @(5h)
+Refactorización de la interacción, creando una carpeta a parte y modulando las interacciones por clases, funcionan las interacciones básicas pero no he conseguido que los botones abran la puerta y encima he descubierto que mi codigo para quitar bounds no funciona correctamente.

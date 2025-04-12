@@ -1,4 +1,5 @@
 #include "Character.h"
+#include "InteractionFactory.h"
 #include <iostream>
 
 Character::Character(const std::string& textureFile) 
@@ -339,55 +340,34 @@ void Character::heal(int amount) {
 
 // INTERACTION STUFF-------------------------------------------------------------------------------------------------------------------------------
 
-void Character::InteractionCage(TileMap& tilemap, int centerX, int centerY) {
-    // Coordenadas relativas desde el centro
-    tilemap.setLocalTile("deco", centerX - 2, centerY, 64); // izquierda
-    tilemap.setLocalTile("deco", centerX - 1, centerY, 65); // centro
-    tilemap.setLocalTile("deco", centerX,     centerY, 66); // derecha
-    tilemap.setLocalTile("deco", centerX - 2, centerY + 1, 80); // izquierda abajo
-    tilemap.setLocalTile("deco", centerX - 1, centerY + 1, 81); // centro abajo
-    tilemap.setLocalTile("deco", centerX,     centerY + 1, 82); // derecha abajo
-}
+// void Character::InteractionCage(TileMap& tilemap, int centerX, int centerY) {
+//     // Coordenadas relativas desde el centro
+//     tilemap.setLocalTile("deco", centerX - 2, centerY, 64); // izquierda
+//     tilemap.setLocalTile("deco", centerX - 1, centerY, 65); // centro
+//     tilemap.setLocalTile("deco", centerX,     centerY, 66); // derecha
+//     tilemap.setLocalTile("deco", centerX - 2, centerY + 1, 80); // izquierda abajo
+//     tilemap.setLocalTile("deco", centerX - 1, centerY + 1, 81); // centro abajo
+//     tilemap.setLocalTile("deco", centerX,     centerY + 1, 82); // derecha abajo
+// }
 
+// void Character::InteractionOpenDoor() {
+//     std::cout << "PUERTA ABIERTA (SE HAN PULSADO LOS 3 BOTONES DE SALA 1)" << std::endl;
+// }
 
 void Character::interact(TileMap& tilemap) {
-    // Obtener el hitbox del jugador
     sf::FloatRect playerBounds = sprite.getGlobalBounds();
-    
-    // Comprobar si está interactuando con algún tile
     int tileId = -1;
-    bool button1 = false;
-    bool button2 = false;
-    bool button3 = false;
+    
     if (tilemap.isPlayerInteractingWithTile(playerBounds, tileId)) {
-        // Acciones según el ID del tile
-        switch (tileId) {
-            case 773:
-                std::cout << "Interactuando con tile 773 (boton abajo)" << std::endl;
-                // Modificar la capa de decoración
-                InteractionCage(tilemap, 31, 29);
-                button1 = true;
-                
-                
-                // tilemap.setTile("deco", 5, 8, 0);   // Elimina el tile en (5,8)
-
-                break;
-            case 774:
-                std::cout << "Interactuando con tile 774 (izq)" << std::endl;
-                InteractionCage(tilemap, 17, 20);
-                button2 = true;
-
-                break;
-            case 775:
-                std::cout << "Interactuando con tile 775 (dcha)" << std::endl;
-                InteractionCage(tilemap, 44, 20);
-                button3 = true;
-
-                break;
-            // Puedes agregar más casos según necesites
-            default:
-                std::cout << "NO hay interaccion: " << tileId << std::endl;
-                break;
+        // Crear la interacción correspondiente usando la fábrica
+        tileId -= 1;
+        auto interaction = InteractionFactory::createInteraction(tileId);
+        
+        if (interaction) {
+            // Ejecutar la interacción
+            interaction->execute(*this, tilemap);
+        } else {
+            std::cout << "No hay interacción definida para el tile " << tileId << std::endl;
         }
     } else {
         std::cout << "No hay nada con lo que interactuar aquí." << std::endl;

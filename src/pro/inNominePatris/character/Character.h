@@ -8,6 +8,8 @@
 #include "Hurtbox.h"
 #include <vector>
 #include "AbilityType.h"
+#include "InteractionManager.h"
+
 
 class Character {
 public:
@@ -52,6 +54,7 @@ public:
 
     // para interaccion
     void InteractionCage(TileMap& tilemap, int centerX, int centerY);
+    void InteractionOpenDoor();
 
 private:
     sf::Texture texture;
