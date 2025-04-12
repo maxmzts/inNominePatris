@@ -22,6 +22,7 @@ PauseMenu::PauseMenu(float width, float height) : selectedItemIndex(0) {
     // Escalar el fondo para que ocupe toda la ventana
     sf::Vector2u textureSize = backgroundTexture.getSize();
     backgroundSprite.setScale(width / textureSize.x, height / textureSize.y);
+    backgroundSprite.setPosition(0, 0); // Asegurarse de que esté centrado
 
     // Opciones del menú
     std::vector<std::string> opciones = {"Continuar", "Configuracion", "Salir"};
@@ -52,7 +53,6 @@ PauseMenu::PauseMenu(float width, float height) : selectedItemIndex(0) {
         menuItems.push_back(text);
     }
 }
-
 PauseMenu* PauseMenu::getInstance(float width, float height) {
     if (!instance) {
         instance = new PauseMenu(width, height);
@@ -91,6 +91,10 @@ void PauseMenu::update(Game& game) {
 }
 
 void PauseMenu::render(Game& game, sf::RenderWindow& window) {
+    // Restablecer la vista predeterminada para usar coordenadas de pantalla
+    sf::View originalView = window.getView();
+    window.setView(window.getDefaultView());
+
     // Dibujar el fondo
     window.draw(backgroundSprite);
 
@@ -99,6 +103,9 @@ void PauseMenu::render(Game& game, sf::RenderWindow& window) {
         window.draw(menuBackgrounds[i]);
         window.draw(menuItems[i]);
     }
+
+    // Restaurar la vista original
+    window.setView(originalView);
 }
 
 void PauseMenu::moveUp() {

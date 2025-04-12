@@ -3,6 +3,7 @@
 #include "../character/Character.h"
 #include "../interface/HUD.h"
 #include "../hboxes/Hitbox.h"
+#include "../Shop/Shop.h"
 #include "PauseMenu.h"
 #include <iostream>
 #include <algorithm> // Para std::remove_if
@@ -16,7 +17,7 @@ InGame* InGame::instance = nullptr;
  * Constructor de InGame. Carga el motor y el lobby con el jugador.
  */
 InGame::InGame(GameEngine& engine)
-    : engine(engine), player("./resources/sprites.png"), hud(800, 600) {
+    : engine(engine), player("./resources/sprites.png"), hud(800, 600), shop(engine.getWindow(), player.getKarma()) {
     // Cargar el mapa
     if (!tileMap.loadFromFile("./maps/world_1.tmx", engine)) {
         std::cerr << "Error cargando el mapa\n";
@@ -68,9 +69,29 @@ void InGame::update(Game& game) {
     while (window.pollEvent(event)) {
         if (event.type == sf::Event::Closed) {
             window.close();
-        } else {
-            player.handleInput(event);
+        } 
+
+        if(shop.isOpen()){
+            shop.handleInput(event);
+            if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::B){
+                shop.close();
+            }
+            continue; // No procesar otros eventos
         }
+        
+        player.handleInput(event);
+
+        // Abrir la tienda (tecla B)
+        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::B) {
+            std::cout << "Abriendo tienda..." << std::endl;
+            shop.open();
+        }
+
+        if (shop.isOpen()) {
+            shop.update(player.getKarma()); // Actualizar la tienda si está abierta
+            return; // No actualizar el resto del juego
+        }
+
 
         // Respawn del jugador (tecla R)
         if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::R) {
@@ -297,6 +318,11 @@ void InGame::render(Game& game, sf::RenderWindow& window) {
 
     // Mostrar el HUD
     hud.draw(window, player);
+
+    // Renderizar la tienda si está abierta
+    if (shop.isOpen()) {
+        shop.render();
+    }
 
     engine.display();
 }

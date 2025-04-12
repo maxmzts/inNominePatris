@@ -9,6 +9,7 @@
 #include "Lance.h"
 #include "Bow.h"
 #include "Enemy.h"
+#include "Shop.h"
 #include "HUD.h"
 #include <SFML/Graphics.hpp>
 #include <vector>
@@ -18,6 +19,7 @@ class InGame : public State {
 private:
     static InGame* instance;
     GameEngine& engine; // Puntero al GameEngine
+    Shop shop;
 
     TileMap tileMap;
     Character player;

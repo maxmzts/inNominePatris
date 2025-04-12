@@ -55,6 +55,10 @@ public:
     // para interaccion
     void InteractionCage(TileMap& tilemap, int centerX, int centerY);
 
+    // para el karma
+    int getKarma() const;
+    void addKarma(int amount);
+
 private:
     sf::Texture texture;
     sf::Sprite sprite;
@@ -88,6 +92,9 @@ private:
     Hurtbox* hurtbox;
 
     void updateInvencibility(float deltaTime);
+
+    // Karma
+    int karma = 100; // Karma del jugador
 };
 
 #endif // CHARACTER_H
