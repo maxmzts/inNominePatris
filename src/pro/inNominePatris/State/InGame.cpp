@@ -191,7 +191,7 @@ void InGame::update(Game& game) {
                     for (auto enemy : EnemyManager::getInstance()->getEnemyList()) {
                         if (equippedWeapon->getAttackHitbox()->getGlobalBounds().intersects(enemy->getHurtbox()->getGlobalBounds())) {
                             std::cout << "Enemigo golpeado!" << std::endl;
-                            enemy->takeDamage(equippedWeapon->getAttackDamage()); // Infligir daño al enemigo
+                            enemy->takeDamage(equippedWeapon->getAttackDamage(), equippedWeapon->getAttackHitbox()->getPosition()); // Infligir daño al enemigo
                         }
                     }
                     // Marcar que el daño ya se ha aplicado
@@ -206,7 +206,7 @@ void InGame::update(Game& game) {
             for (auto enemy : EnemyManager::getInstance()->getEnemyList()) {
                 if (arrow.getBounds().intersects(enemy->getHurtbox()->getGlobalBounds())) {
                     std::cout << "Enemy hit by arrow!" << std::endl;
-                    enemy->takeDamage(15); // Infligir daño al enemigo
+                    enemy->takeDamage(15, arrow.getPosition()); // Infligir daño al enemigo
                     arrow.markforRemoval(); // Marcar la flecha para eliminación
                     break; // Salir del bucle para evitar múltiples colisiones con la misma flecha
                 }
@@ -253,7 +253,8 @@ void InGame::update(Game& game) {
     if(player.hasWeapon()){
         for(auto enemy : EnemyManager::getInstance()->getEnemyList()){
             if(enemy->getisInvincible() && checkEnemyWasHit(enemy, player))
-                enemy->takeDamage(player.getEquippedWeapon()->getAttackDamage());
+                // se debe pasar la posicion de la hitbox para el knockback
+                enemy->takeDamage(player.getEquippedWeapon()->getAttackDamage(), player.getEquippedWeapon()->getAttackHitbox()->getPosition());
         }
     }
 

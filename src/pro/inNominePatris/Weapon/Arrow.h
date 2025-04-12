@@ -12,7 +12,8 @@ public:
     const sf::FloatRect getBounds() const;
 
     void markforRemoval();
-    bool isMarkedForRemoval() const; 
+    bool isMarkedForRemoval() const;
+    sf::Vector2f getPosition() { return sprite.getPosition(); } 
 
 private:
     sf::Sprite sprite;

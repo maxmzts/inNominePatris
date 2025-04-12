@@ -11,12 +11,6 @@
 #include "SpriteFacade.h"
 #include "AnimatedSprite.h"
 
-// Declaraciones adelantadas para evitar dependencias circulares
-// class Hitbox;
-// class Hurtbox;
-// class Character;
-// class TileMap;
-
 class Enemy {
 protected:
     std::string name;
@@ -65,6 +59,13 @@ protected:
     float pathUpdateTimer = 0.0f;  // Tiempo desde la última actualización del camino
     float pathUpdateInterval = 0.5f; // Intervalo para recalcular el camino (en segundos)
 
+    // Knockback
+    sf::Vector2f knockbackDirection;
+    float knockbackForce;
+    float knockbackDuration;
+    float knockbackTimer;
+    bool isInKnockback;
+
 public:
     // Constructor y destructor
     Enemy(const std::string& name, float maxHealth, float movementSpeed, const sf::Vector2f& startPosition, const std::string& texturePath);
@@ -83,9 +84,11 @@ public:
     virtual void changeAnimation(EnemyState newState) = 0;
     
     // Funciones requeridas
-    void takeDamage(float damage);
+    void takeDamage(float damage, const sf::Vector2f& attackPosition);
     void attack();
     void move(const sf::Vector2f& direction);
+    void setupKnockback(const sf::Vector2f& attackDirection, float force);
+    virtual void knockback(float deltaTime, const TileMap* tileMap) = 0;
     
     // Algoritmo A*
     void findPathToPlayer(const Character* player, const TileMap* tileMap);
