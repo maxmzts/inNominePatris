@@ -405,3 +405,13 @@ void Character::updateInvencibility(float deltaTime){
         invencibilityTimer = 0;
     }
 }
+
+
+int Character::getKarma() const {
+    return karma;
+}
+
+void Character::addKarma(int amount) {
+    karma += amount;
+    if (karma < 0) karma = 0; // Asegurarse de que el karma no sea negativo
+}
