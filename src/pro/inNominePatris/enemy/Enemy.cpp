@@ -24,6 +24,11 @@ Enemy::Enemy(const std::string& name, float maxHealth, float movementSpeed, cons
     , detectionRadius(300.0f)      // Detecta al jugador a 300 unidades
     , velocity(0.0f, 0.0f)
     , facingRight(false)
+    , knockbackDirection(0.0f, 0.0f)
+    , knockbackForce(0.0f)
+    , knockbackDuration(0.3f)
+    , knockbackTimer(0.0f)
+    , isInKnockback(false)
 {    
     // Configuración inicial del sprite animado
     setTexture(texturePath);
@@ -61,7 +66,30 @@ void Enemy::setTexture(const std::string& texturePath) {
     sprite.setOrigin(bounds.width / 2.0f, bounds.height / 2.0f);
 }
 
-void Enemy::takeDamage(float damage) {
+void Enemy::setupKnockback(const sf::Vector2f& attackDirection, float force) {
+    // Si hay una dirección de ataque, calcular la dirección opuesta
+    if (attackDirection.x != 0 || attackDirection.y != 0) {
+        // Normalizar la dirección
+        float length = std::sqrt(attackDirection.x * attackDirection.x + attackDirection.y * attackDirection.y);
+        if (length > 0) {
+            // Dirección opuesta al ataque
+            knockbackDirection = -attackDirection / length;
+        } else {
+            // Si no hay dirección clara, usar un valor por defecto
+            knockbackDirection = sf::Vector2f(facingRight ? -1.0f : 1.0f, 0.0f);
+        }
+    } else {
+        // Si no se proporciona dirección, usar la dirección contraria a donde está mirando
+        knockbackDirection = sf::Vector2f(facingRight ? -1.0f : 1.0f, 0.0f);
+    }
+    
+    knockbackForce = force;
+    knockbackDuration = 0.3f; // Duración del knockback en segundos
+    knockbackTimer = knockbackDuration;
+    isInKnockback = true;
+}
+
+void Enemy::takeDamage(float damage, const sf::Vector2f& attackPosition) {
     // Si está invencible, ignorar el daño
     if (isInvincible) {
         return;
@@ -79,10 +107,35 @@ void Enemy::takeDamage(float damage) {
     
     // Activar invencibilidad
     setInvincible(true);
+
+    sf::Vector2f attackDirection = attackPosition-position;
+    setupKnockback(attackDirection, 150.0f);
     
     // Si la vida llega a 0, cambiar al estado de muerte
     if (currentHealth <= 0) {
         changeState(EnemyState::DYING);
+    }
+}
+
+void Enemy::knockback(float deltaTime, const TileMap* tileMap){
+    if (isInKnockback) {
+        // La fuerza se reduce con el tiempo para un efecto de desaceleración
+        float currentForce = knockbackForce * (knockbackTimer / knockbackDuration);
+        sf::Vector2f knockbackVelocity = knockbackDirection * currentForce;
+        
+        // Mover al enemigo
+        position += knockbackVelocity * deltaTime;
+        sprite.setPosition(position.x, position.y);
+        updateHitboxes();
+        
+        // Comprobar colisiones con el mapa si está disponible
+        if (tileMap) {
+            sf::FloatRect enemyBounds = sprite.getGlobalBounds();
+            if (tileMap->isColliding(enemyBounds)) {
+                // Si colisiona con el mapa, detener el knockback
+                isInKnockback = false;
+            }
+        }
     }
 }
 

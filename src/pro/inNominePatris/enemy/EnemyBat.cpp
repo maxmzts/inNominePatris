@@ -13,24 +13,14 @@ EnemyBat::EnemyBat(const std::string& name, float maxHealth, float movementSpeed
     loadAnimations();
 }
 
+/**
+ * Carga las animaciones de este enemigo.
+ */
 void EnemyBat::loadAnimations() {
-    // Animación de vuelo (4 frames en una fila)
-    // Parámetros: nombre, frameCount, startPosition(x,y), frameSize(width,height), loop
     animator->addAnimation("idle", 4, sf::Vector2i(0, 0), sf::Vector2i(64, 64), true);
     animator->addAnimation("moving", 4, sf::Vector2i(0, 0), sf::Vector2i(64, 64), true);
     animator->addAnimation("attacking", 4, sf::Vector2i(0, 0), sf::Vector2i(64, 64), true);
     animator->addAnimation("dying", 7, sf::Vector2i(0, 64), sf::Vector2i(64, 64), false);
-    
-    // Si hay más animaciones específicas para otros estados, se agregarían aquí
-    // Por ejemplo, si hay frames diferentes para el ataque o para recibir daño
-    
-    // // Configurar callback para cuando termine la animación (si es necesario)
-    // animator->setAnimationEndCallback([this]() {
-    //     // Por ejemplo, si la animación de ataque termina, volver a IDLE
-    //     if (currentState == ATTACKING) {
-    //         changeAnimation(IDLE);
-    //     }
-    // });
 }
 
 /**
@@ -48,37 +38,17 @@ void EnemyBat::changeAnimation(EnemyState newState) {
             animator->play("moving", 12.f); // 10 FPS para movimiento
             break;
         case EnemyState::ATTACKING:
-            animator->play("attacking", 32.f, false); // Animación de ataque no en bucle
+            animator->play("attacking", 32.f); // Animación de ataque no en bucle
             break;
         case EnemyState::HURT:
             animator->play("idle", 0.f);
             break;
         case EnemyState::DYING:
-            animator->play("dying", 8.f);
+            animator->play("dying", 8.f, false);
             break;
-        default:
+        case EnemyState::DEAD:
             break;
     }
-}
-
-void EnemyBat::takeDamage(float damage) {
-    // Si está invencible o muerto, ignorar el daño
-    if (isInvincible || currentState == EnemyState::DYING) {
-        return;
-    }
-    
-    currentHealth -= damage;
-    
-    // Asegurar que la vida no baje de 0
-    if (currentHealth < 0) {
-        currentHealth = 0;
-    }
-    
-    // Cambiar al estado de herido
-    changeState(EnemyState::HURT);
-    
-    // Activar invencibilidad
-    setInvincible(true);
 }
 
 /**
@@ -94,6 +64,14 @@ void EnemyBat::attack() {
     
     // Cambiar al estado de ataque
     changeState(EnemyState::ATTACKING);
+    VFXManager::getInstance().addEffect(
+        "./resources/vfx/scratch.png",
+        {hitbox->getPosition().x, hitbox->getPosition().y},          // posición de prueba
+        {45 , 33},           // tamaño de frame
+        6,                  // cantidad de frames
+        16.f,                 // FPS
+        !facingRight
+    );
     
     // Resetear el timer de ataque
     attackTimer = attackCooldown;
@@ -141,6 +119,13 @@ void EnemyBat::update(float deltaTime, Character* player, const TileMap* tileMap
         invincibilityTimer -= deltaTime;
         if (invincibilityTimer <= 0) {
             setInvincible(false);
+        }
+    }
+
+    if (isInKnockback) {
+        knockbackTimer -= deltaTime;
+        if (knockbackTimer <= 0) {
+            isInKnockback = false;
         }
     }
     
@@ -205,15 +190,7 @@ void EnemyBat::update(float deltaTime, Character* player, const TileMap* tileMap
             break;
             
         case EnemyState::ATTACKING:
-            hitbox->setActive(true);
-            VFXManager::getInstance().addEffect(
-                "./resources/vfx/scratch.png",
-                {hitbox->getPosition().x, hitbox->getPosition().y},          // posición de prueba
-                {45 , 33},           // tamaño de frame
-                8,                  // cantidad de frames
-                24.f,                 // FPS
-                facingRight
-            );
+            hitbox->setActive(true);                
             // La animación de ataque duraría un tiempo fijo
             if (stateTimer >= 0.5f) {  // Duración de la animación de ataque
                 changeState(EnemyState::IDLE);
@@ -224,7 +201,10 @@ void EnemyBat::update(float deltaTime, Character* player, const TileMap* tileMap
         case EnemyState::HURT:
             if(hitbox->isActive())
                 hitbox->setActive(false);
-            setInvincible(true);
+            if(isInvincible)
+                setInvincible(true);
+            // Aplicar el movimiento de knockback
+            knockback(deltaTime, tileMap);
             // La animación de daño duraría un tiempo fijo
             if (stateTimer >= 0.3f) {  // Duración de la animación de daño
                 changeState(EnemyState::IDLE);
@@ -235,7 +215,15 @@ void EnemyBat::update(float deltaTime, Character* player, const TileMap* tileMap
         case EnemyState::DYING:
             hitbox->setActive(false);
             hurtbox->setActive(false);
-            if (stateTimer >= 0.5f) {  // Duración de la animación de muerte
+            knockback(deltaTime, tileMap);
+            if (stateTimer >= 3.f) {  // Duración de la animación de muerte
+                VFXManager::getInstance().addEffect(
+                    "./resources/vfx/smoke_disappear.png",
+                    {sprite.getPosition().x, sprite.getPosition().y+15},
+                    sf::Vector2i(64,32),
+                    10,
+                    12.f
+                );
                 changeState(EnemyState::DEAD);
             }
             break;
