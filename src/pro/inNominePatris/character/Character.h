@@ -27,6 +27,7 @@ public:
     void addWeapon(Weapon* weapon);
     void switchWeapon();
     void setWeapon(int index);
+    bool hasWeapon() { if(equippedWeapon == nullptr) return false; else return true; }
     int getWeaponCount() const;
     Weapon* getEquippedWeapon() const;
     void addWeaponWithPosition(Weapon* weapon, sf::Vector2f originalPosition);

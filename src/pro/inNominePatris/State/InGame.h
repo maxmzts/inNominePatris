@@ -22,7 +22,6 @@ private:
     TileMap tileMap;
     Character player;
     std::vector<Weapon*> weaponsOnGround;
-    std::vector<Enemy*> enemies;
     sf::Clock clock;
 
     InGame(GameEngine& engine); // Constructor privado
@@ -36,8 +35,8 @@ public:
     void update(Game& game) override;
     void render(Game& game, sf::RenderWindow& window) override;
 
-    bool checkEnemyWasHit(Enemy* enemy, Character player);
-    bool checkPlayerWasHit(Character player, Enemy* enemy);
+    bool checkEnemyWasHit(std::shared_ptr<Enemy> enemy, Character player);
+    bool checkPlayerWasHit(Character player, std::shared_ptr<Enemy> enemy);
 };
 
 #endif // INGAME_H

@@ -18,7 +18,7 @@
 // class TileMap;
 
 class Enemy {
-private:
+protected:
     std::string name;
     float maxHealth;
     float currentHealth;
@@ -46,7 +46,8 @@ private:
         MOVING,
         ATTACKING,
         HURT,
-        DYING
+        DYING,
+        DEAD
     };
     
     EnemyState currentState;
@@ -66,7 +67,7 @@ private:
 
 public:
     // Constructor y destructor
-    Enemy(const std::string& name, float maxHealth, float movementSpeed, const sf::Vector2f& startPosition);
+    Enemy(const std::string& name, float maxHealth, float movementSpeed, const sf::Vector2f& startPosition, const std::string& texturePath);
     ~Enemy();
     
     // Getters y setters básicos
@@ -78,8 +79,8 @@ public:
     
     void setPosition(const sf::Vector2f& position);
     void setTexture(const std::string& texturePath);
-    void loadAnimations();
-    void changeAnimation(EnemyState newState);
+    virtual void loadAnimations() = 0;
+    virtual void changeAnimation(EnemyState newState) = 0;
     
     // Funciones requeridas
     void takeDamage(float damage);
@@ -90,12 +91,12 @@ public:
     void findPathToPlayer(const Character* player, const TileMap* tileMap);
     
     void render(sf::RenderWindow& window);
-    void update(float deltaTime, Character* player, const TileMap* tileMap);
+    virtual void update(float deltaTime, Character* player, const TileMap* tileMap) = 0;
     
     // Funciones adicionales útiles
     void setInvincible(bool invincible);
     bool getisInvincible() const { return isInvincible; }
-    bool isAlive() const { return currentHealth > 0; }
+    bool isDead() const { if(currentState == EnemyState::DEAD) return true; else return false; }
     void updateHitboxes();
     int getAttackDamage() const { return attackDamage; }
     void setAttackDamage(float damage) { attackDamage = damage; }
