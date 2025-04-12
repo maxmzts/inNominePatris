@@ -35,7 +35,7 @@ protected:
     bool facingRight;
     
     // Estados del enemigo
-    enum class EnemyState {
+    enum class EnemyState : int {
         IDLE,
         MOVING,
         ATTACKING,
@@ -81,11 +81,11 @@ public:
     void setPosition(const sf::Vector2f& position);
     void setTexture(const std::string& texturePath);
     virtual void loadAnimations() = 0;
-    virtual void changeAnimation(EnemyState newState) = 0;
+    virtual void changeAnimation(int newStateInt) = 0;
     
     // Funciones requeridas
-    void takeDamage(float damage, const sf::Vector2f& attackPosition);
-    void attack();
+    virtual void takeDamage(float damage, const sf::Vector2f& attackPosition) = 0;
+    virtual void attack() = 0;
     void move(const sf::Vector2f& direction);
     void setupKnockback(const sf::Vector2f& attackDirection, float force);
     void knockback(float deltaTime, const TileMap* tileMap);
@@ -109,8 +109,9 @@ public:
     Hurtbox* getHurtbox() const { return hurtbox; }
     
     // Cambio de estados
-    void changeState(EnemyState newState);
-    EnemyState getCurrentState() const { return currentState; }
+    virtual void changeState(int newState) = 0;
+    int getCurrentState() const { return static_cast<int>(currentState); }
     // Actualizar el intervalo de recálculo del camino
     void setPathUpdateInterval(float interval) { pathUpdateInterval = interval; }
+    bool isValidEnemyState(int state);
 };

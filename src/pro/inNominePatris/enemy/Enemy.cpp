@@ -88,7 +88,10 @@ void Enemy::setupKnockback(const sf::Vector2f& attackDirection, float force) {
     knockbackTimer = knockbackDuration;
     isInKnockback = true;
 }
-
+/**
+ * Método default de ataque (puede ser sobrescrito porque es virtual)
+ * Recibe daño, pasa a estado herido y aplica knockback.
+ */
 void Enemy::takeDamage(float damage, const sf::Vector2f& attackPosition) {
     // Si está invencible, ignorar el daño
     if (isInvincible) {
@@ -103,7 +106,7 @@ void Enemy::takeDamage(float damage, const sf::Vector2f& attackPosition) {
     }
     
     // Cambiar al estado de herido
-    changeState(EnemyState::HURT);
+    changeState(static_cast<int>(EnemyState::HURT));
     
     // Activar invencibilidad
     setInvincible(true);
@@ -113,7 +116,7 @@ void Enemy::takeDamage(float damage, const sf::Vector2f& attackPosition) {
     
     // Si la vida llega a 0, cambiar al estado de muerte
     if (currentHealth <= 0) {
-        changeState(EnemyState::DYING);
+        changeState(static_cast<int>(EnemyState::DYING));
     }
 }
 
@@ -140,6 +143,7 @@ void Enemy::knockback(float deltaTime, const TileMap* tileMap){
 }
 
 /**
+ * Método default de ataque (puede ser sobrescrito porque es virtual)
  * Para atacar el enemigo pone activa la hitbox durante un corto periodo de tiempo.
  * El daño producido al jugador se manejará en el sistema de colisiones de InGame.
  * Que la hitbox vuelva a estar inactiva se gestiona en el update.
@@ -151,7 +155,7 @@ void Enemy::attack() {
     }
     
     // Cambiar al estado de ataque
-    changeState(EnemyState::ATTACKING);
+    changeState(static_cast<int>(EnemyState::ATTACKING));
     
     // Resetear el timer de ataque
     attackTimer = attackCooldown;
@@ -656,13 +660,21 @@ void Enemy::updateHitboxes() {
     }
 }
 
-void Enemy::changeState(EnemyState newState) {
+void Enemy::changeState(int newStateInt) {
+    if (!isValidEnemyState(newStateInt)) return;
+    EnemyState newState = static_cast<EnemyState>(newStateInt);
+
     // Si estamos cambiando a un nuevo estado, reiniciar el timer
     if (currentState != newState) {
         currentState = newState;
         stateTimer = 0.0f;
-        changeAnimation(newState);
+        changeAnimation(newStateInt);
         // Acciones específicas al cambiar de estado podrían ir aquí
         // Por ejemplo, cambiar la animación según el estado
     }
+}
+
+bool Enemy::isValidEnemyState(int state) {
+    return state >= static_cast<int>(EnemyState::IDLE) &&
+           state <= static_cast<int>(EnemyState::DEAD);
 }

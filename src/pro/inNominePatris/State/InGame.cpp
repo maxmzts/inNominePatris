@@ -8,6 +8,7 @@
 #include <algorithm> // Para std::remove_if
 #include "EnemyBat.h"
 #include <EnemyManager.h>
+#include <EnemyNecromancer.h>
 
 InGame* InGame::instance = nullptr;
 
@@ -42,10 +43,10 @@ InGame::InGame(GameEngine& engine)
     //cargar enemigos
     for (size_t i = 0; i < 3; i++)
     {
-        enemy = std::make_shared<EnemyBat>("Bat", 50.f, 100.f, sf::Vector2f(100.f*i,100.f*i));
+        enemy = std::make_shared<EnemyBat>(sf::Vector2f(100.f*i,100.f*i));
         EnemyManager::getInstance()->addEnemy(enemy);
     }
-
+    EnemyManager::getInstance()->addEnemy(std::make_shared<EnemyNecromancer>(sf::Vector2f(400.f,400.f)));
 }
 
 InGame* InGame::getInstance(GameEngine& engine) {

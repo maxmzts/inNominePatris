@@ -7,8 +7,13 @@
 #include <VFXManager.h>
 #include <unordered_set>
 
-EnemyBat::EnemyBat(const std::string& name, float maxHealth, float movementSpeed, const sf::Vector2f& startPosition)
-    : Enemy(name, maxHealth, movementSpeed, startPosition, "resources/enemies/Bat.png")
+EnemyBat::EnemyBat(const sf::Vector2f& startPosition)
+    : Enemy(
+        "Bat", 
+        50.f, 
+        120.f, 
+        startPosition, 
+        "resources/enemies/Bat.png")
 {
     loadAnimations();
 }
@@ -26,8 +31,9 @@ void EnemyBat::loadAnimations() {
 /**
  * Cambia la animación según el estado actual
  */
-void EnemyBat::changeAnimation(EnemyState newState) {
-    currentState = newState;
+void EnemyBat::changeAnimation(int newStateInt) {
+    if (!isValidEnemyState(newStateInt)) return;
+    EnemyState newState = static_cast<EnemyState>(newStateInt);
     stateTimer = 0.f;
     
     switch (newState) {
@@ -51,6 +57,10 @@ void EnemyBat::changeAnimation(EnemyState newState) {
     }
 }
 
+void EnemyBat::takeDamage(float damage, const sf::Vector2f& attackPosition) {
+    Enemy::takeDamage(damage, attackPosition);    
+}
+
 /**
  * Para atacar el enemigo pone activa la hitbox durante un corto periodo de tiempo.
  * El daño producido al jugador se manejará en el sistema de colisiones de InGame.
@@ -63,7 +73,7 @@ void EnemyBat::attack() {
     }
     
     // Cambiar al estado de ataque
-    changeState(EnemyState::ATTACKING);
+    changeState(static_cast<int>(EnemyState::ATTACKING));
     VFXManager::getInstance().addEffect(
         "./resources/vfx/scratch.png",
         {hitbox->getPosition().x, hitbox->getPosition().y},          // posición de prueba
@@ -143,7 +153,7 @@ void EnemyBat::update(float deltaTime, Character* player, const TileMap* tileMap
 
     // Si la vida llega a 0, cambiar al estado de muerte
     if (currentHealth <= 0 && currentState != EnemyState::DYING) {
-        changeState(EnemyState::DYING);
+        changeState(static_cast<int>(EnemyState::DYING));
     }
     
     // Lógica basada en el estado actual
@@ -159,7 +169,7 @@ void EnemyBat::update(float deltaTime, Character* player, const TileMap* tileMap
                 
                 // Si comenzamos a movernos, cambiar al estado de movimiento
                 if (velocity.x != 0 || velocity.y != 0) {
-                    changeState(EnemyState::MOVING);
+                    changeState(static_cast<int>(EnemyState::MOVING));
                 }
             }
             break;
@@ -193,7 +203,7 @@ void EnemyBat::update(float deltaTime, Character* player, const TileMap* tileMap
             hitbox->setActive(true);                
             // La animación de ataque duraría un tiempo fijo
             if (stateTimer >= 0.5f) {  // Duración de la animación de ataque
-                changeState(EnemyState::IDLE);
+                changeState(static_cast<int>(EnemyState::IDLE));
                 hitbox->setActive(false);
             }
             break;
@@ -207,7 +217,7 @@ void EnemyBat::update(float deltaTime, Character* player, const TileMap* tileMap
             knockback(deltaTime, tileMap);
             // La animación de daño duraría un tiempo fijo
             if (stateTimer >= 0.3f) {  // Duración de la animación de daño
-                changeState(EnemyState::IDLE);
+                changeState(static_cast<int>(EnemyState::IDLE));
                 setInvincible(false);
             }
             break;
@@ -224,10 +234,14 @@ void EnemyBat::update(float deltaTime, Character* player, const TileMap* tileMap
                     10,
                     12.f
                 );
-                changeState(EnemyState::DEAD);
+                changeState(static_cast<int>(EnemyState::DEAD));
             }
             break;
         case EnemyState::DEAD:
             break;
     }
 }
+
+void EnemyBat::changeState(int newState){
+    Enemy::changeState(newState);
+};
