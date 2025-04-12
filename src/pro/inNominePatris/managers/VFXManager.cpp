@@ -1,14 +1,20 @@
 #include "VFXManager.h"
 
+VFXManager& VFXManager::getInstance() {
+    static VFXManager instance;
+    return instance;
+}
+
 void VFXManager::addEffect(
     const std::string& texturePath,
     sf::Vector2f position,
     sf::Vector2i frameSize,
     int frameCount,
-    float frameDuration
+    float frameDuration,
+    bool invert
 ) {
     effects.emplace_back(std::make_unique<VisualEffect>(
-        texturePath, position, frameSize, frameCount, frameDuration
+        texturePath, position, frameSize, frameCount, frameDuration, invert
     ));
 }
 
@@ -27,7 +33,7 @@ void VFXManager::update(float deltaTime) {
     );
 }
 
-void VFXManager::draw(sf::RenderWindow& window) {
+void VFXManager::render(sf::RenderWindow& window) {
     for (const auto& effect : effects) {
         effect->draw(window);
     }

@@ -1,5 +1,7 @@
 #ifndef WEAPON_H
 #define WEAPON_H
+
+#include <memory>
 #include <vector>
 #include "GameEngine.h"
 #include "Hitbox.h"
@@ -29,7 +31,7 @@ class Weapon {
         virtual void renderOnPlayer(sf::Vector2f position, sf::Vector2f direction) = 0;
         virtual sf::Vector2f getPosition() const = 0;
         virtual void setPosition(float x, float y) = 0;
-        virtual Hitbox getAttackHitbox() const = 0; // Método para obtener la hitbox de ataque
+        virtual std::shared_ptr<Hitbox> getAttackHitbox() const = 0; // Método para obtener la hitbox de ataque
         bool hasDealtDamage() const { return dealtDamage; }
         void setDealtDamage(bool value) { dealtDamage = value; }
         virtual float getAttackDamage() const = 0; // Método para obtener el daño del arma

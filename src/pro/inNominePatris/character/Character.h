@@ -29,6 +29,7 @@ public:
     void addWeapon(Weapon* weapon);
     void switchWeapon();
     void setWeapon(int index);
+    bool hasWeapon() { if(equippedWeapon == nullptr) return false; else return true; }
     int getWeaponCount() const;
     Weapon* getEquippedWeapon() const;
     void addWeaponWithPosition(Weapon* weapon, sf::Vector2f originalPosition);
@@ -47,14 +48,19 @@ public:
     void setHealth(int health);
     int getHealth() const;
     int getMaxHealth() const;
+    bool getIsInvencible() const { return isInvencible; }
     void takeDamage(int damage);
     void heal(int amount);
-    void hurt(int amount) { setHealth(currentHealth - amount); }
+    void hurt(int amount);
     Hurtbox* getHurtbox() { return hurtbox; }
 
     // para interaccion
     void InteractionCage(TileMap& tilemap, int centerX, int centerY);
     void InteractionOpenDoor();
+
+    // para el karma
+    int getKarma() const;
+    void addKarma(int amount);
 
 private:
     sf::Texture texture;
@@ -74,6 +80,9 @@ private:
     bool movingUp = false;
     bool movingDown = false;
 
+    bool isInvencible;
+    float invencibilityTimer = 0.f;
+
     //Armas
     Weapon* equippedWeapon;
     bool isDashing;
@@ -84,6 +93,11 @@ private:
     int equippedIndex = 0; // Índice del arma equipada
     std::vector<sf::Vector2f> weaponOriginalPositions; // Posiciones de las armas en el suelo
     Hurtbox* hurtbox;
+
+    void updateInvencibility(float deltaTime);
+
+    // Karma
+    int karma = 100; // Karma del jugador
 };
 
 #endif // CHARACTER_H

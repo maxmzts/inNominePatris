@@ -4,6 +4,7 @@
 #include "Weapon.h"
 #include "SpriteFacade.h"
 #include "Hitbox.h"
+#include "AnimatedSprite.h"
 
 class Sword : public Weapon {
 public:
@@ -28,7 +29,7 @@ public:
     float getLastAbilityTime() { return lastAbilityTime; }
     float getDashSpeed() { return dashSpeed; }
     float getDashDuration() { return 0.2f; }
-    Hitbox getAttackHitbox() const override;
+    std::shared_ptr<Hitbox> getAttackHitbox() const override;
     float getAttackDamage() const override { return attackDamage; }
 
 private:
@@ -38,9 +39,13 @@ private:
     float lastAbilityTime;
     float attackDamage = 25.0f;
 
-    Hitbox attackHitbox;
+    std::shared_ptr<Hitbox> attackHitbox;
     float attackCooldown;
     float attackTimer;
+
+    SpriteFacade slashSpriteFacade;
+    AnimatedSprite slashAnimation; // Animación de ataque
+    bool isAnimating = false; // Indica si la animación está en curso
 };
 
 #endif // !SWORD_H

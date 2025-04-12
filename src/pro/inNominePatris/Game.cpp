@@ -2,13 +2,13 @@
 #include <iostream>
 
 Game::Game(const std::string& title, int width, int height)
-    : currentState(nullptr), window(sf::VideoMode(width, height), title) {}
+    : currentState(nullptr), window(sf::VideoMode(width, height), title), engine(window) {}
 
 Game::~Game() {
     // Limpia el estado actual si existe
     if (currentState) {
         delete currentState;
-        currentState = nullptr;
+        // currentState = nullptr;
     }
 }
 
@@ -19,14 +19,18 @@ void Game::update() {
 }
 
 void Game::render() {
-    window.clear(); // Limpia la ventana
+    engine.clear(); // Limpia la ventana
     if (currentState) {
-        currentState->render(*this, window); // Llama a la función render del estado actual
+        currentState->render(*this, engine.getWindow()); // Llama a la función render del estado actual
     }
-    window.display(); // Muestra el contenido renderizado
+    engine.display(); // Muestra el contenido renderizado
 }
 
 void Game::changeState(State* newState) {
+    if (currentState == newState) {
+        std::cout << "El estado actual ya es el mismo. No se realiza el cambio.\n";
+        return; // No cambia si el nuevo estado es el mismo que el actual
+    }
     if (currentState) {
         std::cout << "Eliminando estado actual\n";
         delete currentState; // Limpia el estado actual
@@ -43,4 +47,8 @@ void Game::restartGame() {
 
 sf::RenderWindow& Game::getWindow() {
     return window; // Devuelve la ventana del juego
+}
+
+GameEngine& Game::getEngine() {
+    return engine; // Devuelve el motor del juego
 }

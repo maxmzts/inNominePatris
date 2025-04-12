@@ -74,6 +74,7 @@ void ConfMenu::update(Game& game) {
                     std::cout << "Sonido seleccionado\n";
                 } else if (selectedItemIndex == 3) {
                     std::cout << "Menu principal seleccionado\n";
+                    window.close(); // salir
                     // game.changeState(MainMenu::getInstance(GameEngine engine, 800, 600));
                 }
             }
@@ -82,13 +83,22 @@ void ConfMenu::update(Game& game) {
 }
 
 void ConfMenu::render(Game& game, sf::RenderWindow& window) {
+    // Restablecer la vista predeterminada para usar coordenadas de pantalla
+    sf::View originalView = window.getView();
+    window.setView(window.getDefaultView());
+
+    // Dibujar el fondo
     window.draw(backgroundSprite);
 
     for (size_t i = 0; i < menuItems.size(); ++i) {
         window.draw(menuBackgrounds[i]);
         window.draw(menuItems[i]);
     }
+
+    // Restaurar la vista original
+    window.setView(originalView);
 }
+
 
 void ConfMenu::moveUp() {
     if (selectedItemIndex > 0) {

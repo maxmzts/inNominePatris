@@ -5,6 +5,7 @@
 #include "SpriteFacade.h"
 #include "Weapon.h"
 #include "Hitbox.h"
+#include "AnimatedSprite.h"
 
 class Portal {
     public:
@@ -53,7 +54,7 @@ class Lance : public Weapon {
         sf::Vector2f getPosition() const override { return spriteFacade.getPosition(); };
         AbilityType getAbilityType() const override { return AbilityType::Teleport; };
         bool getIsPortalDropped() const { return isPortalDropped; }
-        Hitbox getAttackHitbox() const override;
+        std::shared_ptr<Hitbox> getAttackHitbox() const override;
         float getAttackDamage() const override { return attackDamage; }
 
     private:
@@ -65,9 +66,13 @@ class Lance : public Weapon {
         float abilityCooldown = 4.0f; // Cooldown para la habilidad (en segundos)
         float abilityTimer = 0.f;     // Temporizador para la habilidad
 
-        Hitbox attackHitbox;
+        std::shared_ptr<Hitbox> attackHitbox;
         float attackCooldown;
         float attackTimer;
+
+        SpriteFacade pinchSprite;
+        AnimatedSprite pinchAnimation;
+        bool isAnimating = false;
 };
 
 

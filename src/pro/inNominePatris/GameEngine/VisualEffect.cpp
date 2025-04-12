@@ -5,13 +5,16 @@ VisualEffect::VisualEffect(
     sf::Vector2f position,
     sf::Vector2i frameSize,
     int frameCount,
-    float fps
+    float fps,
+    bool invert
 ) : finished(false)
 {
     // Cargar textura
     sprite.loadTexture(texturePath);
     sprite.setOrigin(frameSize.x / 2.0f, frameSize.y / 2.0f);
     sprite.setPosition(position.x, position.y);
+    if(invert)
+        sprite.setScale(-1.f , 1.f);
     
     // Inicializar el sistema de animación
     animator = std::make_unique<AnimatedSprite>(sprite);

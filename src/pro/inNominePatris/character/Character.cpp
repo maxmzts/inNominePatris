@@ -5,7 +5,7 @@
 Character::Character(const std::string& textureFile) 
 : speed(200.f), acceleration(800.f), deceleration(1000.f), equippedWeapon(nullptr), 
 isDashing(false), dashSpeed(400.f), dashDuration(0.2f), weapons(), equippedIndex(0), 
-direction(0.f, 0.f), maxHealth(100), currentHealth(100) {
+direction(0.f, 0.f), maxHealth(100), currentHealth(100), isInvencible(false) {
     
     if (!texture.loadFromFile(textureFile)) {
         std::cerr << "Error cargando la textura" << std::endl;
@@ -43,7 +43,7 @@ void Character::handleInput(const sf::Event& event) {
 
 void Character::update(const TileMap& tilemap, float deltaTime) {
     sf::Vector2f moveDirection(0.f, 0.f);
-
+    updateInvencibility(deltaTime);
     hurtbox->setPosition(getPosition());  // Centrado en la posición del enemigo
 
     // Detectar entrada del usuario solo si no está en dash
@@ -323,7 +323,10 @@ int Character::getMaxHealth() const {
 }
 
 void Character::takeDamage(int damage) {
-    setHealth(currentHealth - damage);
+    if(!isInvencible){
+        setHealth(currentHealth - damage);
+        isInvencible = true;
+    };
 }
 
 void Character::heal(int amount) {
@@ -372,4 +375,23 @@ void Character::interact(TileMap& tilemap) {
     } else {
         std::cout << "No hay nada con lo que interactuar aquí." << std::endl;
     }
+}
+
+void Character::updateInvencibility(float deltaTime){
+    if(isInvencible)
+        invencibilityTimer += deltaTime;
+    if(invencibilityTimer > 1){
+        isInvencible = false;
+        invencibilityTimer = 0;
+    }
+}
+
+
+int Character::getKarma() const {
+    return karma;
+}
+
+void Character::addKarma(int amount) {
+    karma += amount;
+    if (karma < 0) karma = 0; // Asegurarse de que el karma no sea negativo
 }

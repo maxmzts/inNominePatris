@@ -9,6 +9,7 @@
 #include "Lance.h"
 #include "Bow.h"
 #include "Enemy.h"
+#include "Shop.h"
 #include "HUD.h"
 #include <SFML/Graphics.hpp>
 #include <vector>
@@ -18,15 +19,11 @@ class InGame : public State {
 private:
     static InGame* instance;
     GameEngine& engine; // Puntero al GameEngine
-
-    //Managers
-    VFXManager vfxManager;
-    float effectTimer = 0.0f;
+    Shop shop;
 
     TileMap tileMap;
     Character player;
     std::vector<Weapon*> weaponsOnGround;
-    std::vector<Enemy*> enemies;
     sf::Clock clock;
 
     InGame(GameEngine& engine); // Constructor privado
@@ -39,6 +36,9 @@ public:
 
     void update(Game& game) override;
     void render(Game& game, sf::RenderWindow& window) override;
+
+    bool checkEnemyWasHit(std::shared_ptr<Enemy> enemy, Character player);
+    bool checkPlayerWasHit(Character player, std::shared_ptr<Enemy> enemy);
 };
 
 #endif // INGAME_H

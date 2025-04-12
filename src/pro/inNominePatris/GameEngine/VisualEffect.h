@@ -22,7 +22,8 @@ public:
         sf::Vector2f position,
         sf::Vector2i frameSize,
         int frameCount,
-        float frameDuration
+        float frameDuration,
+        bool invert
     );
 
     void update(float deltaTime);
