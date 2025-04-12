@@ -222,6 +222,7 @@ Implementado los recursos en la nube mediante el archivo setup.sh y Dropbox.
 ## 20250412 MáximoMartínez @(3h)
 
 (3h) He modificado el asset del murcielago para que tenga animación de muerte. Antes de añadir un nuevo tipo de enemigo he implementado un ```EnemyManager``` para gestionar los enemigos de ahora en adelante. La clase ```Enemy``` ahora tiene métodos virtuales para que el manager gestione bien las clases hijas. He tardado más de lo esperado por muchos cosas que no comprendía de C++, pero he aprendido una barbaridad. 
+(1h) He implementado knockback para todos los enemigos.
 
 ## 20250412 EstrellaDominguez @(2h)
 He implementado el menu de pausa. Se abre cuando el usuario pulsa la tecla "esc" aunque hay algún error a la hora de mostrarlo.

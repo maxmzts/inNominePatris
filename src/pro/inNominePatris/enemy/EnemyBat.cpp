@@ -51,28 +51,6 @@ void EnemyBat::changeAnimation(EnemyState newState) {
     }
 }
 
-void EnemyBat::knockback(float deltaTime, const TileMap* tileMap){
-    if (isInKnockback) {
-        // La fuerza se reduce con el tiempo para un efecto de desaceleración
-        float currentForce = knockbackForce * (knockbackTimer / knockbackDuration);
-        sf::Vector2f knockbackVelocity = knockbackDirection * currentForce;
-        
-        // Mover al enemigo
-        position += knockbackVelocity * deltaTime;
-        sprite.setPosition(position.x, position.y);
-        updateHitboxes();
-        
-        // Comprobar colisiones con el mapa si está disponible
-        if (tileMap) {
-            sf::FloatRect enemyBounds = sprite.getGlobalBounds();
-            if (tileMap->isColliding(enemyBounds)) {
-                // Si colisiona con el mapa, detener el knockback
-                isInKnockback = false;
-            }
-        }
-    }
-}
-
 /**
  * Para atacar el enemigo pone activa la hitbox durante un corto periodo de tiempo.
  * El daño producido al jugador se manejará en el sistema de colisiones de InGame.

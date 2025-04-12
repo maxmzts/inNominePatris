@@ -18,7 +18,6 @@ public:
     // Funciones requeridas
     void attack();
     void move(const sf::Vector2f& direction);
-    void knockback(float deltaTime, const TileMap* tileMap) override;
     
     void render(sf::RenderWindow& window);
     void update(float deltaTime, Character* player, const TileMap* tileMap) override;

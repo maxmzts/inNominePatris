@@ -88,7 +88,7 @@ public:
     void attack();
     void move(const sf::Vector2f& direction);
     void setupKnockback(const sf::Vector2f& attackDirection, float force);
-    virtual void knockback(float deltaTime, const TileMap* tileMap) = 0;
+    void knockback(float deltaTime, const TileMap* tileMap);
     
     // Algoritmo A*
     void findPathToPlayer(const Character* player, const TileMap* tileMap);
