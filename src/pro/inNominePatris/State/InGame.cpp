@@ -3,6 +3,7 @@
 #include "../character/Character.h"
 #include "../interface/HUD.h"
 #include "../hboxes/Hitbox.h"
+#include "PauseMenu.h"
 #include <iostream>
 #include <algorithm> // Para std::remove_if
 #include "EnemyBat.h"
@@ -77,7 +78,11 @@ void InGame::update(Game& game) {
             player.spawnAt(tileMap, randomX, randomY);
         }
 
-
+        // Menu pausa (tecla esc)
+        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
+            game.changeState(PauseMenu::getInstance(800, 600)); // Cambiar al menú de pausa
+            return;
+        } 
 
 
         // Interacción con armas (tecla E)
