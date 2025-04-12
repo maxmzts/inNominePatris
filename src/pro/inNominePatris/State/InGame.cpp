@@ -5,6 +5,8 @@
 #include "../hboxes/Hitbox.h"
 #include <iostream>
 #include <algorithm> // Para std::remove_if
+#include "EnemyBat.h"
+#include <EnemyManager.h>
 
 InGame* InGame::instance = nullptr;
 
@@ -35,14 +37,14 @@ InGame::InGame(GameEngine& engine)
     bow->setPosition(163, 578);
 
     //TESTS ENEMIGOS
-    Enemy* enemy = nullptr;
+    std::shared_ptr<EnemyBat> enemy = nullptr;
     //cargar enemigos
-    for (size_t i = 0; i < 1; i++)
+    for (size_t i = 0; i < 3; i++)
     {
-        enemy = new Enemy("Bat", 180.f, 100.f, sf::Vector2f(100.f*i,100.f*i));
-        enemy->setTexture("resources/Bat.png");
-        enemies.push_back(enemy);
+        enemy = std::make_shared<EnemyBat>("Bat", 50.f, 100.f, sf::Vector2f(100.f*i,100.f*i));
+        EnemyManager::getInstance()->addEnemy(enemy);
     }
+
 }
 
 InGame* InGame::getInstance(GameEngine& engine) {
@@ -177,9 +179,7 @@ void InGame::update(Game& game) {
     // Actualizar el jugador y otros elementos
     float deltaTime = engine.getDeltaTime();
     player.update(tileMap, deltaTime);
-    for(Enemy* enemy : enemies){
-        enemy->update(deltaTime,&player,&tileMap);
-    }
+    EnemyManager::getInstance()->updateEnemies(deltaTime, &player, &tileMap);
 
     if (Weapon* equippedWeapon = player.getEquippedWeapon()) {
         // Excluir el arco del procesamiento de la hitbox
@@ -188,7 +188,7 @@ void InGame::update(Game& game) {
             if (equippedWeapon->getAttackHitbox()->isActive()) {
                 // Solo infligir daño si es el primer frame en el que la hitbox está activa
                 if (!equippedWeapon->hasDealtDamage()) {
-                    for (Enemy* enemy : enemies) {
+                    for (auto enemy : EnemyManager::getInstance()->getEnemyList()) {
                         if (equippedWeapon->getAttackHitbox()->getGlobalBounds().intersects(enemy->getHurtbox()->getGlobalBounds())) {
                             std::cout << "Enemigo golpeado!" << std::endl;
                             enemy->takeDamage(equippedWeapon->getAttackDamage()); // Infligir daño al enemigo
@@ -203,7 +203,7 @@ void InGame::update(Game& game) {
 
     if (Bow* bow = dynamic_cast<Bow*>(player.getEquippedWeapon())) {
         for (Arrow& arrow : bow->getArrows()) {
-            for (Enemy* enemy : enemies) {
+            for (auto enemy : EnemyManager::getInstance()->getEnemyList()) {
                 if (arrow.getBounds().intersects(enemy->getHurtbox()->getGlobalBounds())) {
                     std::cout << "Enemy hit by arrow!" << std::endl;
                     enemy->takeDamage(15); // Infligir daño al enemigo
@@ -243,16 +243,18 @@ void InGame::update(Game& game) {
     // Comprobar que el jugador recibe daño
     
     if(!player.getIsInvencible()){
-        for(auto enemy : enemies){
+        for(auto enemy : EnemyManager::getInstance()->getEnemyList()){
             if(enemy->getHitbox()->isActive() && checkPlayerWasHit(player, enemy))
                 player.takeDamage(enemy->getAttackDamage());
         }
     }
 
     // Comprobar que algún enemigo recibe daño
-    for(auto enemy : enemies){
-        if(enemy->getisInvincible() && checkEnemyWasHit(enemy, player))
-            enemy->takeDamage(player.getEquippedWeapon()->getAttackDamage());
+    if(player.hasWeapon()){
+        for(auto enemy : EnemyManager::getInstance()->getEnemyList()){
+            if(enemy->getisInvincible() && checkEnemyWasHit(enemy, player))
+                enemy->takeDamage(player.getEquippedWeapon()->getAttackDamage());
+        }
     }
 
     hud.update(player);
@@ -278,7 +280,7 @@ void InGame::render(Game& game, sf::RenderWindow& window) {
         weapon->render();
     }
 
-    for (Enemy* enemy : enemies){
+    for (auto enemy : EnemyManager::getInstance()->getEnemyList()){
         enemy->render(window);
     }
 
@@ -292,11 +294,11 @@ void InGame::render(Game& game, sf::RenderWindow& window) {
     engine.display();
 }
 
-bool InGame::checkEnemyWasHit(Enemy* enemy, Character player){
+bool InGame::checkEnemyWasHit(std::shared_ptr<Enemy> enemy, Character player){
     if(player.getEquippedWeapon()->getAttackHitbox()->isActive())
         return enemy->getHurtbox()->getGlobalBounds().intersects(player.getEquippedWeapon()->getAttackHitbox()->getGlobalBounds());
 }
 
-bool InGame::checkPlayerWasHit(Character player, Enemy* enemy){
+bool InGame::checkPlayerWasHit(Character player, std::shared_ptr<Enemy> enemy){
     return player.getHurtbox()->getGlobalBounds().intersects(enemy->getHitbox()->getGlobalBounds());
 }

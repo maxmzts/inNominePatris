@@ -206,18 +206,19 @@ He implementado el HUD. Ahora el personaje tiene barra de vida y hay un inventar
 
 ## 20250410 MáximoMartínez @(4h)
 (1h 30min) He implementado una clase ```AnimatedSprite``` para poder usar animaciones de spritesheets con la fachada de sprite. Permite cargar varias animaciones que se identifican por un nombre y elegir los FPS de la reproducción. La he añadido a la clase ```Enemy``` para probarlo.
-
 (1h) He creado la clase ```VisualEffect``` para los futuros efectos visuales que querramos añadir. Hace uso de la clase ```AnimatedSprite``` que hice hace nada. Para manejar los en ```InGame``` más fácilmente he creado la clase ```VFXManager```. He hecho un test y funciona perfectamente.
-
 (1h) He empezado a implementar aquello que descartamos por las referencias circulares (sistema de combate). El jugador tiene ```Hurtbox```, ```InGame``` comprueba si alguna hitbox colisiona con él y recibe daño si eso ocurre.
 
 ## 20250410 JorgePelegrin @(3h)
 Arregladas todas las referencias circulares, mejorando el sistema de combate y añadiendo cooldown a todos los ataques y habilidades. He empezado a añadir varios items.
 
-## 200250411 EstrellaDominguez @(1h)
+## 20250411 EstrellaDominguez @(1h)
 Implementado los recursos en la nube mediante el archivo setup.sh y Dropbox.
 
-## 200250411 MáximoMartínez @(2h 20min)
-
+## 20250411 MáximoMartínez @(4h 20min)
 (2h 20min) He puesto un efecto al ataque de los enemigos. He arreglado cómo recibe daño el jugador con un estado de invencibilidad. He conseguido que los enemigos reciban daño. En ese proceso he arreglaod una "Illegal expression" que surgía al obtener la hitbox del arma porque no estaba planteada como un puntero. Al cambiarlo se ha solucionado. También he invertido tiempo en buscar y preparar más assets que añadir al juego.  
 (2h) He cambiado el pathfinding. Estaba hecho con las distancias Manhattan y ahora es euclídea. Ahora es más costoso y de vez en cuando tarda más de 15000 microsegundos en calcular (como 1.5frames a 60fps). Por lo que necesita ser optimizarlo.
+
+## 20250412 MáximoMartínez @(3h)
+
+(3h) He modificado el asset del murcielago para que tenga animación de muerte. Antes de añadir un nuevo tipo de enemigo he implementado un ```EnemyManager``` para gestionar los enemigos de ahora en adelante. La clase ```Enemy``` ahora tiene métodos virtuales para que el manager gestione bien las clases hijas. He tardado más de lo esperado por muchos cosas que no comprendía de C++, pero he aprendido una barbaridad. 
