@@ -233,7 +233,7 @@ void InGame::update(Game& game) {
             for (auto enemy : EnemyManager::getInstance()->getEnemyList()) {
                 if (arrow.getBounds().intersects(enemy->getHurtbox()->getGlobalBounds())) {
                     std::cout << "Enemy hit by arrow!" << std::endl;
-                    enemy->takeDamage(15); // Infligir daño al enemigo
+                    enemy->takeDamage(bow->calculateDamage(), arrow.getPosition()); // Infligir daño al enemigo
                     arrow.markforRemoval(); // Marcar la flecha para eliminación
                     break; // Salir del bucle para evitar múltiples colisiones con la misma flecha
                 }
@@ -277,9 +277,9 @@ void InGame::update(Game& game) {
     }
 
     // Comprobar que algún enemigo recibe daño
-    for(auto enemy : enemies){
+    for(auto enemy : EnemyManager::getInstance()->getEnemyList()){
         if(enemy->getisInvincible() && checkEnemyWasHit(enemy, player))
-            enemy->takeDamage(player.getEquippedWeapon()->getAttackDamage());
+            enemy->takeDamage(player.getEquippedWeapon()->calculateDamage(),  player.getEquippedWeapon()->getAttackHitbox()->getPosition());
     }
 
     hud.update(player);

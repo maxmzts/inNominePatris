@@ -389,3 +389,27 @@ void Character::updateInvencibility(float deltaTime){
         invencibilityTimer = 0;
     }
 }
+
+int Character::getKarma() const {
+    return karma; // Asegúrate de que `karmaPoints` esté definido en la clase
+}
+
+void Character::updateHealthRegeneration(float deltaTime) {
+    if (healthRegenerationEnabled) {
+        healthRegenTimer += deltaTime;
+
+        if (healthRegenTimer >= healthRegenInterval) {
+            healthRegenTimer = 0.0f;
+
+            if (currentHealth < maxHealth) {
+                currentHealth++;
+                std::cout << "Vida regenerada. Vidas actuales: " << currentHealth << std::endl;
+            }
+        }
+    }
+}
+
+bool Character::tryDodge() const {
+    float randomValue = static_cast<float>(rand()) / RAND_MAX;
+    return randomValue < dodgeChance; // `dodgeChance` debe estar definido en la clase
+}
