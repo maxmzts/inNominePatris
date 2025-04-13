@@ -3,8 +3,13 @@
 #include "../character/Character.h"
 #include "../interface/HUD.h"
 #include "../hboxes/Hitbox.h"
+#include "../Shop/Shop.h"
+#include "PauseMenu.h"
 #include <iostream>
 #include <algorithm> // Para std::remove_if
+#include "EnemyBat.h"
+#include <EnemyManager.h>
+#include <EnemyNecromancer.h>
 
 InGame* InGame::instance = nullptr;
 
@@ -12,7 +17,7 @@ InGame* InGame::instance = nullptr;
  * Constructor de InGame. Carga el motor y el lobby con el jugador.
  */
 InGame::InGame(GameEngine& engine)
-    : engine(engine), player("./resources/sprites.png"), hud(800, 600) {
+    : engine(engine), player("./resources/sprites.png"), hud(800, 600), shop(engine.getWindow(), player.getKarma()) {
     // Cargar el mapa
     if (!tileMap.loadFromFile("./maps/world_1.tmx", engine)) {
         std::cerr << "Error cargando el mapa\n";
@@ -35,14 +40,14 @@ InGame::InGame(GameEngine& engine)
     bow->setPosition(163, 578);
 
     //TESTS ENEMIGOS
-    Enemy* enemy = nullptr;
+    std::shared_ptr<EnemyBat> enemy = nullptr;
     //cargar enemigos
-    for (size_t i = 0; i < 1; i++)
+    for (size_t i = 0; i < 3; i++)
     {
-        enemy = new Enemy("Bat", 180.f, 100.f, sf::Vector2f(100.f*i,100.f*i));
-        enemy->setTexture("resources/Bat.png");
-        enemies.push_back(enemy);
+        enemy = std::make_shared<EnemyBat>(sf::Vector2f(100.f*i,100.f*i));
+        EnemyManager::getInstance()->addEnemy(enemy);
     }
+    EnemyManager::getInstance()->addEnemy(std::make_shared<EnemyNecromancer>(sf::Vector2f(400.f,400.f)));
 }
 
 InGame* InGame::getInstance(GameEngine& engine) {
@@ -64,9 +69,29 @@ void InGame::update(Game& game) {
     while (window.pollEvent(event)) {
         if (event.type == sf::Event::Closed) {
             window.close();
-        } else {
-            player.handleInput(event);
+        } 
+
+        if(shop.isOpen()){
+            shop.handleInput(event);
+            if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::B){
+                shop.close();
+            }
+            continue; // No procesar otros eventos
         }
+        
+        player.handleInput(event);
+
+        // Abrir la tienda (tecla B)
+        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::B) {
+            std::cout << "Abriendo tienda..." << std::endl;
+            shop.open();
+        }
+
+        if (shop.isOpen()) {
+            shop.update(player.getKarma()); // Actualizar la tienda si está abierta
+            return; // No actualizar el resto del juego
+        }
+
 
         // Respawn del jugador (tecla R)
         if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::R) {
@@ -75,7 +100,11 @@ void InGame::update(Game& game) {
             player.spawnAt(tileMap, randomX, randomY);
         }
 
-
+        // Menu pausa (tecla esc)
+        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
+            game.changeState(PauseMenu::getInstance(800, 600)); // Cambiar al menú de pausa
+            return;
+        } 
 
 
         // Interacción con armas (tecla E)
@@ -177,9 +206,7 @@ void InGame::update(Game& game) {
     // Actualizar el jugador y otros elementos
     float deltaTime = engine.getDeltaTime();
     player.update(tileMap, deltaTime);
-    for(Enemy* enemy : enemies){
-        enemy->update(deltaTime,&player,&tileMap);
-    }
+    EnemyManager::getInstance()->updateEnemies(deltaTime, &player, &tileMap);
 
     if (Weapon* equippedWeapon = player.getEquippedWeapon()) {
         // Excluir el arco del procesamiento de la hitbox
@@ -188,10 +215,10 @@ void InGame::update(Game& game) {
             if (equippedWeapon->getAttackHitbox()->isActive()) {
                 // Solo infligir daño si es el primer frame en el que la hitbox está activa
                 if (!equippedWeapon->hasDealtDamage()) {
-                    for (Enemy* enemy : enemies) {
+                    for (auto enemy : EnemyManager::getInstance()->getEnemyList()) {
                         if (equippedWeapon->getAttackHitbox()->getGlobalBounds().intersects(enemy->getHurtbox()->getGlobalBounds())) {
                             std::cout << "Enemigo golpeado!" << std::endl;
-                            enemy->takeDamage(equippedWeapon->calculateDamage()); // Infligir daño al enemigo
+                            enemy->takeDamage(equippedWeapon->calculateDamage(), equippedWeapon->getAttackHitbox()->getPosition()); // Infligir daño al enemigo
                         }
                     }
                     // Marcar que el daño ya se ha aplicado
@@ -203,10 +230,10 @@ void InGame::update(Game& game) {
 
     if (Bow* bow = dynamic_cast<Bow*>(player.getEquippedWeapon())) {
         for (Arrow& arrow : bow->getArrows()) {
-            for (Enemy* enemy : enemies) {
+            for (auto enemy : EnemyManager::getInstance()->getEnemyList()) {
                 if (arrow.getBounds().intersects(enemy->getHurtbox()->getGlobalBounds())) {
                     std::cout << "Enemy hit by arrow!" << std::endl;
-                    enemy->takeDamage(bow->calculateDamage()); // Infligir daño al enemigo
+                    enemy->takeDamage(15); // Infligir daño al enemigo
                     arrow.markforRemoval(); // Marcar la flecha para eliminación
                     break; // Salir del bucle para evitar múltiples colisiones con la misma flecha
                 }
@@ -243,7 +270,7 @@ void InGame::update(Game& game) {
     // Comprobar que el jugador recibe daño
     
     if(!player.getIsInvencible()){
-        for(auto enemy : enemies){
+        for(auto enemy : EnemyManager::getInstance()->getEnemyList()){
             if(enemy->getHitbox()->isActive() && checkPlayerWasHit(player, enemy))
                 player.takeDamage(enemy->getAttackDamage());
         }
@@ -252,7 +279,7 @@ void InGame::update(Game& game) {
     // Comprobar que algún enemigo recibe daño
     for(auto enemy : enemies){
         if(enemy->getisInvincible() && checkEnemyWasHit(enemy, player))
-            enemy->takeDamage(player.getEquippedWeapon()->calculateDamage());
+            enemy->takeDamage(player.getEquippedWeapon()->getAttackDamage());
     }
 
     hud.update(player);
@@ -278,7 +305,7 @@ void InGame::render(Game& game, sf::RenderWindow& window) {
         weapon->render();
     }
 
-    for (Enemy* enemy : enemies){
+    for (auto enemy : EnemyManager::getInstance()->getEnemyList()){
         enemy->render(window);
     }
 
@@ -289,14 +316,19 @@ void InGame::render(Game& game, sf::RenderWindow& window) {
     // Mostrar el HUD
     hud.draw(window, player);
 
+    // Renderizar la tienda si está abierta
+    if (shop.isOpen()) {
+        shop.render();
+    }
+
     engine.display();
 }
 
-bool InGame::checkEnemyWasHit(Enemy* enemy, Character player){
+bool InGame::checkEnemyWasHit(std::shared_ptr<Enemy> enemy, Character player){
     if(player.getEquippedWeapon()->getAttackHitbox()->isActive())
         return enemy->getHurtbox()->getGlobalBounds().intersects(player.getEquippedWeapon()->getAttackHitbox()->getGlobalBounds());
 }
 
-bool InGame::checkPlayerWasHit(Character player, Enemy* enemy){
+bool InGame::checkPlayerWasHit(Character player, std::shared_ptr<Enemy> enemy){
     return player.getHurtbox()->getGlobalBounds().intersects(enemy->getHitbox()->getGlobalBounds());
 }

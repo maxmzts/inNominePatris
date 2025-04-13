@@ -11,14 +11,8 @@
 #include "SpriteFacade.h"
 #include "AnimatedSprite.h"
 
-// Declaraciones adelantadas para evitar dependencias circulares
-// class Hitbox;
-// class Hurtbox;
-// class Character;
-// class TileMap;
-
 class Enemy {
-private:
+protected:
     std::string name;
     float maxHealth;
     float currentHealth;
@@ -41,12 +35,13 @@ private:
     bool facingRight;
     
     // Estados del enemigo
-    enum class EnemyState {
+    enum class EnemyState : int {
         IDLE,
         MOVING,
         ATTACKING,
         HURT,
-        DYING
+        DYING,
+        DEAD
     };
     
     EnemyState currentState;
@@ -64,9 +59,16 @@ private:
     float pathUpdateTimer = 0.0f;  // Tiempo desde la última actualización del camino
     float pathUpdateInterval = 0.5f; // Intervalo para recalcular el camino (en segundos)
 
+    // Knockback
+    sf::Vector2f knockbackDirection;
+    float knockbackForce;
+    float knockbackDuration;
+    float knockbackTimer;
+    bool isInKnockback;
+
 public:
     // Constructor y destructor
-    Enemy(const std::string& name, float maxHealth, float movementSpeed, const sf::Vector2f& startPosition);
+    Enemy(const std::string& name, float maxHealth, float movementSpeed, const sf::Vector2f& startPosition, const std::string& texturePath);
     ~Enemy();
     
     // Getters y setters básicos
@@ -78,24 +80,26 @@ public:
     
     void setPosition(const sf::Vector2f& position);
     void setTexture(const std::string& texturePath);
-    void loadAnimations();
-    void changeAnimation(EnemyState newState);
+    virtual void loadAnimations() = 0;
+    virtual void changeAnimation(int newStateInt) = 0;
     
     // Funciones requeridas
-    void takeDamage(float damage);
-    void attack();
+    virtual void takeDamage(float damage, const sf::Vector2f& attackPosition) = 0;
+    virtual void attack() = 0;
     void move(const sf::Vector2f& direction);
+    void setupKnockback(const sf::Vector2f& attackDirection, float force);
+    void knockback(float deltaTime, const TileMap* tileMap);
     
     // Algoritmo A*
     void findPathToPlayer(const Character* player, const TileMap* tileMap);
     
     void render(sf::RenderWindow& window);
-    void update(float deltaTime, Character* player, const TileMap* tileMap);
+    virtual void update(float deltaTime, Character* player, const TileMap* tileMap) = 0;
     
     // Funciones adicionales útiles
     void setInvincible(bool invincible);
     bool getisInvincible() const { return isInvincible; }
-    bool isAlive() const { return currentHealth > 0; }
+    bool isDead() const { if(currentState == EnemyState::DEAD) return true; else return false; }
     void updateHitboxes();
     int getAttackDamage() const { return attackDamage; }
     void setAttackDamage(float damage) { attackDamage = damage; }
@@ -105,8 +109,9 @@ public:
     Hurtbox* getHurtbox() const { return hurtbox; }
     
     // Cambio de estados
-    void changeState(EnemyState newState);
-    EnemyState getCurrentState() const { return currentState; }
+    virtual void changeState(int newState) = 0;
+    int getCurrentState() const { return static_cast<int>(currentState); }
     // Actualizar el intervalo de recálculo del camino
     void setPathUpdateInterval(float interval) { pathUpdateInterval = interval; }
+    bool isValidEnemyState(int state);
 };

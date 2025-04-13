@@ -7,7 +7,7 @@
 #include <VFXManager.h>
 #include <unordered_set>
 
-Enemy::Enemy(const std::string& name, float maxHealth, float movementSpeed, const sf::Vector2f& startPosition)
+Enemy::Enemy(const std::string& name, float maxHealth, float movementSpeed, const sf::Vector2f& startPosition, const std::string& texturePath)
     : name(name)
     , maxHealth(maxHealth)
     , currentHealth(maxHealth)
@@ -24,16 +24,21 @@ Enemy::Enemy(const std::string& name, float maxHealth, float movementSpeed, cons
     , detectionRadius(300.0f)      // Detecta al jugador a 300 unidades
     , velocity(0.0f, 0.0f)
     , facingRight(false)
-{
+    , knockbackDirection(0.0f, 0.0f)
+    , knockbackForce(0.0f)
+    , knockbackDuration(0.3f)
+    , knockbackTimer(0.0f)
+    , isInKnockback(false)
+{    
+    // Configuración inicial del sprite animado
+    setTexture(texturePath);
+    sprite.setPosition(position.x, position.y);
+    animator = new AnimatedSprite(sprite);
+
     // Creamos los hitboxes y hurtboxes
     // Los tamaños y offsets deben ajustarse según el sprite
     hitbox = new Hitbox(sf::Vector2f(40.0f, 40.0f), sf::Vector2f(10.0f, 10.0f));
-    hurtbox = new Hurtbox(sf::Vector2f(60.0f, 60.0f), sf::Vector2f(0.0f, 0.0f));
-    
-    // Configuración inicial del sprite animado
-    sprite.setPosition(position.x, position.y);
-    animator = new AnimatedSprite(sprite);
-    loadAnimations();
+    hurtbox = new Hurtbox(sf::Vector2f(32.f, 32.f), sf::Vector2f(0.f, 0.f));
 
     updateHitboxes();
 }
@@ -59,57 +64,35 @@ void Enemy::setTexture(const std::string& texturePath) {
     
     sf::FloatRect bounds = sprite.getLocalBounds();
     sprite.setOrigin(bounds.width / 2.0f, bounds.height / 2.0f);
-    
-    changeAnimation(currentState);
 }
 
-void Enemy::loadAnimations() {
-    std::cout << "Cargo animación\n"; 
-    // Animación de vuelo (4 frames en una fila)
-    // Parámetros: nombre, frameCount, startPosition(x,y), frameSize(width,height), loop
-    animator->addAnimation("idle", 4, sf::Vector2i(0, 0), sf::Vector2i(64, 64), true);
-    animator->addAnimation("moving", 4, sf::Vector2i(0, 0), sf::Vector2i(64, 64), true);
-    animator->addAnimation("attacking", 4, sf::Vector2i(0, 0), sf::Vector2i(64, 64), true);
-    
-    // Si hay más animaciones específicas para otros estados, se agregarían aquí
-    // Por ejemplo, si hay frames diferentes para el ataque o para recibir daño
-    
-    // // Configurar callback para cuando termine la animación (si es necesario)
-    // animator->setAnimationEndCallback([this]() {
-    //     // Por ejemplo, si la animación de ataque termina, volver a IDLE
-    //     if (currentState == ATTACKING) {
-    //         changeAnimation(IDLE);
-    //     }
-    // });
-}
-
-/**
- * Cambia la animación según el estado actual
- */
-void Enemy::changeAnimation(EnemyState newState) {
-    currentState = newState;
-    stateTimer = 0.0f;
-    
-    switch (newState) {
-        case EnemyState::IDLE:
-            animator->play("idle", 8.0f); // 8 FPS para idle
-            break;
-        case EnemyState::MOVING:
-            animator->play("moving", 12.0f); // 10 FPS para movimiento
-            break;
-        case EnemyState::ATTACKING:
-            animator->play("attacking", 32.0f, false); // Animación de ataque no en bucle
-            break;
-        case EnemyState::HURT:
-            animator->play("idle", 1.0f);
-            break;
-        case EnemyState::DYING:
-            animator->play("idle", 0.0f);
-            break;
+void Enemy::setupKnockback(const sf::Vector2f& attackDirection, float force) {
+    // Si hay una dirección de ataque, calcular la dirección opuesta
+    if (attackDirection.x != 0 || attackDirection.y != 0) {
+        // Normalizar la dirección
+        float length = std::sqrt(attackDirection.x * attackDirection.x + attackDirection.y * attackDirection.y);
+        if (length > 0) {
+            // Dirección opuesta al ataque
+            knockbackDirection = -attackDirection / length;
+        } else {
+            // Si no hay dirección clara, usar un valor por defecto
+            knockbackDirection = sf::Vector2f(facingRight ? -1.0f : 1.0f, 0.0f);
+        }
+    } else {
+        // Si no se proporciona dirección, usar la dirección contraria a donde está mirando
+        knockbackDirection = sf::Vector2f(facingRight ? -1.0f : 1.0f, 0.0f);
     }
+    
+    knockbackForce = force;
+    knockbackDuration = 0.3f; // Duración del knockback en segundos
+    knockbackTimer = knockbackDuration;
+    isInKnockback = true;
 }
-
-void Enemy::takeDamage(float damage) {
+/**
+ * Método default de ataque (puede ser sobrescrito porque es virtual)
+ * Recibe daño, pasa a estado herido y aplica knockback.
+ */
+void Enemy::takeDamage(float damage, const sf::Vector2f& attackPosition) {
     // Si está invencible, ignorar el daño
     if (isInvincible) {
         return;
@@ -123,18 +106,44 @@ void Enemy::takeDamage(float damage) {
     }
     
     // Cambiar al estado de herido
-    changeState(EnemyState::HURT);
+    changeState(static_cast<int>(EnemyState::HURT));
     
     // Activar invencibilidad
     setInvincible(true);
+
+    sf::Vector2f attackDirection = attackPosition-position;
+    setupKnockback(attackDirection, 150.0f);
     
     // Si la vida llega a 0, cambiar al estado de muerte
     if (currentHealth <= 0) {
-        changeState(EnemyState::DYING);
+        changeState(static_cast<int>(EnemyState::DYING));
+    }
+}
+
+void Enemy::knockback(float deltaTime, const TileMap* tileMap){
+    if (isInKnockback) {
+        // La fuerza se reduce con el tiempo para un efecto de desaceleración
+        float currentForce = knockbackForce * (knockbackTimer / knockbackDuration);
+        sf::Vector2f knockbackVelocity = knockbackDirection * currentForce;
+        
+        // Mover al enemigo
+        position += knockbackVelocity * deltaTime;
+        sprite.setPosition(position.x, position.y);
+        updateHitboxes();
+        
+        // Comprobar colisiones con el mapa si está disponible
+        if (tileMap) {
+            sf::FloatRect enemyBounds = sprite.getGlobalBounds();
+            if (tileMap->isColliding(enemyBounds)) {
+                // Si colisiona con el mapa, detener el knockback
+                isInKnockback = false;
+            }
+        }
     }
 }
 
 /**
+ * Método default de ataque (puede ser sobrescrito porque es virtual)
  * Para atacar el enemigo pone activa la hitbox durante un corto periodo de tiempo.
  * El daño producido al jugador se manejará en el sistema de colisiones de InGame.
  * Que la hitbox vuelva a estar inactiva se gestiona en el update.
@@ -146,7 +155,7 @@ void Enemy::attack() {
     }
     
     // Cambiar al estado de ataque
-    changeState(EnemyState::ATTACKING);
+    changeState(static_cast<int>(EnemyState::ATTACKING));
     
     // Resetear el timer de ataque
     attackTimer = attackCooldown;
@@ -525,108 +534,108 @@ void Enemy::render(sf::RenderWindow& window) {
 
 // Primero, añade estos miembros a la clase Enemy en el archivo de cabecera (Enemy.h):
 
-void Enemy::update(float deltaTime, Character* player, const TileMap* tileMap) {
-    // Actualizar los timers
-    if (invincibilityTimer > 0) {
-        invincibilityTimer -= deltaTime;
-        if (invincibilityTimer <= 0) {
-            setInvincible(false);
-        }
-    }
+// void Enemy::update(float deltaTime, Character* player, const TileMap* tileMap) {
+//     // Actualizar los timers
+//     if (invincibilityTimer > 0) {
+//         invincibilityTimer -= deltaTime;
+//         if (invincibilityTimer <= 0) {
+//             setInvincible(false);
+//         }
+//     }
     
-    if (attackTimer > 0) {
-        attackTimer -= deltaTime;
-    }
+//     if (attackTimer > 0) {
+//         attackTimer -= deltaTime;
+//     }
     
-    // Actualizar el timer del estado actual
-    stateTimer += deltaTime;
+//     // Actualizar el timer del estado actual
+//     stateTimer += deltaTime;
     
-    // Actualizar el timer para recalcular el camino
-    pathUpdateTimer += deltaTime;
+//     // Actualizar el timer para recalcular el camino
+//     pathUpdateTimer += deltaTime;
 
-    animator->update(deltaTime);
+//     animator->update(deltaTime);
     
-    // Lógica basada en el estado actual
-    switch (currentState) {
-        case EnemyState::IDLE:
-            // En estado idle, buscar al jugador
-            if (player) {
-                // Recalcular el camino solo en intervalos específicos
-                if (pathUpdateTimer >= pathUpdateInterval) {
-                    pathUpdateTimer = 0;
-                    findPathToPlayer(player, tileMap);
-                }
+//     // Lógica basada en el estado actual
+//     switch (currentState) {
+//         case EnemyState::IDLE:
+//             // En estado idle, buscar al jugador
+//             if (player) {
+//                 // Recalcular el camino solo en intervalos específicos
+//                 if (pathUpdateTimer >= pathUpdateInterval) {
+//                     pathUpdateTimer = 0;
+//                     findPathToPlayer(player, tileMap);
+//                 }
                 
-                // Si comenzamos a movernos, cambiar al estado de movimiento
-                if (velocity.x != 0 || velocity.y != 0) {
-                    changeState(EnemyState::MOVING);
-                }
-            }
-            break;
+//                 // Si comenzamos a movernos, cambiar al estado de movimiento
+//                 if (velocity.x != 0 || velocity.y != 0) {
+//                     changeState(EnemyState::MOVING);
+//                 }
+//             }
+//             break;
             
-        case EnemyState::MOVING:
-            // Aplicar velocidad al movimiento
-            position += velocity * deltaTime;
-            sprite.setPosition(position.x, position.y);
-            updateHitboxes();
+//         case EnemyState::MOVING:
+//             // Aplicar velocidad al movimiento
+//             position += velocity * deltaTime;
+//             sprite.setPosition(position.x, position.y);
+//             updateHitboxes();
             
-            // Recalcular el camino periódicamente mientras nos movemos
-            if (player && pathUpdateTimer >= pathUpdateInterval) {
-                pathUpdateTimer = 0;
-                findPathToPlayer(player, tileMap);
-            }
+//             // Recalcular el camino periódicamente mientras nos movemos
+//             if (player && pathUpdateTimer >= pathUpdateInterval) {
+//                 pathUpdateTimer = 0;
+//                 findPathToPlayer(player, tileMap);
+//             }
             
-            // Verificar si podemos atacar al jugador
-            if (player) {
-                sf::Vector2f playerPos = player->getPosition();
-                sf::Vector2f direction = playerPos - position;
-                float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+//             // Verificar si podemos atacar al jugador
+//             if (player) {
+//                 sf::Vector2f playerPos = player->getPosition();
+//                 sf::Vector2f direction = playerPos - position;
+//                 float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
                 
-                // Si estamos lo suficientemente cerca y el ataque no está en cooldown
-                if (distance < 50.0f && attackTimer <= 0) {
-                    attack();
-                }
-            }
-            break;
+//                 // Si estamos lo suficientemente cerca y el ataque no está en cooldown
+//                 if (distance < 50.0f && attackTimer <= 0) {
+//                     attack();
+//                 }
+//             }
+//             break;
             
-        case EnemyState::ATTACKING:
-            hitbox->setActive(true);
-            VFXManager::getInstance().addEffect(
-                "./resources/vfx/scratch.png",
-                {hitbox->getPosition().x, hitbox->getPosition().y},          // posición de prueba
-                {45 , 33},           // tamaño de frame
-                8,                  // cantidad de frames
-                24.f,                 // FPS
-                facingRight
-            );
-            // La animación de ataque duraría un tiempo fijo
-            if (stateTimer >= 0.5f) {  // Duración de la animación de ataque
-                changeState(EnemyState::IDLE);
-                hitbox->setActive(false);
-            }
-            break;
+//         case EnemyState::ATTACKING:
+//             hitbox->setActive(true);
+//             VFXManager::getInstance().addEffect(
+//                 "./resources/vfx/scratch.png",
+//                 {hitbox->getPosition().x, hitbox->getPosition().y},          // posición de prueba
+//                 {45 , 33},           // tamaño de frame
+//                 8,                  // cantidad de frames
+//                 24.f,                 // FPS
+//                 facingRight
+//             );
+//             // La animación de ataque duraría un tiempo fijo
+//             if (stateTimer >= 0.5f) {  // Duración de la animación de ataque
+//                 changeState(EnemyState::IDLE);
+//                 hitbox->setActive(false);
+//             }
+//             break;
             
-        case EnemyState::HURT:
-            if(hitbox->isActive())
-                hitbox->setActive(false);
-            setInvincible(true);
-            // La animación de daño duraría un tiempo fijo
-            if (stateTimer >= 0.3f) {  // Duración de la animación de daño
-                changeState(EnemyState::IDLE);
-                setInvincible(false);
-            }
-            break;
+//         case EnemyState::HURT:
+//             if(hitbox->isActive())
+//                 hitbox->setActive(false);
+//             setInvincible(true);
+//             // La animación de daño duraría un tiempo fijo
+//             if (stateTimer >= 0.3f) {  // Duración de la animación de daño
+//                 changeState(EnemyState::IDLE);
+//                 setInvincible(false);
+//             }
+//             break;
             
-        case EnemyState::DYING:
-            if(hitbox->isActive())
-                hitbox->setActive(false);
-            hurtbox->setActive(false);
-            // La animación de muerte duraría un tiempo fijo
-            // Después de ese tiempo, el enemigo debería ser eliminado del juego
-            // Esto se manejaría desde el gestor de enemigos
-            break;
-    }
-}
+//         case EnemyState::DYING:
+//             if(hitbox->isActive())
+//                 hitbox->setActive(false);
+//             hurtbox->setActive(false);
+//             // La animación de muerte duraría un tiempo fijo
+//             // Después de ese tiempo, el enemigo debería ser eliminado del juego
+//             // Esto se manejaría desde el gestor de enemigos
+//             break;
+//     }
+// }
 
 void Enemy::setInvincible(bool invincible) {
     isInvincible = invincible;
@@ -634,7 +643,7 @@ void Enemy::setInvincible(bool invincible) {
         invincibilityTimer = invincibilityDuration;
         
         // Efecto visual de invencibilidad (parpadeo)
-        sprite.setColor(sf::Color(255, 255, 255, 128));  // Semi-transparente
+        sprite.setColor(sf::Color(255, 76, 76, 128));  // Semi-transparente
     } else {
         sprite.setColor(sf::Color(255, 255, 255, 255));  // Opaco
     }
@@ -651,13 +660,21 @@ void Enemy::updateHitboxes() {
     }
 }
 
-void Enemy::changeState(EnemyState newState) {
+void Enemy::changeState(int newStateInt) {
+    if (!isValidEnemyState(newStateInt)) return;
+    EnemyState newState = static_cast<EnemyState>(newStateInt);
+
     // Si estamos cambiando a un nuevo estado, reiniciar el timer
     if (currentState != newState) {
         currentState = newState;
         stateTimer = 0.0f;
-        changeAnimation(newState);
+        changeAnimation(newStateInt);
         // Acciones específicas al cambiar de estado podrían ir aquí
         // Por ejemplo, cambiar la animación según el estado
     }
+}
+
+bool Enemy::isValidEnemyState(int state) {
+    return state >= static_cast<int>(EnemyState::IDLE) &&
+           state <= static_cast<int>(EnemyState::DEAD);
 }

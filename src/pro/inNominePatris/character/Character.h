@@ -8,6 +8,8 @@
 #include "Hurtbox.h"
 #include <vector>
 #include "AbilityType.h"
+#include "InteractionManager.h"
+
 
 class Character {
 public:
@@ -27,6 +29,7 @@ public:
     void addWeapon(Weapon* weapon);
     void switchWeapon();
     void setWeapon(int index);
+    bool hasWeapon() { if(equippedWeapon == nullptr) return false; else return true; }
     int getWeaponCount() const;
     Weapon* getEquippedWeapon() const;
     void addWeaponWithPosition(Weapon* weapon, sf::Vector2f originalPosition);
@@ -59,6 +62,11 @@ public:
 
     // para interaccion
     void InteractionCage(TileMap& tilemap, int centerX, int centerY);
+    void InteractionOpenDoor();
+
+    // para el karma
+    int getKarma() const;
+    void addKarma(int amount);
 
     void enableTemporalyShield(float duration);
 
@@ -106,6 +114,9 @@ private:
     Hurtbox* hurtbox;
 
     void updateInvencibility(float deltaTime);
+
+    // Karma
+    int karma = 100; // Karma del jugador
 };
 
 #endif // CHARACTER_H

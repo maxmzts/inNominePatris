@@ -1,4 +1,5 @@
 #include "Character.h"
+#include "InteractionFactory.h"
 #include <iostream>
 
 Character::Character(const std::string& textureFile) 
@@ -346,55 +347,34 @@ void Character::heal(int amount) {
 
 // INTERACTION STUFF-------------------------------------------------------------------------------------------------------------------------------
 
-void Character::InteractionCage(TileMap& tilemap, int centerX, int centerY) {
-    // Coordenadas relativas desde el centro
-    tilemap.setLocalTile("deco", centerX - 2, centerY, 64); // izquierda
-    tilemap.setLocalTile("deco", centerX - 1, centerY, 65); // centro
-    tilemap.setLocalTile("deco", centerX,     centerY, 66); // derecha
-    tilemap.setLocalTile("deco", centerX - 2, centerY + 1, 80); // izquierda abajo
-    tilemap.setLocalTile("deco", centerX - 1, centerY + 1, 81); // centro abajo
-    tilemap.setLocalTile("deco", centerX,     centerY + 1, 82); // derecha abajo
-}
+// void Character::InteractionCage(TileMap& tilemap, int centerX, int centerY) {
+//     // Coordenadas relativas desde el centro
+//     tilemap.setLocalTile("deco", centerX - 2, centerY, 64); // izquierda
+//     tilemap.setLocalTile("deco", centerX - 1, centerY, 65); // centro
+//     tilemap.setLocalTile("deco", centerX,     centerY, 66); // derecha
+//     tilemap.setLocalTile("deco", centerX - 2, centerY + 1, 80); // izquierda abajo
+//     tilemap.setLocalTile("deco", centerX - 1, centerY + 1, 81); // centro abajo
+//     tilemap.setLocalTile("deco", centerX,     centerY + 1, 82); // derecha abajo
+// }
 
+// void Character::InteractionOpenDoor() {
+//     std::cout << "PUERTA ABIERTA (SE HAN PULSADO LOS 3 BOTONES DE SALA 1)" << std::endl;
+// }
 
 void Character::interact(TileMap& tilemap) {
-    // Obtener el hitbox del jugador
     sf::FloatRect playerBounds = sprite.getGlobalBounds();
-    
-    // Comprobar si está interactuando con algún tile
     int tileId = -1;
-    bool button1 = false;
-    bool button2 = false;
-    bool button3 = false;
+    
     if (tilemap.isPlayerInteractingWithTile(playerBounds, tileId)) {
-        // Acciones según el ID del tile
-        switch (tileId) {
-            case 773:
-                std::cout << "Interactuando con tile 773 (boton abajo)" << std::endl;
-                // Modificar la capa de decoración
-                InteractionCage(tilemap, 31, 29);
-                button1 = true;
-                
-                
-                // tilemap.setTile("deco", 5, 8, 0);   // Elimina el tile en (5,8)
-
-                break;
-            case 774:
-                std::cout << "Interactuando con tile 774 (izq)" << std::endl;
-                InteractionCage(tilemap, 17, 20);
-                button2 = true;
-
-                break;
-            case 775:
-                std::cout << "Interactuando con tile 775 (dcha)" << std::endl;
-                InteractionCage(tilemap, 44, 20);
-                button3 = true;
-
-                break;
-            // Puedes agregar más casos según necesites
-            default:
-                std::cout << "NO hay interaccion: " << tileId << std::endl;
-                break;
+        // Crear la interacción correspondiente usando la fábrica
+        tileId -= 1;
+        auto interaction = InteractionFactory::createInteraction(tileId);
+        
+        if (interaction) {
+            // Ejecutar la interacción
+            interaction->execute(*this, tilemap);
+        } else {
+            std::cout << "No hay interacción definida para el tile " << tileId << std::endl;
         }
     } else {
         std::cout << "No hay nada con lo que interactuar aquí." << std::endl;
@@ -408,51 +388,4 @@ void Character::updateInvencibility(float deltaTime){
         isInvencible = false;
         invencibilityTimer = 0;
     }
-}
-
-void Character::increaseMovementSpeed(float amount) {
-    speed += amount;
-    dashSpeed += amount;
-}
-
-void Character::increaseMaxHealth(int amount) {
-    maxHealth += amount;
-    currentHealth = maxHealth; 
-}
-
-void Character::enableTemporalyShield(float duration) {
-    invencibilityDuration = duration;
-}
-
-void Character::enableHealthRegeneration() {
-    healthRegenerationEnabled = true;
-}
-
-void Character::updateHealthRegeneration(float deltaTime) {
-    if (healthRegenerationEnabled) {
-        healthRegenTimer += deltaTime;
-
-        if(healthRegenTimer >= healthRegenInterval) {
-            healthRegenTimer = 0.f; // Reiniciar el temporizador
-        
-            if(currentHealth < maxHealth) {
-                currentHealth ++;
-                std::cout << "Regenerando vida: " << currentHealth << "/" << maxHealth << std::endl;
-            } else {
-                std::cout << "Vida al máximo: " << currentHealth << "/" << maxHealth << std::endl;
-            }
-        }
-    }
-}
-
-void Character::increaseDodgeChance(float amount) {
-    dodgeChance += amount;
-    if(dodgeChance > 1.0f) {
-        dodgeChance = 1.0f; // Limitar la probabilidad de esquivar al 100%
-    }
-}
-
-bool Character::tryDodge() const {
-    float randomValue = static_cast<float>(rand()) / RAND_MAX;
-    return randomValue < dodgeChance; // Retorna true si se esquiva
 }

@@ -3,11 +3,13 @@
 
 #include <SFML/Graphics.hpp>
 #include "State.h"
+#include "GameEngine.h"
 
 class Game {
 private:
     sf::RenderWindow window; // Ventana principal del juego
     State* currentState;     // Estado actual del juego
+    GameEngine engine;      // Motor del juego
 
 public:
     Game(const std::string& title, int width, int height);
@@ -19,6 +21,7 @@ public:
     void restartGame();      // Reinicia el juego
 
     sf::RenderWindow& getWindow(); // Devuelve la ventana del juego
+    GameEngine& getEngine(); // Devuelve el motor del juego// Establece el estado actual
     State* getCurrentState() const { return currentState; } // Devuelve el estado actual
 };
 
