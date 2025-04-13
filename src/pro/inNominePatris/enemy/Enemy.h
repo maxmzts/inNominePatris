@@ -99,7 +99,7 @@ public:
     // Funciones adicionales útiles
     void setInvincible(bool invincible);
     bool getisInvincible() const { return isInvincible; }
-    bool isDead() const { if(currentState == EnemyState::DEAD) return true; else return false; }
+    virtual bool isDead() const;
     void updateHitboxes();
     int getAttackDamage() const { return attackDamage; }
     void setAttackDamage(float damage) { attackDamage = damage; }

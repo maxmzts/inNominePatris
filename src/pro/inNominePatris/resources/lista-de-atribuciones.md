@@ -7,3 +7,5 @@
 - [Claw Scratch](https://nyknck.itch.io/clawsct) by NYKNCK.
 - [Necromancer](https://creativekind.itch.io/necromancer-free) by CreativeKind.
 - [Blood Effects](https://xyezawr.itch.io/gif-free-pixel-effects-pack-5-blood-effects) by XYEzawr.
+- [Pixel VFX: Explosions Pack 01](https://sentient-dream-games.itch.io/pixel-effects-explosions-pack-01) by Sentient Dream Games.
+- [Smoke Effect](https://nyknck.itch.io/smoke-effect) by NYKNCK;

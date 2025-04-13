@@ -77,9 +77,8 @@ void EnemyNecromancer::changeAnimation(int newStateInt) {
 
 void EnemyNecromancer::takeDamage(float damage, const sf::Vector2f& attackPosition) {
     // Si está invencible, ignorar el daño
-    if (isInvincible || currentNecromancerState == NecromancerState::DYING ) {
+    if (isInvincible || currentNecromancerState == NecromancerState::DYING || currentNecromancerState == NecromancerState::DEAD)
         return;
-    }
     
     currentHealth -= damage;
     
@@ -236,11 +235,11 @@ void EnemyNecromancer::update(float deltaTime, Character* player, const TileMap*
                 hitbox->setPosition(attackPosition);
                 hitbox->setActive(true);
                 VFXManager::getInstance().addEffect(
-                    "./resources/vfx/explosion.png",
+                    "./resources/vfx/explosion64x64.png",
                     attackPosition,  
                     {64 , 64},           
-                    16,                 
-                    24.f
+                    10,                 
+                    16.f
                 );
                 attacked = true;
             }
@@ -265,9 +264,7 @@ void EnemyNecromancer::update(float deltaTime, Character* player, const TileMap*
             // La animación de spawn
             if (stateTimer >= 1.f) {  // Duración de la animación de daño
                 // spawnea un enemigo
-                EnemyManager::getInstance()->addEnemy(
-                    std::make_shared<EnemyBat>(position)
-                );
+                spawn();
                 changeState(static_cast<int>(NecromancerState::IDLE));
                 spawnTimer = 5.f;
             }
@@ -306,4 +303,18 @@ void EnemyNecromancer::changeState(int newStateInt) {
 bool EnemyNecromancer::isValidNecromancerState(int state){
     return state >= static_cast<int>(NecromancerState::IDLE) &&
            state <= static_cast<int>(NecromancerState::DEAD);
+}
+
+bool EnemyNecromancer::isDead() const{
+    if(currentNecromancerState == NecromancerState::DEAD) 
+        return true; 
+    else 
+        return false; 
+}
+
+void EnemyNecromancer::spawn(){
+    EnemyManager::getInstance()->addEnemy(
+        std::make_shared<EnemyBat>(position)
+    );
+    // anyadir efecto en el futuro
 }
