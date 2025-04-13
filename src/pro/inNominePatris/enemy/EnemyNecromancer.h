@@ -42,6 +42,7 @@ public:
 
     void changeState(int newState) override;
     bool isValidNecromancerState(int state);
+    bool isDead() const override;
 
     void spawn();
 };

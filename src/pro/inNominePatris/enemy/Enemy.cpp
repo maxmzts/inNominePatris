@@ -649,6 +649,13 @@ void Enemy::setInvincible(bool invincible) {
     }
 }
 
+bool Enemy::isDead() const{ 
+    if(currentState == EnemyState::DEAD) 
+        return true; 
+    else 
+        return false; 
+}
+
 void Enemy::updateHitboxes() {
     // Actualizar las posiciones de los hitboxes y hurtboxes
     if (hitbox) {
