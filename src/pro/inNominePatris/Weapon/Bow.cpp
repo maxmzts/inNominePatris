@@ -8,12 +8,13 @@
 Bow::Bow(GameEngine* engine) : Weapon(engine), arrowSpeed(500.0f), abilityArrowCount(5), abilitySpreadAngle(45.0f) {
     spriteFacade.loadTexture("./resources/Weapons/Bow.png");
     name = "Bow"; // Nombre del arma
+    baseDamage = 15.0f; // Daño base del arco
 }
 
 void Bow::attack(sf::Vector2f position, sf::Vector2f direction) {
     if (attackTimer <= 0.f) { // Verificar si el cooldown ha terminado
         std::cout << "Bow attack: Shooting an arrow!" << std::endl;
-
+        increaseConsecutiveAttacks();
         // Crear una flecha y añadirla al contenedor
         arrows.emplace_back(position, direction, arrowSpeed);
 
@@ -57,6 +58,7 @@ void Bow::useAbility(sf::Vector2f position, sf::Vector2f direction) {
 
         // Reiniciar el cooldown
         abilityTimer = abilityCooldown;
+        consecutiveAttacks = 0;
     } else {
         std::cout << "Ability on cooldown! Time remaining: " << abilityTimer << " seconds" << std::endl;
     }
@@ -69,6 +71,10 @@ void Bow::update(float deltaTime, const TileMap& tileMap) {
     }
     if (abilityTimer > 0.f) {
         abilityTimer -= deltaTime;
+    }
+
+    if(comboDamageBonus > 0.0f) {
+        updateConsecutiveAttacks(deltaTime);
     }
 
     // Actualizar todas las flechas activas

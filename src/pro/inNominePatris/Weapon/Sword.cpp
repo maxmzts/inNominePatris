@@ -10,7 +10,7 @@ Sword::Sword(GameEngine* engine)
     attackCooldown(0.8f), 
     attackTimer(0.f), 
     dashSpeed(600.0f), 
-    abilityCooldown(2.f), 
+    abilityCooldown(2.f),
     lastAbilityTime(-abilityCooldown),
     slashSpriteFacade("./resources/Horizontal_Slash_Sword.png"),
     slashAnimation(slashSpriteFacade) 
@@ -29,6 +29,8 @@ Sword::Sword(GameEngine* engine)
     slashAnimation.setAnimationEndCallback([this](){
         isAnimating = false; // Desactivar la animación al finalizar
     });
+
+    baseDamage = 25.0f;
 }
 
 /**
@@ -38,7 +40,7 @@ void Sword::attack(sf::Vector2f position, sf::Vector2f direction) {
     if (attackTimer <= 0.f) {
         createHitbox(position, direction); // Crear la hitbox del ataque
         attackTimer = attackCooldown;     // Reiniciar el temporizador de ataque
-
+        increaseConsecutiveAttacks();
         // Configurar la posición inicial del slash
         sf::Vector2f slashOffset;
         float rotation = 0.f;
@@ -63,6 +65,9 @@ void Sword::attack(sf::Vector2f position, sf::Vector2f direction) {
         // Reproducir la animación del slash
         slashAnimation.play("slash", 12.0f, false); // 12 FPS, no en bucle
         isAnimating = true;
+
+        float damage = calculateDamage(); // Calcular el daño
+        std::cout << "Sword attack: Dealt " << damage << " damage!" << std::endl;
     }
 }
 
@@ -98,6 +103,7 @@ bool Sword::useAbility() {
     }
 
     lastAbilityTime = elapsedTime;
+    consecutiveAttacks = 0;
     std::cout << "Sword ability!" << std::endl;
     return true;
 }
@@ -157,6 +163,10 @@ void Sword::update(float deltaTime) {
     if(isAnimating){
         slashAnimation.update(deltaTime); // Actualizar la animación
     }
+
+    if(comboDamageBonus > 0.0f) {
+        updateConsecutiveAttacks(deltaTime);
+    }
 }
 
 std::shared_ptr<Hitbox> Sword::getAttackHitbox() const {
@@ -180,5 +190,5 @@ void Sword::decreaseAttackCooldown(float cooldown) {
 
 void Sword::increaseAttackDamage(float damage) {
     std::cout << "Attack damage increased!" << std::endl;
-    attackDamage += damage;
+    baseDamage += damage;
 }

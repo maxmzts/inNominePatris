@@ -30,14 +30,12 @@ public:
     float getDashSpeed() { return dashSpeed; }
     float getDashDuration() { return 0.2f; }
     std::shared_ptr<Hitbox> getAttackHitbox() const override;
-    float getAttackDamage() const override { return attackDamage; }
 
 private:
     SpriteFacade spriteFacade; // Usar el Façade en lugar de sf::Sprite
     float dashSpeed;
     float abilityCooldown;
     float lastAbilityTime;
-    float attackDamage = 25.0f;
 
     std::shared_ptr<Hitbox> attackHitbox;
     float attackCooldown;

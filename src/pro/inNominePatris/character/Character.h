@@ -31,6 +31,9 @@ public:
     Weapon* getEquippedWeapon() const;
     void addWeaponWithPosition(Weapon* weapon, sf::Vector2f originalPosition);
     Weapon* removeFirstWeapon(sf::Vector2f& outOriginalPosition);
+
+    void increaseMovementSpeed(float amount);
+    void increaseMaxHealth(int amount);
     
     void setPosition(float x, float y);
     sf::Vector2f getPosition() const {
@@ -45,6 +48,9 @@ public:
     void setHealth(int health);
     int getHealth() const;
     int getMaxHealth() const;
+    void enableHealthRegeneration();
+    void updateHealthRegeneration(float deltaTime);
+
     bool getIsInvencible() const { return isInvencible; }
     void takeDamage(int damage);
     void heal(int amount);
@@ -53,6 +59,11 @@ public:
 
     // para interaccion
     void InteractionCage(TileMap& tilemap, int centerX, int centerY);
+
+    void enableTemporalyShield(float duration);
+
+    void increaseDodgeChance(float amount);
+    bool tryDodge() const;
 
 private:
     sf::Texture texture;
@@ -67,6 +78,10 @@ private:
     int maxHealth;
     int currentHealth;
 
+    bool healthRegenerationEnabled = false;
+    float healthRegenTimer = 0.f;
+    float healthRegenInterval = 30.f; // Intervalo de regeneración en segundos
+
     bool movingRight = false;
     bool movingLeft = false;
     bool movingUp = false;
@@ -74,6 +89,10 @@ private:
 
     bool isInvencible;
     float invencibilityTimer = 0.f;
+    float invencibilityDuration = 1.f; // Duración de la invencibilidad en segundos
+
+    //Para esquivar la mejora
+    float dodgeChance = 0.0f; // Probabilidad de esquivar ataques
 
     //Armas
     Weapon* equippedWeapon;

@@ -55,14 +55,11 @@ class Lance : public Weapon {
         AbilityType getAbilityType() const override { return AbilityType::Teleport; };
         bool getIsPortalDropped() const { return isPortalDropped; }
         std::shared_ptr<Hitbox> getAttackHitbox() const override;
-        float getAttackDamage() const override { return attackDamage; }
-
     private:
         SpriteFacade spriteFacade;
         bool isPortalDropped;
         float PortalRange;
         Portal portal;
-        float attackDamage = 20.0f;
         float abilityCooldown = 4.0f; // Cooldown para la habilidad (en segundos)
         float abilityTimer = 0.f;     // Temporizador para la habilidad
 

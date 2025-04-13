@@ -44,7 +44,7 @@ void Character::update(const TileMap& tilemap, float deltaTime) {
     sf::Vector2f moveDirection(0.f, 0.f);
     updateInvencibility(deltaTime);
     hurtbox->setPosition(getPosition());  // Centrado en la posición del enemigo
-
+    updateHealthRegeneration(deltaTime); // Regenerar vida si está habilitado;
     // Detectar entrada del usuario solo si no está en dash
     if (!isDashing) {
         if (movingRight) { moveDirection.x += 1; setDirection(1.0f, 0.0f); }
@@ -323,6 +323,10 @@ int Character::getMaxHealth() const {
 
 void Character::takeDamage(int damage) {
     if(!isInvencible){
+        if(tryDodge()) {
+            std::cout << "Esquivas el ataque!" << std::endl;
+            return; // Si se esquiva, no se recibe daño
+        }
         setHealth(currentHealth - damage);
         isInvencible = true;
     };
@@ -400,8 +404,55 @@ void Character::interact(TileMap& tilemap) {
 void Character::updateInvencibility(float deltaTime){
     if(isInvencible)
         invencibilityTimer += deltaTime;
-    if(invencibilityTimer > 1){
+    if(invencibilityTimer > invencibilityDuration){
         isInvencible = false;
         invencibilityTimer = 0;
     }
+}
+
+void Character::increaseMovementSpeed(float amount) {
+    speed += amount;
+    dashSpeed += amount;
+}
+
+void Character::increaseMaxHealth(int amount) {
+    maxHealth += amount;
+    currentHealth = maxHealth; 
+}
+
+void Character::enableTemporalyShield(float duration) {
+    invencibilityDuration = duration;
+}
+
+void Character::enableHealthRegeneration() {
+    healthRegenerationEnabled = true;
+}
+
+void Character::updateHealthRegeneration(float deltaTime) {
+    if (healthRegenerationEnabled) {
+        healthRegenTimer += deltaTime;
+
+        if(healthRegenTimer >= healthRegenInterval) {
+            healthRegenTimer = 0.f; // Reiniciar el temporizador
+        
+            if(currentHealth < maxHealth) {
+                currentHealth ++;
+                std::cout << "Regenerando vida: " << currentHealth << "/" << maxHealth << std::endl;
+            } else {
+                std::cout << "Vida al máximo: " << currentHealth << "/" << maxHealth << std::endl;
+            }
+        }
+    }
+}
+
+void Character::increaseDodgeChance(float amount) {
+    dodgeChance += amount;
+    if(dodgeChance > 1.0f) {
+        dodgeChance = 1.0f; // Limitar la probabilidad de esquivar al 100%
+    }
+}
+
+bool Character::tryDodge() const {
+    float randomValue = static_cast<float>(rand()) / RAND_MAX;
+    return randomValue < dodgeChance; // Retorna true si se esquiva
 }

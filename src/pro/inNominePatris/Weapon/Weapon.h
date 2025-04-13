@@ -1,6 +1,7 @@
 #ifndef WEAPON_H
 #define WEAPON_H
-
+#include <SFML/Graphics.hpp>
+#include <iostream>
 #include <memory>
 #include <vector>
 #include "GameEngine.h"
@@ -13,6 +14,26 @@ class Weapon {
         GameEngine* engine;
         std::string name;
         bool dealtDamage = false; // Indica si el arma ha causado daño en el último ataque
+
+        // Atributos específicos del arma
+        float baseDamage = 10.0f;
+        float baseAttackSpeed = 1.0f;
+        float baseCriticalChance = 0.1f;
+        float criticalMultiplier = 1.5f;
+        float baseCooldownReduction = 0.0f;
+
+        //Para el combo de ataques
+        int consecutiveAttacks = 0; // Contador de ataques consecutivos
+        float attackResetTimer = 0.0f; // Temporizador para reiniciar el contador de ataques
+        const float attackResetTime = 2.0f; // Tiempo para reiniciar el contador de ataques
+        inline static float comboDamageBonus = 0.0f; // Daño adicional por combos
+
+        // Atributos estáticos (globales para todas las armas)
+        inline static float globalDamageMultiplier = 1.0f;
+        inline static float globalAttackSpeedMultiplier = 1.0f;
+        inline static float globalCriticalChanceBonus = 0.0f;
+        inline static float globalCriticalMultiplier = 0.0f;
+        inline static float globalCooldownReduction = 0.0f;
     
     public:
         Weapon(GameEngine* engine) : engine(engine) {}
@@ -34,11 +55,84 @@ class Weapon {
         virtual std::shared_ptr<Hitbox> getAttackHitbox() const = 0; // Método para obtener la hitbox de ataque
         bool hasDealtDamage() const { return dealtDamage; }
         void setDealtDamage(bool value) { dealtDamage = value; }
-        virtual float getAttackDamage() const = 0; // Método para obtener el daño del arma
 
 
         // Métodos para obtener y establecer el nombre del arma
         const std::string& getName() const { return name; }
+
+        float calculateDamage() const {
+            float damage = getDamage() * globalDamageMultiplier;
+            damage *= (1.0f + comboDamageBonus * consecutiveAttacks); // Aumentar el daño por ataques consecutivos
+            float randomValue = static_cast<float>(rand()) / RAND_MAX; // Generar un número aleatorio entre 0 y 1
+            if (randomValue < baseCriticalChance + globalCriticalChanceBonus) {
+                return damage * getCriticalMultiplier(); // Daño crítico
+            }
+            return damage; // Daño normal
+        }
+
+        //Para las mejoras globales de las armas 
+        static void increaseGlobalDamageMultiplier(float amount) {
+            globalDamageMultiplier += amount;
+        }
+
+        static void increaseGlobalAttackSpeedMultiplier(float amount) {
+            globalAttackSpeedMultiplier += amount;
+        }
+
+        static void increaseGlobalCriticalChanceBonus(float amount) {
+            globalCriticalChanceBonus += amount;
+        }
+
+        static void increaseGlobalCriticalMultiplier(float amount) {
+            globalCriticalMultiplier += amount;
+        }
+
+        static void increaseGlobalCooldownReduction(float amount) {
+            globalCooldownReduction += amount;
+        }
+
+        static void enableComboDamageBonus(float amount) {
+            comboDamageBonus += amount;
+            std::cout << "Daño por combo aumentado en " << amount * 100 << "%." << std::endl;
+        }
+
+        float getDamage() const {
+            return baseDamage * globalDamageMultiplier;
+        }
+
+        float getAttackSpeed() const {
+            return baseAttackSpeed * globalAttackSpeedMultiplier;
+        }
+
+        float getCriticalChance() const {
+            return baseCriticalChance + globalCriticalChanceBonus;
+        }
+
+        float getCooldownReduction() const {
+            return baseCooldownReduction + globalCooldownReduction;
+        }
+
+        float getCriticalMultiplier() const {
+            return criticalMultiplier + globalCriticalMultiplier;
+        }
+
+        void increaseConsecutiveAttacks() {
+            consecutiveAttacks++;
+            attackResetTimer = 0.0f;
+        }
+
+        void resetConsecutiveAttacks() {
+            consecutiveAttacks = 0;
+        }
+
+        void updateConsecutiveAttacks(float deltaTime) {
+            if (consecutiveAttacks > 0){
+                attackResetTimer += deltaTime;
+                if (attackResetTimer >= attackResetTime) {
+                    resetConsecutiveAttacks();
+                }
+            }
+        }
     };
 
 #endif // !WEAPON_H

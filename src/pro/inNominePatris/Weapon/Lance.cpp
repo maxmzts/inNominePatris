@@ -28,6 +28,8 @@ Lance::Lance(GameEngine* engine)
     pinchAnimation.setAnimationEndCallback([this]() {
         isAnimating = false; // Desactivar la animación al finalizar
     });
+
+    baseDamage = 20.0f;
 }
 
 void Lance::createHitbox(sf::Vector2f position, sf::Vector2f direction) {
@@ -56,7 +58,7 @@ void Lance::attack(sf::Vector2f position, sf::Vector2f direction) {
     if (attackTimer <= 0.f) {
         createHitbox(position, direction); // Crear la hitbox del ataque
         attackTimer = attackCooldown;     // Reiniciar el temporizador de ataque
-
+        increaseConsecutiveAttacks(); // Aumentar el contador de ataques consecutivos
         // Configurar la posición inicial del ataque
         sf::Vector2f pinchOffset;
         float rotation = 0.f;
@@ -82,6 +84,9 @@ void Lance::attack(sf::Vector2f position, sf::Vector2f direction) {
         // Reproducir la animación del ataque
         pinchAnimation.play("pinch", 12.0f, false); // 12 FPS, no en bucle
         isAnimating = true;
+
+        float damage = calculateDamage(); // Calcular el daño
+        std::cout << "Lance attack: Dealt " << damage << " damage!" << std::endl;
     }
 }
 
@@ -117,6 +122,7 @@ const sf::Vector2f& Lance::teleportToPortal() {
     portal.setVisible(false);
     isPortalDropped = false;
     return portal.getPosition();
+    consecutiveAttacks = 0;
 }
 
 Portal::Portal() : position(0.f, 0.f), visible(false) {
@@ -174,6 +180,10 @@ void Lance::update(float deltaTime) {
 
     if(isAnimating){
         pinchAnimation.update(deltaTime);
+    }
+
+    if(comboDamageBonus > 0.0f) {
+        updateConsecutiveAttacks(deltaTime);
     }
 }
 
@@ -275,6 +285,6 @@ void Lance::decreaseAttackCooldown(float cooldown) {
 }
 
 void Lance::increaseAttackDamage(float damage) {
-    attackDamage += damage;
+    baseDamage += damage;
     std::cout << "Attack damage increased!" << std::endl;
 }

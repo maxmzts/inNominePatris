@@ -31,7 +31,6 @@ public:
     std::shared_ptr<Hitbox> getAttackHitbox() const override{}
     void increaseArrowSpeed(float speed);
     void increaseAbilityArrowCount(int count);
-    float getAttackDamage() const override { return attackDamage; }
     std::vector<Arrow>& getArrows() { return arrows; }
 private:
     SpriteFacade spriteFacade;
@@ -40,7 +39,6 @@ private:
     float abilitySpreadAngle;
     int abilityArrowCount;
     std::vector<Arrow> arrows;
-    float attackDamage;
     float attackCooldown = 0.75f; // Cooldown para el ataque (en segundos)
     float attackTimer = 0.f;     // Temporizador para el ataque
     float abilityCooldown = 4.0f; // Cooldown para la habilidad (en segundos)
