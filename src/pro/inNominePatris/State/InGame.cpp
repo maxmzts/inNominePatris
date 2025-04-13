@@ -4,9 +4,10 @@
 #include "../interface/HUD.h"
 #include "../hboxes/Hitbox.h"
 #include "../Shop/Shop.h"
+#include "KarmaSystem.h"
 #include "PauseMenu.h"
 #include <iostream>
-#include <algorithm> // Para std::remove_if
+#include <algorithm>
 #include "EnemyBat.h"
 #include <EnemyManager.h>
 #include <EnemyNecromancer.h>
@@ -17,9 +18,9 @@ InGame* InGame::instance = nullptr;
  * Constructor de InGame. Carga el motor y el lobby con el jugador.
  */
 InGame::InGame(GameEngine& engine)
-    : engine(engine), player("./resources/sprites.png"), hud(800, 600), shop(engine.getWindow(), player.getKarma()) {
+    : engine(engine), player("./resources/sprites.png"), hud(800, 600), karmaSystem(player), shop(engine.getWindow(), karmaSystem) {
     // Cargar el mapa
-    if (!tileMap.loadFromFile("./maps/world_1.tmx", engine)) {
+    if (!tileMap.loadFromFile("./maps/obstaculos_mapa.tmx", engine)) {
         std::cerr << "Error cargando el mapa\n";
         exit(-1);
     }

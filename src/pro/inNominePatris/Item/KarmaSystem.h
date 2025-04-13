@@ -26,21 +26,20 @@ struct Upgrade {
 
 class KarmaSystem {
 private:
-    int karmaPoints;
     std::vector<Upgrade> upgrades;
     int pecadoCount;
     int absolucionCount;
-    Character* character; // Referencia al personaje
+    Character& character; // Referencia al personaje
 
 public:
-    KarmaSystem(Character* character);
+    KarmaSystem(Character& character);
 
-    void addKarma(int amount);
     bool purchaseUpgrade(int upgradeIndex);
     void displayUpgrades() const;
     int getPecadoCount() const;
     int getAbsolucionCount() const;
     int getKarmaPoints() const;
+    const std::vector<Upgrade>& getUpgrades() const { return upgrades; }
 };
 
 #endif // KARMASYSTEM_H

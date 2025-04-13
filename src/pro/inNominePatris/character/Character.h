@@ -116,7 +116,7 @@ private:
     void updateInvencibility(float deltaTime);
 
     // Karma
-    int karma = 100; // Karma del jugador
+    int karmaPoints = 100; // Karma del jugador
 };
 
 #endif // CHARACTER_H

@@ -1,6 +1,7 @@
 #ifndef INGAME_H
 #define INGAME_H
 
+#include "KarmaSystem.h"
 #include "State.h"
 #include "GameEngine.h"
 #include "TileMap.h"
@@ -19,10 +20,11 @@ class InGame : public State {
 private:
     static InGame* instance;
     GameEngine& engine; // Puntero al GameEngine
+    Character player;
+    KarmaSystem karmaSystem; // Sistema de karma
     Shop shop;
 
     TileMap tileMap;
-    Character player;
     std::vector<Weapon*> weaponsOnGround;
     sf::Clock clock;
 

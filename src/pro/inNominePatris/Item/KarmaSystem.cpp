@@ -1,41 +1,36 @@
 #include "KarmaSystem.h"
 #include "Weapon.h"
-KarmaSystem::KarmaSystem(Character* character)
-    : karmaPoints(0), pecadoCount(0), absolucionCount(0), character(character) {
+KarmaSystem::KarmaSystem(Character& character)
+    : pecadoCount(0), absolucionCount(0), character(character) {
     // Inicializar las mejoras permanentes
     upgrades.push_back(Upgrade("Daño aumentado", KarmaType::Pecado, 100, [&](){
         Weapon::increaseGlobalDamageMultiplier(0.35f); // Aumentar el daño global
     })); // Mejora de Pecado
     upgrades.push_back(Upgrade("Velocidad de movimiento", KarmaType::Absolucion, 100, [&]() {
-        character->increaseMovementSpeed(75);
+        character.increaseMovementSpeed(75.0f);
     })); // Mejora de Absolución
     upgrades.push_back(Upgrade("Probabilidad de esquivar ataques", KarmaType::Pecado, 200, [&](){
-        character->increaseDodgeChance(0.05f); // Aumentar la probabilidad de esquivar ataques
+        character.increaseDodgeChance(0.05f); // Aumentar la probabilidad de esquivar ataques
     })); // Mejora de Pecado
     upgrades.push_back(Upgrade("Bonus de monedas", KarmaType::Absolucion, 200, [&]() {})); // Mejora de Absolución
     upgrades.push_back(Upgrade("Probabilidad de crítico", KarmaType::Pecado, 300, [&](){
         Weapon::increaseGlobalCriticalChanceBonus(0.05f); // Aumentar la probabilidad de crítico global
     })); // Mejora de Pecado
     upgrades.push_back(Upgrade("Cantidad de vidas", KarmaType::Absolucion, 300, [&](){
-        character->increaseMaxHealth(1);
+        character.increaseMaxHealth(1);
     })); // Mejora de Absolución
     upgrades.push_back(Upgrade("Daño crítico aumentado", KarmaType::Pecado, 500, [&](){
         Weapon::increaseGlobalCriticalMultiplier(0.25f); // Aumentar el daño crítico global
     })); // Mejora avanzada de Pecado
     upgrades.push_back(Upgrade("Regeneración de vida", KarmaType::Absolucion, 500, [&](){
-        character->enableHealthRegeneration(); // Habilitar regeneración de vida
+        character.enableHealthRegeneration(); // Habilitar regeneración de vida
     })); // Mejora avanzada de Absolución
     upgrades.push_back(Upgrade("Combo de ataques", KarmaType::Pecado, 700, [&](){
-        Weapon::enableComboDamageBonus(0.05f); // Aumentar el daño por combo
+        Weapon::enableComboDamageBonus(0.1f); // Aumentar el daño por combo
     })); // Mejora avanzada de Pecado
     upgrades.push_back(Upgrade("Escudo temporal", KarmaType::Absolucion, 700, [&](){
-        character->enableTemporalyShield(4.0f); // Habilitar escudo temporal durante 4 segundos
+        character.enableTemporalyShield(4.0f); // Habilitar escudo temporal durante 4 segundos
     })); // Mejora avanzada de Absolución
-}
-
-void KarmaSystem::addKarma(int amount) {
-    karmaPoints += amount;
-    std::cout << "Karma añadido: " << amount << ". Total: " << karmaPoints << std::endl;
 }
 
 bool KarmaSystem::purchaseUpgrade(int upgradeIndex) {
@@ -46,26 +41,57 @@ bool KarmaSystem::purchaseUpgrade(int upgradeIndex) {
 
     Upgrade& upgrade = upgrades[upgradeIndex];
 
-    if (upgrade.isUnlocked || upgrade.isBlocked) {
-        std::cout << "Esta mejora ya está desbloqueada o bloqueada." << std::endl;
+    // Verificar si la mejora ya está desbloqueada o bloqueada
+    if (upgrade.isUnlocked) {
+        std::cout << "Esta mejora ya está desbloqueada." << std::endl;
+        return false;
+    }
+    
+    if (upgrade.isBlocked) {
+        std::cout << "Esta mejora está bloqueada y no puede ser comprada." << std::endl;
         return false;
     }
 
-    if (karmaPoints < upgrade.cost) {
+    // Verificar si hay suficiente karma
+    if (character.getKarma() < upgrade.cost) {
         std::cout << "No tienes suficiente karma para esta mejora." << std::endl;
         return false;
     }
 
-    // Desbloquear la mejora seleccionada
-    karmaPoints -= upgrade.cost;
-    upgrade.isUnlocked = true;
-
-    // Bloquear la mejora opuesta
-    for (size_t i = 0; i < upgrades.size(); i++) {
-        if (i != upgradeIndex && upgrades[i].type != upgrade.type && !upgrades[i].isUnlocked) {
-            upgrades[i].isBlocked = true;
-            break;
+    // Verificar si se pueden desbloquear según el orden
+    // Nivel 1: Mejoras iniciales disponibles siempre
+    // Nivel 2+: Solo disponible si el nivel anterior tiene al menos una mejora comprada
+    int level = upgradeIndex / 2;
+    if (level > 0) {
+        bool previousLevelUnlocked = false;
+        for (int i = (level-1)*2; i < level*2 && i < upgrades.size(); i++) {
+            if (upgrades[i].isUnlocked) {
+                previousLevelUnlocked = true;
+                break;
+            }
         }
+        
+        if (!previousLevelUnlocked) {
+            std::cout << "Debes desbloquear al menos una mejora del nivel anterior." << std::endl;
+            return false;
+        }
+    }
+
+    // Desbloquear la mejora seleccionada
+    character.addKarma(-upgrade.cost); // Restar el costo de karma
+    upgrade.isUnlocked = true;
+    
+    // Ejecutar la acción de la mejora
+    if (upgrade.action) {
+        std::cout << "Ejecutando acción para: " << upgrade.name << std::endl;
+        upgrade.action();
+        std::cout << "Acción ejecutada correctamente" << std::endl;
+    }
+
+    // Bloquear la mejora opuesta del mismo nivel
+    int pairedIndex = (upgradeIndex % 2 == 0) ? upgradeIndex + 1 : upgradeIndex - 1;
+    if (pairedIndex >= 0 && pairedIndex < upgrades.size() && !upgrades[pairedIndex].isUnlocked) {
+        upgrades[pairedIndex].isBlocked = true;
     }
 
     // Incrementar el contador de mejoras según el tipo
@@ -101,5 +127,5 @@ int KarmaSystem::getAbsolucionCount() const {
 }
 
 int KarmaSystem::getKarmaPoints() const {
-    return karmaPoints;
+    return character.getKarma(); // Obtener karma del personaje
 }

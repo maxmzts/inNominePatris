@@ -391,7 +391,11 @@ void Character::updateInvencibility(float deltaTime){
 }
 
 int Character::getKarma() const {
-    return karma; // Asegúrate de que `karmaPoints` esté definido en la clase
+    return karmaPoints; // Asegúrate de que `karmaPoints` esté definido en la clase
+}
+
+void Character::addKarma(int amount) {
+    karmaPoints += amount;
 }
 
 void Character::updateHealthRegeneration(float deltaTime) {
@@ -412,4 +416,28 @@ void Character::updateHealthRegeneration(float deltaTime) {
 bool Character::tryDodge() const {
     float randomValue = static_cast<float>(rand()) / RAND_MAX;
     return randomValue < dodgeChance; // `dodgeChance` debe estar definido en la clase
+}
+
+void Character::increaseMovementSpeed(float amount) {
+    float oldSpeed = speed;
+    speed += amount;
+    std::cout << "Velocidad aumentada de " << oldSpeed << " a " << speed << std::endl;
+}
+
+void Character::increaseDodgeChance(float amount) {
+    dodgeChance += amount;
+}
+
+void Character::increaseMaxHealth(int amount) {
+    maxHealth += amount;
+    currentHealth = std::min(currentHealth, maxHealth); // Asegúrate de que la vida actual no exceda la máxima
+}
+
+void Character::enableHealthRegeneration() {
+    healthRegenerationEnabled = true;
+}
+
+void Character::enableTemporalyShield(float duration) {
+    invencibilityDuration = duration;
+    invencibilityTimer = 0.0f; // Reiniciar el temporizador
 }
