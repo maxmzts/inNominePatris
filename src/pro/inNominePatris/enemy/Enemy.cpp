@@ -243,10 +243,10 @@ void Enemy::findPathToPlayer(const Character* player, const TileMap* tileMap) {
     if (startX == targetX && startY == targetY) {
         sf::Vector2f direction = playerPos - position;
         move(direction);
-        std::cout << "Inicialización completada: " << initClock.getElapsedTime().asMicroseconds() << " microsegundos" << std::endl;
+        // std::cout << "Inicialización completada: " << initClock.getElapsedTime().asMicroseconds() << " microsegundos" << std::endl;
         return;
     }
-    std::cout << "Inicialización completada: " << initClock.getElapsedTime().asMicroseconds() << " microsegundos" << std::endl;
+    // std::cout << "Inicialización completada: " << initClock.getElapsedTime().asMicroseconds() << " microsegundos" << std::endl;
     
     // Verificar si hay línea de visión directa (optimización temprana)
     sf::Clock lineOfSightClock;
@@ -277,9 +277,9 @@ void Enemy::findPathToPlayer(const Character* player, const TileMap* tileMap) {
         // Si hay línea de visión, moverse directamente sin calcular camino
         if (lineOfSight) {
             move(normalizedDir);
-            std::cout << "Verificación de línea de visión completada: " << lineOfSightClock.getElapsedTime().asMicroseconds() << " microsegundos" << std::endl;
-            std::cout << "Tiempo total de pathfinding: " << totalClock.getElapsedTime().asMicroseconds() << " microsegundos (" 
-                      << totalClock.getElapsedTime().asMicroseconds() / 16667.0f << " frames a 60 FPS)" << std::endl;
+            // std::cout << "Verificación de línea de visión completada: " << lineOfSightClock.getElapsedTime().asMicroseconds() << " microsegundos" << std::endl;
+            // std::cout << "Tiempo total de pathfinding: " << totalClock.getElapsedTime().asMicroseconds() << " microsegundos (" 
+                    //   << totalClock.getElapsedTime().asMicroseconds() / 16667.0f << " frames a 60 FPS)" << std::endl;
             return;
         }
     }
@@ -296,12 +296,12 @@ void Enemy::findPathToPlayer(const Character* player, const TileMap* tileMap) {
         float angle = std::atan2(targetY - startY, targetX - startX);
         sf::Vector2f direction(std::cos(angle), std::sin(angle));
         move(direction);
-        std::cout << "Verificación de distancia máxima completada: " << distanceCheckClock.getElapsedTime().asMicroseconds() << " microsegundos" << std::endl;
-        std::cout << "Tiempo total de pathfinding: " << totalClock.getElapsedTime().asMicroseconds() << " microsegundos (" 
-                  << totalClock.getElapsedTime().asMicroseconds() / 16667.0f << " frames a 60 FPS)" << std::endl;
+        // std::cout << "Verificación de distancia máxima completada: " << distanceCheckClock.getElapsedTime().asMicroseconds() << " microsegundos" << std::endl;
+        // std::cout << "Tiempo total de pathfinding: " << totalClock.getElapsedTime().asMicroseconds() << " microsegundos (" 
+                //   << totalClock.getElapsedTime().asMicroseconds() / 16667.0f << " frames a 60 FPS)" << std::endl;
         return;
     }
-    std::cout << "Verificación de distancia máxima completada: " << distanceCheckClock.getElapsedTime().asMicroseconds() << " microsegundos" << std::endl;
+    // std::cout << "Verificación de distancia máxima completada: " << distanceCheckClock.getElapsedTime().asMicroseconds() << " microsegundos" << std::endl;
     
     // Inicializar estructuras para A*
     sf::Clock aStarInitClock;
@@ -335,7 +335,7 @@ void Enemy::findPathToPlayer(const Character* player, const TileMap* tileMap) {
     
     // Matriz precalculada para costos de movimiento
     const float moveCosts[8] = {1.0f, 1.414f, 1.0f, 1.414f, 1.0f, 1.414f, 1.0f, 1.414f};
-    std::cout << "Inicialización de A* completada: " << aStarInitClock.getElapsedTime().asMicroseconds() << " microsegundos" << std::endl;
+    // std::cout << "Inicialización de A* completada: " << aStarInitClock.getElapsedTime().asMicroseconds() << " microsegundos" << std::endl;
     
     // Bucle principal del algoritmo A*
     sf::Clock aStarMainLoopClock;
@@ -426,8 +426,8 @@ void Enemy::findPathToPlayer(const Character* player, const TileMap* tileMap) {
             }
         }
     }
-    std::cout << "Bucle principal de A* completado: " << aStarMainLoopClock.getElapsedTime().asMicroseconds() 
-              << " microsegundos (iteraciones: " << iterations << ")" << std::endl;
+    // std::cout << "Bucle principal de A* completado: " << aStarMainLoopClock.getElapsedTime().asMicroseconds() 
+            //   << " microsegundos (iteraciones: " << iterations << ")" << std::endl;
     
     // Reconstruir el camino si se encontró uno
     sf::Clock pathReconstructionClock;
@@ -464,7 +464,7 @@ void Enemy::findPathToPlayer(const Character* player, const TileMap* tileMap) {
         // Invertir para obtener el camino correcto
         path.assign(reversePath.rbegin(), reversePath.rend());
     }
-    std::cout << "Reconstrucción del camino completada: " << pathReconstructionClock.getElapsedTime().asMicroseconds() << " microsegundos" << std::endl;
+    // std::cout << "Reconstrucción del camino completada: " << pathReconstructionClock.getElapsedTime().asMicroseconds() << " microsegundos" << std::endl;
     
     // Decidir cómo moverse
     sf::Clock movementClock;
@@ -508,16 +508,16 @@ void Enemy::findPathToPlayer(const Character* player, const TileMap* tileMap) {
             move(direction);
         }
     }
-    std::cout << "Cálculo de movimiento completado: " << movementClock.getElapsedTime().asMicroseconds() << " microsegundos" << std::endl;
+    // std::cout << "Cálculo de movimiento completado: " << movementClock.getElapsedTime().asMicroseconds() << " microsegundos" << std::endl;
     
     // Tiempo total del algoritmo
     sf::Int64 totalTime = totalClock.getElapsedTime().asMicroseconds();
     float framesAt60FPS = totalTime / 16667.0f; // 1000000 / 60 = 16667 microsegundos por frame a 60 FPS
     
-    std::cout << "Tiempo total de pathfinding: " << totalTime << " microsegundos (" 
-              << framesAt60FPS << " frames a 60 FPS)" << std::endl 
-              << "---------------------------------------------------------------------------------------"
-              << std::endl;
+    // std::cout << "Tiempo total de pathfinding: " << totalTime << " microsegundos (" 
+            //   << framesAt60FPS << " frames a 60 FPS)" << std::endl 
+            //   << "---------------------------------------------------------------------------------------"
+            //   << std::endl;
 }
 
 /**

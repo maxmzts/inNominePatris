@@ -371,8 +371,18 @@ void Character::interact(TileMap& tilemap) {
         auto interaction = InteractionFactory::createInteraction(tileId);
         
         if (interaction) {
-            // Ejecutar la interacción
-            interaction->execute(*this, tilemap);
+            // Verificar si la interacción está disponible
+            if (interaction->isAvailable(*this, tilemap)) {
+                // Ejecutar la interacción
+                interaction->execute(*this, tilemap);
+                
+                // Si es una puerta y se han cumplido los requisitos, abrirla
+                if (auto doorInteraction = std::dynamic_pointer_cast<DoorInteraction>(interaction)) {
+                    if (InteractionManager::getInstance()->checkDoorRequirements(tileId)) {
+                        std::cout << "Se han cumplido todos los requisitos para abrir la puerta." << std::endl;
+                    }
+                }
+            }
         } else {
             std::cout << "No hay interacción definida para el tile " << tileId << std::endl;
         }
@@ -380,6 +390,7 @@ void Character::interact(TileMap& tilemap) {
         std::cout << "No hay nada con lo que interactuar aquí." << std::endl;
     }
 }
+
 
 void Character::updateInvencibility(float deltaTime){
     if(isInvencible)

@@ -20,7 +20,7 @@ InGame* InGame::instance = nullptr;
 InGame::InGame(GameEngine& engine)
     : engine(engine), player("./resources/sprites.png"), hud(800, 600), karmaSystem(player), shop(engine.getWindow(), karmaSystem) {
     // Cargar el mapa
-    if (!tileMap.loadFromFile("./maps/obstaculos_mapa.tmx", engine)) {
+    if (!tileMap.loadFromFile("./maps/world_1.tmx", engine)) {
         std::cerr << "Error cargando el mapa\n";
         exit(-1);
     }
