@@ -283,7 +283,8 @@ void Enemy::findPathToPlayer(const Character* player, const TileMap* tileMap) {
             return;
         }
     }
-    std::cout << "Verificación de línea de visión completada: " << lineOfSightClock.getElapsedTime().asMicroseconds() << " microsegundos" << std::endl;
+    // std::cout << "Verificación de línea de visión completada: " << lineOfSightClock.getElapsedTime().asMicroseconds() << " microsegundos" << std::endl;
+    
     
     // Limitar el área de búsqueda para mejorar el rendimiento
     sf::Clock distanceCheckClock;
