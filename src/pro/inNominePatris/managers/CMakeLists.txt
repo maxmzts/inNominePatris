@@ -1,7 +1,9 @@
 #Especificar donde se encuentran los ficheros cpp a compilar
 target_sources(libModulos PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/VFXManager.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/EnemyManager.cpp"    
+    "${CMAKE_CURRENT_SOURCE_DIR}/SFXManager.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/EnemyManager.cpp" 
+    "${CMAKE_CURRENT_SOURCE_DIR}/MusicManager.cpp"   
 )
 
 #Y donde se encuentran los .h

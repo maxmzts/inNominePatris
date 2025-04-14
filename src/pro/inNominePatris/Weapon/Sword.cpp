@@ -1,9 +1,11 @@
-#include "Sword.h"
 #include <iostream>
+#include <cstdlib>
+
+#include "Sword.h"
 #include "Weapon.h"
-// #include "Character.h" SE DEBE QUITAR
-#include "../hboxes/Hitbox.h"
+#include "Hitbox.h"
 #include "Enemy.h"
+#include "SFXManager.h"
 #include <cmath>
 
 Sword::Sword(GameEngine* engine) 
@@ -61,6 +63,8 @@ void Sword::attack(sf::Vector2f position, sf::Vector2f direction) {
         // Reproducir la animación del slash
         slashAnimation.play("slash", 12.0f, false);
         isAnimating = true;
+        float pitch = 0.8f + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (1.2f - 0.8f);
+        SFXManager::getInstance().addEffect("resources/sfx/stab.wav", 60.f, pitch);
 
         float damage = calculateDamage();
         std::cout << "Sword attack: Dealt " << damage << " damage!" << std::endl;

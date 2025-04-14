@@ -14,6 +14,7 @@
 #include "EnemyBat.h"
 #include <EnemyManager.h>
 #include <EnemyNecromancer.h>
+#include <MusicManager.h>
 
 InGame* InGame::instance = nullptr;
 
@@ -57,6 +58,7 @@ InGame::InGame(GameEngine& engine)
         EnemyManager::getInstance()->addEnemy(enemy);
     }
     EnemyManager::getInstance()->addEnemy(std::make_shared<EnemyNecromancer>(sf::Vector2f(400.f,400.f)));
+    MusicManager::getInstance().addTrack("resources/music/lobby_track.ogg");
 }
 
 InGame* InGame::getInstance(GameEngine& engine) {
