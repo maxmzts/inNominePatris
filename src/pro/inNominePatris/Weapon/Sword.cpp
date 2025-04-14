@@ -3,8 +3,7 @@
 
 #include "Sword.h"
 #include "Weapon.h"
-// #include "Character.h" SE DEBE QUITAR
-#include "../hboxes/Hitbox.h"
+#include "Hitbox.h"
 #include "Enemy.h"
 #include "SFXManager.h"
 #include <cmath>

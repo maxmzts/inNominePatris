@@ -25,7 +25,7 @@ void Bow::attack(sf::Vector2f position, sf::Vector2f direction) {
         // Crear una flecha y añadirla al contenedor
         arrows.emplace_back(position, direction, arrowSpeed);
         float pitch = 0.8f + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (1.2f - 0.8f);
-        SFXManager::getInstance().addEffect("resources/sfx/bowa.wav", 60.f, pitch);
+        SFXManager::getInstance().addEffect("resources/sfx/bow.wav", 60.f, pitch);
 
         // Reiniciar el cooldown
         attackTimer = attackCooldown;
