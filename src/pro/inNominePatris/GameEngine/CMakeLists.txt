@@ -4,6 +4,7 @@ target_sources(libModulos PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/SpriteFacade.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/AnimatedSprite.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/VisualEffect.cpp"
+     "${CMAKE_CURRENT_SOURCE_DIR}/SoundEffect.cpp"
 )
 
 #Y donde se encuentran los .h

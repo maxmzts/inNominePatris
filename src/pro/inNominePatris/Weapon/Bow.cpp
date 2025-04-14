@@ -1,7 +1,7 @@
 #include "Bow.h"
 #include "Arrow.h"
 #include "Character.h"
-#include "Enemy.h"
+#include "SFXManager.h"
 #include <iostream>
 #include <cmath>
 
@@ -17,6 +17,8 @@ void Bow::attack(sf::Vector2f position, sf::Vector2f direction) {
         increaseConsecutiveAttacks();
         // Crear una flecha y añadirla al contenedor
         arrows.emplace_back(position, direction, arrowSpeed);
+        float pitch = 0.8f + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (1.2f - 0.8f);
+        SFXManager::getInstance().addEffect("resources/sfx/bowa.wav", 60.f, pitch);
 
         // Reiniciar el cooldown
         attackTimer = attackCooldown;

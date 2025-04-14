@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <VFXManager.h>
 #include <unordered_set>
+#include <SFXManager.h>
 
 Enemy::Enemy(const std::string& name, float maxHealth, float movementSpeed, const sf::Vector2f& startPosition, const std::string& texturePath)
     : name(name)
@@ -113,6 +114,9 @@ void Enemy::takeDamage(float damage, const sf::Vector2f& attackPosition) {
 
     sf::Vector2f attackDirection = attackPosition-position;
     setupKnockback(attackDirection, 150.0f);
+
+    float pitch = 0.8f + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (1.2f - 0.8f);
+    SFXManager::getInstance().addEffect("resources/sfx/hit.wav", 60.f, pitch);
     
     // Si la vida llega a 0, cambiar al estado de muerte
     if (currentHealth <= 0) {
