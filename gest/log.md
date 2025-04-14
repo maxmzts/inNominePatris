@@ -255,4 +255,4 @@ Por último he cambiado la barra de vida por corazones.
 Arreglado problema con los bounds, ya se puden eliminar bounds para dar paso al jugador a zonas previamente inaccesibles.
 
 ## 20250414 EstrellaDominguez @(30min)
-Arreglos menores en la tienda y el HUD.
+Arreglos menores en la tienda y el HUD. Subida a la rama main para el hito 2.
