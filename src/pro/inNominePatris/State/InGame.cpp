@@ -290,12 +290,6 @@ void InGame::update(Game& game) {
         }
     }
 
-    // Comprobar que algún enemigo recibe daño
-    for(auto enemy : EnemyManager::getInstance()->getEnemyList()){
-        if(enemy->getisInvincible() && checkEnemyWasHit(enemy, player))
-            enemy->takeDamage(player.getEquippedWeapon()->calculateDamage(),  player.getEquippedWeapon()->getAttackHitbox()->getPosition());
-    }
-
     hud.update(player);
 
     VFXManager::getInstance().update(deltaTime);
@@ -363,6 +357,7 @@ void InGame::render(Game& game, sf::RenderWindow& window) {
     engine.display();
 }
 
+//  QUITAR
 bool InGame::checkEnemyWasHit(std::shared_ptr<Enemy> enemy, Character player){
     if(player.getEquippedWeapon()->getAttackHitbox()->isActive())
         return enemy->getHurtbox()->getGlobalBounds().intersects(player.getEquippedWeapon()->getAttackHitbox()->getGlobalBounds());

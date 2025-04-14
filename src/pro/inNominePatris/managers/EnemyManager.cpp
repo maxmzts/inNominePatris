@@ -35,7 +35,9 @@ void EnemyManager::clearEnemies() {
 }
 
 void EnemyManager::updateEnemies(float deltaTime, Character* player, const TileMap* tileMap) {
-    for (auto& enemy : enemies) {
+    // copia del vector original para evitar segmentation fault cuando se añaden enemigos en el update de uno que ya está en la lista.
+    std::vector<std::shared_ptr<Enemy>> enemiesCopy = getEnemyList();
+    for (auto& enemy : enemiesCopy) {
         enemy->update(deltaTime, player, tileMap);
     }
     
