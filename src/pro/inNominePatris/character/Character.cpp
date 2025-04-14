@@ -1,4 +1,5 @@
 #include "Character.h"
+#include "../hboxes/Hurtbox.h"
 #include "InteractionFactory.h"
 #include <iostream>
 
@@ -17,6 +18,11 @@ direction(0.f, 0.f), maxHealth(100), currentHealth(100), isInvencible(false) {
     sprite.setTextureRect(sf::IntRect(0, 0, 75, 75));
     sprite.setPosition(320, 240);
     sprite.setScale(0.6f, 0.6f);
+
+    // sprite.setOrigin(16 / 2, 16 / 2);
+    // sprite.setTextureRect(sf::IntRect(0, 0, 16, 16));
+    // sprite.setPosition(320, 240);
+    // sprite.setScale(2.0f, 2.0f);
 
     velocity = sf::Vector2f(0.f, 0.f);
 
@@ -127,8 +133,20 @@ void Character::update(const TileMap& tilemap, float deltaTime) {
         sprite.setTextureRect(sf::IntRect(0, 2 * 75, 75, 75));
         sprite.setScale(-0.6f, 0.6f);
     }
+
     if (movingUp) sprite.setTextureRect(sf::IntRect(0, 3 * 75, 75, 75));
     if (movingDown) sprite.setTextureRect(sf::IntRect(0, 0 * 75, 75, 75));
+
+    // if (movingRight) {
+    //     sprite.setTextureRect(sf::IntRect(16, 16, 16, 16));
+    //     sprite.setScale(2.0f, 2.0f);
+    // }
+    // if (movingLeft) {
+    //     sprite.setTextureRect(sf::IntRect(0, 16, 16, 16));
+    //     sprite.setScale(2.0f, 2.0f);
+    // }
+    // if (movingUp) sprite.setTextureRect(sf::IntRect(32, 16, 16, 16));
+    // if (movingDown) sprite.setTextureRect(sf::IntRect(48, 0, 16, 16));
 }
 
 void Character::draw(GameEngine& engine) {
