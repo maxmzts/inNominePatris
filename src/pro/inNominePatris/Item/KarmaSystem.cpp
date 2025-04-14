@@ -4,7 +4,7 @@ KarmaSystem::KarmaSystem(Character& character)
     : pecadoCount(0), absolucionCount(0), character(character) {
     // Inicializar las mejoras permanentes
     upgrades.push_back(Upgrade("Daño aumentado", KarmaType::Pecado, 100, [&](){
-        Weapon::increaseGlobalDamageMultiplier(0.35f); // Aumentar el daño global
+        Weapon::increaseGlobalDamageMultiplier(0.2f); // Aumentar el daño global
     })); // Mejora de Pecado
     upgrades.push_back(Upgrade("Velocidad de movimiento", KarmaType::Absolucion, 100, [&]() {
         character.increaseMovementSpeed(75.0f);
