@@ -13,8 +13,15 @@ Bow::Bow(GameEngine* engine) : Weapon(engine), arrowSpeed(500.0f), abilityArrowC
 
 void Bow::attack(sf::Vector2f position, sf::Vector2f direction) {
     if (attackTimer <= 0.f) { // Verificar si el cooldown ha terminado
-        std::cout << "Bow attack: Shooting an arrow!" << std::endl;
+        // Asegurarse de que la dirección esté normalizada
+        float magnitude = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+        if (magnitude != 0) {
+            direction /= magnitude;
+        }
+        
+        std::cout << "Bow attack: Shooting an arrow in direction: " << direction.x << ", " << direction.y << std::endl;
         increaseConsecutiveAttacks();
+        
         // Crear una flecha y añadirla al contenedor
         arrows.emplace_back(position, direction, arrowSpeed);
         float pitch = 0.8f + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (1.2f - 0.8f);
@@ -101,29 +108,39 @@ void Bow::update(float deltaTime, const TileMap& tileMap) {
  * Ajusta el arco en la posicion y con la direccion del jugador.
  * Luego llama a render para dibujar el arco.
  */
-void Bow::renderOnPlayer(sf::Vector2f position, sf::Vector2f direction) {
-    // Ajustar la posición del arma en función de la dirección
-    if (direction.x > 0) {  // Mirando a la derecha
-        spriteFacade.setPosition(position.x + 20, position.y - 34);
-        spriteFacade.setRotation(45); // Sin rotación
-    } else if (direction.x < 0) {  // Mirando a la izquierda
-        spriteFacade.setPosition(position.x - 20, position.y + 34);
-        spriteFacade.setRotation(225); // Rotar 180 grados
-    } else if (direction.y < 0) {  // Mirando hacia arriba
-        spriteFacade.setPosition(position.x - 34, position.y - 20);
-        spriteFacade.setRotation(315); // Rotar 270 grados
-    } else if (direction.y > 0) {  // Mirando hacia abajo
-        spriteFacade.setPosition(position.x + 34, position.y + 20);
-        spriteFacade.setRotation(135); // Rotar 90 grados
+void Bow::renderOnPlayer(sf::Vector2f position, sf::Vector2f direction,sf::RenderWindow& window) {
+    // Normalize the direction vector
+    float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+    if (length > 0) {
+        direction.x /= length;
+        direction.y /= length;
     }
-
-    render();
+    
+    // Calculate angle in degrees
+    float angle = std::atan2(direction.y, direction.x) * 180 / M_PI;
+    
+    // Set the origin to the center of the bow sprite for proper rotation
+    // Assuming spriteFacade has a getTexture() method to get dimensions
+    sf::Vector2u textureSize = {48, 48}; // Placeholder for actual texture size
+    spriteFacade.setOrigin(textureSize.x / 2.f, textureSize.y / 2.f);
+    
+    // Distance from player to bow
+    float bowDistance = 30.f;
+    
+    // Calculate new position
+    sf::Vector2f bowPosition = position + direction * bowDistance;
+    
+    // Position the bow
+    spriteFacade.setPosition(bowPosition.x, bowPosition.y);
+    spriteFacade.setRotation(angle + 45);
+    
+    render(window);
 }
 
 /**
  * Dibuja el arco en la posicion y con la direccion que tiene su sprite por defecto.
  */
-void Bow::render(){
+void Bow::render(sf::RenderWindow& window){
     // Dibujar el sprite del arma
     spriteFacade.draw(engine->getWindow());
     for(const Arrow& arrow : arrows) {

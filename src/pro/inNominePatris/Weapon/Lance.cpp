@@ -1,6 +1,7 @@
 #include "Lance.h"
 #include <iostream>
 #include "Character.h"
+#include "../hboxes/Hitbox.h"
 #include <SFML/Window/Mouse.hpp>
 #include <cmath>
 #include <SFXManager.h>
@@ -36,47 +37,46 @@ Lance::Lance(GameEngine* engine)
 void Lance::createHitbox(sf::Vector2f position, sf::Vector2f direction) {
     sf::Vector2f offset;
     sf::Vector2f size;
-
-    if (direction.x > 0) { // Derecha
-        offset = sf::Vector2f(70.f, 0.f);
-        size = sf::Vector2f(110.f, 30.f); // Hitbox horizontal
-    } else if (direction.x < 0) { // Izquierda
-        offset = sf::Vector2f(-70.f, 0.f);
-        size = sf::Vector2f(110.f, 30.f); // Hitbox horizontal
-    } else if (direction.y > 0) { // Abajo
-        offset = sf::Vector2f(0.f, 70.f);
-        size = sf::Vector2f(30.f, 110.f); // Hitbox vertical
-    } else if (direction.y < 0) { // Arriba
-        offset = sf::Vector2f(0.f, -70.f);
-        size = sf::Vector2f(30.f, 110.f); // Hitbox vertical
+    
+    // Calcular el ángulo para la dirección de apuntado
+    float angle = std::atan2(direction.y, direction.x);
+    
+    // Calcular el offset basado en la dirección normalizada
+    float offsetDistance = 70.f;
+    offset.x = direction.x * offsetDistance;
+    offset.y = direction.y * offsetDistance;
+    
+    // Ajustar el tamaño de la hitbox según la dirección
+    if (std::abs(direction.x) > std::abs(direction.y)) {
+        // Más horizontal que vertical
+        size = sf::Vector2f(110.f, 30.f);
+    } else {
+        // Más vertical que horizontal
+        size = sf::Vector2f(30.f, 110.f);
     }
-    attackHitbox->setSize(size); // Ajustar el tamaño de la hitbox
-    attackHitbox->setPosition(position + offset); // Ajustar la posición de la hitbox
-    attackHitbox->setActive(true); // Activar la hitbox
+
+    attackHitbox->setSize(size);
+    attackHitbox->setPosition(position + offset);
+    attackHitbox->setActive(true);
 }
 
 void Lance::attack(sf::Vector2f position, sf::Vector2f direction) {
     if (attackTimer <= 0.f) {
-        createHitbox(position, direction); // Crear la hitbox del ataque
+        createHitbox(position, direction); // Usar la dirección de apuntado
         attackTimer = attackCooldown;     // Reiniciar el temporizador de ataque
         increaseConsecutiveAttacks(); // Aumentar el contador de ataques consecutivos
+        
         // Configurar la posición inicial del ataque
         sf::Vector2f pinchOffset;
         float rotation = 0.f;
-
-        if (direction.x > 0) { // Derecha
-            pinchOffset = sf::Vector2f(30.f, -15.f); // Desplazar hacia la derecha
-            rotation = 0.f;
-        } else if (direction.x < 0) { // Izquierda
-            pinchOffset = sf::Vector2f(-30.f, 15.f); // Desplazar hacia la izquierda
-            rotation = 180.f;
-        } else if (direction.y > 0) { // Abajo
-            pinchOffset = sf::Vector2f(15.f, 30.f); // Desplazar hacia abajo
-            rotation = 90.f;
-        } else if (direction.y < 0) { // Arriba
-            pinchOffset = sf::Vector2f(-15.f, -30.f); // Desplazar hacia arriba
-            rotation = -90.f;
-        }
+        
+        // Calcular el ángulo de rotación basado en la dirección de apuntado
+        float angle = std::atan2(direction.y, direction.x) * 180 / M_PI;
+        rotation = angle;
+        
+        // Ajustar el offset basado en el ángulo
+        pinchOffset.x = direction.x * 30.f;
+        pinchOffset.y = direction.y * 30.f;
 
         // Configurar la posición y rotación del ataque
         pinchSprite.setPosition(position.x + pinchOffset.x, position.y + pinchOffset.y);
@@ -237,29 +237,38 @@ void Portal::update(float deltaTime) {
  * Ajusta la lanza en la posicion y con la direccion del jugador.
  * Luego llama a render para dibujar la lanza.
  */
-void Lance::renderOnPlayer(sf::Vector2f position, sf::Vector2f direction) {
-    // Ajustar la posición del arma en función de la dirección
-    if (direction.x > 0) {  // Mirando a la derecha
-        spriteFacade.setPosition(position.x + 20, position.y-20);
-        spriteFacade.setRotation(0); // Sin rotación
-    } else if (direction.x < 0) {  // Mirando a la izquierda
-        spriteFacade.setPosition(position.x - 20, position.y+20);
-        spriteFacade.setRotation(180); // Rotar 180 grados
-    } else if (direction.y < 0) {  // Mirando hacia arriba
-        spriteFacade.setPosition(position.x-20, position.y - 20);
-        spriteFacade.setRotation(270); // Rotar 270 grados
-    } else if (direction.y > 0) {  // Mirando hacia abajo
-        spriteFacade.setPosition(position.x+20, position.y + 20);
-        spriteFacade.setRotation(90); // Rotar 90 grados
+void Lance::renderOnPlayer(sf::Vector2f position, sf::Vector2f direction,sf::RenderWindow& window) {
+    // Normalize the direction vector
+    float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+    if (length > 0) {
+        direction.x /= length;
+        direction.y /= length;
     }
-
-    render();
+    
+    // Calculate angle in degrees
+    float angle = std::atan2(direction.y, direction.x) * 180 / M_PI;
+    
+    // Set the origin to the center of the lance sprite for proper rotation
+    sf::Vector2u textureSize = {64,64};
+    spriteFacade.setOrigin(textureSize.x / 2.f, textureSize.y / 2.f);
+    
+    // Distance from player to lance
+    float lanceDistance = 25.f;
+    
+    // Calculate new position
+    sf::Vector2f lancePosition = position + direction * lanceDistance;
+    
+    // Position the lance
+    spriteFacade.setPosition(lancePosition.x, lancePosition.y);
+    spriteFacade.setRotation(angle);
+    
+    render(window);
 }
 
 /**
  * Dibuja la lanza en la posicion y con la direccion que tiene su sprite por defecto.
  */
-void Lance::render(){
+void Lance::render(sf::RenderWindow& window){
     // Dibujar el sprite del arma
     spriteFacade.draw(engine->getWindow());
     //attackHitbox.render(engine->getWindow()); // Dibujar la hitbox de ataque

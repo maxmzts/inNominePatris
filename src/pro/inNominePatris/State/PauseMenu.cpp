@@ -90,9 +90,26 @@ void PauseMenu::update(Game& game) {
     }
 }
 
+// void PauseMenu::render(Game& game, sf::RenderWindow& window) {
+//     // Restablecer la vista predeterminada para usar coordenadas de pantalla
+//     sf::View originalView = window.getView();
+//     window.setView(window.getDefaultView());
+
+//     // Dibujar el fondo
+//     window.draw(backgroundSprite);
+
+//     // Dibujar las opciones del menú
+//     for (size_t i = 0; i < menuBackgrounds.size(); ++i) {
+//         window.draw(menuBackgrounds[i]);
+//         window.draw(menuItems[i]);
+//     }
+
+//     // Restaurar la vista original
+//     window.setView(originalView);
+// }
+
 void PauseMenu::render(Game& game, sf::RenderWindow& window) {
-    // Restablecer la vista predeterminada para usar coordenadas de pantalla
-    sf::View originalView = window.getView();
+    // Restablecer la vista predeterminada directamente
     window.setView(window.getDefaultView());
 
     // Dibujar el fondo
@@ -103,9 +120,6 @@ void PauseMenu::render(Game& game, sf::RenderWindow& window) {
         window.draw(menuBackgrounds[i]);
         window.draw(menuItems[i]);
     }
-
-    // Restaurar la vista original
-    window.setView(originalView);
 }
 
 void PauseMenu::moveUp() {

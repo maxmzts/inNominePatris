@@ -229,10 +229,10 @@ Implementado los recursos en la nube mediante el archivo setup.sh y Dropbox.
 He implementado el menu de pausa. Se abre cuando el usuario pulsa la tecla "esc" aunque hay algún error a la hora de mostrarlo.
 
 
-## 20250402 DavidGonzález @(5h)
+## 20250412 DavidGonzález @(5h)
 Refactorización de la interacción, creando una carpeta a parte y modulando las interacciones por clases, funcionan las interacciones básicas pero no he conseguido que los botones abran la puerta y encima he descubierto que mi codigo para quitar bounds no funciona correctamente. He hecho tambien un mapa de obstaculos para probar pathfindings.
 
-## 20250402 DavidGonzález @(6h)
+## 20250413 DavidGonzález @(6h)
 Refactorización aparentemente funcionando como debe, no vuelvo a refactorizar un codigo en mi vida, los botones abren puerta y ya hay spawnInteraction para mover al jugador entre salas, falta arreglar que setLocaltile quite la colision de los bloques, que me estoy peleando y no la consigo quitar por ahora.
 
 ## 20250412 - 20250413 JorgePelegrin @(6h 30min)
@@ -243,3 +243,14 @@ He movido un poco el arco y la lanza para que no estén tan alejados del persona
 
 ## 20250414 MáximoMartínez @(5h)
 Me he puesto a solucionar diferentes errores y a trabajar sobre la fachada de sonido que hice en el hito 1 para añadir de una vez un poco de música y SFX. Luego he ayudado a un compañero a solucionar ciertos errores. Después, parte del tiempo ha sido una sesión de planificación para el bucle de salas. 
+## 20250414 EstrellaDominguez @(1h)
+He cambiado todos algunos archivos de State para implementarlos con el motor 2D.
+
+## 20250414 DavidGonzález @(3h)
+Arreglado problema con los bounds, ya se puden eliminar bounds para dar paso al jugador a zonas previamente inaccesibles.
+
+## 20250414 EstrellaDominguez @(30min)
+He arreglado un error con el menú de pausa.
+
+## 20250414 EstrellaDominguez @(1h)
+He implementado los mensajes de texto de los botones y las puertas para ayudar al jugador (Abrir con la "E", etc).

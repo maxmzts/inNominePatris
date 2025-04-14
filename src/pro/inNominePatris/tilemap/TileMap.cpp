@@ -19,7 +19,7 @@ bool TileMap::loadFromFile(const std::string& filename, GameEngine& engine) {
     TileSet* decoTileset = nullptr;
 
     for (tinyxml2::XMLElement* tilesetElement = mapElement->FirstChildElement("tileset");
-         tilesetElement; tilesetElement = tilesetElement->NextSiblingElement("tileset")) {
+        tilesetElement; tilesetElement = tilesetElement->NextSiblingElement("tileset")) {
         
         int firstGid;
         tilesetElement->QueryIntAttribute("firstgid", &firstGid);
@@ -257,14 +257,16 @@ void TileMap::updateSingleTile(Layer& layer, int x, int y, int oldTileId, int ne
     std::cout << "Vértices actualizados correctamente para el nuevo tile" << std::endl;
 }
 
+
 bool TileMap::isColliding(const sf::FloatRect& playerBounds) const {
     for (const auto& block : collisionBlocks) {
-        if (playerBounds.intersects(block)) {
+        if (block.rect.intersects(playerBounds)) {
             return true;
         }
     }
     return false;
 }
+
 
 sf::Vector2f TileMap::getSpawnPosition(float x, float y) const {
     // Creamos un rectángulo para el jugador en la posición solicitada
@@ -507,7 +509,8 @@ bool TileMap::setTile(const std::string& layerName, int x, int y, int tileId) {
     return true;
 }
 
-// Mantener la función updateCollisionBlocks como estaba
+
+
 void TileMap::updateCollisionBlocks(TileSet* tileset) {
     if (!tileset) return;
     
@@ -519,18 +522,110 @@ void TileMap::updateCollisionBlocks(TileSet* tileset) {
     
     for (int y = 0; y < m_mapHeight; ++y) {
         for (int x = 0; x < m_mapWidth; ++x) {
-            int tileNumber = m_boundsTiles[y * m_mapWidth + x];
+            int tileId = m_boundsTiles[y * m_mapWidth + x];
             // Solo añadir colisión para tiles con ID > 0 (positivos)
-            if (tileNumber > 0) {
-                collisionBlocks.push_back(sf::FloatRect(
+            if (tileId > 0) {
+                CollisionBlock block;
+                block.rect = sf::FloatRect(
                     x * tileset->tileWidth, 
                     y * tileset->tileHeight,
                     tileset->tileWidth, 
                     tileset->tileHeight
-                ));
+                );
+                block.tileId = tileId;
+                block.x = x;
+                block.y = y;
+                collisionBlocks.push_back(block);
             }
         }
     }
     
     std::cout << "Total de bloques de colisión: " << collisionBlocks.size() << std::endl;
+}
+
+bool TileMap::removeCollisionByCoord(int x, int y) {
+    auto it = std::remove_if(collisionBlocks.begin(), collisionBlocks.end(),
+        [x, y](const CollisionBlock& block) {
+            return block.x == x && block.y == y;
+        });
+    std::cout << std::endl;
+    
+    bool removed = it != collisionBlocks.end();
+    collisionBlocks.erase(it, collisionBlocks.end());
+    if (removed) {
+        // También actualizar m_boundsTiles para reflejar la eliminación
+        m_boundsTiles[y * m_mapWidth + x] = 0;
+        std::cout << "Eliminado bloque de colisión en (" << x << ", " << y << ")" << std::endl;
+    }
+    
+    return removed;
+}
+
+bool TileMap::removeCollisionByTileId(int tileId) {
+    bool anyRemoved = false;
+    
+    auto it = std::remove_if(collisionBlocks.begin(), collisionBlocks.end(),
+        [tileId, this, &anyRemoved](const CollisionBlock& block) {
+            if (block.tileId == tileId) {
+                // Actualizar m_boundsTiles cuando encontramos un bloque a eliminar
+                m_boundsTiles[block.y * m_mapWidth + block.x] = 0;
+                anyRemoved = true;
+                return true;
+            }
+            return false;
+        });
+    
+    collisionBlocks.erase(it, collisionBlocks.end());
+    
+    if (anyRemoved) {
+        std::cout << "Eliminados bloques de colisión con ID de tile: " << tileId << std::endl;
+    }
+    
+    return anyRemoved;
+}
+
+bool TileMap::toggleCollisionAt(int x, int y) {
+    // Primero verificamos si ya hay un bloque en esa posición
+    auto it = std::find_if(collisionBlocks.begin(), collisionBlocks.end(),
+        [x, y](const CollisionBlock& block) {
+            return block.x == x && block.y == y;
+        });
+    
+    if (it != collisionBlocks.end()) {
+        // Si existe, lo eliminamos
+        collisionBlocks.erase(it);
+        m_boundsTiles[y * m_mapWidth + x] = 0;
+        std::cout << "Desactivada colisión en (" << x << ", " << y << ")" << std::endl;
+        return true;
+    } else {
+        // Si no existe, verificamos si hay un tile en la capa principal
+        if (m_layers.empty() || m_tilesets.empty()) return false;
+        
+        // Buscar un tileset válido
+        TileSet* mainTileset = nullptr;
+        if (!m_tilesets.empty()) {
+            mainTileset = &(m_tilesets.begin()->second);
+        }
+        
+        if (!mainTileset) return false;
+        
+        // Añadir un nuevo bloque de colisión
+        CollisionBlock block;
+        block.rect = sf::FloatRect(
+            x * mainTileset->tileWidth, 
+            y * mainTileset->tileHeight,
+            mainTileset->tileWidth, 
+            mainTileset->tileHeight
+        );
+        block.tileId = 1; // Usamos un ID genérico para colisión
+        block.x = x;
+        block.y = y;
+        
+        collisionBlocks.push_back(block);
+        // También actualizamos el array de tiles de colisión
+        m_boundsTiles[y * m_mapWidth + x] = block.tileId;
+        
+        std::cout << "Activada colisión en (" << x << ", " << y << ")" << std::endl;
+        return true;
+    }
 }

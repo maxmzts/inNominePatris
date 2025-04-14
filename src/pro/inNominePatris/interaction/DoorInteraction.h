@@ -14,6 +14,8 @@ public:
     
     // Nuevo método para establecer el estado de la puerta
     void setIsOpen(bool isOpen) { m_isOpen = isOpen; }
+    std::string getProximityMessage() const;
+    sf::FloatRect getBounds() const;
     
 private:
     int m_centerX;

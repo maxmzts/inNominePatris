@@ -82,21 +82,40 @@ void ConfMenu::update(Game& game) {
     }
 }
 
+// void ConfMenu::render(Game& game, sf::RenderWindow& window) {
+//     // Restablecer la vista predeterminada para usar coordenadas de pantalla
+//     sf::View originalView = window.getView();
+//     window.setView(window.getDefaultView());
+
+//     // Dibujar el fondo
+//     window.draw(backgroundSprite);
+
+//     for (size_t i = 0; i < menuItems.size(); ++i) {
+//         window.draw(menuBackgrounds[i]);
+//         window.draw(menuItems[i]);
+//     }
+
+//     // Restaurar la vista original
+//     window.setView(originalView);
+// }
+
+
 void ConfMenu::render(Game& game, sf::RenderWindow& window) {
+    GameEngine& engine = game.getEngine();
+
     // Restablecer la vista predeterminada para usar coordenadas de pantalla
-    sf::View originalView = window.getView();
-    window.setView(window.getDefaultView());
+    engine.resetView();
 
     // Dibujar el fondo
-    window.draw(backgroundSprite);
+    engine.drawSprite(backgroundSprite);
 
     for (size_t i = 0; i < menuItems.size(); ++i) {
-        window.draw(menuBackgrounds[i]);
-        window.draw(menuItems[i]);
+        engine.drawRectangle(menuBackgrounds[i]);
+        engine.drawText(menuItems[i]);
     }
 
     // Restaurar la vista original
-    window.setView(originalView);
+    engine.resetView();
 }
 
 

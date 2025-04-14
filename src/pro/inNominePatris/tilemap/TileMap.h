@@ -23,6 +23,10 @@ public:
     bool setTile(const std::string& layerName, int x, int y, int tileId);
     bool setLocalTile(const std::string& layerName, int x, int y, int localTileId);
 
+    bool removeCollisionByCoord(int x, int y);
+    bool removeCollisionByTileId(int tileId);
+    bool toggleCollisionAt(int x, int y);
+
     
 private:
     struct TileSet {
@@ -44,6 +48,12 @@ private:
         sf::FloatRect rect; // Rectángulo de colisión
     };
 
+    struct CollisionBlock {
+        sf::FloatRect rect;     // El rectángulo de colisión
+        int tileId;             // ID del tile
+        int x, y;               // Coordenadas del tile en el mapa
+    };
+
     std::vector<Layer> m_layers;
     std::unordered_map<int, TileSet> m_tilesets;
     std::vector<InteractiveTile> interactiveTiles;
@@ -52,7 +62,7 @@ private:
 
     int m_mapWidth, m_mapHeight;
 
-    std::vector<sf::FloatRect> collisionBlocks;    // Almacena los bloques de colisión
+    std::vector<CollisionBlock> collisionBlocks;    // Almacena los bloques de colisión
 
     // Atributos privados
     sf::VertexArray m_vertices;
