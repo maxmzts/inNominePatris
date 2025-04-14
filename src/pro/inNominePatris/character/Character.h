@@ -76,6 +76,15 @@ public:
 
     void setMousePosition(const sf::Vector2f& position);
     sf::Vector2f getAimDirection() const;
+    
+    
+    int getEquippedIndex() const { return equippedIndex; }
+    Weapon* getWeaponAtIndex(int index) const {
+        if (index >= 0 && index < weapons.size()) {
+            return weapons[index];
+        }
+        return nullptr;
+    }
 
 private:
     sf::Texture texture;
@@ -85,6 +94,8 @@ private:
     sf::Vector2f mousePosition;
     sf::Vector2f aimDirection;
 
+    float currentHealth; // Float para manejar medias vidas
+
     void updateAimDirection();
     
     float speed;
@@ -93,7 +104,6 @@ private:
     sf::Vector2f direction;
 
     int maxHealth;
-    int currentHealth;
 
     bool healthRegenerationEnabled = false;
     float healthRegenTimer = 0.f;
@@ -129,6 +139,8 @@ private:
 
     // Karma
     int karmaPoints = 2000; // Karma del jugador
+
+    void drawHearts(GameEngine& engine);
 };
 
 #endif // CHARACTER_H

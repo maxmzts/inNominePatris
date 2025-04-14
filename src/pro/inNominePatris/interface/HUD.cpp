@@ -26,13 +26,19 @@ HUD::HUD(float width, float height) {
     weaponText.setCharacterSize(20);
     weaponText.setFillColor(sf::Color::White);
     weaponText.setPosition(20, height - 140); // Coordenadas de pantalla
+
+    // Configurar texto del arma secundaria
+    secondaryWeaponText.setFont(font);
+    secondaryWeaponText.setCharacterSize(20);
+    secondaryWeaponText.setFillColor(sf::Color::White);
+    secondaryWeaponText.setPosition(20, height - 110); // Debajo del arma equipada
 }
 
 void HUD::update(const Character& character) {
     // Actualizar barra de vida
-    float healthPercentage = static_cast<float>(character.getHealth()) / character.getMaxHealth();
-    healthPercentage = std::max(0.0f, std::min(healthPercentage, 1.0f)); // Limitar entre 0 y 1
-    healthBar.setSize(sf::Vector2f(200 * healthPercentage, 20));
+    // float healthPercentage = static_cast<float>(character.getHealth()) / character.getMaxHealth();
+    // healthPercentage = std::max(0.0f, std::min(healthPercentage, 1.0f)); // Limitar entre 0 y 1
+    // healthBar.setSize(sf::Vector2f(200 * healthPercentage, 20));
 
     // Actualizar texto del arma equipada
     Weapon* equippedWeapon = character.getEquippedWeapon();
@@ -40,6 +46,17 @@ void HUD::update(const Character& character) {
         weaponText.setString("Arma equipada: " + equippedWeapon->getName());
     } else {
         weaponText.setString("Sin arma equipada");
+    }
+
+    // Actualizar texto del arma secundaria
+    if (character.getWeaponCount() > 1) {
+        int secondaryIndex = 1 - character.getEquippedIndex(); // Índice del arma secundaria
+        Weapon* secondaryWeapon = character.getWeaponAtIndex(secondaryIndex);
+        if (secondaryWeapon) {
+            secondaryWeaponText.setString("Arma secundaria: " + secondaryWeapon->getName());
+        }
+    } else {
+        secondaryWeaponText.setString("");
     }
 }
 
@@ -51,14 +68,17 @@ void HUD::draw(sf::RenderWindow& window, const Character& character) {
     window.setView(window.getDefaultView());
 
     // Dibujar barra de vida
-    window.draw(healthBarBackground);
-    window.draw(healthBar);
+    // window.draw(healthBarBackground);
+    // window.draw(healthBar);
 
     // Dibujar inventario
     window.draw(inventoryBackground);
 
     // Dibujar texto del arma equipada
     window.draw(weaponText);
+
+    // Dibujar texto del arma secundaria
+    window.draw(secondaryWeaponText);
 
     // Restaurar la vista original
     window.setView(originalView);

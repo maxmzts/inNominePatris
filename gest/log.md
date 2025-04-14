@@ -252,3 +252,6 @@ He arreglado un error con el menú de pausa.
 
 ## 20250414 EstrellaDominguez @(1h)
 He implementado los mensajes de texto de los botones y las puertas para ayudar al jugador (Abrir con la "E", etc).
+
+## 20250414 EstrellaDominguez @(1h)
+Ahora en el HUD se ve también el arma secundaria del personaje. 

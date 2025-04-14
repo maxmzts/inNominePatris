@@ -3,6 +3,8 @@
 #include <queue>
 #include <unordered_map>
 #include <cmath>
+#include "../hboxes/Hitbox.h"
+#include "../hboxes/Hurtbox.h"
 #include <algorithm>
 #include <VFXManager.h>
 #include <unordered_set>
@@ -18,7 +20,7 @@ Enemy::Enemy(const std::string& name, float maxHealth, float movementSpeed, cons
     , invincibilityDuration(0.5f)  // Medio segundo de invencibilidad por defecto
     , currentState(EnemyState::IDLE)
     , stateTimer(0.0f)
-    , attackDamage(10)          // Valor por defecto
+    , attackDamage(16.67)          // Valor por defecto
     , attackCooldown(1.0f)         // 1 segundo entre ataques
     , attackTimer(0.0f)
     , detectionRadius(300.0f)      // Detecta al jugador a 300 unidades
