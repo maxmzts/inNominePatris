@@ -1,6 +1,7 @@
 #include "Character.h"
 #include "InteractionFactory.h"
 #include <iostream>
+#include <cmath>
 
 Character::Character(const std::string& textureFile) 
 : speed(200.f), acceleration(800.f), deceleration(1000.f), equippedWeapon(nullptr), 
@@ -43,23 +44,51 @@ void Character::handleInput(const sf::Event& event) {
             case sf::Keyboard::W: movingUp = false; break;
             case sf::Keyboard::S: movingDown = false; break;
         }
+    } else if (event.type == sf::Event::MouseMoved) {
+        // Actualizar la posición del ratón cuando se mueve
+        setMousePosition(sf::Vector2f(event.mouseMove.x, event.mouseMove.y));
     }
+}
+
+void Character::setMousePosition(const sf::Vector2f& position) {
+    mousePosition = position;
+    updateAimDirection();
+}
+
+void Character::updateAimDirection() {
+    // Calcular la dirección desde el personaje hacia el ratón
+    sf::Vector2f playerPos = sprite.getPosition();
+    aimDirection = mousePosition - playerPos;
+    
+    // Normalizar el vector de dirección
+    float length = std::sqrt(aimDirection.x * aimDirection.x + aimDirection.y * aimDirection.y);
+    if (length > 0) {
+        aimDirection.x /= length;
+        aimDirection.y /= length;
+    }
+}
+
+sf::Vector2f Character::getAimDirection() const {
+    return aimDirection;
 }
 
 void Character::update(const TileMap& tilemap, float deltaTime) {
     sf::Vector2f moveDirection(0.f, 0.f);
     updateInvencibility(deltaTime);
     hurtbox->setPosition(getPosition());  // Centrado en la posición del enemigo
-    updateHealthRegeneration(deltaTime); // Regenerar vida si está habilitado;
+    updateHealthRegeneration(deltaTime); // Regenerar vida si está habilitado
+    updateAimDirection(); // Actualizar la dirección de apuntado en cada frame
+    
     if(isShieldActive) {
         shieldAnimation->update(deltaTime); // Actualizar la animación del escudo
     }
+    
     // Detectar entrada del usuario solo si no está en dash
     if (!isDashing) {
-        if (movingRight) { moveDirection.x += 1; setDirection(1.0f, 0.0f); }
-        if (movingLeft) { moveDirection.x -= 1; setDirection(-1.0f, 0.0f); }
-        if (movingUp) { moveDirection.y -= 1; setDirection(0.0f, -1.0f); }
-        if (movingDown) { moveDirection.y += 1; setDirection(0.0f, 1.0f); }
+        if (movingRight) { moveDirection.x += 1; }
+        if (movingLeft) { moveDirection.x -= 1; }
+        if (movingUp) { moveDirection.y -= 1; }
+        if (movingDown) { moveDirection.y += 1; }
 
         // Normalizar el vector de movimiento en caso de movimiento diagonal
         if (moveDirection.x != 0 && moveDirection.y != 0) {
@@ -98,6 +127,9 @@ void Character::update(const TileMap& tilemap, float deltaTime) {
                 if (velocity.y > 0) velocity.y = 0;
             }
         }
+        
+        // Actualizar la dirección a la que mira el personaje para que siempre sea la dirección de apuntado
+        direction = aimDirection;
     }
 
     // Manejar el dash
@@ -109,7 +141,7 @@ void Character::update(const TileMap& tilemap, float deltaTime) {
         }
     }
 
-    // **Comprobación de colisiones antes de mover al personaje**
+    // Comprobación de colisiones antes de mover al personaje
     sf::FloatRect nextBounds = sprite.getGlobalBounds();
     nextBounds.left += velocity.x * deltaTime;
     nextBounds.top += velocity.y * deltaTime;
@@ -126,18 +158,23 @@ void Character::update(const TileMap& tilemap, float deltaTime) {
         }
     }
 
-    // Ajustar la textura según la dirección del movimiento
-    if (movingRight) {
+    // Ajustar la textura según la dirección de apuntado
+    if (aimDirection.x > 0) {
         sprite.setTextureRect(sf::IntRect(0, 2 * 75, 75, 75));
         sprite.setScale(0.6f, 0.6f);
     }
-    if (movingLeft) {
+    if (aimDirection.x < 0) {
         sprite.setTextureRect(sf::IntRect(0, 2 * 75, 75, 75));
         sprite.setScale(-0.6f, 0.6f);
     }
-    if (movingUp) sprite.setTextureRect(sf::IntRect(0, 3 * 75, 75, 75));
-    if (movingDown) sprite.setTextureRect(sf::IntRect(0, 0 * 75, 75, 75));
+    if (aimDirection.y < 0 && std::abs(aimDirection.y) > std::abs(aimDirection.x)) {
+        sprite.setTextureRect(sf::IntRect(0, 3 * 75, 75, 75));
+    }
+    if (aimDirection.y > 0 && std::abs(aimDirection.y) > std::abs(aimDirection.x)) {
+        sprite.setTextureRect(sf::IntRect(0, 0 * 75, 75, 75));
+    }
 }
+
 
 void Character::draw(GameEngine& engine) {
     /////// DEBUG
@@ -148,7 +185,7 @@ void Character::draw(GameEngine& engine) {
 
     // Dibujar el arma equipada
     if (equippedWeapon) {
-        equippedWeapon->renderOnPlayer(getPosition(), getDirection()); // Pasar el posicion y direccion para ajustar la posición del arma
+        equippedWeapon->renderOnPlayer(getPosition(), aimDirection); // Usar dirección de apuntado
     }
 
     // Dibujar barra de vida sobre el personaje
@@ -233,8 +270,8 @@ void Character::startDash(float speed, float duration) {
         dashSpeed = speed;
         dashDuration = duration;
         dashTimer.restart();
-        velocity.x = dashSpeed * direction.x; // Se mueve en la dirección que mira el personaje
-        velocity.y = dashSpeed * direction.y;
+        velocity.x = dashSpeed * aimDirection.x; // Se mueve en la dirección de apuntado
+        velocity.y = dashSpeed * aimDirection.y;
     }
 }
 
@@ -476,3 +513,4 @@ void Character::enableTemporalyShield(float duration) {
 sf::FloatRect Character::getBounds() const {
     return sprite.getGlobalBounds();
 }
+

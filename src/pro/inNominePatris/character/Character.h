@@ -74,10 +74,18 @@ public:
     void increaseDodgeChance(float amount);
     bool tryDodge() const;
 
+    void setMousePosition(const sf::Vector2f& position);
+    sf::Vector2f getAimDirection() const;
+
 private:
     sf::Texture texture;
     sf::Sprite sprite;
     sf::Vector2f velocity;
+
+    sf::Vector2f mousePosition;
+    sf::Vector2f aimDirection;
+
+    void updateAimDirection();
     
     float speed;
     float acceleration;

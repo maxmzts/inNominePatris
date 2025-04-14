@@ -1,8 +1,8 @@
 #include "Sword.h"
 #include <iostream>
 #include "Weapon.h"
-// #include "Character.h" SE DEBE QUITAR
 #include "Enemy.h"
+#include <cmath>
 
 Sword::Sword(GameEngine* engine) 
 :   Weapon(engine),
@@ -38,61 +38,58 @@ Sword::Sword(GameEngine* engine)
  */
 void Sword::attack(sf::Vector2f position, sf::Vector2f direction) {
     if (attackTimer <= 0.f) {
-        createHitbox(position, direction); // Crear la hitbox del ataque
+        createHitbox(position, direction); // Usar la dirección de apuntado
         attackTimer = attackCooldown;     // Reiniciar el temporizador de ataque
         increaseConsecutiveAttacks();
-        // Configurar la posición inicial del slash
+        // Configurar la posición inicial del slash basado en la dirección de apuntado
         sf::Vector2f slashOffset;
         float rotation = 0.f;
+        
+        // Calcular el ángulo de rotación basado en la dirección de apuntado
+        float angle = std::atan2(direction.y, direction.x) * 180 / M_PI;
+        rotation = angle;
+        
+        // Ajustar el offset basado en el ángulo
+        slashOffset.x = direction.x * 25.f;
+        slashOffset.y = direction.y * 25.f;
 
-        if (direction.x > 0) { // Derecha
-            slashOffset = sf::Vector2f(25.f, -20.f); // Desplazar hacia la derecha
-            rotation = 0.f;
-        } else if (direction.x < 0) { // Izquierda
-            slashOffset = sf::Vector2f(-25.f, 20.f); // Desplazar hacia la izquierda
-            rotation = 180.f;
-        } else if (direction.y > 0) { // Abajo
-            slashOffset = sf::Vector2f(20.f, 25.f); // Desplazar hacia abajo
-            rotation = 90.f;
-        } else if (direction.y < 0) { // Arriba
-            slashOffset = sf::Vector2f(-20.f, -25.f); // Desplazar hacia arriba
-            rotation = -90.f;
-        }
-
-        slashSpriteFacade.setPosition(position.x + slashOffset.x, position.y + slashOffset.y); // Ajustar la posición del slash
+        slashSpriteFacade.setPosition(position.x + slashOffset.x, position.y + slashOffset.y);
         slashSpriteFacade.setRotation(rotation);
 
         // Reproducir la animación del slash
-        slashAnimation.play("slash", 12.0f, false); // 12 FPS, no en bucle
+        slashAnimation.play("slash", 12.0f, false);
         isAnimating = true;
 
-        float damage = calculateDamage(); // Calcular el daño
+        float damage = calculateDamage();
         std::cout << "Sword attack: Dealt " << damage << " damage!" << std::endl;
     }
 }
 
 void Sword::createHitbox(sf::Vector2f position, sf::Vector2f direction) {
     sf::Vector2f offset;
-    sf::Vector2f size;
-
-    if (direction.x > 0) { // Derecha
-        offset = sf::Vector2f(60.f, 0.f);
-        size = sf::Vector2f(80.f, 50.f); // Hitbox horizontal
-    } else if (direction.x < 0) { // Izquierda
-        offset = sf::Vector2f(-60.f, 0.f);
-        size = sf::Vector2f(80.f, 50.f); // Hitbox horizontal
-    } else if (direction.y > 0) { // Abajo
-        offset = sf::Vector2f(0.f, 60.f);
-        size = sf::Vector2f(50.f, 80.f); // Hitbox vertical
-    } else if (direction.y < 0) { // Arriba
-        offset = sf::Vector2f(0.f, -60.f);
-        size = sf::Vector2f(50.f, 80.f); // Hitbox vertical
+    sf::Vector2f size(80.f, 50.f); // Tamaño base de la hitbox
+    
+    // Calcular el ángulo para la dirección de apuntado
+    float angle = std::atan2(direction.y, direction.x);
+    
+    // Calcular el offset basado en la dirección normalizada
+    offset.x = direction.x * 60.f;
+    offset.y = direction.y * 60.f;
+    
+    // Ajustar el tamaño de la hitbox según la dirección
+    if (std::abs(direction.x) > std::abs(direction.y)) {
+        // Más horizontal que vertical
+        size = sf::Vector2f(80.f, 50.f);
+    } else {
+        // Más vertical que horizontal
+        size = sf::Vector2f(50.f, 80.f);
     }
 
-    attackHitbox->setSize(size); // Ajustar el tamaño de la hitbox
-    attackHitbox->setPosition(position + offset); // Ajustar la posición de la hitbox
-    attackHitbox->setActive(true); // Activar la hitbox
+    attackHitbox->setSize(size);
+    attackHitbox->setPosition(position + offset);
+    attackHitbox->setActive(true);
 }
+
 
 bool Sword::useAbility() {
     static sf::Clock clock;
@@ -113,21 +110,18 @@ bool Sword::useAbility() {
  * Luego llama a render para dibujar el espada.
  */
 void Sword::renderOnPlayer(sf::Vector2f position, sf::Vector2f direction) {
-    // Ajustar la posición del arma en función de la dirección
-    if (direction.x > 0) {  // Mirando a la derecha
-        spriteFacade.setPosition(position.x + 20, position.y);
-        spriteFacade.setRotation(0); // Sin rotación
-    } else if (direction.x < 0) {  // Mirando a la izquierda
-        spriteFacade.setPosition(position.x - 20, position.y);
-        spriteFacade.setRotation(180); // Rotar 180 grados
-    } else if (direction.y < 0) {  // Mirando hacia arriba
-        spriteFacade.setPosition(position.x, position.y - 20);
-        spriteFacade.setRotation(270); // Rotar 270 grados
-    } else if (direction.y > 0) {  // Mirando hacia abajo
-        spriteFacade.setPosition(position.x, position.y + 20);
-        spriteFacade.setRotation(90); // Rotar 90 grados
-    }
-
+    // Calcular el ángulo para la dirección de apuntado
+    float angle = std::atan2(direction.y, direction.x) * 180 / M_PI;
+    
+    // Calcular el offset basado en la dirección normalizada
+    sf::Vector2f offset;
+    offset.x = direction.x * 20.f;
+    offset.y = direction.y * 20.f;
+    
+    // Posicionar la espada en la dirección de apuntado
+    spriteFacade.setPosition(position.x + offset.x, position.y + offset.y);
+    spriteFacade.setRotation(angle);
+    
     render();
 }
 
