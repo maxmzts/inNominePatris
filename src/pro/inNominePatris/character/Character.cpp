@@ -27,6 +27,11 @@ direction(0.f, 0.f), maxHealth(100), currentHealth(100), isInvencible(false) {
     velocity = sf::Vector2f(0.f, 0.f);
 
     hurtbox = new Hurtbox(sf::Vector2f(60.0f, 60.0f), sf::Vector2f(0.0f, 0.0f));
+
+    shieldsprite.loadTexture("./resources/bubble.png");
+    // Inicializar la animación del escudo
+    shieldAnimation = new AnimatedSprite(shieldsprite); // Usar el sprite como referencia
+    shieldAnimation->addAnimation("shield", 7, {0, 0}, {64, 64}, true); // 7 frames, 64x64 cada uno
 }
 
 void Character::handleInput(const sf::Event& event) {
@@ -52,6 +57,9 @@ void Character::update(const TileMap& tilemap, float deltaTime) {
     updateInvencibility(deltaTime);
     hurtbox->setPosition(getPosition());  // Centrado en la posición del enemigo
     updateHealthRegeneration(deltaTime); // Regenerar vida si está habilitado;
+    if(isShieldActive) {
+        shieldAnimation->update(deltaTime); // Actualizar la animación del escudo
+    }
     // Detectar entrada del usuario solo si no está en dash
     if (!isDashing) {
         if (movingRight) { moveDirection.x += 1; setDirection(1.0f, 0.0f); }
@@ -170,6 +178,11 @@ void Character::draw(GameEngine& engine) {
     healthBar.setSize(sf::Vector2f(50 * healthPercentage, 5));
 
     engine.drawRectangle(healthBar);
+
+    if (isShieldActive) {
+        shieldsprite.setPosition(sprite.getPosition().x - 32, sprite.getPosition().y - 32);
+        shieldsprite.draw(engine.getWindow());
+    }
 }
 
 
@@ -348,6 +361,10 @@ void Character::takeDamage(int damage) {
         }
         setHealth(currentHealth - damage);
         isInvencible = true;
+        if(invencibilityDuration == 4.0f) {
+            isShieldActive = true; // Activar el escudo temporal
+            shieldAnimation->play("shield", 12.0f); // Reproducir a 12 FPS
+        }
     };
 }
 
@@ -389,8 +406,18 @@ void Character::interact(TileMap& tilemap) {
         auto interaction = InteractionFactory::createInteraction(tileId);
         
         if (interaction) {
-            // Ejecutar la interacción
-            interaction->execute(*this, tilemap);
+            // Verificar si la interacción está disponible
+            if (interaction->isAvailable(*this, tilemap)) {
+                // Ejecutar la interacción
+                interaction->execute(*this, tilemap);
+                
+                // Si es una puerta y se han cumplido los requisitos, abrirla
+                if (auto doorInteraction = std::dynamic_pointer_cast<DoorInteraction>(interaction)) {
+                    if (InteractionManager::getInstance()->checkDoorRequirements(tileId)) {
+                        std::cout << "Se han cumplido todos los requisitos para abrir la puerta." << std::endl;
+                    }
+                }
+            }
         } else {
             std::cout << "No hay interacción definida para el tile " << tileId << std::endl;
         }
@@ -399,12 +426,15 @@ void Character::interact(TileMap& tilemap) {
     }
 }
 
+
 void Character::updateInvencibility(float deltaTime){
     if(isInvencible)
         invencibilityTimer += deltaTime;
     if(invencibilityTimer > invencibilityDuration){
         isInvencible = false;
         invencibilityTimer = 0;
+        if(invencibilityDuration == 4.0f)
+            isShieldActive = false; // Desactivar el escudo al finalizar la invencibilidad
     }
 }
 
@@ -458,4 +488,9 @@ void Character::enableHealthRegeneration() {
 void Character::enableTemporalyShield(float duration) {
     invencibilityDuration = duration;
     invencibilityTimer = 0.0f; // Reiniciar el temporizador
+}
+
+
+sf::FloatRect Character::getBounds() const {
+    return sprite.getGlobalBounds();
 }

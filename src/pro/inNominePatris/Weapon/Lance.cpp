@@ -237,16 +237,16 @@ void Portal::update(float deltaTime) {
 void Lance::renderOnPlayer(sf::Vector2f position, sf::Vector2f direction) {
     // Ajustar la posición del arma en función de la dirección
     if (direction.x > 0) {  // Mirando a la derecha
-        spriteFacade.setPosition(position.x + 20, position.y);
+        spriteFacade.setPosition(position.x + 20, position.y-20);
         spriteFacade.setRotation(0); // Sin rotación
     } else if (direction.x < 0) {  // Mirando a la izquierda
-        spriteFacade.setPosition(position.x - 20, position.y);
+        spriteFacade.setPosition(position.x - 20, position.y+20);
         spriteFacade.setRotation(180); // Rotar 180 grados
     } else if (direction.y < 0) {  // Mirando hacia arriba
-        spriteFacade.setPosition(position.x, position.y - 20);
+        spriteFacade.setPosition(position.x-20, position.y - 20);
         spriteFacade.setRotation(270); // Rotar 270 grados
     } else if (direction.y > 0) {  // Mirando hacia abajo
-        spriteFacade.setPosition(position.x, position.y + 20);
+        spriteFacade.setPosition(position.x+20, position.y + 20);
         spriteFacade.setRotation(90); // Rotar 90 grados
     }
 

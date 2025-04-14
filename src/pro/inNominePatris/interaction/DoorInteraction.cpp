@@ -1,6 +1,6 @@
-// DoorInteraction.cpp
 #include "DoorInteraction.h"
 #include "Character.h"
+#include "InteractionManager.h"
 #include <iostream>
 
 DoorInteraction::DoorInteraction(int id, const std::string& name, bool isOpen, int centerX, int centerY)
@@ -11,24 +11,39 @@ DoorInteraction::DoorInteraction(int id, const std::string& name, bool isOpen, i
 }
 
 void DoorInteraction::execute(Character& character, TileMap& tilemap) {
-    if (m_isOpen) {
-        std::cout << "La puerta " << getName() << " está abierta." << std::endl;
-        m_isOpen = false; //reiniciamos bool para evitar que este codigo se realice repetidas veces
-        // eliminamos barrera de deco
-        tilemap.setLocalTile("deco", m_centerX, m_centerY, -1); 
-        tilemap.setLocalTile("deco", m_centerX + 1, m_centerY, -1); 
-        tilemap.setLocalTile("deco", m_centerX + 2, m_centerY, -1); 
-        tilemap.setLocalTile("deco", m_centerX + 3, m_centerY, -1); 
-        tilemap.setLocalTile("deco", m_centerX + 4, m_centerY, -1); 
-        tilemap.setLocalTile("deco", m_centerX + 5, m_centerY, -1); 
-        // eliminamos barrera de bounds
-        // TENGO QUE ARREGLAR EL CODIGO PARA QUE PUEDA QUITAR BLOQUES PORQUE NO ESTÁ FUNCIONANDO
+    // Verificar si todos los botones requeridos están activados
+    if (InteractionManager::getInstance()->checkDoorRequirements(getId())) {
+        if (!m_isOpen) {
+            std::cout << "¡Abriendo puerta " << getName() << "!" << std::endl;
+            m_isOpen = true;
+            
+            // Eliminar barrera de decoración
+            tilemap.setLocalTile("deco", m_centerX, m_centerY, -1); 
+            tilemap.setLocalTile("deco", m_centerX + 1, m_centerY, -1); 
+            tilemap.setLocalTile("deco", m_centerX + 2, m_centerY, -1); 
+            tilemap.setLocalTile("deco", m_centerX + 3, m_centerY, -1); 
+            tilemap.setLocalTile("deco", m_centerX + 4, m_centerY, -1); 
+            tilemap.setLocalTile("deco", m_centerX + 5, m_centerY, -1); 
+            // Eliminar barrera de bounds
+            tilemap.setLocalTile("bounds", m_centerX, m_centerY, -1); 
+            tilemap.setLocalTile("bounds", m_centerX + 1, m_centerY, -1); 
+            tilemap.setLocalTile("bounds", m_centerX + 2, m_centerY, -1); 
+            tilemap.setLocalTile("bounds", m_centerX + 3, m_centerY, -1); 
+            tilemap.setLocalTile("bounds", m_centerX + 4, m_centerY, -1); 
+            tilemap.setLocalTile("bounds", m_centerX + 5, m_centerY, -1); 
+            
+            // Eliminar barrera de colisiones
+            // Aquí puedes añadir el código para quitar los bloques de colisión
+        } else {
+            std::cout << "La puerta " << getName() << " ya está abierta." << std::endl;
+        }
     } else {
-        std::cout << "La puerta " << getName() << " está cerrada." << std::endl;
+        std::cout << "No se puede abrir la puerta " << getName() << ". Faltan botones por activar." << std::endl;
     }
 }
 
 bool DoorInteraction::isAvailable(Character& character, TileMap& tilemap) const {
-    // Siempre disponible
+    // La puerta está disponible para interacción siempre,
+    // pero solo se abrirá si se cumplen los requisitos
     return true;
 }

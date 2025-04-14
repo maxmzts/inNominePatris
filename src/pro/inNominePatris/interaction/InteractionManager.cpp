@@ -1,50 +1,74 @@
 #include "InteractionManager.h"
-#include "Character.h"
-#include "DoorInteraction.h"
 #include <iostream>
 
+InteractionManager* InteractionManager::instance = nullptr;
+
 InteractionManager::InteractionManager() {
-    // Registrar interacciones iniciales (si las hay)
+    // Configurar los requisitos iniciales para la puerta principal (ID 69)
+    // Requiere los tres botones (IDs 772, 773, 774)
+    std::vector<int> requiredButtons = {772, 773, 774};
+    setDoorRequirements(69, requiredButtons);
 }
 
-void InteractionManager::registerInteraction(std::shared_ptr<Interaction> interaction) {
-    m_interactions[interaction->getId()] = interaction;
-}
-
-bool InteractionManager::executeInteraction(int id, Character& character, TileMap& tilemap) {
-    auto it = m_interactions.find(id);
-    if (it != m_interactions.end() && it->second->isAvailable(character, tilemap)) {
-        it->second->execute(character, tilemap);
-        
-        // Trackear botones presionados
-        if (id == 772) m_button1Pressed = true;
-        if (id == 773) m_button2Pressed = true;
-        if (id == 774) m_button3Pressed = true;
-        
-        // Si todos los botones están presionados, ejecutar la interacción de la puerta
-        if (areAllButtonsPressed()) {
-            // Crear temporalmente una interacción de puerta
-            DoorInteraction doorInteraction(69, "Puerta Principal", true, 27, 7);
-            doorInteraction.execute(character, tilemap);
-        }
-        
-        return true;
+InteractionManager* InteractionManager::getInstance() {
+    if (!instance) {
+        instance = new InteractionManager();
     }
-    return false;
+    return instance;
 }
 
-bool InteractionManager::checkInteraction(Character& character, TileMap& tilemap) {
-    sf::FloatRect playerBounds = character.getBounds();
-    int tileId = -1;
+void InteractionManager::registerButtonPress(int buttonId) {
+    m_activatedButtons[buttonId] = true;
     
-    if (tilemap.isPlayerInteractingWithTile(playerBounds, tileId)) {
-        return executeInteraction(tileId, character, tilemap);
-    } else {
-        std::cout << "No hay nada con lo que interactuar aquí." << std::endl;
+    // Imprimir el estado actual para depuración
+    std::cout << "Botón " << buttonId << " activado." << std::endl;
+    
+    // Verificar todas las puertas que puedan verse afectadas por este botón
+    for (const auto& pair : m_doorRequirements) {
+        int doorId = pair.first;
+        const std::set<int>& requirements = pair.second;
+        
+        // Verificar si este botón es relevante para esta puerta
+        if (requirements.find(buttonId) != requirements.end()) {
+            if (checkDoorRequirements(doorId)) {
+                std::cout << "¡Todos los botones activados para la puerta " << doorId << "!" << std::endl;
+            }
+        }
+    }
+}
+
+bool InteractionManager::checkDoorRequirements(int doorId) {
+    // Si la puerta no tiene requisitos, devolver false
+    if (m_doorRequirements.find(doorId) == m_doorRequirements.end()) {
         return false;
     }
+    
+    // Verificar si todos los botones requeridos para esta puerta están activados
+    const std::set<int>& requiredButtons = m_doorRequirements[doorId];
+    for (int buttonId : requiredButtons) {
+        if (m_activatedButtons.find(buttonId) == m_activatedButtons.end() || !m_activatedButtons[buttonId]) {
+            return false; // Al menos un botón requerido no está activado
+        }
+    }
+    
+    return true; // Todos los botones requeridos están activados
 }
 
-bool InteractionManager::areAllButtonsPressed() const {
-    return m_button1Pressed && m_button2Pressed && m_button3Pressed;
+void InteractionManager::addDoorRequirement(int doorId, int buttonId) {
+    if (m_doorRequirements.find(doorId) == m_doorRequirements.end()) {
+        m_doorRequirements[doorId] = std::set<int>();
+    }
+    m_doorRequirements[doorId].insert(buttonId);
+}
+
+void InteractionManager::setDoorRequirements(int doorId, const std::vector<int>& buttonIds) {
+    m_doorRequirements[doorId] = std::set<int>(buttonIds.begin(), buttonIds.end());
+}
+
+void InteractionManager::resetButtons() {
+    m_activatedButtons.clear();
+}
+
+InteractionManager::~InteractionManager() {
+    // Cleanup if needed
 }

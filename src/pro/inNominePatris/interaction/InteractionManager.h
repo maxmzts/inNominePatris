@@ -1,33 +1,47 @@
 #pragma once
-#include "Interaction.h"
-#include "TileMap.h"
-#include <unordered_map>
-#include <memory>
 
-class Character;
+#include <map>
+#include <vector>
+#include <set>
+#include <memory>
+#include "Interaction.h"
+#include "DoorInteraction.h"
+#include "ButtonInteraction.h"
 
 class InteractionManager {
-public:
-    InteractionManager();
-    ~InteractionManager() = default;
-    
-    // Registrar una nueva interacción
-    void registerInteraction(std::shared_ptr<Interaction> interaction);
-    
-    // Ejecutar una interacción por ID
-    bool executeInteraction(int id, Character& character, TileMap& tilemap);
-    
-    // Comprobar interacciones disponibles en la posición del jugador
-    bool checkInteraction(Character& character, TileMap& tilemap);
-    
 private:
-    std::unordered_map<int, std::shared_ptr<Interaction>> m_interactions;
+    // Singleton
+    static InteractionManager* instance;
     
-    // Variables para tracking del estado de los botones
-    bool m_button1Pressed = false;
-    bool m_button2Pressed = false;
-    bool m_button3Pressed = false;
+    // Mapa que registra qué botones (por ID) han sido presionados
+    std::map<int, bool> m_activatedButtons;
     
-    // Comprobar si todos los botones han sido presionados
-    bool areAllButtonsPressed() const;
+    // Mapa que asocia cada puerta con los botones requeridos para abrirla
+    // La clave es el ID de la puerta, el valor es un conjunto de IDs de botones
+    std::map<int, std::set<int>> m_doorRequirements;
+    
+    // Constructor privado (singleton)
+    InteractionManager();
+    
+public:
+    // Obtener instancia única
+    static InteractionManager* getInstance();
+    
+    // Registrar un botón como presionado
+    void registerButtonPress(int buttonId);
+    
+    // Verificar si todos los botones requeridos para una puerta están presionados
+    bool checkDoorRequirements(int doorId);
+    
+    // Añadir un requisito para una puerta (asociar un botón a una puerta)
+    void addDoorRequirement(int doorId, int buttonId);
+    
+    // Configurar los requisitos para una puerta desde una lista de botones
+    void setDoorRequirements(int doorId, const std::vector<int>& buttonIds);
+    
+    // Reiniciar todos los botones a no presionados
+    void resetButtons();
+    
+    // Destructor
+    ~InteractionManager();
 };

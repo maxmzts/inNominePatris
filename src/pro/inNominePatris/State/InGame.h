@@ -31,6 +31,9 @@ private:
     InGame(GameEngine& engine); // Constructor privado
 
     HUD hud; // Instancia de la interfaz de usuario
+    
+    // Método para verificar interacciones automáticas (como los teletransportes)
+    void checkAutoInteractions();
 
 public:
     static InGame* getInstance(GameEngine& engine); // Método para obtener la instancia

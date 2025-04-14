@@ -231,3 +231,12 @@ He implementado el menu de pausa. Se abre cuando el usuario pulsa la tecla "esc"
 
 ## 20250402 DavidGonzález @(5h)
 Refactorización de la interacción, creando una carpeta a parte y modulando las interacciones por clases, funcionan las interacciones básicas pero no he conseguido que los botones abran la puerta y encima he descubierto que mi codigo para quitar bounds no funciona correctamente. He hecho tambien un mapa de obstaculos para probar pathfindings.
+
+## 20250402 DavidGonzález @(6h)
+Refactorización aparentemente funcionando como debe, no vuelvo a refactorizar un codigo en mi vida, los botones abren puerta y ya hay spawnInteraction para mover al jugador entre salas, falta arreglar que setLocaltile quite la colision de los bloques, que me estoy peleando y no la consigo quitar por ahora.
+
+## 20250412 - 20250413 JorgePelegrin @(6h 30min)
+He añadido el sistema de karma con las dos ramas, una de pecado y otra de absolucion, y lo he juntado con la tienda para poder comprar las mejoras desde ahí. También he implementado todas las mejoras al personaje y armas, las cuales he tenido que refactorizar un poco el código para poder aplicar las mejoras permanentes a todas las armas a la vez.
+
+## 20250414 JorgePelegrin @(1h)
+He movido un poco el arco y la lanza para que no estén tan alejados del personaje, y he añadido la animación de una burbuja a modo visual para poder saber cuando tienes el escudo de la mejora permanente activo y no te pueden golpear. 

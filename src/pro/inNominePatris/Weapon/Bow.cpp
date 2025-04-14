@@ -102,17 +102,17 @@ void Bow::update(float deltaTime, const TileMap& tileMap) {
 void Bow::renderOnPlayer(sf::Vector2f position, sf::Vector2f direction) {
     // Ajustar la posición del arma en función de la dirección
     if (direction.x > 0) {  // Mirando a la derecha
-        spriteFacade.setPosition(position.x + 20, position.y);
-        spriteFacade.setRotation(0); // Sin rotación
+        spriteFacade.setPosition(position.x + 20, position.y - 34);
+        spriteFacade.setRotation(45); // Sin rotación
     } else if (direction.x < 0) {  // Mirando a la izquierda
-        spriteFacade.setPosition(position.x - 20, position.y);
-        spriteFacade.setRotation(180); // Rotar 180 grados
+        spriteFacade.setPosition(position.x - 20, position.y + 34);
+        spriteFacade.setRotation(225); // Rotar 180 grados
     } else if (direction.y < 0) {  // Mirando hacia arriba
-        spriteFacade.setPosition(position.x, position.y - 20);
-        spriteFacade.setRotation(270); // Rotar 270 grados
+        spriteFacade.setPosition(position.x - 34, position.y - 20);
+        spriteFacade.setRotation(315); // Rotar 270 grados
     } else if (direction.y > 0) {  // Mirando hacia abajo
-        spriteFacade.setPosition(position.x, position.y + 20);
-        spriteFacade.setRotation(90); // Rotar 90 grados
+        spriteFacade.setPosition(position.x + 34, position.y + 20);
+        spriteFacade.setRotation(135); // Rotar 90 grados
     }
 
     render();

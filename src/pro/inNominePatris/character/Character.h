@@ -9,6 +9,7 @@
 #include <vector>
 #include "AbilityType.h"
 #include "InteractionManager.h"
+#include "AnimatedSprite.h"
 
 
 class Character {
@@ -98,6 +99,9 @@ private:
     bool isInvencible;
     float invencibilityTimer = 0.f;
     float invencibilityDuration = 1.f; // Duración de la invencibilidad en segundos
+    AnimatedSprite* shieldAnimation; // Animación del escudo
+    SpriteFacade shieldsprite;       // Textura para el escudo
+    bool isShieldActive = false;     // Indica si el escudo está activo
 
     //Para esquivar la mejora
     float dodgeChance = 0.0f; // Probabilidad de esquivar ataques
@@ -116,7 +120,7 @@ private:
     void updateInvencibility(float deltaTime);
 
     // Karma
-    int karmaPoints = 100; // Karma del jugador
+    int karmaPoints = 2000; // Karma del jugador
 };
 
 #endif // CHARACTER_H
