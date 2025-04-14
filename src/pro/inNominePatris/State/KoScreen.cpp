@@ -1,4 +1,5 @@
 #include "KoScreen.h"
+#include "../Game.h"
 #include <iostream>
 
 KoScreen* KoScreen::instance = nullptr;
@@ -16,6 +17,8 @@ void KoScreen::update(Game& game) {
 }
 
 void KoScreen::render(Game& game, sf::RenderWindow& window) {
+    GameEngine& engine = game.getEngine();
+
+    // Lógica para renderizar elementos específicos de la pantalla de KO
     std::cout << "Rendering KoScreen state...\n";
-    // Renderizado de la pantalla de KO
 }

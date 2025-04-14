@@ -2,6 +2,7 @@
 #include <iostream>
 #include "Weapon.h"
 // #include "Character.h" SE DEBE QUITAR
+#include "../hboxes/Hitbox.h"
 #include "Enemy.h"
 
 Sword::Sword(GameEngine* engine) 
@@ -112,7 +113,7 @@ bool Sword::useAbility() {
  * Ajusta el espada en la posicion y con la direccion del jugador.
  * Luego llama a render para dibujar el espada.
  */
-void Sword::renderOnPlayer(sf::Vector2f position, sf::Vector2f direction) {
+void Sword::renderOnPlayer(sf::Vector2f position, sf::Vector2f direction, sf::RenderWindow& window) {
     // Ajustar la posición del arma en función de la dirección
     if (direction.x > 0) {  // Mirando a la derecha
         spriteFacade.setPosition(position.x + 20, position.y);
@@ -128,18 +129,28 @@ void Sword::renderOnPlayer(sf::Vector2f position, sf::Vector2f direction) {
         spriteFacade.setRotation(90); // Rotar 90 grados
     }
 
-    render();
+    render(window);
 }
 
 /**
  * Dibuja el espada en la posicion y con la direccion que tiene su sprite por defecto.
  */
-void Sword::render(){
+// void Sword::render(){
+//     // Dibujar el sprite del arma
+//     spriteFacade.draw(engine->getWindow());
+//     //attackHitbox.render(engine->getWindow()); // Dibujar la hitbox de ataque
+//     if(isAnimating) {
+//         slashSpriteFacade.draw(engine->getWindow()); // Dibujar la animación de ataque
+//     }
+// }
+
+// filepath: /proyecto-abp-grupo-f4/src/pro/inNominePatris/Weapon/Sword.cpp
+void Sword::render(sf::RenderWindow& window) {
     // Dibujar el sprite del arma
-    spriteFacade.draw(engine->getWindow());
-    //attackHitbox.render(engine->getWindow()); // Dibujar la hitbox de ataque
-    if(isAnimating) {
-        slashSpriteFacade.draw(engine->getWindow()); // Dibujar la animación de ataque
+    spriteFacade.draw(engine->getRenderWindow());
+    //attackHitbox.render(engine.getRenderWindow()); // Dibujar la hitbox de ataque
+    if (isAnimating) {
+        slashSpriteFacade.draw(engine->getRenderWindow()); // Dibujar la animación de ataque
     }
 }
 

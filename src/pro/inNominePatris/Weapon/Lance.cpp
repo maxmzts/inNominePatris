@@ -1,6 +1,7 @@
 #include "Lance.h"
 #include <iostream>
 #include "Character.h"
+#include "../hboxes/Hitbox.h"
 #include <SFML/Window/Mouse.hpp>
 #include <cmath>
 
@@ -234,7 +235,7 @@ void Portal::update(float deltaTime) {
  * Ajusta la lanza en la posicion y con la direccion del jugador.
  * Luego llama a render para dibujar la lanza.
  */
-void Lance::renderOnPlayer(sf::Vector2f position, sf::Vector2f direction) {
+void Lance::renderOnPlayer(sf::Vector2f position, sf::Vector2f direction,sf::RenderWindow& window) {
     // Ajustar la posición del arma en función de la dirección
     if (direction.x > 0) {  // Mirando a la derecha
         spriteFacade.setPosition(position.x + 20, position.y-20);
@@ -250,13 +251,13 @@ void Lance::renderOnPlayer(sf::Vector2f position, sf::Vector2f direction) {
         spriteFacade.setRotation(90); // Rotar 90 grados
     }
 
-    render();
+    render(window);
 }
 
 /**
  * Dibuja la lanza en la posicion y con la direccion que tiene su sprite por defecto.
  */
-void Lance::render(){
+void Lance::render(sf::RenderWindow& window){
     // Dibujar el sprite del arma
     spriteFacade.draw(engine->getWindow());
     //attackHitbox.render(engine->getWindow()); // Dibujar la hitbox de ataque

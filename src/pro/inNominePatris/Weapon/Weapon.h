@@ -47,9 +47,9 @@ class Weapon {
 
         // Método para dibujar el arma, ajustado al personaje
         //virtual void draw(sf::Vector2f position, sf::Vector2f direction) = 0;
-        virtual void render() = 0;
+        virtual void render(sf::RenderWindow& window) = 0;
         virtual void update(float deltaTime) = 0;
-        virtual void renderOnPlayer(sf::Vector2f position, sf::Vector2f direction) = 0;
+        virtual void renderOnPlayer(sf::Vector2f position, sf::Vector2f direction, sf::RenderWindow& window) = 0;
         virtual sf::Vector2f getPosition() const = 0;
         virtual void setPosition(float x, float y) = 0;
         virtual std::shared_ptr<Hitbox> getAttackHitbox() const = 0; // Método para obtener la hitbox de ataque

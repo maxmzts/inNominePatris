@@ -166,7 +166,7 @@ void Character::draw(GameEngine& engine) {
 
     // Dibujar el arma equipada
     if (equippedWeapon) {
-        equippedWeapon->renderOnPlayer(getPosition(), getDirection()); // Pasar el posicion y direccion para ajustar la posición del arma
+        equippedWeapon->renderOnPlayer(getPosition(), getDirection(), engine.getWindow()); // Pasar el posicion y direccion para ajustar la posición del arma
     }
 
     // Dibujar barra de vida sobre el personaje

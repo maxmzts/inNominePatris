@@ -107,7 +107,7 @@ void Shop::update(int playerKarma) {
     updateNodeVisuals();
 }
 
-void Shop::render() {
+void Shop::render(sf::RenderWindow& window) {
     if (!openState) return;
 
     // Guardamos la vista actual temporalmente

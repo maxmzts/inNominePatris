@@ -329,32 +329,63 @@ InGame::~InGame() {
 /**
  * Renderiza los elementos de InGame
  */
+// void InGame::render(Game& game, sf::RenderWindow& window) {
+//     engine.clear();
+//     tileMap.draw(engine);
+
+//     for (Weapon* weapon : weaponsOnGround) {
+//         weapon->render();
+//     }
+
+//     for (auto enemy : EnemyManager::getInstance()->getEnemyList()){
+//         enemy->render(window);
+//     }
+
+//     player.draw(engine);
+
+//     VFXManager::getInstance().render(window);
+
+//     // Mostrar el HUD
+//     hud.draw(window, player);
+
+//     // Renderizar la tienda si está abierta
+//     if (shop.isOpen()) {
+//         shop.render();
+//     }
+
+//     engine.display();
+// }
+
+
 void InGame::render(Game& game, sf::RenderWindow& window) {
+    GameEngine& engine = game.getEngine();
+
     engine.clear();
     tileMap.draw(engine);
 
     for (Weapon* weapon : weaponsOnGround) {
-        weapon->render();
+        weapon->render(engine.getRenderWindow()); // Usa el RenderWindow directamente
     }
-
-    for (auto enemy : EnemyManager::getInstance()->getEnemyList()){
-        enemy->render(window);
+    
+    for (auto enemy : EnemyManager::getInstance()->getEnemyList()) {
+        enemy->render(engine.getRenderWindow()); // Usa el RenderWindow directamente
     }
+    
+    VFXManager::getInstance().render(engine.getRenderWindow());
 
     player.draw(engine);
 
-    VFXManager::getInstance().render(window);
-
     // Mostrar el HUD
-    hud.draw(window, player);
+    hud.draw(engine.getRenderWindow(), player);
 
     // Renderizar la tienda si está abierta
     if (shop.isOpen()) {
-        shop.render();
+        shop.render(engine.getRenderWindow()); // Usa el RenderWindow directamente
     }
 
     engine.display();
 }
+
 
 bool InGame::checkEnemyWasHit(std::shared_ptr<Enemy> enemy, Character player){
     if(player.getEquippedWeapon()->getAttackHitbox()->isActive())

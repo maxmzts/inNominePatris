@@ -90,22 +90,41 @@ void PauseMenu::update(Game& game) {
     }
 }
 
+// void PauseMenu::render(Game& game, sf::RenderWindow& window) {
+//     // Restablecer la vista predeterminada para usar coordenadas de pantalla
+//     sf::View originalView = window.getView();
+//     window.setView(window.getDefaultView());
+
+//     // Dibujar el fondo
+//     window.draw(backgroundSprite);
+
+//     // Dibujar las opciones del menú
+//     for (size_t i = 0; i < menuBackgrounds.size(); ++i) {
+//         window.draw(menuBackgrounds[i]);
+//         window.draw(menuItems[i]);
+//     }
+
+//     // Restaurar la vista original
+//     window.setView(originalView);
+// }
+
 void PauseMenu::render(Game& game, sf::RenderWindow& window) {
+    GameEngine& engine = game.getEngine();
+
     // Restablecer la vista predeterminada para usar coordenadas de pantalla
-    sf::View originalView = window.getView();
-    window.setView(window.getDefaultView());
+    engine.resetView();
 
     // Dibujar el fondo
-    window.draw(backgroundSprite);
+    engine.drawSprite(backgroundSprite);
 
     // Dibujar las opciones del menú
     for (size_t i = 0; i < menuBackgrounds.size(); ++i) {
-        window.draw(menuBackgrounds[i]);
-        window.draw(menuItems[i]);
+        engine.drawRectangle(menuBackgrounds[i]);
+        engine.drawText(menuItems[i]);
     }
 
     // Restaurar la vista original
-    window.setView(originalView);
+    engine.resetView();
 }
 
 void PauseMenu::moveUp() {

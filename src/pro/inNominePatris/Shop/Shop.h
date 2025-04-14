@@ -12,7 +12,7 @@ public:
     void close();
     bool isOpen() const;
     void update(int playerKarma);
-    void render();
+    void render(sf::RenderWindow& window);
     void handleInput(const sf::Event& event);
     
 private:
