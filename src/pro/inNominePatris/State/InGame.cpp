@@ -107,7 +107,14 @@ void InGame::update(Game& game) {
         if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
             game.changeState(PauseMenu::getInstance(800, 600)); // Cambiar al menú de pausa
             return;
-        } 
+        }
+        
+        // Capturar posición del ratón y actualizar la dirección de apuntado
+        if (event.type == sf::Event::MouseMoved) {
+            sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
+            sf::Vector2f worldMousePos = window.mapPixelToCoords(mousePosition);
+            player.setMousePosition(worldMousePos);
+        }
 
 
         // Interacción con armas (tecla E)
@@ -175,7 +182,7 @@ void InGame::update(Game& game) {
                 //crear aqui la hitbox
                 if (Weapon* equippedWeapon = player.getEquippedWeapon()) {
                     // Crear la hitbox del ataque
-                    equippedWeapon->attack(player.getPosition(), player.getDirection());
+                    equippedWeapon->attack(player.getPosition(), player.getAimDirection());
                 }
             } else if (event.mouseButton.button == sf::Mouse::Right) {
                 // Usar habilidad especial
@@ -283,12 +290,6 @@ void InGame::update(Game& game) {
         }
     }
 
-    // Comprobar que algún enemigo recibe daño
-    for(auto enemy : EnemyManager::getInstance()->getEnemyList()){
-        if(enemy->getisInvincible() && checkEnemyWasHit(enemy, player))
-            enemy->takeDamage(player.getEquippedWeapon()->calculateDamage(),  player.getEquippedWeapon()->getAttackHitbox()->getPosition());
-    }
-
     hud.update(player);
 
     VFXManager::getInstance().update(deltaTime);
@@ -387,6 +388,7 @@ void InGame::render(Game& game, sf::RenderWindow& window) {
 }
 
 
+//  QUITAR
 bool InGame::checkEnemyWasHit(std::shared_ptr<Enemy> enemy, Character player){
     if(player.getEquippedWeapon()->getAttackHitbox()->isActive())
         return enemy->getHurtbox()->getGlobalBounds().intersects(player.getEquippedWeapon()->getAttackHitbox()->getGlobalBounds());
