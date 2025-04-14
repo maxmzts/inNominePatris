@@ -134,3 +134,24 @@ void GameEngine::resetView() {
 float GameEngine::getDeltaTime() {
     return clock.restart().asSeconds();
 }
+
+
+void GameEngine::drawRectangle(const sf::RectangleShape& rectangle) {
+    if (ownsWindow) {
+        window.draw(rectangle);
+    } else {
+        existingWindow->draw(rectangle);
+    }
+}
+
+void GameEngine::drawText(const sf::Text& text) {
+    if (ownsWindow) {
+        window.draw(text);
+    } else {
+        existingWindow->draw(text);
+    }
+}
+
+sf::RenderWindow& GameEngine::getRenderWindow() {
+    return ownsWindow ? window : *existingWindow;
+}

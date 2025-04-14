@@ -41,11 +41,7 @@ public:
     void resetView();
     float getDeltaTime();
 
-    void drawRectangle(const sf::RectangleShape& rectangle) {
-        if(ownsWindow) {
-            window.draw(rectangle);
-        } else {
-            existingWindow->draw(rectangle);
-        }
-    }
+    void drawRectangle(const sf::RectangleShape& rectangle);
+    void drawText(const sf::Text& text);
+    sf::RenderWindow& getRenderWindow(); // Para obtener el RenderWindow directamente
 };

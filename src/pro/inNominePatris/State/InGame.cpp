@@ -107,7 +107,14 @@ void InGame::update(Game& game) {
         if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
             game.changeState(PauseMenu::getInstance(800, 600)); // Cambiar al menú de pausa
             return;
-        } 
+        }
+        
+        // Capturar posición del ratón y actualizar la dirección de apuntado
+        if (event.type == sf::Event::MouseMoved) {
+            sf::Vector2i mousePosition = sf::Mouse::getPosition(window);
+            sf::Vector2f worldMousePos = window.mapPixelToCoords(mousePosition);
+            player.setMousePosition(worldMousePos);
+        }
 
 
         // Interacción con armas (tecla E)
@@ -175,7 +182,7 @@ void InGame::update(Game& game) {
                 //crear aqui la hitbox
                 if (Weapon* equippedWeapon = player.getEquippedWeapon()) {
                     // Crear la hitbox del ataque
-                    equippedWeapon->attack(player.getPosition(), player.getDirection());
+                    equippedWeapon->attack(player.getPosition(), player.getAimDirection());
                 }
             } else if (event.mouseButton.button == sf::Mouse::Right) {
                 // Usar habilidad especial
@@ -283,12 +290,6 @@ void InGame::update(Game& game) {
         }
     }
 
-    // Comprobar que algún enemigo recibe daño
-    for(auto enemy : EnemyManager::getInstance()->getEnemyList()){
-        if(enemy->getisInvincible() && checkEnemyWasHit(enemy, player))
-            enemy->takeDamage(player.getEquippedWeapon()->calculateDamage(),  player.getEquippedWeapon()->getAttackHitbox()->getPosition());
-    }
-
     hud.update(player);
 
     VFXManager::getInstance().update(deltaTime);
@@ -329,33 +330,65 @@ InGame::~InGame() {
 /**
  * Renderiza los elementos de InGame
  */
+// void InGame::render(Game& game, sf::RenderWindow& window) {
+//     engine.clear();
+//     tileMap.draw(engine);
+
+//     for (Weapon* weapon : weaponsOnGround) {
+//         weapon->render();
+//     }
+
+//     for (auto enemy : EnemyManager::getInstance()->getEnemyList()){
+//         enemy->render(window);
+//     }
+
+//     player.draw(engine);
+
+//     VFXManager::getInstance().render(window);
+
+//     // Mostrar el HUD
+//     hud.draw(window, player);
+
+//     // Renderizar la tienda si está abierta
+//     if (shop.isOpen()) {
+//         shop.render();
+//     }
+
+//     engine.display();
+// }
+
+
 void InGame::render(Game& game, sf::RenderWindow& window) {
+    GameEngine& engine = game.getEngine();
+
     engine.clear();
     tileMap.draw(engine);
 
     for (Weapon* weapon : weaponsOnGround) {
-        weapon->render();
+        weapon->render(engine.getRenderWindow()); // Usa el RenderWindow directamente
     }
-
-    for (auto enemy : EnemyManager::getInstance()->getEnemyList()){
-        enemy->render(window);
+    
+    for (auto enemy : EnemyManager::getInstance()->getEnemyList()) {
+        enemy->render(engine.getRenderWindow()); // Usa el RenderWindow directamente
     }
+    
+    VFXManager::getInstance().render(engine.getRenderWindow());
 
     player.draw(engine);
 
-    VFXManager::getInstance().render(window);
-
     // Mostrar el HUD
-    hud.draw(window, player);
+    hud.draw(engine.getRenderWindow(), player);
 
     // Renderizar la tienda si está abierta
     if (shop.isOpen()) {
-        shop.render();
+        shop.render(engine.getRenderWindow()); // Usa el RenderWindow directamente
     }
 
     engine.display();
 }
 
+
+//  QUITAR
 bool InGame::checkEnemyWasHit(std::shared_ptr<Enemy> enemy, Character player){
     if(player.getEquippedWeapon()->getAttackHitbox()->isActive())
         return enemy->getHurtbox()->getGlobalBounds().intersects(player.getEquippedWeapon()->getAttackHitbox()->getGlobalBounds());

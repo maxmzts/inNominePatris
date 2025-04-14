@@ -23,8 +23,8 @@ public:
     void update(float deltaTime) override {}
     void createHitbox(sf::Vector2f position, sf::Vector2f direction);
     // void draw(GameEngine& engine, sf::Vector2f position, sf::Vector2f direction) override;
-    void render() override;
-    void renderOnPlayer(sf::Vector2f position, sf::Vector2f direction) override;
+    void render(sf::RenderWindow& window) override;
+    void renderOnPlayer(sf::Vector2f position, sf::Vector2f direction, sf::RenderWindow& window) override;
     void setPosition(float x, float y) override { spriteFacade.setPosition(x, y); };
     sf::Vector2f getPosition() const override { return spriteFacade.getPosition(); };
     AbilityType getAbilityType() const override { return AbilityType::Shot; };

@@ -88,12 +88,25 @@ void MainMenu::update(Game& game) {
     }
 }
 
-void MainMenu::render(Game& game, sf::RenderWindow& window) {
-    window.draw(backgroundSprite);
+// void MainMenu::render(Game& game, sf::RenderWindow& window) {
+//     window.draw(backgroundSprite);
 
-    for (size_t i = 0; i < menuItems.size(); ++i) {
-        window.draw(menuBackgrounds[i]);
-        window.draw(menuItems[i]);
+//     for (size_t i = 0; i < menuItems.size(); ++i) {
+//         window.draw(menuBackgrounds[i]);
+//         window.draw(menuItems[i]);
+//     }
+// }
+
+void MainMenu::render(Game& game, sf::RenderWindow& window) {
+    GameEngine& engine = game.getEngine();
+
+    // Dibujar el fondo
+    engine.drawSprite(backgroundSprite);
+
+    // Dibujar las opciones del menú
+    for (size_t i = 0; i < menuBackgrounds.size(); ++i) {
+        engine.drawRectangle(menuBackgrounds[i]);
+        engine.drawText(menuItems[i]);
     }
 }
 

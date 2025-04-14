@@ -107,7 +107,7 @@ void Shop::update(int playerKarma) {
     updateNodeVisuals();
 }
 
-void Shop::render() {
+void Shop::render(sf::RenderWindow& window) {
     if (!openState) return;
 
     // Guardamos la vista actual temporalmente
@@ -156,7 +156,10 @@ void Shop::handleInput(const sf::Event& event) {
     if (event.type == sf::Event::MouseMoved) {
         // Convertir las coordenadas del ratón al sistema de coordenadas de la tienda
         sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
-        sf::Vector2f worldPos = window.mapPixelToCoords(pixelPos, window.getDefaultView());
+        
+        // Usar la vista actual de la tienda para mapear las coordenadas
+        sf::View shopView(sf::FloatRect(0, 0, window.getSize().x, window.getSize().y));
+        sf::Vector2f worldPos = window.mapPixelToCoords(pixelPos, shopView);
         
         selectedNodeIndex = -1;
 
@@ -181,7 +184,10 @@ void Shop::handleInput(const sf::Event& event) {
     if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
         // Convertir coordenadas del ratón para la interacción con los nodos
         sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
-        sf::Vector2f worldPos = window.mapPixelToCoords(pixelPos, window.getDefaultView());
+        
+        // Usar la vista actual de la tienda para mapear las coordenadas
+        sf::View shopView(sf::FloatRect(0, 0, window.getSize().x, window.getSize().y));
+        sf::Vector2f worldPos = window.mapPixelToCoords(pixelPos, shopView);
         
         selectedNodeIndex = -1;
         
