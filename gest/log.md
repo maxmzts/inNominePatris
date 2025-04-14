@@ -242,7 +242,10 @@ He añadido el sistema de karma con las dos ramas, una de pecado y otra de absol
 He movido un poco el arco y la lanza para que no estén tan alejados del personaje, y he añadido la animación de una burbuja a modo visual para poder saber cuando tienes el escudo de la mejora permanente activo y no te pueden golpear. 
 
 ## 20250414 EstrellaDominguez @(1h)
-He cambiado todos los archivos de State para implementarlo con el motor 2D.
+He cambiado todos algunos archivos de State para implementarlos con el motor 2D.
 
 ## 20250414 DavidGonzález @(3h)
 Arreglado problema con los bounds, ya se puden eliminar bounds para dar paso al jugador a zonas previamente inaccesibles.
+
+## 20250414 EstrellaDominguez @(30min)
+He arreglado un error con el menú de pausa.

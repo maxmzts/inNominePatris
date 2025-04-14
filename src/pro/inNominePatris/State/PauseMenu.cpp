@@ -109,22 +109,17 @@ void PauseMenu::update(Game& game) {
 // }
 
 void PauseMenu::render(Game& game, sf::RenderWindow& window) {
-    GameEngine& engine = game.getEngine();
-
-    // Restablecer la vista predeterminada para usar coordenadas de pantalla
-    engine.resetView();
+    // Restablecer la vista predeterminada directamente
+    window.setView(window.getDefaultView());
 
     // Dibujar el fondo
-    engine.drawSprite(backgroundSprite);
+    window.draw(backgroundSprite);
 
     // Dibujar las opciones del menú
     for (size_t i = 0; i < menuBackgrounds.size(); ++i) {
-        engine.drawRectangle(menuBackgrounds[i]);
-        engine.drawText(menuItems[i]);
+        window.draw(menuBackgrounds[i]);
+        window.draw(menuItems[i]);
     }
-
-    // Restaurar la vista original
-    engine.resetView();
 }
 
 void PauseMenu::moveUp() {
