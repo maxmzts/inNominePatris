@@ -249,3 +249,6 @@ Arreglado problema con los bounds, ya se puden eliminar bounds para dar paso al 
 
 ## 20250414 EstrellaDominguez @(30min)
 He arreglado un error con el menú de pausa.
+
+## 20250414 EstrellaDominguez @(1h)
+He implementado los mensajes de texto de los botones y las puertas para ayudar al jugador (Abrir con la "E", etc).

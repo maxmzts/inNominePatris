@@ -21,4 +21,6 @@ public:
     bool isActivated() const { return m_isActivated; }
     int getCenterX() const { return m_centerX; }
     int getCenterY() const { return m_centerY; }
+    std::string getProximityMessage() const;
+    sf::FloatRect getBounds() const;
 };

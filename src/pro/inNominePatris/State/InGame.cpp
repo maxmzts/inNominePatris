@@ -4,6 +4,7 @@
 #include "../interface/HUD.h"
 #include "../hboxes/Hitbox.h"
 #include "../Shop/Shop.h"
+#include "../interaction/Interaction.h"
 #include "KarmaSystem.h"
 #include "PauseMenu.h"
 #include "InteractionFactory.h"
@@ -25,6 +26,11 @@ InGame::InGame(GameEngine& engine)
     if (!tileMap.loadFromFile("./maps/world_1.tmx", engine)) {
         std::cerr << "Error cargando el mapa\n";
         exit(-1);
+    }
+
+    // Cargar la fuente
+    if (!font.loadFromFile("./assets/fonts/IMPACT.TTF")) {
+        std::cerr << "Error al cargar la fuente para los mensajes de proximidad\n";
     }
 
     // Hacer spawn al jugador
@@ -161,7 +167,26 @@ void InGame::update(Game& game) {
             }
         }
     
+        proximityMessage.clear(); // Limpiar el mensaje por defecto
+        sf::FloatRect playerBounds = player.getBounds();
+        int tileId = -1;
 
+        if (tileMap.isPlayerInteractingWithTile(playerBounds, tileId)) {
+            tileId -= 1;
+            auto interaction = InteractionFactory::createInteraction(tileId);
+
+            if (interaction && interaction->isAvailable(player, tileMap)) {
+                // Verificar si la interacción es un ButtonInteraction
+                if (auto buttonInteraction = std::dynamic_pointer_cast<ButtonInteraction>(interaction)) {
+                    proximityMessage = buttonInteraction->getProximityMessage();
+                }
+                // Verificar si la interacción es un DoorInteraction
+                else if (auto doorInteraction = std::dynamic_pointer_cast<DoorInteraction>(interaction)) {
+                    proximityMessage = doorInteraction->getProximityMessage();
+                }
+            }
+        }
+        
 
 
 
@@ -378,6 +403,29 @@ void InGame::render(Game& game, sf::RenderWindow& window) {
 
     // Mostrar el HUD
     hud.draw(engine.getRenderWindow(), player);
+
+    // Dibujar el mensaje de proximidad
+    if (!proximityMessage.empty()) {
+        sf::Text text;
+        text.setFont(font); // Usa la fuente cargada
+        text.setString(proximityMessage);
+        text.setCharacterSize(18); // Tamaño de la letra
+        text.setFillColor(sf::Color::White);
+
+        // Calcular la posición del texto
+        sf::Vector2f textPosition(player.getPosition().x - 50, player.getPosition().y - 70);
+        text.setPosition(textPosition);
+
+        // Crear un fondo rectangular detrás del texto
+        sf::FloatRect textBounds = text.getGlobalBounds();
+        sf::RectangleShape background(sf::Vector2f(textBounds.width + 10, textBounds.height + 10));
+        background.setFillColor(sf::Color(50, 50, 50, 150)); // Gris translúcido
+        background.setPosition(textBounds.left - 5, textBounds.top - 5);
+
+        // Dibujar el fondo y luego el texto
+        window.draw(background);
+        window.draw(text);
+    }
 
     // Renderizar la tienda si está abierta
     if (shop.isOpen()) {
