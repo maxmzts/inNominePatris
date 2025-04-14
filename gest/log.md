@@ -244,17 +244,12 @@ He movido un poco el arco y la lanza para que no estén tan alejados del persona
 ## 20250414 MáximoMartínez @(5h 30min)
 Me he puesto a solucionar diferentes errores y a trabajar sobre la fachada de sonido que hice en el hito 1 para añadir música y efectos de sonido. Luego he ayudado a un compañero a solucionar ciertos errores. Después, parte del tiempo ha sido una sesión de planificación en grupo para el bucle de salas. 
 
-## 20250414 EstrellaDominguez @(1h)
+## 20250414 EstrellaDominguez @(4h)
 He cambiado todos algunos archivos de State para implementarlos con el motor 2D.
+He arreglado un error con el menú de pausa.
+He implementado los mensajes de texto de los botones y las puertas para ayudar al jugador.
+Ahora en el HUD se ve también el arma secundaria del personaje.
+Por último he cambiado la barra de vida por corazones.
 
 ## 20250414 DavidGonzález @(3h)
 Arreglado problema con los bounds, ya se puden eliminar bounds para dar paso al jugador a zonas previamente inaccesibles.
-
-## 20250414 EstrellaDominguez @(30min)
-He arreglado un error con el menú de pausa.
-
-## 20250414 EstrellaDominguez @(1h)
-He implementado los mensajes de texto de los botones y las puertas para ayudar al jugador (Abrir con la "E", etc).
-
-## 20250414 EstrellaDominguez @(1h)
-Ahora en el HUD se ve también el arma secundaria del personaje. 
