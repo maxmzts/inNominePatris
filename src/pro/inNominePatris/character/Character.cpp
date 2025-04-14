@@ -179,6 +179,21 @@ void Character::update(const TileMap& tilemap, float deltaTime) {
     if (aimDirection.y > 0 && std::abs(aimDirection.y) > std::abs(aimDirection.x)) {
         sprite.setTextureRect(sf::IntRect(0, 0 * 75, 75, 75));
     }
+
+    // if (aimDirection.x > 0) {
+    //     sprite.setTextureRect(sf::IntRect(0, 2 * 16, 16, 16));
+    //     sprite.setScale(2.0f, 2.0f);
+    // }
+    // if (aimDirection.x < 0) {
+    //     sprite.setTextureRect(sf::IntRect(0, 2 * 16, 16, 16));
+    //     sprite.setScale(-2.0f, 2.0f);
+    // }
+    // if (aimDirection.y < 0 && std::abs(aimDirection.y) > std::abs(aimDirection.x)) {
+    //     sprite.setTextureRect(sf::IntRect(0, 3 * 16, 16, 16));
+    // }
+    // if (aimDirection.y > 0 && std::abs(aimDirection.y) > std::abs(aimDirection.x)) {
+    //     sprite.setTextureRect(sf::IntRect(0, 0 * 16, 16, 16));
+    // }
 }
 
 
@@ -233,6 +248,8 @@ void Character::spawnAt(const TileMap& tilemap, float x, float y) {
     
     // Asegúrate de que la textura del sprite esté correctamente orientada
     sprite.setTextureRect(sf::IntRect(0, 0, 75, 75));
+    // sprite.setTextureRect(sf::IntRect(0, 0, 16, 16));
+
 }
 
 

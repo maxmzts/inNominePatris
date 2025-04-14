@@ -5,6 +5,7 @@
 #include "../hboxes/Hitbox.h"
 #include "../Shop/Shop.h"
 #include "../interaction/Interaction.h"
+#include "MainMenu.h"
 #include "KarmaSystem.h"
 #include "PauseMenu.h"
 #include "InteractionFactory.h"
@@ -243,6 +244,13 @@ void InGame::update(Game& game) {
     // Actualizar el jugador y otros elementos
     float deltaTime = engine.getDeltaTime();
     player.update(tileMap, deltaTime);
+
+    // Verificar si la vida del jugador es 0
+    // if (player.getHealth() <= 0) {
+    //     std::cout << "El jugador ha muerto. Pantalla KO..." << std::endl;
+    //     game.changeState(KoScreen::getInstance(engine, 800, 600));
+    //     return; // Salir del método para evitar más actualizaciones
+    // }
     
     // Verificar interacciones automáticas (como los teletransportes)
     checkAutoInteractions();

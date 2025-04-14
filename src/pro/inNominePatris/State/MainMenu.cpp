@@ -98,6 +98,7 @@ void MainMenu::update(Game& game) {
 // }
 
 void MainMenu::render(Game& game, sf::RenderWindow& window) {
+    window.clear(); // Limpiar la ventana antes de dibujar
     GameEngine& engine = game.getEngine();
 
     // Dibujar el fondo

@@ -112,7 +112,7 @@ void KarmaSystem::displayUpgrades() const {
         const Upgrade& upgrade = upgrades[i];
         std::cout << i << ". " << upgrade.name
                   << " (Costo: " << upgrade.cost << ", Tipo: "
-                  << (upgrade.type == KarmaType::Pecado ? "Pecado" : "Absolución") << ")"
+                  << (upgrade.type == KarmaType::Pecado ? "Pecado" : "Absolucion") << ")"
                   << (upgrade.isUnlocked ? " [Desbloqueada]" : "")
                   << (upgrade.isBlocked ? " [Bloqueada]" : "")
                   << std::endl;

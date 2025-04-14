@@ -46,7 +46,7 @@ Shop::Shop(sf::RenderWindow& window, KarmaSystem& karmaSystem)
     pecadoTitleText.setFillColor(sf::Color(200, 50, 50));
     
     absolucionTitleText.setFont(font);
-    absolucionTitleText.setString("Absolución");
+    absolucionTitleText.setString("Absolucion");
     absolucionTitleText.setCharacterSize(28);
     absolucionTitleText.setFillColor(sf::Color(50, 150, 200));
 
@@ -175,7 +175,7 @@ void Shop::handleInput(const sf::Event& event) {
                                     
                 descriptionText.setString(upgrade.name + status + 
                                          "\nCosto: " + std::to_string(upgrade.cost) + 
-                                         "\nTipo: " + (upgrade.type == KarmaType::Pecado ? "Pecado" : "Absolución"));
+                                         "\nTipo: " + (upgrade.type == KarmaType::Pecado ? "Pecado" : "Absolucion"));
                 break;
             }
         }

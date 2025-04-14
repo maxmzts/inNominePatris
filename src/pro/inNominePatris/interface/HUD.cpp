@@ -8,13 +8,13 @@ HUD::HUD(float width, float height) {
     }
 
     // Configurar barra de vida
-    healthBarBackground.setSize(sf::Vector2f(200, 20));
-    healthBarBackground.setFillColor(sf::Color(50, 50, 50));
-    healthBarBackground.setPosition(10, height - 40); // Coordenadas de pantalla
+    // healthBarBackground.setSize(sf::Vector2f(200, 20));
+    // healthBarBackground.setFillColor(sf::Color(50, 50, 50));
+    // healthBarBackground.setPosition(10, height - 40); // Coordenadas de pantalla
 
-    healthBar.setSize(sf::Vector2f(200, 20));
-    healthBar.setFillColor(sf::Color::Green);
-    healthBar.setPosition(10, height - 40); // Coordenadas de pantalla
+    // healthBar.setSize(sf::Vector2f(200, 20));
+    // healthBar.setFillColor(sf::Color::Green);
+    // healthBar.setPosition(10, height - 40); // Coordenadas de pantalla
 
     // Configurar inventario
     inventoryBackground.setSize(sf::Vector2f(300, 100));
