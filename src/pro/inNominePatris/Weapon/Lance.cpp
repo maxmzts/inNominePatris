@@ -234,7 +234,7 @@ void Portal::update(float deltaTime) {
  * Ajusta la lanza en la posicion y con la direccion del jugador.
  * Luego llama a render para dibujar la lanza.
  */
-void Lance::renderOnPlayer(sf::Vector2f position, sf::Vector2f direction) {
+void Lance::renderOnPlayer(sf::Vector2f position, sf::Vector2f direction,sf::RenderWindow& window) {
     // Normalize the direction vector
     float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
     if (length > 0) {
@@ -259,7 +259,7 @@ void Lance::renderOnPlayer(sf::Vector2f position, sf::Vector2f direction) {
     spriteFacade.setPosition(lancePosition.x, lancePosition.y);
     spriteFacade.setRotation(angle);
     
-    render();
+    render(window);
 }
 
 /**

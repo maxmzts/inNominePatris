@@ -106,7 +106,7 @@ void Bow::update(float deltaTime, const TileMap& tileMap) {
  * Ajusta el arco en la posicion y con la direccion del jugador.
  * Luego llama a render para dibujar el arco.
  */
-void Bow::renderOnPlayer(sf::Vector2f position, sf::Vector2f direction) {
+void Bow::renderOnPlayer(sf::Vector2f position, sf::Vector2f direction,sf::RenderWindow& window) {
     // Normalize the direction vector
     float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
     if (length > 0) {
@@ -132,7 +132,7 @@ void Bow::renderOnPlayer(sf::Vector2f position, sf::Vector2f direction) {
     spriteFacade.setPosition(bowPosition.x, bowPosition.y);
     spriteFacade.setRotation(angle + 45);
     
-    render();
+    render(window);
 }
 
 /**

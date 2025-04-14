@@ -111,7 +111,7 @@ bool Sword::useAbility() {
  * Ajusta el espada en la posicion y con la direccion del jugador.
  * Luego llama a render para dibujar el espada.
  */
-void Sword::renderOnPlayer(sf::Vector2f position, sf::Vector2f direction) {
+void Sword::renderOnPlayer(sf::Vector2f position, sf::Vector2f direction,sf::RenderWindow& window) {
     // Calcular el ángulo para la dirección de apuntado
     float angle = std::atan2(direction.y, direction.x) * 180 / M_PI;
     
@@ -124,7 +124,7 @@ void Sword::renderOnPlayer(sf::Vector2f position, sf::Vector2f direction) {
     spriteFacade.setPosition(position.x + offset.x, position.y + offset.y);
     spriteFacade.setRotation(angle);
     
-    render();
+    render(window);
 }
 
 /**
