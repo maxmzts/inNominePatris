@@ -6,6 +6,8 @@
 #include "../Shop/Shop.h"
 #include "KarmaSystem.h"
 #include "PauseMenu.h"
+#include "InteractionFactory.h"
+#include "SpawnPlayerInteraction.h"
 #include <iostream>
 #include <algorithm>
 #include "EnemyBat.h"
@@ -207,6 +209,10 @@ void InGame::update(Game& game) {
     // Actualizar el jugador y otros elementos
     float deltaTime = engine.getDeltaTime();
     player.update(tileMap, deltaTime);
+    
+    // Verificar interacciones automáticas (como los teletransportes)
+    checkAutoInteractions();
+    
     EnemyManager::getInstance()->updateEnemies(deltaTime, &player, &tileMap);
 
     if (Weapon* equippedWeapon = player.getEquippedWeapon()) {
@@ -286,6 +292,31 @@ void InGame::update(Game& game) {
     hud.update(player);
 
     VFXManager::getInstance().update(deltaTime);
+}
+
+// Método para verificar interacciones automáticas
+void InGame::checkAutoInteractions() {
+    sf::FloatRect playerBounds = player.getBounds();
+    int tileId = -1;
+    
+    if (tileMap.isPlayerInteractingWithTile(playerBounds, tileId)) {
+        // Ajustar el ID del tile
+        tileId -= 1;
+        
+        // Crear la interacción correspondiente usando la fábrica
+        auto interaction = InteractionFactory::createInteraction(tileId);
+        
+        if (interaction) {
+            // Verificar si es una interacción de tipo SpawnPlayerInteraction con autoTrigger
+            if (auto spawnInteraction = std::dynamic_pointer_cast<SpawnPlayerInteraction>(interaction)) {
+                if (spawnInteraction->getAutoTrigger() && spawnInteraction->isAvailable(player, tileMap)) {
+                    // Ejecutar automáticamente el teletransporte
+                    spawnInteraction->execute(player, tileMap);
+                }
+            }
+            // Aquí podrían ir otras tipos de interacciones automáticas
+        }
+    }
 }
 
 InGame::~InGame() {

@@ -183,156 +183,6 @@ void TileMap::updateLayerVertices(Layer& layer, TileSet* tileset) {
     }
 }
 
-void TileMap::updateCollisionBlocks(TileSet* tileset) {
-    if (!tileset) return;
-    
-    std::cout << "Actualizando bloques de colisión..." << std::endl;
-    
-    collisionBlocks.clear();
-    
-    if (m_boundsTiles.empty()) return;
-    
-    for (int y = 0; y < m_mapHeight; ++y) {
-        for (int x = 0; x < m_mapWidth; ++x) {
-            int tileNumber = m_boundsTiles[y * m_mapWidth + x];
-            if (tileNumber != 0) {
-                collisionBlocks.push_back(sf::FloatRect(
-                    x * tileset->tileWidth, 
-                    y * tileset->tileHeight,
-                    tileset->tileWidth, 
-                    tileset->tileHeight
-                ));
-            }
-        }
-    }
-    
-    std::cout << "Total de bloques de colisión: " << collisionBlocks.size() << std::endl;
-}
-
-bool TileMap::setTile(const std::string& layerName, int x, int y, int tileId) {
-    // Verificar que las coordenadas estén dentro del mapa
-    if (x < 0 || x >= m_mapWidth || y < 0 || y >= m_mapHeight) {
-        std::cerr << "setTile: Coordenadas (" << x << ", " << y << ") fuera del mapa." << std::endl;
-        return false;
-    }
-    
-    std::cout << "Estableciendo tile en capa '" << layerName << "' en (" << x << "," << y 
-              << ") con ID=" << tileId << std::endl;
-    
-    // Para otras capas, buscar por nombre
-    auto layerIndexIt = m_layerIndices.find(layerName);
-    if (layerIndexIt == m_layerIndices.end()) {
-        std::cerr << "setTile: No se encontró la capa '" << layerName << "'" << std::endl;
-        return false;
-    }
-    
-    int layerIndex = layerIndexIt->second;
-    std::cout << "Índice de capa encontrado: " << layerIndex << std::endl;
-    
-    // Caso especial para la capa de colisiones
-    if (layerName == "bounds" || layerIndex == -1) {
-        // Verificar que tengamos datos de bounds
-        if (m_boundsTiles.size() != m_mapWidth * m_mapHeight) {
-            std::cerr << "setTile: Datos de bounds no inicializados correctamente." << std::endl;
-            return false;
-        }
-        
-        // Actualizar el tile de colisión
-        m_boundsTiles[y * m_mapWidth + x] = tileId;
-        
-        // Obtener el tileset principal
-        TileSet* mainTileset = nullptr;
-        if (!m_tilesets.empty()) {
-            mainTileset = &m_tilesets.begin()->second;
-        }
-        
-        if (!mainTileset) {
-            std::cerr << "setTile: No se encontró tileset para bounds." << std::endl;
-            return false;
-        }
-        
-        // Actualizar las colisiones
-        updateCollisionBlocks(mainTileset);
-        std::cout << "Tile de colisión actualizado en (" << x << ", " << y << ") a ID " << tileId << std::endl;
-        return true;
-    }
-    
-    // Caso especial para la capa de interacción
-    if (layerName == "interaction" || layerIndex == -2) {
-        // Simplemente eliminamos cualquier tile interactivo en esa posición y añadimos uno nuevo si tileId != 0
-        
-        // Calcular las coordenadas del mundo para esta posición de tile
-        TileSet* mainTileset = nullptr;
-        if (!m_tilesets.empty()) {
-            mainTileset = &m_tilesets.begin()->second;
-        }
-        
-        if (!mainTileset) {
-            std::cerr << "setTile: No se encontró tileset para interaction." << std::endl;
-            return false;
-        }
-        
-        float worldX = x * mainTileset->tileWidth;
-        float worldY = y * mainTileset->tileHeight;
-        
-        // Eliminar cualquier tile interactivo en esta posición
-        auto it = interactiveTiles.begin();
-        while (it != interactiveTiles.end()) {
-            if (it->rect.left == worldX && it->rect.top == worldY) {
-                it = interactiveTiles.erase(it);
-            } else {
-                ++it;
-            }
-        }
-        
-        // Añadir nuevo tile interactivo si tileId != 0
-        if (tileId != 0) {
-            addInteractiveTile(tileId, sf::FloatRect(
-                worldX, worldY,
-                mainTileset->tileWidth, mainTileset->tileHeight
-            ));
-        }
-        
-        std::cout << "Tile de interacción actualizado en (" << x << ", " << y << ") a ID " << tileId << std::endl;
-        return true;
-    }
-    
-    // Caso normal para capas regulares
-    if (layerIndex < 0 || layerIndex >= m_layers.size()) {
-        std::cerr << "setTile: Índice de capa fuera de rango: " << layerIndex << " (m_layers.size = " 
-                  << m_layers.size() << ")" << std::endl;
-        return false;
-    }
-    
-    // Obtener la capa
-    Layer& layer = m_layers[layerIndex];
-    
-    // Verificar que tengamos datos de tiles
-    if (layer.tiles.size() != m_mapWidth * m_mapHeight) {
-        std::cerr << "setTile: Datos de tiles no inicializados correctamente para la capa '" 
-                  << layerName << "'" << std::endl;
-        return false;
-    }
-    
-    // Obtener el tileset asociado a esta capa
-    if (!layer.tileset) {
-        std::cerr << "setTile: No hay tileset asociado a la capa '" << layerName << "'" << std::endl;
-        return false;
-    }
-    
-    // Actualizar el ID del tile
-    int tileIndex = y * m_mapWidth + x;
-    int oldTileId = layer.tiles[tileIndex];
-    layer.tiles[tileIndex] = tileId;
-    
-    // Actualizar solo el quad específico en lugar de regenerar todos los vértices
-    updateSingleTile(layer, x, y, oldTileId, tileId);
-    
-    std::cout << "Tile actualizado en capa '" << layerName << "' en (" 
-              << x << ", " << y << ") de ID " << oldTileId << " a ID " << tileId << std::endl;
-    return true;
-}
-
 void TileMap::updateSingleTile(Layer& layer, int x, int y, int oldTileId, int newTileId) {
     if (!layer.tileset) {
         std::cerr << "updateSingleTile: No hay tileset asociado a la capa '" << layer.name << "'" << std::endl;
@@ -502,8 +352,19 @@ void TileMap::addInteractiveTile(int id, const sf::FloatRect& rect) {
               << " en posición (" << rect.left << "," << rect.top << ")" << std::endl;
 }
 
+
+// PARA CAMBIO Y ELMINACION DE TILES
+// Modificación para setLocalTile
 bool TileMap::setLocalTile(const std::string& layerName, int x, int y, int localTileId) {
-    // Buscar la capa
+    // Caso especial para "bounds" - enviarlo directamente a setTile
+    if (layerName == "bounds") {
+        // Para valores negativos (-1, -2, etc.), establecemos el ID a 0
+        // lo que eliminará la colisión en updateCollisionBlocks()
+        int globalTileId = (localTileId < 0) ? 0 : localTileId;
+        return setTile(layerName, x, y, globalTileId);
+    }
+    
+    // Para otras capas
     auto layerIndexIt = m_layerIndices.find(layerName);
     if (layerIndexIt == m_layerIndices.end() || layerIndexIt->second < 0 || layerIndexIt->second >= m_layers.size()) {
         std::cerr << "setLocalTile: No se encontró la capa '" << layerName << "'" << std::endl;
@@ -518,8 +379,158 @@ bool TileMap::setLocalTile(const std::string& layerName, int x, int y, int local
     }
     
     // Convertir ID local a ID global
-    int globalTileId = (localTileId > 0) ? (layer.tileset->firstGid + (localTileId )) : 0;
+    int globalTileId = (localTileId >= 0) ? (layer.tileset->firstGid + localTileId) : 0;
     
     // Usar la función existente para establecer el tile
     return setTile(layerName, x, y, globalTileId);
+}
+
+// Modificación para setTile
+bool TileMap::setTile(const std::string& layerName, int x, int y, int tileId) {
+    // Verificar que las coordenadas estén dentro del mapa
+    if (x < 0 || x >= m_mapWidth || y < 0 || y >= m_mapHeight) {
+        std::cerr << "setTile: Coordenadas (" << x << ", " << y << ") fuera del mapa." << std::endl;
+        return false;
+    }
+    
+    std::cout << "Estableciendo tile en capa '" << layerName << "' en (" << x << "," << y 
+              << ") con ID=" << tileId << std::endl;
+    
+    // Caso especial para la capa de colisiones
+    if (layerName == "bounds") {
+        // Verificar que tengamos datos de bounds
+        if (m_boundsTiles.size() != m_mapWidth * m_mapHeight) {
+            std::cerr << "setTile: Datos de bounds no inicializados correctamente." << std::endl;
+            return false;
+        }
+        
+        // Actualizar el tile de colisión
+        m_boundsTiles[y * m_mapWidth + x] = tileId;
+        
+        // Obtener el tileset principal
+        TileSet* mainTileset = nullptr;
+        if (!m_tilesets.empty()) {
+            mainTileset = &m_tilesets.begin()->second;
+        }
+        
+        if (!mainTileset) {
+            std::cerr << "setTile: No se encontró tileset para bounds." << std::endl;
+            return false;
+        }
+        
+        // Actualizar las colisiones
+        updateCollisionBlocks(mainTileset);
+        std::cout << "Tile de colisión actualizado en (" << x << ", " << y << ") a ID " << tileId << std::endl;
+        return true;
+    }
+    
+    // Caso especial para la capa de interacción
+    if (layerName == "interaction") {
+        TileSet* mainTileset = nullptr;
+        if (!m_tilesets.empty()) {
+            mainTileset = &m_tilesets.begin()->second;
+        }
+        
+        if (!mainTileset) {
+            std::cerr << "setTile: No se encontró tileset para interaction." << std::endl;
+            return false;
+        }
+        
+        float worldX = x * mainTileset->tileWidth;
+        float worldY = y * mainTileset->tileHeight;
+        
+        // Eliminar cualquier tile interactivo en esta posición
+        auto it = interactiveTiles.begin();
+        while (it != interactiveTiles.end()) {
+            if (it->rect.left == worldX && it->rect.top == worldY) {
+                it = interactiveTiles.erase(it);
+            } else {
+                ++it;
+            }
+        }
+        
+        // Añadir nuevo tile interactivo si tileId != 0
+        if (tileId != 0) {
+            addInteractiveTile(tileId, sf::FloatRect(
+                worldX, worldY,
+                mainTileset->tileWidth, mainTileset->tileHeight
+            ));
+        }
+        
+        std::cout << "Tile de interacción actualizado en (" << x << ", " << y << ") a ID " << tileId << std::endl;
+        return true;
+    }
+    
+    // Para otras capas, buscar por nombre
+    auto layerIndexIt = m_layerIndices.find(layerName);
+    if (layerIndexIt == m_layerIndices.end()) {
+        std::cerr << "setTile: No se encontró la capa '" << layerName << "'" << std::endl;
+        return false;
+    }
+    
+    int layerIndex = layerIndexIt->second;
+    std::cout << "Índice de capa encontrado: " << layerIndex << std::endl;
+    
+    // Caso normal para capas regulares
+    if (layerIndex < 0 || layerIndex >= m_layers.size()) {
+        std::cerr << "setTile: Índice de capa fuera de rango: " << layerIndex << " (m_layers.size = " 
+                  << m_layers.size() << ")" << std::endl;
+        return false;
+    }
+    
+    // Obtener la capa
+    Layer& layer = m_layers[layerIndex];
+    
+    // Verificar que tengamos datos de tiles
+    if (layer.tiles.size() != m_mapWidth * m_mapHeight) {
+        std::cerr << "setTile: Datos de tiles no inicializados correctamente para la capa '" 
+                  << layerName << "'" << std::endl;
+        return false;
+    }
+    
+    // Obtener el tileset asociado a esta capa
+    if (!layer.tileset) {
+        std::cerr << "setTile: No hay tileset asociado a la capa '" << layerName << "'" << std::endl;
+        return false;
+    }
+    
+    // Actualizar el ID del tile
+    int tileIndex = y * m_mapWidth + x;
+    int oldTileId = layer.tiles[tileIndex];
+    layer.tiles[tileIndex] = tileId;
+    
+    // Actualizar solo el quad específico en lugar de regenerar todos los vértices
+    updateSingleTile(layer, x, y, oldTileId, tileId);
+    
+    std::cout << "Tile actualizado en capa '" << layerName << "' en (" 
+              << x << ", " << y << ") de ID " << oldTileId << " a ID " << tileId << std::endl;
+    return true;
+}
+
+// Mantener la función updateCollisionBlocks como estaba
+void TileMap::updateCollisionBlocks(TileSet* tileset) {
+    if (!tileset) return;
+    
+    std::cout << "Actualizando bloques de colisión..." << std::endl;
+    
+    collisionBlocks.clear();
+    
+    if (m_boundsTiles.empty()) return;
+    
+    for (int y = 0; y < m_mapHeight; ++y) {
+        for (int x = 0; x < m_mapWidth; ++x) {
+            int tileNumber = m_boundsTiles[y * m_mapWidth + x];
+            // Solo añadir colisión para tiles con ID > 0 (positivos)
+            if (tileNumber > 0) {
+                collisionBlocks.push_back(sf::FloatRect(
+                    x * tileset->tileWidth, 
+                    y * tileset->tileHeight,
+                    tileset->tileWidth, 
+                    tileset->tileHeight
+                ));
+            }
+        }
+    }
+    
+    std::cout << "Total de bloques de colisión: " << collisionBlocks.size() << std::endl;
 }

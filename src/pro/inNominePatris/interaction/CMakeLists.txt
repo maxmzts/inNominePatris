@@ -6,6 +6,7 @@ target_sources(libModulos PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/ButtonInteraction.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/DoorInteraction.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/UiTriggerInteraction.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/SpawnPlayerInteraction.cpp"
 )
 
 #Y donde se encuentran los .h

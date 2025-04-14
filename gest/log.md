@@ -231,3 +231,6 @@ He implementado el menu de pausa. Se abre cuando el usuario pulsa la tecla "esc"
 
 ## 20250402 DavidGonzález @(5h)
 Refactorización de la interacción, creando una carpeta a parte y modulando las interacciones por clases, funcionan las interacciones básicas pero no he conseguido que los botones abran la puerta y encima he descubierto que mi codigo para quitar bounds no funciona correctamente. He hecho tambien un mapa de obstaculos para probar pathfindings.
+
+## 20250402 DavidGonzález @(6h)
+Refactorización aparentemente funcionando como debe, no vuelvo a refactorizar un codigo en mi vida, los botones abren puerta y ya hay spawnInteraction para mover al jugador entre salas, falta arreglar que setLocaltile quite la colision de los bloques, que me estoy peleando y no la consigo quitar por ahora.

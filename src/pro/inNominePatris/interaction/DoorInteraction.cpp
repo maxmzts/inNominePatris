@@ -24,6 +24,13 @@ void DoorInteraction::execute(Character& character, TileMap& tilemap) {
             tilemap.setLocalTile("deco", m_centerX + 3, m_centerY, -1); 
             tilemap.setLocalTile("deco", m_centerX + 4, m_centerY, -1); 
             tilemap.setLocalTile("deco", m_centerX + 5, m_centerY, -1); 
+            // Eliminar barrera de bounds
+            tilemap.setLocalTile("bounds", m_centerX, m_centerY, -1); 
+            tilemap.setLocalTile("bounds", m_centerX + 1, m_centerY, -1); 
+            tilemap.setLocalTile("bounds", m_centerX + 2, m_centerY, -1); 
+            tilemap.setLocalTile("bounds", m_centerX + 3, m_centerY, -1); 
+            tilemap.setLocalTile("bounds", m_centerX + 4, m_centerY, -1); 
+            tilemap.setLocalTile("bounds", m_centerX + 5, m_centerY, -1); 
             
             // Eliminar barrera de colisiones
             // Aquí puedes añadir el código para quitar los bloques de colisión

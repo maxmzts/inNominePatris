@@ -452,3 +452,8 @@ void Character::enableTemporalyShield(float duration) {
     invencibilityDuration = duration;
     invencibilityTimer = 0.0f; // Reiniciar el temporizador
 }
+
+
+sf::FloatRect Character::getBounds() const {
+    return sprite.getGlobalBounds();
+}

@@ -99,9 +99,6 @@ sf::Vector2f Character::getPosition() const {
     return sprite.getPosition();
 }
 
-sf::FloatRect Character::getBounds() const {
-    return sprite.getGlobalBounds();
-}
 
 void Character::addWeapon(Weapon* weapon) {
     if(weapons.size() < 2){
