@@ -3,7 +3,7 @@
 KarmaSystem::KarmaSystem(Character& character)
     : pecadoCount(0), absolucionCount(0), character(character) {
     // Inicializar las mejoras permanentes
-    upgrades.push_back(Upgrade("Daño aumentado", KarmaType::Pecado, 100, [&](){
+    upgrades.push_back(Upgrade("Dano aumentado", KarmaType::Pecado, 100, [&](){
         Weapon::increaseGlobalDamageMultiplier(0.2f); // Aumentar el daño global
     })); // Mejora de Pecado
     upgrades.push_back(Upgrade("Velocidad de movimiento", KarmaType::Absolucion, 100, [&]() {
@@ -14,16 +14,16 @@ KarmaSystem::KarmaSystem(Character& character)
     })); // Mejora de Pecado
     upgrades.push_back(Upgrade("Bonus de monedas", KarmaType::Absolucion, 200, [&]() {})); // Mejora de Absolución
     
-    upgrades.push_back(Upgrade("Probabilidad de crítico", KarmaType::Pecado, 300, [&](){
+    upgrades.push_back(Upgrade("Probabilidad de critico", KarmaType::Pecado, 300, [&](){
         Weapon::increaseGlobalCriticalChanceBonus(0.05f); // Aumentar la probabilidad de crítico global
     })); // Mejora de Pecado
     upgrades.push_back(Upgrade("Cantidad de vidas", KarmaType::Absolucion, 300, [&](){
         character.increaseMaxHealth(1);
     })); // Mejora de Absolución
-    upgrades.push_back(Upgrade("Daño crítico aumentado", KarmaType::Pecado, 500, [&](){
+    upgrades.push_back(Upgrade("Dano critico aumentado", KarmaType::Pecado, 500, [&](){
         Weapon::increaseGlobalCriticalMultiplier(0.25f); // Aumentar el daño crítico global
     })); // Mejora avanzada de Pecado
-    upgrades.push_back(Upgrade("Regeneración de vida", KarmaType::Absolucion, 500, [&](){
+    upgrades.push_back(Upgrade("Regeneracion de vida", KarmaType::Absolucion, 500, [&](){
         character.enableHealthRegeneration(); // Habilitar regeneración de vida
     })); // Mejora avanzada de Absolución
     upgrades.push_back(Upgrade("Combo de ataques", KarmaType::Pecado, 700, [&](){
@@ -112,7 +112,7 @@ void KarmaSystem::displayUpgrades() const {
         const Upgrade& upgrade = upgrades[i];
         std::cout << i << ". " << upgrade.name
                   << " (Costo: " << upgrade.cost << ", Tipo: "
-                  << (upgrade.type == KarmaType::Pecado ? "Pecado" : "Absolución") << ")"
+                  << (upgrade.type == KarmaType::Pecado ? "Pecado" : "Absolucion") << ")"
                   << (upgrade.isUnlocked ? " [Desbloqueada]" : "")
                   << (upgrade.isBlocked ? " [Bloqueada]" : "")
                   << std::endl;

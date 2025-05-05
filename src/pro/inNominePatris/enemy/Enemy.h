@@ -101,7 +101,7 @@ public:
     bool getisInvincible() const { return isInvincible; }
     virtual bool isDead() const;
     void updateHitboxes();
-    int getAttackDamage() const { return attackDamage; }
+    float getAttackDamage() const { return attackDamage; }
     void setAttackDamage(float damage) { attackDamage = damage; }
     
     // Para la detección de colisiones

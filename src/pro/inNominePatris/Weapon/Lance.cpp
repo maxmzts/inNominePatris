@@ -4,6 +4,7 @@
 #include "../hboxes/Hitbox.h"
 #include <SFML/Window/Mouse.hpp>
 #include <cmath>
+#include <SFXManager.h>
 
 Lance::Lance(GameEngine* engine) 
 :   Weapon(engine), 
@@ -84,6 +85,8 @@ void Lance::attack(sf::Vector2f position, sf::Vector2f direction) {
         // Reproducir la animación del ataque
         pinchAnimation.play("pinch", 12.0f, false); // 12 FPS, no en bucle
         isAnimating = true;
+        float pitch = 0.8f + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (1.2f - 0.8f);
+        SFXManager::getInstance().addEffect("resources/sfx/spear.wav", 60.f, pitch);
 
         float damage = calculateDamage(); // Calcular el daño
         std::cout << "Lance attack: Dealt " << damage << " damage!" << std::endl;

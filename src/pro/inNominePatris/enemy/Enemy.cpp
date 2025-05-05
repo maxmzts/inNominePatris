@@ -3,9 +3,12 @@
 #include <queue>
 #include <unordered_map>
 #include <cmath>
+#include "../hboxes/Hitbox.h"
+#include "../hboxes/Hurtbox.h"
 #include <algorithm>
 #include <VFXManager.h>
 #include <unordered_set>
+#include <SFXManager.h>
 
 Enemy::Enemy(const std::string& name, float maxHealth, float movementSpeed, const sf::Vector2f& startPosition, const std::string& texturePath)
     : name(name)
@@ -18,7 +21,7 @@ Enemy::Enemy(const std::string& name, float maxHealth, float movementSpeed, cons
     , invincibilityDuration(0.5f)  // Medio segundo de invencibilidad por defecto
     , currentState(EnemyState::IDLE)
     , stateTimer(0.0f)
-    , attackDamage(10)          // Valor por defecto
+    , attackDamage(16.67)          // Valor por defecto
     , attackCooldown(1.0f)         // 1 segundo entre ataques
     , attackTimer(0.0f)
     , detectionRadius(300.0f)      // Detecta al jugador a 300 unidades
@@ -113,6 +116,9 @@ void Enemy::takeDamage(float damage, const sf::Vector2f& attackPosition) {
 
     sf::Vector2f attackDirection = attackPosition-position;
     setupKnockback(attackDirection, 150.0f);
+
+    float pitch = 0.8f + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (1.2f - 0.8f);
+    SFXManager::getInstance().addEffect("resources/sfx/hit.wav", 60.f, pitch);
     
     // Si la vida llega a 0, cambiar al estado de muerte
     if (currentHealth <= 0) {

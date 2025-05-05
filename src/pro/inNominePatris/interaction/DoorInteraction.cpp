@@ -48,3 +48,14 @@ bool DoorInteraction::isAvailable(Character& character, TileMap& tilemap) const 
     // pero solo se abrirá si se cumplen los requisitos
     return true;
 }
+
+std::string DoorInteraction::getProximityMessage() const {
+    if (!m_isOpen) {
+        return "Abrir con la \"E\"";
+    }
+    return ""; // No mostrar mensaje si ya está abierta
+}
+
+sf::FloatRect DoorInteraction::getBounds() const {
+    return sf::FloatRect(m_centerX - 1, m_centerY - 1, 2, 2); // Ajusta el tamaño del área de proximidad
+}

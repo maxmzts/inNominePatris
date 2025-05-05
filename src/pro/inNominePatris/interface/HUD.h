@@ -10,6 +10,7 @@ private:
     sf::RectangleShape inventoryBackground;
     sf::Font font;
     sf::Text weaponText;
+    sf::Text secondaryWeaponText;
 
 public:
     HUD(float width, float height);

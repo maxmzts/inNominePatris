@@ -179,6 +179,21 @@ void Character::update(const TileMap& tilemap, float deltaTime) {
     if (aimDirection.y > 0 && std::abs(aimDirection.y) > std::abs(aimDirection.x)) {
         sprite.setTextureRect(sf::IntRect(0, 0 * 75, 75, 75));
     }
+
+    // if (aimDirection.x > 0) {
+    //     sprite.setTextureRect(sf::IntRect(0, 2 * 16, 16, 16));
+    //     sprite.setScale(2.0f, 2.0f);
+    // }
+    // if (aimDirection.x < 0) {
+    //     sprite.setTextureRect(sf::IntRect(0, 2 * 16, 16, 16));
+    //     sprite.setScale(-2.0f, 2.0f);
+    // }
+    // if (aimDirection.y < 0 && std::abs(aimDirection.y) > std::abs(aimDirection.x)) {
+    //     sprite.setTextureRect(sf::IntRect(0, 3 * 16, 16, 16));
+    // }
+    // if (aimDirection.y > 0 && std::abs(aimDirection.y) > std::abs(aimDirection.x)) {
+    //     sprite.setTextureRect(sf::IntRect(0, 0 * 16, 16, 16));
+    // }
 }
 
 
@@ -189,20 +204,22 @@ void Character::draw(GameEngine& engine) {
     // Dibujar el personaje
     engine.drawSprite(sprite);
 
+    drawHearts(engine); // Dibujar corazones de vida
+
     // Dibujar el arma equipada
     if (equippedWeapon) {
         equippedWeapon->renderOnPlayer(getPosition(), getDirection(), engine.getWindow()); // Pasar el posicion y direccion para ajustar la posición del arma
     }
 
     // Dibujar barra de vida sobre el personaje
-    sf::RectangleShape healthBar(sf::Vector2f(50, 5));
-    healthBar.setFillColor(sf::Color::Green);
-    healthBar.setPosition(sprite.getPosition().x - 25, sprite.getPosition().y - 40);
+    // sf::RectangleShape healthBar(sf::Vector2f(50, 5));
+    // healthBar.setFillColor(sf::Color::Green);
+    // healthBar.setPosition(sprite.getPosition().x - 25, sprite.getPosition().y - 40);
 
-    float healthPercentage = static_cast<float>(currentHealth) / maxHealth;
-    healthBar.setSize(sf::Vector2f(50 * healthPercentage, 5));
+    // float healthPercentage = static_cast<float>(currentHealth) / maxHealth;
+    // healthBar.setSize(sf::Vector2f(50 * healthPercentage, 5));
 
-    engine.drawRectangle(healthBar);
+    // engine.drawRectangle(healthBar);
 
     if (isShieldActive) {
         shieldsprite.setPosition(sprite.getPosition().x - 32, sprite.getPosition().y - 32);
@@ -231,6 +248,8 @@ void Character::spawnAt(const TileMap& tilemap, float x, float y) {
     
     // Asegúrate de que la textura del sprite esté correctamente orientada
     sprite.setTextureRect(sf::IntRect(0, 0, 75, 75));
+    // sprite.setTextureRect(sf::IntRect(0, 0, 16, 16));
+
 }
 
 
@@ -397,7 +416,37 @@ void Character::heal(int amount) {
     setHealth(currentHealth + amount);
 }
 
+void Character::drawHearts(GameEngine& engine) {
+    // Cargar el sprite de los corazones si no está cargado
+    static SpriteFacade heartSprite("./resources/crucifix.png");
 
+    // Posición base del primer corazón (encima del personaje)
+    sf::Vector2f basePosition = sprite.getPosition();
+    basePosition.y -= 50; // Ajustar la altura para que esté encima del personaje
+    basePosition.x -= 45; // Centrar los corazones (ajustar según el tamaño del sprite)
+
+    // Dibujar los 3 corazones
+    for (int i = 0; i < 3; ++i) {
+        sf::Vector2f position = basePosition;
+        position.x += i * 30; // Separación entre corazones
+
+        // Determinar el estado del corazón (lleno, medio lleno o vacío)
+        float heartValue = currentHealth - (i * 33.33f); // Vida restante para este corazón
+        if (heartValue >= 33.33f) {
+            // Corazón lleno
+            heartSprite.setTextureRect(sf::IntRect(0, 0, 32, 32)); // Rect completo para corazón lleno
+        } else if (heartValue > 0) {
+            // Medio corazón
+            heartSprite.setTextureRect(sf::IntRect(0, 0, 16, 32)); // Rect para medio corazón
+        } else {
+            // Corazón vacío
+           heartSprite.setTextureRect(sf::IntRect(32, 0, 32, 32)); // Rect para corazón vacío (ajustar según el sprite)
+        }
+
+        heartSprite.setPosition(position.x, position.y);
+        heartSprite.draw(engine.getWindow());
+    }
+}
 
 
 
@@ -503,7 +552,7 @@ void Character::increaseDodgeChance(float amount) {
 
 void Character::increaseMaxHealth(int amount) {
     maxHealth += amount;
-    currentHealth = std::min(currentHealth, maxHealth); // Asegúrate de que la vida actual no exceda la máxima
+    currentHealth = std::min(currentHealth, static_cast<float>(maxHealth)); // Asegúrate de que la vida actual no exceda la máxima
 }
 
 void Character::enableHealthRegeneration() {

@@ -35,6 +35,9 @@ private:
     // Método para verificar interacciones automáticas (como los teletransportes)
     void checkAutoInteractions();
 
+    std::string proximityMessage;
+    sf::Font font;
+
 public:
     static InGame* getInstance(GameEngine& engine); // Método para obtener la instancia
     ~InGame();  
