@@ -4,6 +4,8 @@
 #include "UiTriggerInteraction.h"
 #include "SpawnPlayerInteraction.h"
 
+// bool going = true;
+
 std::shared_ptr<Interaction> InteractionFactory::createInteraction(int tileId) {
     switch (tileId) {
         // BUTTONS----------------------------------------------------------------------------------------------------
@@ -22,10 +24,13 @@ std::shared_ptr<Interaction> InteractionFactory::createInteraction(int tileId) {
         case 873: // Tile para la tienda
             return std::make_shared<UiTriggerInteraction>(tileId, "Tienda", "Tienda");
         // SPAWN POINTS----------------------------------------------------------------------------------------------------------------
+        // lvl 1
         case 68: // Nuevo tile para teletransporte
-            return std::make_shared<SpawnPlayerInteraction>(tileId, "Teletransporte 1", 121, 45);        
+            return std::make_shared<SpawnPlayerInteraction>(tileId, "Teletransporte 1-2", 121, 45, 29, 10);
+        // case 690: // Nuevo tile para teletransporte
+            // return std::make_shared<SpawnPlayerInteraction>(tileId, "Teletransporte 2-3", 121, 45);        
         case 999: // Ejemplo de teletransporte que requiere interacción (presionar E)
-            return std::make_shared<SpawnPlayerInteraction>(tileId, "Portal Manual", 90, 120, false);
+            // return std::make_shared<SpawnPlayerInteraction>(tileId, "Portal Manual", 90, 120, false);
         default:
             return nullptr;
     }

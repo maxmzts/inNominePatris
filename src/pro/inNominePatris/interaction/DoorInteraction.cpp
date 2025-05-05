@@ -40,12 +40,6 @@ void DoorInteraction::execute(Character& character, TileMap& tilemap) {
         }
     } else {
         std::cout << "No se puede abrir la puerta " << getName() << ". Faltan botones por activar." << std::endl;
-        tilemap.removeCollisionByCoord(m_centerX, m_centerY);
-            tilemap.removeCollisionByCoord(m_centerX + 1, m_centerY);
-            tilemap.removeCollisionByCoord(m_centerX + 2, m_centerY);
-            tilemap.removeCollisionByCoord(m_centerX + 3, m_centerY);
-            tilemap.removeCollisionByCoord(m_centerX + 4, m_centerY);
-            tilemap.removeCollisionByCoord(m_centerX + 5, m_centerY);
     }
 }
 
