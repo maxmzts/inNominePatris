@@ -20,15 +20,14 @@ Este fichero puede ser un PDF si la herramienta que gastáis lo requiere, pero *
 
 **TAREAS PARA FINAL DE PROYECTO**
 
-- Menú de pausa funcional.
-- Ciclo de muerte (morir y spawnear en el lobby).
-- Sistema de guardado.
-- Tilear mundo 1 mínimo.
-- Agregar el boss.
+- Menú de pausa funcional y Sistema de guardado - Estrella Domínguez.
+- Ciclo de muerte (morir y spawnear en el lobby) - Estrella Domínguez.
+- Tilear mundo 1 mínimo - David González y Jorge Pelegrín.
+- Agregar el boss - Máximo Martínez
 - Añadir el bucle de salas.
 - Render Interpolado.
-- Que funcionen los menús con el click del ratón.
-- Cambios menores en armas. 
-- Añadir más efectos de sonido (algunos más). 
+- Que funcionen los menús con el click del ratón - Estrella Domínguez.
+- Cambios menores en armas - Jorge Pelegrín.
+- Añadir más efectos de sonido (algunos más) - Máximo Martínez.
 - Añadir input de recibir daño, y algún efecto de sonido.
 - 
