@@ -255,7 +255,7 @@ Por último he cambiado la barra de vida por corazones.
 Arreglado problema con los bounds, ya se puden eliminar bounds para dar paso al jugador a zonas previamente inaccesibles.
 
 ## 20250414 EstrellaDominguez @(30min)
-Arreglos menores en la tienda y el HUD.
+Arreglos menores en la tienda y el HUD. Subida a main para el Hito 2.
 
 ## 20250414 DavidGonzález @(2h)
 Spawn at funcionando correctamente con ida y vuelta + puliendo world_1
