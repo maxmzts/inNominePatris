@@ -17,3 +17,18 @@ Se recomienda gastar alguna herramienta que permita medir el tiempo y administra
 * Todo+: Plugin de VSCODE: fabiospampinato.vscode-todo-plus
 
 Este fichero puede ser un PDF si la herramienta que gastáis lo requiere, pero **debe estar actualizado semanalmente**.
+
+**TAREAS PARA FINAL DE PROYECTO**
+
+- Menú de pausa funcional.
+- Ciclo de muerte (morir y spawnear en el lobby).
+- Sistema de guardado.
+- Tilear mundo 1 mínimo.
+- Agregar el boss.
+- Añadir el bucle de salas.
+- Render Interpolado.
+- Que funcionen los menús con el click del ratón.
+- Cambios menores en armas. 
+- Añadir más efectos de sonido (algunos más). 
+- Añadir input de recibir daño, y algún efecto de sonido.
+- 
