@@ -220,12 +220,9 @@ void InGame::update(Game& game) {
                         player.startDash(sword->getDashSpeed(), 0.2f); // Usa los valores de la espada
                 } else if (Lance* lance = dynamic_cast<Lance*>(player.getEquippedWeapon())) {
                     // Usar habilidad de la lanza
-                    sf::Vector2i mousePosition = sf::Mouse::getPosition(engine.getWindow());
-                    sf::Vector2f worldMousePos = engine.getWindow().mapPixelToCoords(mousePosition);
-
                     if (!lance->getIsPortalDropped()) {
                         // Colocar el portal
-                        lance->useAbility(player.getPosition(), worldMousePos);
+                        lance->useAbility(player.getPosition());
                     } else {
                         // Teletransportar al portal
                         sf::Vector2f playerPosition = player.getPosition();

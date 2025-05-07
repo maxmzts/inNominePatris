@@ -12,7 +12,8 @@ public:
     void attack(sf::Vector2f position, sf::Vector2f direction) override;
     // REIMPLEMENTAR
     bool useAbility() override;
-    void useAbility(sf::Vector2f characterPosition, sf::Vector2f mousePosition) override {}
+    void useAbility(sf::Vector2f characterPosition) override {}
+    void useAbility(sf::Vector2f position, sf::Vector2f direction) override {}
     void increaseDashSpeed(float speed);
     void decreaseDashCooldown(float cooldown);
     void decreaseAttackCooldown(float cooldown);

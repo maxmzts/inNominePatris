@@ -39,12 +39,12 @@ class Lance : public Weapon {
         void attack(sf::Vector2f position, sf::Vector2f direction) override;
         void createHitbox(sf::Vector2f position, sf::Vector2f direction);
         bool useAbility() override {}
-        void useAbility(sf::Vector2f characterPosition, sf::Vector2f mousePosition);
+        void useAbility(sf::Vector2f characterPosition);
+        void useAbility(sf::Vector2f position, sf::Vector2f direction) override {}
         const sf::Vector2f& teleportToPortal();
         void DrawPortal(sf::RenderWindow& window);
         void PortalUpdate(float deltaTime);
         void update(float deltaTime) override;
-        void increasePortalRange(float range);
         void decreaseAttackCooldown(float cooldown);
         void increaseAttackDamage(float damage);
         //void draw(GameEngine& engine, sf::Vector2f position, sf::Vector2f direction) override;
@@ -58,7 +58,6 @@ class Lance : public Weapon {
     private:
         SpriteFacade spriteFacade;
         bool isPortalDropped;
-        float PortalRange;
         Portal portal;
         float abilityCooldown = 4.0f; // Cooldown para la habilidad (en segundos)
         float abilityTimer = 0.f;     // Temporizador para la habilidad

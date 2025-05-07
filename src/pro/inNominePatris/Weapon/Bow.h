@@ -18,6 +18,7 @@ public:
     void attack(sf::Vector2f position, sf::Vector2f direction) override;
     // REIMPLEMENTAR
     bool useAbility() {}
+    void useAbility(sf::Vector2f position) override {};
     void useAbility(sf::Vector2f position, sf::Vector2f direction) override;
     void update(float deltaTime, const TileMap& tileMap);
     void update(float deltaTime) override {}

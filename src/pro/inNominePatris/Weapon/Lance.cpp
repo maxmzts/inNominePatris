@@ -12,7 +12,6 @@ Lance::Lance(GameEngine* engine)
     attackCooldown(0.7f), 
     attackTimer(0.f), 
     isPortalDropped(false), 
-    PortalRange(300.0f), 
     portal(), 
     pinchSprite("./resources/Pinch_Animation_Lance.png"),
     pinchAnimation(pinchSprite) 
@@ -94,7 +93,7 @@ void Lance::attack(sf::Vector2f position, sf::Vector2f direction) {
 }
 
 // REIMPLEMENTAR
-void Lance::useAbility(sf::Vector2f characterPosition, sf::Vector2f mousePosition) {
+void Lance::useAbility(sf::Vector2f characterPosition) {
     if (abilityTimer > 0.f) {
         std::cout << "Ability on cooldown! Time remaining: " << abilityTimer << " seconds" << std::endl;
         return;
@@ -102,23 +101,14 @@ void Lance::useAbility(sf::Vector2f characterPosition, sf::Vector2f mousePositio
 
     if (!isPortalDropped) {
         // Calcular la distancia entre el personaje y la posición del ratón
-        float distance = std::sqrt(std::pow(mousePosition.x - characterPosition.x, 2) +
-                                   std::pow(mousePosition.y - characterPosition.y, 2));
 
-        if (distance <= PortalRange) {
-            std::cout << "Dropping Portal at: " << mousePosition.x << ", " << mousePosition.y << std::endl;
-            portal.setPosition(mousePosition);
+            portal.setPosition(characterPosition);
             portal.setVisible(true);
             isPortalDropped = true;
 
             // Reiniciar el cooldown
             abilityTimer = abilityCooldown;
-        } else {
-            std::cout << "Portal placement out of range! Distance: " << distance << " - PortalRange: " << PortalRange << std::endl;
         }
-    } else {
-        std::cout << "Portal already placed. Ready to teleport!" << std::endl;
-    }
 }
 
 const sf::Vector2f& Lance::teleportToPortal() {
@@ -283,11 +273,6 @@ void Lance::render(sf::RenderWindow& window){
 
 std::shared_ptr<Hitbox> Lance::getAttackHitbox() const {
     return attackHitbox;
-}
-
-void Lance::increasePortalRange(float range) {
-    PortalRange += range;
-    std::cout << "Portal range increased!" << std::endl;
 }
 
 void Lance::decreaseAttackCooldown(float cooldown) {

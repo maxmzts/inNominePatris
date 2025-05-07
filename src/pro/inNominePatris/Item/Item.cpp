@@ -28,7 +28,6 @@ Item* Item::generateRandomItemforWeapon(ItemType weapontype) {
         items.push_back(new AttackDamageSwordItem());
     }
     else if(weapontype == ItemType::Lance){
-        items.push_back(new PortalRangeItem());
         items.push_back(new AttackCooldownLanceItem());
         items.push_back(new AttackDamageLanceItem());
     }
@@ -88,17 +87,6 @@ void AttackDamageSwordItem::Picked() {
 }
 
 //--------------Lanza-------------------//
-
-//Aumentar el rango del portal
-void PortalRangeItem::applyEffect(Weapon& weapon) {
-    if (Lance* lance = dynamic_cast<Lance*>(&weapon)) {
-        lance->increasePortalRange(100.f); // Aumentar el rango del portal
-    }
-}
-
-void PortalRangeItem::Picked() {
-    isPickedUp = true;
-}
 
 //Disminuir el cooldown del ataque
 void AttackCooldownLanceItem::applyEffect(Weapon& weapon) {

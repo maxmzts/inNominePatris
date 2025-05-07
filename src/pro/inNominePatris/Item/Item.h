@@ -62,13 +62,6 @@ class AttackDamageSwordItem : public Item {
 };
 
 //--------------Lanza-------------------//
-class PortalRangeItem : public Item {
-    public:
-        PortalRangeItem() : Item(ItemType::Lance) {}
-        void applyEffect(Weapon& weapon) override;
-        void Picked();
-};
-
 class AttackCooldownLanceItem : public Item {
     public:
         AttackCooldownLanceItem() : Item(ItemType::Lance) {}
