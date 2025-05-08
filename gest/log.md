@@ -257,5 +257,8 @@ Arreglado problema con los bounds, ya se puden eliminar bounds para dar paso al 
 ## 20250414 EstrellaDominguez @(30min)
 Arreglos menores en la tienda y el HUD. Subida a main para el Hito 2.
 
-## 20250414 DavidGonzález @(2h)
+## 20250506 DavidGonzález @(2h)
 Spawn at funcionando correctamente con ida y vuelta + puliendo world_1
+
+## 20250508 DavidGonzález @(2h)
+World_1 casi terminado (faltan los tps)
