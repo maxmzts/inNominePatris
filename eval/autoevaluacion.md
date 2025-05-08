@@ -7,7 +7,7 @@ Reflejar tanto el progreso como los problemas encontrados con el grupo, código,
 
 
 ## David González
-
+Demasiada dependencia de IA por falta absoluta de conocimiento del lenguaje c++ en este ámbito, sensación grande de frustración por tener que trabajar a un nivel tan bajo como para tener que desarrollar un motor, aun asi satisfecho con el resultado.
 
 ## Máximo Martínez Torres
 He tenido muchos problemas con el nivel exigido de C++ respecto al poco que se enseña en la carrera. He tenido que aprender sobre la marcha y eso ha retrasado tanto mi trabajo como mi motivación. Además nos pasamos de ambición y esto añadió un extra de presión al trabajo. 
