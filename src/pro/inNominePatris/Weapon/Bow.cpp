@@ -27,6 +27,19 @@ void Bow::attack(sf::Vector2f position, sf::Vector2f direction) {
         float pitch = 0.8f + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (1.2f - 0.8f);
         SFXManager::getInstance().addEffect("resources/sfx/bow.wav", 60.f, pitch);
 
+        if (quickShotEnabled) {
+            float randomValue = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+            if (randomValue < quickShotChance) {
+                std::cout << "Quick Shot triggered! Firing a second arrow!" << std::endl;
+                // Small delay for the second arrow to simulate rapid fire
+                sf::Vector2f slightOffset = direction * 20.f;
+                arrows.emplace_back(position + slightOffset, direction, arrowSpeed * 1.1f);
+                // Higher pitch for the second arrow
+                pitch = 1.0f + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (1.3f - 1.0f);
+                SFXManager::getInstance().addEffect("resources/sfx/bow.wav", 65.f, pitch);
+            }
+        }
+
         // Reiniciar el cooldown
         attackTimer = attackCooldown;
     } else {
@@ -148,10 +161,26 @@ void Bow::render(sf::RenderWindow& window){
     }
 }
 
+void Bow::increaseAttackDamage(float damage) {
+    baseDamage += damage; // Aumentar el daño base del arco
+}
+
 void Bow::increaseAbilityArrowCount(int count) {
     abilityArrowCount += count; // Incrementar el número de flechas de la habilidad
 }
 
 void Bow::increaseArrowSpeed(float speed) {
     arrowSpeed += speed; // Incrementar la velocidad de las flechas
+}
+
+void Bow::enableQuickShot(float chance) {
+    quickShotEnabled = true;
+    quickShotChance += chance; // Allow the chance to stack if multiple items are collected
+    if (quickShotChance > 0.75f) quickShotChance = 0.75f; // Cap at 75% to prevent it from becoming too powerful
+    std::cout << "Quick Shot enabled with " << quickShotChance * 100 << "% chance!" << std::endl;
+}
+
+void Bow::decreaseAbilityCooldown(float cooldown) {
+    abilityCooldown -= cooldown; // Disminuir el cooldown de la habilidad
+    if (abilityCooldown < 1.0f) abilityCooldown = 1.0f; // Cap at 1 second to prevent it from becoming too powerful
 }

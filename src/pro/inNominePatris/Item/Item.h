@@ -90,3 +90,47 @@ class AttackHitboxLanceItem : public Item {
         void Picked();
 };
 #endif // ITEM_H
+
+class RevengeReturnItem : public Item {
+    public:
+        RevengeReturnItem() : Item(ItemType::Lance) {}
+        void applyEffect(Weapon& weapon) override;
+        void Picked();
+};
+
+//--------------Arco-------------------//
+
+class AttackDamageBowItem : public Item {
+    public:
+        AttackDamageBowItem() : Item(ItemType::Bow) {}
+        void applyEffect(Weapon& weapon) override;
+        void Picked();
+};
+
+class ArrowSpeedItem : public Item {
+    public:
+        ArrowSpeedItem() : Item(ItemType::Bow) {}
+        void applyEffect(Weapon& weapon) override;
+        void Picked();
+};
+
+class ArrowCountItem : public Item {
+    public:
+        ArrowCountItem() : Item(ItemType::Bow) {}
+        void applyEffect(Weapon& weapon) override;
+        void Picked();
+};
+
+class QuickShotItem : public Item {
+    public:
+        QuickShotItem() : Item(ItemType::Bow) {}
+        void applyEffect(Weapon& weapon) override;
+        void Picked();
+};
+
+class DecreaseAbilityCooldownBowItem : public Item {
+    public:
+        DecreaseAbilityCooldownBowItem() : Item(ItemType::Bow) {}
+        void applyEffect(Weapon& weapon) override;
+        void Picked();
+};

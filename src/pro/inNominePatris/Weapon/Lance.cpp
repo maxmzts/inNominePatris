@@ -88,7 +88,13 @@ void Lance::attack(sf::Vector2f position, sf::Vector2f direction) {
         SFXManager::getInstance().addEffect("resources/sfx/spear.wav", 60.f, pitch);
 
         float damage = calculateDamage(); // Calcular el daño
-        std::cout << "Lance attack: Dealt " << damage << " damage!" << std::endl;
+
+        if(RevengeReturnActive) {
+            damage *= revengeReturnDamageMultiplier; // Aplicar el multiplicador de daño
+            std::cout << "Revenge return activated! Damage: " << damage << std::endl;
+        } else {
+            std::cout << "Normal attack! Damage: " << damage << std::endl;
+        }
     }
 }
 
@@ -114,8 +120,15 @@ void Lance::useAbility(sf::Vector2f characterPosition) {
 const sf::Vector2f& Lance::teleportToPortal() {
     portal.setVisible(false);
     isPortalDropped = false;
-    return portal.getPosition();
     consecutiveAttacks = 0;
+
+    if (RevengeReturnItemPicked) {
+        SetRevengeReturn();
+        std::cout << "Retorno vengador preparado para el próximo ataque!" << std::endl;
+    }
+
+    return portal.getPosition();
+
 }
 
 Portal::Portal() : position(0.f, 0.f), visible(false) {
@@ -284,4 +297,25 @@ void Lance::decreaseAttackCooldown(float cooldown) {
 void Lance::increaseAttackDamage(float damage) {
     baseDamage += damage;
     std::cout << "Attack damage increased!" << std::endl;
+}
+
+void Lance::activateRevengeReturn() {
+    RevengeReturnItemPicked = true;
+}
+
+bool Lance::HasRevengeReturn() const {
+    return RevengeReturnActive;
+}
+
+void Lance::SetRevengeReturn() {
+    RevengeReturnActive = true;
+}
+
+void Lance::ConsumeRevengeReturn() {
+    RevengeReturnActive = false;
+}
+
+void Lance::increaseAttackHitbox(float width, float height) {
+    attackHitbox->setSize(sf::Vector2f(width, height));
+    std::cout << "Attack hitbox size increased!" << std::endl;
 }

@@ -47,6 +47,7 @@ class Lance : public Weapon {
         void update(float deltaTime) override;
         void decreaseAttackCooldown(float cooldown);
         void increaseAttackDamage(float damage);
+        void increaseAttackHitbox(float width, float height);
         //void draw(GameEngine& engine, sf::Vector2f position, sf::Vector2f direction) override;
         void render(sf::RenderWindow& window) override;
         void renderOnPlayer(sf::Vector2f position, sf::Vector2f direction, sf::RenderWindow& window) override;
@@ -55,12 +56,23 @@ class Lance : public Weapon {
         AbilityType getAbilityType() const override { return AbilityType::Teleport; };
         bool getIsPortalDropped() const { return isPortalDropped; }
         std::shared_ptr<Hitbox> getAttackHitbox() const override;
+
+        
+        bool HasRevengeReturn() const; // Verifica si el ataque de venganza está activo
+        void SetRevengeReturn(); // Activa o desactiva el ataque de venganza
+        void ConsumeRevengeReturn(); // Consume el ataque de venganza
+        void activateRevengeReturn(); // Activa el ataque de venganza
     private:
         SpriteFacade spriteFacade;
         bool isPortalDropped;
         Portal portal;
         float abilityCooldown = 4.0f; // Cooldown para la habilidad (en segundos)
         float abilityTimer = 0.f;     // Temporizador para la habilidad
+
+        bool RevengeReturnItemPicked = false; // Indica si el ataque de venganza ha sido activado por un ítem
+        bool RevengeReturnActive = false; // Indica si el ataque de venganza está activos
+        float revengeReturnDamageMultiplier = 1.75f;  // Multiplicador de daño (75% extra de daño)
+
 
         std::shared_ptr<Hitbox> attackHitbox;
         float attackCooldown;

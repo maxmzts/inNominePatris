@@ -1,83 +1,57 @@
-#ifndef CHARACTER_H
-#define CHARACTER_H
+#pragma once
 
 #include <SFML/Graphics.hpp>
-#include "TileMap.h" // clase TileMap para detección de colisiones
-#include "GameEngine.h" // clase GameEngine para la ventana y eventos
-#include "Weapon.h" // clase Weapon para armas
-#include "Hurtbox.h"
+#include <string>
 #include <vector>
-#include "AbilityType.h"
+#include <map>
+#include "TileMap.h" // Asumiendo que este header existe
+#include "GameEngine.h" // Asumiendo que este header existe
+#include "SpriteFacade.h" // Asumiendo que este header existe
+#include "AnimatedSprite.h" // Asumiendo que este header existe
 #include "InteractionManager.h"
-#include "AnimatedSprite.h"
+#include "Weapon.h" // Asumiendo que este header existe
 
+class Hurtbox; // Forward declaration
 
 class Character {
 public:
-    Character(const std::string& textureFile);
+    // Enum para los estados de animación
+    enum class AnimationState {
+        IDLE_DOWN,
+        IDLE_UP,
+        IDLE_LEFT,
+        IDLE_RIGHT,
+        WALK_DOWN,
+        WALK_UP,
+        WALK_LEFT,
+        WALK_RIGHT
+    };
+
+    Character();
+    virtual ~Character();
 
     void handleInput(const sf::Event& event);
-    void update(const TileMap& tilemap, float deltaTime); // update recibe el mapa para verificar colisiones
-    void draw(GameEngine& engine);
+    void setMousePosition(const sf::Vector2f& position);
+    void updateAimDirection();
+    sf::Vector2f getAimDirection() const;
     
+    virtual void update(const TileMap& tilemap, float deltaTime);
+    void draw(GameEngine& engine);
+    void spawnAt(const TileMap& tilemap, float x, float y);
+
+    // Weapon related methods
     void equipWeapon();
-    sf::Vector2f getDirection() const;
-    // cambiar
-    // void attack(std::vector<Enemy>& enemies);
-    void useAbility(sf::RenderWindow& window);
     void startDash(float speed, float duration);
-    sf::FloatRect getBounds() const;
     void addWeapon(Weapon* weapon);
     void switchWeapon();
     void setWeapon(int index);
-    bool hasWeapon() { if(equippedWeapon == nullptr) return false; else return true; }
     int getWeaponCount() const;
     Weapon* getEquippedWeapon() const;
+    void setPosition(float x, float y);
+    sf::Vector2f getDirection() const;
+    void setDirection(float x, float y);
     void addWeaponWithPosition(Weapon* weapon, sf::Vector2f originalPosition);
     Weapon* removeFirstWeapon(sf::Vector2f& outOriginalPosition);
-
-    void increaseMovementSpeed(float amount);
-    void increaseMaxHealth(int amount);
-    
-    void setPosition(float x, float y);
-    sf::Vector2f getPosition() const {
-        return sprite.getPosition();
-    }
-    void setDirection(float x, float y);
-    // para spawn del jugador
-    void spawnAt(const TileMap& tilemap, float x, float y);
-    void interact(TileMap& tilemap);
-
-    // para la vida del jugador
-    void setHealth(int health);
-    int getHealth() const;
-    int getMaxHealth() const;
-    void enableHealthRegeneration();
-    void updateHealthRegeneration(float deltaTime);
-
-    bool getIsInvencible() const { return isInvencible; }
-    void takeDamage(int damage);
-    void heal(int amount);
-    void hurt(int amount);
-    Hurtbox* getHurtbox() { return hurtbox; }
-
-    // para interaccion
-    void InteractionCage(TileMap& tilemap, int centerX, int centerY);
-    void InteractionOpenDoor();
-
-    // para el karma
-    int getKarma() const;
-    void addKarma(int amount);
-
-    void enableTemporalyShield(float duration);
-
-    void increaseDodgeChance(float amount);
-    bool tryDodge() const;
-
-    void setMousePosition(const sf::Vector2f& position);
-    sf::Vector2f getAimDirection() const;
-    
-    
     int getEquippedIndex() const { return equippedIndex; }
     Weapon* getWeaponAtIndex(int index) const {
         if (index >= 0 && index < weapons.size()) {
@@ -85,62 +59,100 @@ public:
         }
         return nullptr;
     }
+ 
 
-private:
+    // Health related methods
+    void setHealth(int health);
+    int getHealth() const;
+    int getMaxHealth() const;
+    void takeDamage(int damage);
+    void heal(int amount);
+    void hurt(int amount);
+    Hurtbox* getHurtbox() { return hurtbox; }
+    void drawHearts(GameEngine& engine);
+
+    // Interaction methods
+    void InteractionCage(TileMap& tilemap, int centerX, int centerY);
+    void InteractionOpenDoor();
+    void interact(TileMap& tilemap);
+    bool getIsInvencible() const { return isInvencible; }
+ 
+    
+    void updateInvencibility(float deltaTime);
+    int getKarma() const;
+    void addKarma(int amount);
+    void updateHealthRegeneration(float deltaTime);
+    bool tryDodge() const;
+    void increaseMovementSpeed(float amount);
+    void increaseDodgeChance(float amount);
+    void increaseMaxHealth(int amount);
+    void enableHealthRegeneration();
+    void enableTemporalyShield(float duration);
+    
+    sf::FloatRect getBounds() const;
+    
+    sf::Vector2f getPosition() const { return sprite.getPosition(); }
+
+protected:
+    // Animation methods
+    void setupAnimations();
+    void updateAnimation();
+    void changeAnimationState(AnimationState newState);
+
+    SpriteFacade sprite;
     sf::Texture texture;
-    sf::Sprite sprite;
     sf::Vector2f velocity;
-
+    sf::Vector2f direction;
     sf::Vector2f mousePosition;
     sf::Vector2f aimDirection;
-
-    float currentHealth; // Float para manejar medias vidas
-
-    void updateAimDirection();
     
     float speed;
     float acceleration;
     float deceleration;
-    sf::Vector2f direction;
-
-    int maxHealth;
-
-    bool healthRegenerationEnabled = false;
-    float healthRegenTimer = 0.f;
-    float healthRegenInterval = 30.f; // Intervalo de regeneración en segundos
-
-    bool movingRight = false;
+    
     bool movingLeft = false;
+    bool movingRight = false;
     bool movingUp = false;
     bool movingDown = false;
-
-    bool isInvencible;
-    float invencibilityTimer = 0.f;
-    float invencibilityDuration = 1.f; // Duración de la invencibilidad en segundos
-    AnimatedSprite* shieldAnimation; // Animación del escudo
-    SpriteFacade shieldsprite;       // Textura para el escudo
-    bool isShieldActive = false;     // Indica si el escudo está activo
-
-    //Para esquivar la mejora
-    float dodgeChance = 0.0f; // Probabilidad de esquivar ataques
-
-    //Armas
-    Weapon* equippedWeapon;
+    
     bool isDashing;
-    sf::Clock dashTimer;
     float dashSpeed;
     float dashDuration;
-    std::vector<Weapon*> weapons; // Máximo 2 armas
-    int equippedIndex = 0; // Índice del arma equipada
-    std::vector<sf::Vector2f> weaponOriginalPositions; // Posiciones de las armas en el suelo
-    Hurtbox* hurtbox;
-
-    void updateInvencibility(float deltaTime);
-
-    // Karma
-    int karmaPoints = 2000; // Karma del jugador
-
-    void drawHearts(GameEngine& engine);
+    sf::Clock dashTimer;
+    
+    std::vector<Weapon*> weapons;
+    std::vector<sf::Vector2f> weaponOriginalPositions;
+    Weapon* equippedWeapon;
+    int equippedIndex;
+    
+    int maxHealth;
+    float currentHealth;
+    
+    bool isInvencible;
+    float invencibilityTimer = 0;
+    float invencibilityDuration = 1.0f;
+    
+    Hurtbox* hurtbox; // Hurtbox para detección de colisión con enemigos
+    
+    // Shield related
+    bool isShieldActive = false;
+    SpriteFacade shieldsprite;
+    AnimatedSprite* shieldAnimation;
+    
+    // Health regeneration
+    bool healthRegenerationEnabled = false;
+    float healthRegenTimer = 0.0f;
+    float healthRegenInterval = 5.0f; // Regenerar cada 5 segundos
+    
+    // Dodge chance
+    float dodgeChance = 0.0f;
+    
+    // Karma system
+    int karmaPoints = 0;
+    
+    // Animation system
+    AnimatedSprite* animations;
+    AnimationState currentState;
+    bool wasMoving;
+    std::map<AnimationState, std::string> animationTextures;
 };
-
-#endif // CHARACTER_H

@@ -46,7 +46,7 @@ public:
     void render(Game& game, sf::RenderWindow& window) override;
 
     bool checkEnemyWasHit(std::shared_ptr<Enemy> enemy, Character player);
-    bool checkPlayerWasHit(Character player, std::shared_ptr<Enemy> enemy);
+    bool checkPlayerWasHit(Character& player, std::shared_ptr<Enemy> enemy);
 };
 
 #endif // INGAME_H

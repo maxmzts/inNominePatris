@@ -18,6 +18,11 @@ bool SpriteFacade::loadTexture(const std::string& texturePath) {
     return true;
 }
 
+void SpriteFacade::loadTexture(const sf::Texture& texture) {
+    this->texture = texture;
+    sprite.setTexture(this->texture);
+}
+
 // Establecer la posición del sprite
 void SpriteFacade::setPosition(float x, float y) {
     sprite.setPosition(x, y);
@@ -73,4 +78,8 @@ void SpriteFacade::setColor(const sf::Color& color) {
 
 const sf::Sprite& SpriteFacade::getSprite() const {
     return sprite;
+}
+
+void SpriteFacade::move(sf::Vector2f offset) {
+    sprite.move(offset);
 }

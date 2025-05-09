@@ -31,8 +31,19 @@ Item* Item::generateRandomItemforWeapon(ItemType weapontype) {
     else if(weapontype == ItemType::Lance){
         items.push_back(new AttackCooldownLanceItem());
         items.push_back(new AttackDamageLanceItem());
+        items.push_back(new AttackHitboxLanceItem());
+        items.push_back(new RevengeReturnItem());
     }
     else if(weapontype == ItemType::Bow){
+        items.push_back(new AttackDamageBowItem());
+        items.push_back(new ArrowSpeedItem());
+        items.push_back(new ArrowCountItem());
+        items.push_back(new QuickShotItem());
+        items.push_back(new DecreaseAbilityCooldownBowItem());
+    }
+    else{
+        std::cerr << "Error: Tipo de arma no reconocido." << std::endl;
+        return nullptr;
     }
     
     if(items.empty()) return nullptr;
@@ -134,5 +145,73 @@ void AttackHitboxLanceItem::applyEffect(Weapon& weapon) {
 }
 
 void AttackHitboxLanceItem::Picked() {
+    isPickedUp = true;
+}
+
+//Activar el ataque de venganza
+void RevengeReturnItem::applyEffect(Weapon& weapon) {
+    if (Lance* lance = dynamic_cast<Lance*>(&weapon)) {
+        lance->activateRevengeReturn();
+    }
+}
+
+void RevengeReturnItem::Picked() {
+    isPickedUp = true;
+}
+
+//--------------Arco-------------------//
+
+//Aumentar el daño del ataque
+void AttackDamageBowItem::applyEffect(Weapon& weapon) {
+    if (Bow* bow = dynamic_cast<Bow*>(&weapon)) {
+        bow->increaseAttackDamage(8.f); // Aumentar el daño del ataque
+    }
+}
+
+void AttackDamageBowItem::Picked() {
+    isPickedUp = true;
+}
+
+//Aumentar la velocidad de la flecha
+void ArrowSpeedItem::applyEffect(Weapon& weapon) {
+    if (Bow* bow = dynamic_cast<Bow*>(&weapon)) {
+        bow->increaseArrowSpeed(150.f); // Aumentar la velocidad de la flecha
+    }
+}
+
+void ArrowSpeedItem::Picked() {
+    isPickedUp = true;
+}
+
+//Aumentar la cantidad de flechas disparadas por la habilidad
+void ArrowCountItem::applyEffect(Weapon& weapon) {
+    if (Bow* bow = dynamic_cast<Bow*>(&weapon)) {
+        bow->increaseAbilityArrowCount(2); // Aumentar la cantidad de flechas disparadas por la habilidad
+    }
+}
+
+void ArrowCountItem::Picked() {
+    isPickedUp = true;
+}
+
+//Tirar flechas más rápido
+void QuickShotItem::applyEffect(Weapon& weapon) {
+    if (Bow* bow = dynamic_cast<Bow*>(&weapon)) {
+        bow->enableQuickShot(0.25f); // 25% chance to trigger quick shot
+    }
+}
+
+void QuickShotItem::Picked() {
+    isPickedUp = true;
+}
+
+//Disminuir el cooldown de la habilidad
+void DecreaseAbilityCooldownBowItem::applyEffect(Weapon& weapon) {
+    if (Bow* bow = dynamic_cast<Bow*>(&weapon)) {
+        bow->decreaseAbilityCooldown(1.f); // Disminuir el cooldown de la habilidad
+    }
+}
+
+void DecreaseAbilityCooldownBowItem::Picked() {
     isPickedUp = true;
 }
