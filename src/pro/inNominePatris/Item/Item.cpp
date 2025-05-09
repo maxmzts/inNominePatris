@@ -26,6 +26,7 @@ Item* Item::generateRandomItemforWeapon(ItemType weapontype) {
         items.push_back(new DashCooldownItem());
         items.push_back(new AttackCooldownSwordItem());
         items.push_back(new AttackDamageSwordItem());
+        items.push_back(new DoubleDashItem());
     }
     else if(weapontype == ItemType::Lance){
         items.push_back(new AttackCooldownLanceItem());
@@ -86,6 +87,21 @@ void AttackDamageSwordItem::Picked() {
     isPickedUp = true;
 }
 
+void DoubleDashItem::applyEffect(Weapon& weapon) {
+    Sword* sword = dynamic_cast<Sword*>(&weapon);
+    if (sword) {
+        sword->enableDoubleDash(); // Habilitar el doble dash en la espada
+        std::cout << "¡Doble dash habilitado para la espada!" << std::endl;
+    } else {
+        std::cerr << "El ítem DoubleDash solo puede aplicarse a una espada." << std::endl;
+    }
+}
+
+void DoubleDashItem::Picked() {
+    isPickedUp = true;
+    std::cout << "¡Has recogido el ítem DoubleDash!" << std::endl;
+}
+
 //--------------Lanza-------------------//
 
 //Disminuir el cooldown del ataque
@@ -107,5 +123,16 @@ void AttackDamageLanceItem::applyEffect(Weapon& weapon) {
 }
 
 void AttackDamageLanceItem::Picked() {
+    isPickedUp = true;
+}
+
+//Aumentar el tamaño de la hitbox del ataque
+void AttackHitboxLanceItem::applyEffect(Weapon& weapon) {
+    if (Lance* lance = dynamic_cast<Lance*>(&weapon)) {
+        lance->increaseAttackHitbox(250,40); // Crear la hitbox de ataque
+    }
+}
+
+void AttackHitboxLanceItem::Picked() {
     isPickedUp = true;
 }

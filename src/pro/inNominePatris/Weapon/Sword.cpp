@@ -17,7 +17,9 @@ Sword::Sword(GameEngine* engine)
     abilityCooldown(2.f),
     lastAbilityTime(-abilityCooldown),
     slashSpriteFacade("./resources/Horizontal_Slash_Sword.png"),
-    slashAnimation(slashSpriteFacade) 
+    slashAnimation(slashSpriteFacade),
+    canDoubleDash(false),
+    consecutiveDashes(1) // Inicializa con 1 dash disponible por defecto
 {    
     spriteFacade.loadTexture("./resources/Weapons/sword.png"); // Cargar textura usando el Façade
     spriteFacade.setOrigin(16.0f, 16.0f);           // Establecer el origen
@@ -96,26 +98,63 @@ void Sword::createHitbox(sf::Vector2f position, sf::Vector2f direction) {
     attackHitbox->setActive(true);
 }
 
-
 bool Sword::useAbility() {
     static sf::Clock clock;
     float elapsedTime = clock.getElapsedTime().asSeconds();
-    if(elapsedTime - lastAbilityTime < abilityCooldown) {
+
+    // Si tenemos dashes disponibles, permitir usar la habilidad independientemente del cooldown
+    if (consecutiveDashes > 0) {
+        consecutiveDashes--; // Reducir el contador de dashes disponibles
+        
+        // Si usamos el último dash disponible, iniciar el cooldown
+        if (consecutiveDashes == 0) {
+            lastAbilityTime = elapsedTime;
+        }
+        
+        float pitch = 0.9f + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * 0.2f;
+        SFXManager::getInstance().addEffect("resources/sfx/dash.wav", 50.f, pitch);
+        std::cout << "Dash realizado. Dashes restantes: " << consecutiveDashes << std::endl;
+        return true;
+    }
+    
+    // Verificar si la habilidad está en cooldown
+    if (elapsedTime - lastAbilityTime < abilityCooldown) {
         std::cout << "Ability on cooldown!" << std::endl;
         return false;
     }
-
-    lastAbilityTime = elapsedTime;
-    consecutiveAttacks = 0;
-    std::cout << "Sword ability!" << std::endl;
+    
+    // El cooldown ha terminado, reiniciar dashés y usar uno
+    resetConsecutiveDashes();
+    consecutiveDashes--; // Usar uno de los dashes recién recargados
+    
+    float pitch = 0.9f + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * 0.2f;
+    SFXManager::getInstance().addEffect("resources/sfx/dash.wav", 50.f, pitch);
+    std::cout << "Sword ability used! Dashes restantes: " << consecutiveDashes << std::endl;
+    
+    // Solo iniciar cooldown si no quedan más dashes
+    if (consecutiveDashes == 0) {
+        lastAbilityTime = elapsedTime;
+    }
+    
     return true;
+}
+
+/**
+ * Resetea el número de dashes consecutivos disponibles según la habilidad desbloqueada
+ */
+void Sword::resetConsecutiveDashes() {
+    if (canDoubleDash) {
+        consecutiveDashes = 2;
+    } else {
+        consecutiveDashes = 1;
+    }
 }
 
 /**
  * Ajusta el espada en la posicion y con la direccion del jugador.
  * Luego llama a render para dibujar el espada.
  */
-void Sword::renderOnPlayer(sf::Vector2f position, sf::Vector2f direction,sf::RenderWindow& window) {
+void Sword::renderOnPlayer(sf::Vector2f position, sf::Vector2f direction, sf::RenderWindow& window) {
     // Calcular el ángulo para la dirección de apuntado
     float angle = std::atan2(direction.y, direction.x) * 180 / M_PI;
     
@@ -131,19 +170,6 @@ void Sword::renderOnPlayer(sf::Vector2f position, sf::Vector2f direction,sf::Ren
     render(window);
 }
 
-/**
- * Dibuja el espada en la posicion y con la direccion que tiene su sprite por defecto.
- */
-// void Sword::render(){
-//     // Dibujar el sprite del arma
-//     spriteFacade.draw(engine->getWindow());
-//     //attackHitbox.render(engine->getWindow()); // Dibujar la hitbox de ataque
-//     if(isAnimating) {
-//         slashSpriteFacade.draw(engine->getWindow()); // Dibujar la animación de ataque
-//     }
-// }
-
-// filepath: /proyecto-abp-grupo-f4/src/pro/inNominePatris/Weapon/Sword.cpp
 void Sword::render(sf::RenderWindow& window) {
     // Dibujar el sprite del arma
     spriteFacade.draw(engine->getRenderWindow());
@@ -162,12 +188,15 @@ void Sword::update(float deltaTime) {
             dealtDamage = false;
         }
     }
+    
     // Actualizar el temporizador de habilidad
-    if (lastAbilityTime > 0.f) {
-        lastAbilityTime -= deltaTime;
-        if(lastAbilityTime < 0.f) {
-            lastAbilityTime = -abilityCooldown; // Reiniciar el temporizador de habilidad
-        }
+    static sf::Clock clock;
+    float elapsedTime = clock.getElapsedTime().asSeconds();
+    
+    // Verificar si el cooldown ha terminado para recargar los dashes
+    if (consecutiveDashes == 0 && (elapsedTime - lastAbilityTime >= abilityCooldown)) {
+        resetConsecutiveDashes();
+        std::cout << "Dashes recargados: " << consecutiveDashes << std::endl;
     }
 
     if(isAnimating){
@@ -201,4 +230,10 @@ void Sword::decreaseAttackCooldown(float cooldown) {
 void Sword::increaseAttackDamage(float damage) {
     std::cout << "Attack damage increased!" << std::endl;
     baseDamage += damage;
+}
+
+void Sword::enableDoubleDash() {
+    std::cout << "Doble dash habilitado para la espada." << std::endl;
+    canDoubleDash = true;
+    resetConsecutiveDashes(); // Actualiza inmediatamente el número de dashes disponibles
 }

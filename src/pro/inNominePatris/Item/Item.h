@@ -61,6 +61,13 @@ class AttackDamageSwordItem : public Item {
         void Picked();
 };
 
+class DoubleDashItem : public Item {
+    public:
+        DoubleDashItem() : Item(ItemType::Sword) {}
+        void applyEffect(Weapon& weapon) override;
+        void Picked();
+};
+
 //--------------Lanza-------------------//
 class AttackCooldownLanceItem : public Item {
     public:
@@ -72,6 +79,13 @@ class AttackCooldownLanceItem : public Item {
 class AttackDamageLanceItem : public Item {
     public:
         AttackDamageLanceItem() : Item(ItemType::Lance) {}
+        void applyEffect(Weapon& weapon) override;
+        void Picked();
+};
+
+class AttackHitboxLanceItem : public Item {
+    public:
+        AttackHitboxLanceItem() : Item(ItemType::Lance) {}
         void applyEffect(Weapon& weapon) override;
         void Picked();
 };
