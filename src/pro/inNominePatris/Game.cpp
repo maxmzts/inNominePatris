@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "InGame.h"
 #include <iostream>
 
 Game::Game(const std::string& title, int width, int height)
@@ -29,11 +30,15 @@ void Game::render() {
 void Game::changeState(State* newState) {
     if (currentState == newState) {
         std::cout << "El estado actual ya es el mismo. No se realiza el cambio.\n";
-        return; // No cambia si el nuevo estado es el mismo que el actual
+        return;
     }
     if (currentState) {
         std::cout << "Eliminando estado actual\n";
-        delete currentState; // Limpia el estado actual
+
+        // Si el estado actual no es un singleton, elimínalo
+        if (dynamic_cast<InGame*>(currentState) == nullptr) {
+            delete currentState;
+        }
     }
     currentState = newState; // Cambia al nuevo estado
     std::cout << "Nuevo estado asignado\n";

@@ -66,6 +66,9 @@ InGame::InGame(GameEngine& engine)
 InGame* InGame::getInstance(GameEngine& engine) {
     if (!instance) {
         instance = new InGame(engine);
+    } else {
+        // Reinicia el estado del juego si ya existe
+        instance->reset(engine);
     }
     return instance;
 }
@@ -360,36 +363,6 @@ InGame::~InGame() {
     weaponsOnGround.clear();
 }
 
-/**
- * Renderiza los elementos de InGame
- */
-// void InGame::render(Game& game, sf::RenderWindow& window) {
-//     engine.clear();
-//     tileMap.draw(engine);
-
-//     for (Weapon* weapon : weaponsOnGround) {
-//         weapon->render();
-//     }
-
-//     for (auto enemy : EnemyManager::getInstance()->getEnemyList()){
-//         enemy->render(window);
-//     }
-
-//     player.draw(engine);
-
-//     VFXManager::getInstance().render(window);
-
-//     // Mostrar el HUD
-//     hud.draw(window, player);
-
-//     // Renderizar la tienda si está abierta
-//     if (shop.isOpen()) {
-//         shop.render();
-//     }
-
-//     engine.display();
-// }
-
 
 void InGame::render(Game& game, sf::RenderWindow& window) {
     GameEngine& engine = game.getEngine();
@@ -455,4 +428,12 @@ bool InGame::checkPlayerWasHit(Character& player, std::shared_ptr<Enemy> enemy){
     return player.getHurtbox()->getGlobalBounds().intersects(enemy->getHitbox()->getGlobalBounds());
 }
 
+void InGame::reset(GameEngine& engine) {
+    // Reinicia los datos del estado del juego
+    player.spawnAt(tileMap, 30, 44); // Reinicia la posición del jugador
+    player.setHealth(player.getMaxHealth()); // Restaura la salud del jugador
 
+    // Reinicia enemigos, armas y otros elementos del juego
+    EnemyManager::getInstance()->clearEnemies();
+    weaponsOnGround.clear();
+}

@@ -26,10 +26,13 @@ KoScreen::KoScreen() : selectedItemIndex(0) {
     }
     backgroundSprite.setTexture(backgroundTexture);
 
-    // Escalar el fondo para que ocupe toda la ventana
+    // Escalar el fondo dinámicamente según el tamaño de la ventana
     sf::Vector2u textureSize = backgroundTexture.getSize();
-    backgroundSprite.setScale(800.f / textureSize.x, 600.f / textureSize.y);
-    backgroundSprite.setPosition(0, 0);
+    sf::Vector2u windowSize(800, 600); // Tamaño predeterminado de la ventana
+    backgroundSprite.setScale(
+        static_cast<float>(windowSize.x) / textureSize.x,
+        static_cast<float>(windowSize.y) / textureSize.y
+    );
 
     // Configurar el texto principal
     title.setFont(font);
@@ -40,25 +43,55 @@ KoScreen::KoScreen() : selectedItemIndex(0) {
     // Centrar el título en la parte superior
     sf::FloatRect titleBounds = title.getLocalBounds();
     title.setOrigin(titleBounds.width / 2, titleBounds.height / 2);
-    title.setPosition(400, 150); // Centrado horizontalmente, ajustado verticalmente
+    title.setPosition(windowSize.x / 2.f, 100); // Centrado horizontalmente
 
     // Configurar las opciones
-    std::vector<std::string> opciones = {"Juegar de nuevo", "salir"};
+    std::vector<std::string> opciones = {"Jugar de nuevo", "Salir"};
     for (size_t i = 0; i < opciones.size(); ++i) {
+        // Crear fondo del texto
+        sf::RectangleShape background(sf::Vector2f(300, 50));
+        float spacing = windowSize.y / (opciones.size() + 2);
+        background.setPosition((windowSize.x - 300) / 2, spacing * (i + 2));
+        background.setFillColor(sf::Color(50, 50, 50, 200)); // Color gris con transparencia
+        background.setOutlineThickness(2);
+        background.setOutlineColor(sf::Color::White);
+        menuBackgrounds.push_back(background);
+
+        // Crear texto del menú
         sf::Text option;
         option.setFont(font);
         option.setString(opciones[i]);
         option.setCharacterSize(30);
         option.setFillColor(i == 0 ? sf::Color::Red : sf::Color::White);
 
-        // Posicionar las opciones proporcionalmente
-        float spacing = 600.f / (opciones.size() + 2); // Espaciado proporcional
-        option.setPosition(400, spacing * (i + 2)); // Centrado horizontalmente
+        // Centrar el texto dentro del recuadro
         sf::FloatRect optionBounds = option.getLocalBounds();
         option.setOrigin(optionBounds.width / 2, optionBounds.height / 2);
+        option.setPosition(background.getPosition().x + 300 / 2, background.getPosition().y + 50 / 2);
 
         menuOptions.push_back(option);
     }
+}
+
+void KoScreen::render(Game& game, sf::RenderWindow& window) {
+    // Restablecer la vista predeterminada
+    window.setView(window.getDefaultView());
+
+    window.clear();
+
+    // Dibujar el fondo
+    window.draw(backgroundSprite);
+
+    // Dibujar el título
+    window.draw(title);
+
+    // Dibujar las opciones del menú
+    for (size_t i = 0; i < menuOptions.size(); ++i) {
+        window.draw(menuBackgrounds[i]);
+        window.draw(menuOptions[i]);
+    }
+
+    window.display();
 }
 
 void KoScreen::update(Game& game) {
@@ -85,23 +118,6 @@ void KoScreen::update(Game& game) {
             }
         }
     }
-}
-
-void KoScreen::render(Game& game, sf::RenderWindow& window) {
-    window.clear();
-
-    // Dibujar el fondo
-    window.draw(backgroundSprite);
-
-    // Dibujar el título
-    window.draw(title);
-
-    // Dibujar las opciones del menú
-    for (const auto& option : menuOptions) {
-        window.draw(option);
-    }
-
-    window.display();
 }
 
 void KoScreen::moveUp() {

@@ -271,3 +271,6 @@ World_1 casi terminado (faltan los tps)
 
 ## 20250509 JorgePelegrín @(4h 30min)
 He añadido varios items para mejorar las armas y alguna que otra mecánica nueva para mejorarlas. También he añadido el sprite del personaje con su animación.
+
+## 200250510 EstrellaDomínguez @(30min)
+Ya funciona la ventana de KO y el personaje muere.

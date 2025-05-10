@@ -45,6 +45,8 @@ public:
     void update(Game& game) override;
     void render(Game& game, sf::RenderWindow& window) override;
 
+    void reset(GameEngine& engine);
+
     bool checkEnemyWasHit(std::shared_ptr<Enemy> enemy, Character player);
     bool checkPlayerWasHit(Character& player, std::shared_ptr<Enemy> enemy);
 };

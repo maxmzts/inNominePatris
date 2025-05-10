@@ -15,12 +15,13 @@ private:
     KoScreen();
     static KoScreen* instance;
 
-    sf::Texture backgroundTexture; // Añadido: textura del fondo
-    sf::Sprite backgroundSprite;   // Añadido: sprite del fondo
-    sf::Font font;
-    sf::Text title;
-    std::vector<sf::Text> menuOptions;
-    int selectedItemIndex;
+    sf::Texture backgroundTexture; // Textura del fondo
+    sf::Sprite backgroundSprite;   // Sprite del fondo
+    sf::Font font;                 // Fuente para el texto
+    sf::Text title;                // Título de la pantalla
+    std::vector<sf::Text> menuOptions; // Opciones del menú
+    std::vector<sf::RectangleShape> menuBackgrounds; // Fondos de las opciones del menú
+    int selectedItemIndex;         // Índice de la opción seleccionada
 
     void moveUp();
     void moveDown();
