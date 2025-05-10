@@ -9,7 +9,7 @@
 #include <EnemyManager.h>
 #include "EnemyBat.h"
 
-EnemyNecromancer::EnemyNecromancer(const sf::Vector2f& startPosition)
+EnemyNecromancer::EnemyNecromancer(const sf::Vector2f& startPosition, int DropKarmaPoints)
     : Enemy(
         "Necromancer", 
         150.f, 
@@ -22,7 +22,8 @@ EnemyNecromancer::EnemyNecromancer(const sf::Vector2f& startPosition)
 {
     sprite.setTextureRect(sf::IntRect(0, 0, 64, 96));
     loadAnimations();
-    attackCooldown = 10.f; 
+    attackCooldown = 10.f;
+    KarmaPoints = DropKarmaPoints; 
 }
 
 /**
@@ -314,7 +315,7 @@ bool EnemyNecromancer::isDead() const{
 
 void EnemyNecromancer::spawn(){
     EnemyManager::getInstance()->addEnemy(
-        std::make_shared<EnemyBat>(position)
+        std::make_shared<EnemyBat>(position, 0)
     );
     // anyadir efecto en el futuro
 }

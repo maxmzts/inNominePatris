@@ -657,8 +657,8 @@ void Enemy::setInvincible(bool invincible) {
 }
 
 bool Enemy::isDead() const{ 
-    if(currentState == EnemyState::DEAD) 
-        return true; 
+    if(currentState == EnemyState::DEAD)
+        return true;
     else 
         return false; 
 }

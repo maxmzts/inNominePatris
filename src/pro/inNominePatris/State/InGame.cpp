@@ -55,10 +55,10 @@ InGame::InGame(GameEngine& engine)
     //cargar enemigos
     for (size_t i = 0; i < 3; i++)
     {
-        enemy = std::make_shared<EnemyBat>(sf::Vector2f(100.f*i,100.f*i));
+        enemy = std::make_shared<EnemyBat>(sf::Vector2f(100.f*i,100.f*i), 2);
         EnemyManager::getInstance()->addEnemy(enemy);
     }
-    EnemyManager::getInstance()->addEnemy(std::make_shared<EnemyNecromancer>(sf::Vector2f(400.f,400.f)));
+    EnemyManager::getInstance()->addEnemy(std::make_shared<EnemyNecromancer>(sf::Vector2f(400.f,400.f), 10));
     MusicManager::getInstance().addTrack("resources/music/lobby_track.ogg");
 }
 
@@ -231,7 +231,7 @@ void InGame::update(Game& game) {
                     }
                 } else if (Bow* bow = dynamic_cast<Bow*>(player.getEquippedWeapon())) {
                     // Usar habilidad del arco
-                    bow->useAbility(player.getPosition(), player.getDirection());
+                    bow->useAbility(player.getPosition(), player.getAimDirection());
                 }
                 //player.useAbility(window, enemies);
             }

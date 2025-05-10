@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include "Enemy.h"
+#include "Character.h"
 
 class EnemyManager {
 private:
@@ -46,7 +47,7 @@ public:
     void renderEnemies(sf::RenderWindow& window);
     
     // Eliminar enemigos muertos
-    void removeDeadEnemies();
+    void removeDeadEnemies(Character* player);
     
     // Obtener lista de enemigos
     const std::vector<std::shared_ptr<Enemy>>& getEnemyList() const;
