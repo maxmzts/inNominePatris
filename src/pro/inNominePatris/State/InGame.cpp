@@ -70,6 +70,7 @@ InGame::InGame(GameEngine& engine)
     worldStates["world_1"] = std::make_unique<World1State>();
 
     currentWorldState = worldStates["lobby"].get(); // Comienza en el lobby
+
 }
 
 InGame* InGame::getInstance(GameEngine& engine) {
@@ -467,3 +468,4 @@ void InGame::changeWorldState(const std::string& stateName) {
         std::cerr << "Error: Estado del mundo no encontrado: " << stateName << std::endl;
     }
 }
+

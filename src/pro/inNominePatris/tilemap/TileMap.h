@@ -26,6 +26,9 @@ public:
     bool removeCollisionByCoord(int x, int y);
     bool removeCollisionByTileId(int tileId);
     bool toggleCollisionAt(int x, int y);
+    void clear();
+
+    
 
     
 private:

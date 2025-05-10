@@ -3,6 +3,9 @@
 #include <sstream>
 
 bool TileMap::loadFromFile(const std::string& filename, GameEngine& engine) {
+    // Limpiar datos anteriores antes de cargar el nuevo mapa
+    clear();
+
     tinyxml2::XMLDocument doc;
     if (doc.LoadFile(filename.c_str()) != tinyxml2::XML_SUCCESS) {
         std::cerr << "Error cargando el mapa XML\n";
@@ -628,4 +631,21 @@ bool TileMap::toggleCollisionAt(int x, int y) {
         std::cout << "Activada colisión en (" << x << ", " << y << ")" << std::endl;
         return true;
     }
+}
+
+
+void TileMap::clear() {
+    // Limpiar todas las estructuras de datos
+    m_layers.clear();
+    m_tilesets.clear();
+    interactiveTiles.clear();
+    m_boundsTiles.clear();
+    m_layerIndices.clear();
+    collisionBlocks.clear();
+    
+    // Reiniciar dimensiones del mapa
+    m_mapWidth = 0;
+    m_mapHeight = 0;
+    
+    std::cout << "Limpiados todos los datos del mapa anterior" << std::endl;
 }

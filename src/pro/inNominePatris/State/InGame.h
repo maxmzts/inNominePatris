@@ -55,6 +55,10 @@ public:
     bool checkPlayerWasHit(Character& player, std::shared_ptr<Enemy> enemy);
 
     void changeWorldState(const std::string& stateName);
+
+    TileMap& getTileMap() { return tileMap; }
+    Character& getPlayer() { return player; }
+
 };
 
 #endif // INGAME_H

@@ -277,3 +277,6 @@ Ya funciona la ventana de KO y el personaje muere.
 Implementación del patrón State para el lobby y mundo 1.
 El personaje spawnea en el lobby.
 Ahora los menús también funcionan con el clic del ratón y no solo con la tecla Enter.
+
+## 20250511 DavidGonzález @(6h)
+Muchas cosas, sistema de estados por interacción para manejar el cambio entre mapas al pasar por zonas, cambios ligeros en los mapas, añadidas funcion clear en musicManager y en TileMap entre otras y debug.

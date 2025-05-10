@@ -26,3 +26,13 @@ void MusicManager::update(float deltaTime) {
         tracks.end()
     );
 }
+
+void MusicManager::clear() {
+    for (auto& track : tracks) {
+        if (track) {
+            track->stop(); // Detener la música si está reproduciéndose
+        }
+    }
+    tracks.clear(); // Eliminar todos los punteros
+}
+

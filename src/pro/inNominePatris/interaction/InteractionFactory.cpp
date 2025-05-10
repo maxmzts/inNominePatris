@@ -24,7 +24,7 @@ std::shared_ptr<Interaction> InteractionFactory::createInteraction(int tileId) {
         // INTERFACES-------------------------------------------------------------------------------------------------------
         case 873: // Tile para la tienda
             return std::make_shared<UiTriggerInteraction>(tileId, "Tienda", "Tienda");
-            
+
         // SPAWN POINTS----------------------------------------------------------------------------------------------------------------
         // WRLD 1
         case 68: // Nuevo tile para teletransporte
@@ -35,8 +35,7 @@ std::shared_ptr<Interaction> InteractionFactory::createInteraction(int tileId) {
 
          // CAMBIOS DE MUNDO
         case 936: // Cambio al World 1
-            return std::make_shared<WorldChangeInteraction>(tileId, "Entrada al Mundo 1", "world_1", "./maps/world_1.tmx", true);
-         
+            return std::make_shared<WorldChangeInteraction>(tileId, "Entrada al Mundo 1", "world_1", "./maps/world_1.tmx", "resources/music/lobby_track.ogg", 20, 44, true);
         
         default:
             return nullptr;

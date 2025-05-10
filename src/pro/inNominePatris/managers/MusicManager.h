@@ -29,5 +29,7 @@ public:
     );
 
     void update(float deltaTime);
+    void clear(); // Detiene y elimina todas las pistas de música
+
 };
 
