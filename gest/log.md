@@ -259,3 +259,6 @@ Arreglos menores en la tienda y el HUD. Subida a main para el Hito 2.
 
 ## 20250414 DavidGonzález @(2h)
 Spawn at funcionando correctamente con ida y vuelta + puliendo world_1
+
+## 20250507 EstrellaDomínguez @(1h)
+He implementado la pantalla de KO a la que se redirige cuando el personaje muere. Aunque estéticamente no está correcta y algunas funciones fallan.

@@ -8,6 +8,7 @@
 #include "MainMenu.h"
 #include "KarmaSystem.h"
 #include "PauseMenu.h"
+#include "KoScreen.h"
 #include "InteractionFactory.h"
 #include "SpawnPlayerInteraction.h"
 #include <iostream>
@@ -246,11 +247,11 @@ void InGame::update(Game& game) {
     player.update(tileMap, deltaTime);
 
     // Verificar si la vida del jugador es 0
-    // if (player.getHealth() <= 0) {
-    //     std::cout << "El jugador ha muerto. Pantalla KO..." << std::endl;
-    //     game.changeState(KoScreen::getInstance(engine, 800, 600));
-    //     return; // Salir del método para evitar más actualizaciones
-    // }
+    if (player.getHealth() <= 0) {
+        std::cout << "El jugador ha muerto. Pantalla KO..." << std::endl;
+        game.changeState(KoScreen::getInstance());
+        return; // Salir del método para evitar más actualizaciones
+    }
     
     // Verificar interacciones automáticas (como los teletransportes)
     checkAutoInteractions();
@@ -455,3 +456,5 @@ bool InGame::checkEnemyWasHit(std::shared_ptr<Enemy> enemy, Character player){
 bool InGame::checkPlayerWasHit(Character player, std::shared_ptr<Enemy> enemy){
     return player.getHurtbox()->getGlobalBounds().intersects(enemy->getHitbox()->getGlobalBounds());
 }
+
+
