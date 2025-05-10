@@ -158,12 +158,12 @@ void TileMap::updateLayerVertices(Layer& layer, TileSet* tileset) {
             if (tileNumber == 0) continue;
 
             int relativeTileID = tileNumber - tileset->firstGid;
-            if (relativeTileID < 0) {
-                std::cerr << "ERROR: TileID " << tileNumber << " menor que firstGid " 
-                          << tileset->firstGid << " en capa '" << layer.name 
-                          << "' en posición (" << x << "," << y << ")" << std::endl;
-                continue;
-            }
+            // if (relativeTileID < 0) {
+            //     std::cerr << "ERROR: TileID " << tileNumber << " menor que firstGid " 
+            //               << tileset->firstGid << " en capa '" << layer.name 
+            //               << "' en posición (" << x << "," << y << ")" << std::endl;
+            //     continue;
+            // }
             
             int tu = relativeTileID % tileset->columns;
             int tv = relativeTileID / tileset->columns;
