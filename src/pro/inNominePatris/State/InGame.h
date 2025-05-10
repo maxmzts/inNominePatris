@@ -12,6 +12,7 @@
 #include "Enemy.h"
 #include "Shop.h"
 #include "HUD.h"
+#include "WorldState.h"
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <VFXManager.h>
@@ -38,6 +39,9 @@ private:
     std::string proximityMessage;
     sf::Font font;
 
+    std::unordered_map<std::string, std::unique_ptr<WorldState>> worldStates;
+    WorldState* currentWorldState;
+
 public:
     static InGame* getInstance(GameEngine& engine); // Método para obtener la instancia
     ~InGame();  
@@ -49,6 +53,8 @@ public:
 
     bool checkEnemyWasHit(std::shared_ptr<Enemy> enemy, Character player);
     bool checkPlayerWasHit(Character& player, std::shared_ptr<Enemy> enemy);
+
+    void changeWorldState(const std::string& stateName);
 };
 
 #endif // INGAME_H
