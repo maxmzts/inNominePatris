@@ -58,10 +58,10 @@ InGame::InGame(GameEngine& engine)
     //cargar enemigos
     for (size_t i = 0; i < 3; i++)
     {
-        enemy = std::make_shared<EnemyBat>(sf::Vector2f(100.f*i,100.f*i), 2);
+        enemy = std::make_shared<EnemyBat>(sf::Vector2f(100.f*i / 16,100.f*i / 16), 2);
         EnemyManager::getInstance()->addEnemy(enemy);
     }
-    EnemyManager::getInstance()->addEnemy(std::make_shared<EnemyNecromancer>(sf::Vector2f(400.f,400.f), 10));
+    EnemyManager::getInstance()->addEnemy(std::make_shared<EnemyNecromancer>(sf::Vector2f(400.f / 16,400.f / 16), 10));
     MusicManager::getInstance().addTrack("resources/music/lobby_track.ogg");
 
     // Inicializar los subestados del mundo

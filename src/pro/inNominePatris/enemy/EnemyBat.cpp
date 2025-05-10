@@ -12,7 +12,7 @@ EnemyBat::EnemyBat(const sf::Vector2f& startPosition, int DropkarmaPoints)
         "Bat", 
         50.f, 
         120.f, 
-        startPosition, 
+        startPosition* 16.f, 
         "resources/enemies/Bat.png"
         )
 {

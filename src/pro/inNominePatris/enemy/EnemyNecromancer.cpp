@@ -14,7 +14,7 @@ EnemyNecromancer::EnemyNecromancer(const sf::Vector2f& startPosition, int DropKa
         "Necromancer", 
         150.f, 
         80.f, 
-        startPosition, 
+        startPosition * 16.f, 
         "resources/enemies/necromancer.png"),
         spawnTimer(5.f),
         attacked(false), //spawnea nuevos enemigos cada 5 segundos
@@ -22,7 +22,7 @@ EnemyNecromancer::EnemyNecromancer(const sf::Vector2f& startPosition, int DropKa
 {
     sprite.setTextureRect(sf::IntRect(0, 0, 64, 96));
     loadAnimations();
-    attackCooldown = 10.f;
+    attackCooldown = 4.f;
     KarmaPoints = DropKarmaPoints; 
 }
 
