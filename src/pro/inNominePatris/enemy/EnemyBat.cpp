@@ -7,15 +7,17 @@
 #include <VFXManager.h>
 #include <unordered_set>
 
-EnemyBat::EnemyBat(const sf::Vector2f& startPosition)
+EnemyBat::EnemyBat(const sf::Vector2f& startPosition, int DropkarmaPoints)
     : Enemy(
         "Bat", 
         50.f, 
         120.f, 
         startPosition, 
-        "resources/enemies/Bat.png")
+        "resources/enemies/Bat.png"
+        )
 {
     loadAnimations();
+    KarmaPoints = DropkarmaPoints;
 }
 
 /**

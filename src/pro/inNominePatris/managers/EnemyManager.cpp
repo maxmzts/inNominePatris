@@ -42,7 +42,7 @@ void EnemyManager::updateEnemies(float deltaTime, Character* player, const TileM
     }
     
     // Eliminar enemigos muertos después de la actualización
-    removeDeadEnemies();
+    removeDeadEnemies(player);
 }
 
 void EnemyManager::renderEnemies(sf::RenderWindow& window) {
@@ -51,11 +51,15 @@ void EnemyManager::renderEnemies(sf::RenderWindow& window) {
     }
 }
 
-void EnemyManager::removeDeadEnemies() {
+void EnemyManager::removeDeadEnemies(Character* player) {
     enemies.erase(
         std::remove_if(enemies.begin(), enemies.end(), 
-            [](const std::shared_ptr<Enemy>& enemy) {
-                return enemy->isDead();
+            [player](const std::shared_ptr<Enemy>& enemy) {
+                if (enemy->isDead()) {
+                    player->addKarma(enemy->getKarmaPoints());
+                    return true;
+                }
+                return false;
             }),
         enemies.end()
     );

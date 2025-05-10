@@ -9,7 +9,7 @@
 class EnemyBat: public Enemy {
 public:
     // Constructor y destructor
-    EnemyBat(const sf::Vector2f& startPosition);
+    EnemyBat(const sf::Vector2f& startPosition, int karmaPoints);
 
     // Animaciones
     void loadAnimations() override;
