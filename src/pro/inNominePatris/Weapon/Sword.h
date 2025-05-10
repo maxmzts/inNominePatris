@@ -12,11 +12,14 @@ public:
     void attack(sf::Vector2f position, sf::Vector2f direction) override;
     // REIMPLEMENTAR
     bool useAbility() override;
-    void useAbility(sf::Vector2f characterPosition, sf::Vector2f mousePosition) override {}
+    void useAbility(sf::Vector2f characterPosition) override {}
+    void useAbility(sf::Vector2f position, sf::Vector2f direction) override {}
     void increaseDashSpeed(float speed);
     void decreaseDashCooldown(float cooldown);
     void decreaseAttackCooldown(float cooldown);
     void increaseAttackDamage(float damage); 
+    void enableDoubleDash();
+    bool canPerformDoubleDash() const;
     void createHitbox(sf::Vector2f position, sf::Vector2f direction);
     // void draw(GameEngine& engine, sf::Vector2f position, sf::Vector2f direction) override;
     void render(sf::RenderWindow& window) override;
@@ -30,6 +33,7 @@ public:
     float getDashSpeed() { return dashSpeed; }
     float getDashDuration() { return 0.2f; }
     std::shared_ptr<Hitbox> getAttackHitbox() const override;
+    void resetConsecutiveDashes();
 
 private:
     SpriteFacade spriteFacade; // Usar el Façade en lugar de sf::Sprite
@@ -40,6 +44,8 @@ private:
     std::shared_ptr<Hitbox> attackHitbox;
     float attackCooldown;
     float attackTimer;
+    int consecutiveDashes;
+    bool canDoubleDash; // Indica si se puede realizar un doble dash
 
     SpriteFacade slashSpriteFacade;
     AnimatedSprite slashAnimation; // Animación de ataque

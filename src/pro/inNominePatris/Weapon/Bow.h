@@ -18,6 +18,7 @@ public:
     void attack(sf::Vector2f position, sf::Vector2f direction) override;
     // REIMPLEMENTAR
     bool useAbility() {}
+    void useAbility(sf::Vector2f position) override {};
     void useAbility(sf::Vector2f position, sf::Vector2f direction) override;
     void update(float deltaTime, const TileMap& tileMap);
     void update(float deltaTime) override {}
@@ -31,6 +32,9 @@ public:
     std::shared_ptr<Hitbox> getAttackHitbox() const override{}
     void increaseArrowSpeed(float speed);
     void increaseAbilityArrowCount(int count);
+    void increaseAttackDamage(float damage);
+    void decreaseAbilityCooldown(float cooldown);
+    void enableQuickShot(float chance);
     std::vector<Arrow>& getArrows() { return arrows; }
 private:
     SpriteFacade spriteFacade;
@@ -39,6 +43,8 @@ private:
     float abilitySpreadAngle;
     int abilityArrowCount;
     std::vector<Arrow> arrows;
+    bool quickShotEnabled = false;
+    float quickShotChance = 0.0f;
     float attackCooldown = 0.75f; // Cooldown para el ataque (en segundos)
     float attackTimer = 0.f;     // Temporizador para el ataque
     float abilityCooldown = 4.0f; // Cooldown para la habilidad (en segundos)

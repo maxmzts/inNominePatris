@@ -61,14 +61,14 @@ class AttackDamageSwordItem : public Item {
         void Picked();
 };
 
-//--------------Lanza-------------------//
-class PortalRangeItem : public Item {
+class DoubleDashItem : public Item {
     public:
-        PortalRangeItem() : Item(ItemType::Lance) {}
+        DoubleDashItem() : Item(ItemType::Sword) {}
         void applyEffect(Weapon& weapon) override;
         void Picked();
 };
 
+//--------------Lanza-------------------//
 class AttackCooldownLanceItem : public Item {
     public:
         AttackCooldownLanceItem() : Item(ItemType::Lance) {}
@@ -82,4 +82,55 @@ class AttackDamageLanceItem : public Item {
         void applyEffect(Weapon& weapon) override;
         void Picked();
 };
+
+class AttackHitboxLanceItem : public Item {
+    public:
+        AttackHitboxLanceItem() : Item(ItemType::Lance) {}
+        void applyEffect(Weapon& weapon) override;
+        void Picked();
+};
 #endif // ITEM_H
+
+class RevengeReturnItem : public Item {
+    public:
+        RevengeReturnItem() : Item(ItemType::Lance) {}
+        void applyEffect(Weapon& weapon) override;
+        void Picked();
+};
+
+//--------------Arco-------------------//
+
+class AttackDamageBowItem : public Item {
+    public:
+        AttackDamageBowItem() : Item(ItemType::Bow) {}
+        void applyEffect(Weapon& weapon) override;
+        void Picked();
+};
+
+class ArrowSpeedItem : public Item {
+    public:
+        ArrowSpeedItem() : Item(ItemType::Bow) {}
+        void applyEffect(Weapon& weapon) override;
+        void Picked();
+};
+
+class ArrowCountItem : public Item {
+    public:
+        ArrowCountItem() : Item(ItemType::Bow) {}
+        void applyEffect(Weapon& weapon) override;
+        void Picked();
+};
+
+class QuickShotItem : public Item {
+    public:
+        QuickShotItem() : Item(ItemType::Bow) {}
+        void applyEffect(Weapon& weapon) override;
+        void Picked();
+};
+
+class DecreaseAbilityCooldownBowItem : public Item {
+    public:
+        DecreaseAbilityCooldownBowItem() : Item(ItemType::Bow) {}
+        void applyEffect(Weapon& weapon) override;
+        void Picked();
+};

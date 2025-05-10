@@ -12,7 +12,6 @@ Lance::Lance(GameEngine* engine)
     attackCooldown(0.7f), 
     attackTimer(0.f), 
     isPortalDropped(false), 
-    PortalRange(300.0f), 
     portal(), 
     pinchSprite("./resources/Pinch_Animation_Lance.png"),
     pinchAnimation(pinchSprite) 
@@ -89,12 +88,18 @@ void Lance::attack(sf::Vector2f position, sf::Vector2f direction) {
         SFXManager::getInstance().addEffect("resources/sfx/spear.wav", 60.f, pitch);
 
         float damage = calculateDamage(); // Calcular el daño
-        std::cout << "Lance attack: Dealt " << damage << " damage!" << std::endl;
+
+        if(RevengeReturnActive) {
+            damage *= revengeReturnDamageMultiplier; // Aplicar el multiplicador de daño
+            std::cout << "Revenge return activated! Damage: " << damage << std::endl;
+        } else {
+            std::cout << "Normal attack! Damage: " << damage << std::endl;
+        }
     }
 }
 
 // REIMPLEMENTAR
-void Lance::useAbility(sf::Vector2f characterPosition, sf::Vector2f mousePosition) {
+void Lance::useAbility(sf::Vector2f characterPosition) {
     if (abilityTimer > 0.f) {
         std::cout << "Ability on cooldown! Time remaining: " << abilityTimer << " seconds" << std::endl;
         return;
@@ -102,30 +107,28 @@ void Lance::useAbility(sf::Vector2f characterPosition, sf::Vector2f mousePositio
 
     if (!isPortalDropped) {
         // Calcular la distancia entre el personaje y la posición del ratón
-        float distance = std::sqrt(std::pow(mousePosition.x - characterPosition.x, 2) +
-                                   std::pow(mousePosition.y - characterPosition.y, 2));
 
-        if (distance <= PortalRange) {
-            std::cout << "Dropping Portal at: " << mousePosition.x << ", " << mousePosition.y << std::endl;
-            portal.setPosition(mousePosition);
+            portal.setPosition(characterPosition);
             portal.setVisible(true);
             isPortalDropped = true;
 
             // Reiniciar el cooldown
             abilityTimer = abilityCooldown;
-        } else {
-            std::cout << "Portal placement out of range! Distance: " << distance << " - PortalRange: " << PortalRange << std::endl;
         }
-    } else {
-        std::cout << "Portal already placed. Ready to teleport!" << std::endl;
-    }
 }
 
 const sf::Vector2f& Lance::teleportToPortal() {
     portal.setVisible(false);
     isPortalDropped = false;
-    return portal.getPosition();
     consecutiveAttacks = 0;
+
+    if (RevengeReturnItemPicked) {
+        SetRevengeReturn();
+        std::cout << "Retorno vengador preparado para el próximo ataque!" << std::endl;
+    }
+
+    return portal.getPosition();
+
 }
 
 Portal::Portal() : position(0.f, 0.f), visible(false) {
@@ -285,11 +288,6 @@ std::shared_ptr<Hitbox> Lance::getAttackHitbox() const {
     return attackHitbox;
 }
 
-void Lance::increasePortalRange(float range) {
-    PortalRange += range;
-    std::cout << "Portal range increased!" << std::endl;
-}
-
 void Lance::decreaseAttackCooldown(float cooldown) {
     attackCooldown -= cooldown;
     if (attackCooldown < 0.1f) attackCooldown = 0.1f; // Limitar el cooldown mínimo
@@ -299,4 +297,25 @@ void Lance::decreaseAttackCooldown(float cooldown) {
 void Lance::increaseAttackDamage(float damage) {
     baseDamage += damage;
     std::cout << "Attack damage increased!" << std::endl;
+}
+
+void Lance::activateRevengeReturn() {
+    RevengeReturnItemPicked = true;
+}
+
+bool Lance::HasRevengeReturn() const {
+    return RevengeReturnActive;
+}
+
+void Lance::SetRevengeReturn() {
+    RevengeReturnActive = true;
+}
+
+void Lance::ConsumeRevengeReturn() {
+    RevengeReturnActive = false;
+}
+
+void Lance::increaseAttackHitbox(float width, float height) {
+    attackHitbox->setSize(sf::Vector2f(width, height));
+    std::cout << "Attack hitbox size increased!" << std::endl;
 }

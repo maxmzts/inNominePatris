@@ -20,6 +20,8 @@ public:
     // Cargar textura desde un archivo
     bool loadTexture(const std::string& texturePath);
 
+    void loadTexture(const sf::Texture& texture);
+
     // Establecer la posición del sprite
     void setPosition(float x, float y);
 
@@ -52,6 +54,8 @@ public:
     void setColor(const sf::Color& color);
 
     const sf::Sprite& getSprite() const;
+
+    void move(sf::Vector2f offset);
 };
 
 #endif // SPRITEFACADE_H

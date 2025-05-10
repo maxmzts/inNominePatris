@@ -30,4 +30,5 @@ Este fichero puede ser un PDF si la herramienta que gastáis lo requiere, pero *
 - Cambios menores en armas - Jorge Pelegrín.
 - Añadir más efectos de sonido (algunos más) - Máximo Martínez.
 - Añadir input de recibir daño, y algún efecto de sonido.
-- 
+- Sprite del personaje principal - Jorge Pelegrín.
+- Añadir items para las armas - Jorge Pelegrín.

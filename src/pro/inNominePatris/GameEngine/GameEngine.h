@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <map> // Faltaba este include
+#include "SpriteFacade.h"
 
 class GameEngine {
 private:
@@ -29,6 +30,7 @@ public:
     void clear();
     void display();
     void drawSprite(const sf::Sprite& sprite);
+    void drawSprite(const SpriteFacade& sprite);
     sf::Sprite createSprite(const std::string& texturePath, const sf::Vector2f& position);
     sf::Texture& loadTexture(const std::string& path);
     void drawVertices(const sf::VertexArray& vertices, const sf::Texture& texture, const sf::Transform& transform);

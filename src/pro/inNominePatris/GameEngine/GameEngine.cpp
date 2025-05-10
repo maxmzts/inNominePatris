@@ -48,6 +48,14 @@ void GameEngine::drawSprite(const sf::Sprite& sprite) {
     }
 }
 
+void GameEngine::drawSprite(const SpriteFacade& sprite) {
+    if(ownsWindow) {
+        window.draw(sprite.getSprite());
+    } else {
+        existingWindow->draw(sprite.getSprite());
+    }
+}
+
 sf::Sprite GameEngine::createSprite(const std::string& texturePath, const sf::Vector2f& position) {
     sf::Texture* texture = new sf::Texture();
     if (!texture->loadFromFile(texturePath)) {

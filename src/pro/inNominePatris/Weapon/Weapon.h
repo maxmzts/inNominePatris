@@ -42,7 +42,8 @@ class Weapon {
         virtual void attack(sf::Vector2f position, sf::Vector2f direction) = 0;
         // REIMPLEMENTAR PORQUE CAUSA REFERENCIAS CIRCULARES POR TODOS LADOS
         virtual bool useAbility() = 0;
-        virtual void useAbility(sf::Vector2f characterPosition, sf::Vector2f mousePosition) = 0;
+        virtual void useAbility(sf::Vector2f characterPosition) = 0;
+        virtual void useAbility(sf::Vector2f position, sf::Vector2f direction) = 0;
         virtual AbilityType getAbilityType() const = 0;
 
         // Método para dibujar el arma, ajustado al personaje

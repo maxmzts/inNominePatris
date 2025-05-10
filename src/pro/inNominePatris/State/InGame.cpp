@@ -24,7 +24,7 @@ InGame* InGame::instance = nullptr;
  * Constructor de InGame. Carga el motor y el lobby con el jugador.
  */
 InGame::InGame(GameEngine& engine)
-    : engine(engine), player("./resources/sprites.png"), hud(800, 600), karmaSystem(player), shop(engine.getWindow(), karmaSystem) {
+    : engine(engine), player(), hud(800, 600), karmaSystem(player), shop(engine.getWindow(), karmaSystem) {
     // Cargar el mapa
     if (!tileMap.loadFromFile("./maps/world_1.tmx", engine)) {
         std::cerr << "Error cargando el mapa\n";
@@ -221,12 +221,9 @@ void InGame::update(Game& game) {
                         player.startDash(sword->getDashSpeed(), 0.2f); // Usa los valores de la espada
                 } else if (Lance* lance = dynamic_cast<Lance*>(player.getEquippedWeapon())) {
                     // Usar habilidad de la lanza
-                    sf::Vector2i mousePosition = sf::Mouse::getPosition(engine.getWindow());
-                    sf::Vector2f worldMousePos = engine.getWindow().mapPixelToCoords(mousePosition);
-
                     if (!lance->getIsPortalDropped()) {
                         // Colocar el portal
-                        lance->useAbility(player.getPosition(), worldMousePos);
+                        lance->useAbility(player.getPosition());
                     } else {
                         // Teletransportar al portal
                         sf::Vector2f playerPosition = player.getPosition();
@@ -453,7 +450,8 @@ bool InGame::checkEnemyWasHit(std::shared_ptr<Enemy> enemy, Character player){
         return enemy->getHurtbox()->getGlobalBounds().intersects(player.getEquippedWeapon()->getAttackHitbox()->getGlobalBounds());
 }
 
-bool InGame::checkPlayerWasHit(Character player, std::shared_ptr<Enemy> enemy){
+bool InGame::checkPlayerWasHit(Character& player, std::shared_ptr<Enemy> enemy){
+    if (enemy->getHitbox() == nullptr) return false;
     return player.getHurtbox()->getGlobalBounds().intersects(enemy->getHitbox()->getGlobalBounds());
 }
 
