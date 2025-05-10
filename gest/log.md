@@ -272,5 +272,8 @@ World_1 casi terminado (faltan los tps)
 ## 20250509 JorgePelegrín @(4h 30min)
 He añadido varios items para mejorar las armas y alguna que otra mecánica nueva para mejorarlas. También he añadido el sprite del personaje con su animación.
 
-## 200250510 EstrellaDomínguez @(30min)
+## 20250410 EstrellaDomínguez @(4h)
 Ya funciona la ventana de KO y el personaje muere.
+Implementación del patrón State para el lobby y mundo 1.
+El personaje spawnea en el lobby.
+Ahora los menús también funcionan con el clic del ratón y no solo con la tecla Enter.

@@ -20,6 +20,9 @@ private:
 
     ConfMenu(float width, float height);
 
+    void handleMouseClick(Game& game, sf::RenderWindow& window); // Manejar clics del ratón
+    void handleSelection(Game& game); // Manejar la selección de una opción
+
 public:
     static ConfMenu* getInstance(float width, float height);
 

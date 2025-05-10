@@ -84,18 +84,42 @@ void MainMenu::update(Game& game) {
                     window.close();
                 }
             }
+        } else if (event.type == sf::Event::MouseButtonPressed) {
+            if (event.mouseButton.button == sf::Mouse::Left) {
+                handleMouseClick(game, window);
+            }
         }
     }
 }
 
-// void MainMenu::render(Game& game, sf::RenderWindow& window) {
-//     window.draw(backgroundSprite);
+void MainMenu::handleMouseClick(Game& game, sf::RenderWindow& window) {
+    sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+    sf::Vector2f worldPos = window.mapPixelToCoords(mousePos);
 
-//     for (size_t i = 0; i < menuItems.size(); ++i) {
-//         window.draw(menuBackgrounds[i]);
-//         window.draw(menuItems[i]);
-//     }
-// }
+    for (size_t i = 0; i < menuBackgrounds.size(); ++i) {
+        if (menuBackgrounds[i].getGlobalBounds().contains(worldPos)) {
+            selectedItemIndex = i;
+            handleSelection(game);
+            break;
+        }
+    }
+}
+
+void MainMenu::handleSelection(Game& game) {
+    if (selectedItemIndex == 0) {
+        std::cout << "Nueva Partida seleccionada\n";
+        game.changeState(InGame::getInstance(engine));
+    } else if (selectedItemIndex == 1) {
+        std::cout << "Continuar partida seleccionada\n";
+        game.changeState(InGame::getInstance(engine));
+    } else if (selectedItemIndex == 2) {
+        std::cout << "Configuración seleccionada\n";
+        game.changeState(ConfMenu::getInstance(800, 600));
+    } else if (selectedItemIndex == 3) {
+        std::cout << "Salir seleccionado\n";
+        game.getWindow().close();
+    }
+}
 
 void MainMenu::render(Game& game, sf::RenderWindow& window) {
     window.clear(); // Limpiar la ventana antes de dibujar

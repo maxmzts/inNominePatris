@@ -25,6 +25,8 @@ private:
 
     void moveUp();
     void moveDown();
+    void handleMouseClick(Game& game, sf::RenderWindow& window); // Manejar clics del ratón
+    void handleSelection(Game& game); // Manejar la selección de una opción
 };
 
 #endif

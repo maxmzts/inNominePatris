@@ -23,6 +23,9 @@ private:
 
     MainMenu(GameEngine& engine, float width, float height); // Constructor modificado
 
+    void handleMouseClick(Game& game, sf::RenderWindow& window); // Manejar clics del ratón
+    void handleSelection(Game& game); // Manejar la selección de una opción
+
 public:
     static MainMenu* getInstance(GameEngine& engine, float width, float height); // Método modificado
 

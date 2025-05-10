@@ -8,9 +8,7 @@ class World1State : public WorldState {
 public:
     void update(InGame& inGame, GameEngine& engine, Character& player, TileMap& tileMap) override {
         // Lógica específica del mundo 1
-        if (player.getHealth() <= 0) { // Si el jugador muere
-            inGame.changeWorldState("lobby"); // Regresa al lobby
-        }
+        std::cout << "World1State: Actualizando..." << std::endl;
     }
 
     void render(GameEngine& engine, Character& player, TileMap& tileMap) override {

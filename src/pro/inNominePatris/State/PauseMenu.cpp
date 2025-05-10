@@ -86,27 +86,41 @@ void PauseMenu::update(Game& game) {
                     window.close();
                 }
             }
+        } else if (event.type == sf::Event::MouseButtonPressed) {
+            if (event.mouseButton.button == sf::Mouse::Left) {
+                handleMouseClick(game, window);
+            }
         }
     }
 }
 
-// void PauseMenu::render(Game& game, sf::RenderWindow& window) {
-//     // Restablecer la vista predeterminada para usar coordenadas de pantalla
-//     sf::View originalView = window.getView();
-//     window.setView(window.getDefaultView());
+void PauseMenu::handleMouseClick(Game& game, sf::RenderWindow& window) {
+    // Obtener la posición del ratón en coordenadas de la ventana
+    sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+    sf::Vector2f worldPos = window.mapPixelToCoords(mousePos);
 
-//     // Dibujar el fondo
-//     window.draw(backgroundSprite);
+    // Verificar si el ratón está sobre alguna opción del menú
+    for (size_t i = 0; i < menuBackgrounds.size(); ++i) {
+        if (menuBackgrounds[i].getGlobalBounds().contains(worldPos)) {
+            selectedItemIndex = i; // Actualizar la opción seleccionada
+            handleSelection(game); // Ejecutar la acción correspondiente
+            break;
+        }
+    }
+}
 
-//     // Dibujar las opciones del menú
-//     for (size_t i = 0; i < menuBackgrounds.size(); ++i) {
-//         window.draw(menuBackgrounds[i]);
-//         window.draw(menuItems[i]);
-//     }
-
-//     // Restaurar la vista original
-//     window.setView(originalView);
-// }
+void PauseMenu::handleSelection(Game& game) {
+    if (selectedItemIndex == 0) {
+        // Continuar
+        game.changeState(InGame::getInstance(game.getEngine()));
+    } else if (selectedItemIndex == 1) {
+        // Configuración
+        game.changeState(ConfMenu::getInstance(800, 600));
+    } else if (selectedItemIndex == 2) {
+        // Salir
+        game.getWindow().close();
+    }
+}
 
 void PauseMenu::render(Game& game, sf::RenderWindow& window) {
     // Restablecer la vista predeterminada directamente

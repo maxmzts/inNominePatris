@@ -116,7 +116,35 @@ void KoScreen::update(Game& game) {
                     window.close();
                 }
             }
+        } else if (event.type == sf::Event::MouseButtonPressed) {
+            if (event.mouseButton.button == sf::Mouse::Left) {
+                handleMouseClick(game, window);
+            }
         }
+    }
+}
+
+void KoScreen::handleMouseClick(Game& game, sf::RenderWindow& window) {
+    sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+    sf::Vector2f worldPos = window.mapPixelToCoords(mousePos);
+
+    for (size_t i = 0; i < menuBackgrounds.size(); ++i) {
+        if (menuBackgrounds[i].getGlobalBounds().contains(worldPos)) {
+            selectedItemIndex = i;
+            handleSelection(game);
+            break;
+        }
+    }
+}
+
+void KoScreen::handleSelection(Game& game) {
+    if (selectedItemIndex == 0) {
+        // Jugar de nuevo
+        game.changeState(InGame::getInstance(game.getEngine()));
+        return;
+    } else if (selectedItemIndex == 1) {
+        // Salir
+        game.getWindow().close();
     }
 }
 

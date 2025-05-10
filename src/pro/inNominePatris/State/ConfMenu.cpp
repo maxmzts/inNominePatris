@@ -82,22 +82,32 @@ void ConfMenu::update(Game& game) {
     }
 }
 
-// void ConfMenu::render(Game& game, sf::RenderWindow& window) {
-//     // Restablecer la vista predeterminada para usar coordenadas de pantalla
-//     sf::View originalView = window.getView();
-//     window.setView(window.getDefaultView());
+void ConfMenu::handleMouseClick(Game& game, sf::RenderWindow& window) {
+    sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+    sf::Vector2f worldPos = window.mapPixelToCoords(mousePos);
 
-//     // Dibujar el fondo
-//     window.draw(backgroundSprite);
+    for (size_t i = 0; i < menuBackgrounds.size(); ++i) {
+        if (menuBackgrounds[i].getGlobalBounds().contains(worldPos)) {
+            selectedItemIndex = i;
+            handleSelection(game);
+            break;
+        }
+    }
+}
 
-//     for (size_t i = 0; i < menuItems.size(); ++i) {
-//         window.draw(menuBackgrounds[i]);
-//         window.draw(menuItems[i]);
-//     }
-
-//     // Restaurar la vista original
-//     window.setView(originalView);
-// }
+void ConfMenu::handleSelection(Game& game) {
+    if (selectedItemIndex == 0) {
+        std::cout << "Graficos seleccionados\n";
+    } else if (selectedItemIndex == 1) {
+        std::cout << "Accesibilidad seleccionada\n";
+    } else if (selectedItemIndex == 2) {
+        std::cout << "Sonido seleccionado\n";
+    } else if (selectedItemIndex == 3) {
+        std::cout << "Menu principal seleccionado\n";
+        game.getWindow().close(); // salir
+        // game.changeState(MainMenu::getInstance(GameEngine engine, 800, 600));
+    }
+}
 
 
 void ConfMenu::render(Game& game, sf::RenderWindow& window) {
