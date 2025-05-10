@@ -11,6 +11,7 @@
 #include "KoScreen.h"
 #include "InteractionFactory.h"
 #include "SpawnPlayerInteraction.h"
+#include "WorldChangeInteraction.h"
 #include <iostream>
 #include <algorithm>
 #include "EnemyBat.h"
@@ -359,6 +360,13 @@ void InGame::checkAutoInteractions() {
                 if (spawnInteraction->getAutoTrigger() && spawnInteraction->isAvailable(player, tileMap)) {
                     // Ejecutar automáticamente el teletransporte
                     spawnInteraction->execute(player, tileMap);
+                }
+            }
+            // Verificar si es una interacción de tipo WorldChangeInteraction con autoTrigger
+            else if (auto worldChangeInteraction = std::dynamic_pointer_cast<WorldChangeInteraction>(interaction)) {
+                if (worldChangeInteraction->getAutoTrigger() && worldChangeInteraction->isAvailable(player, tileMap)) {
+                    // Ejecutar automáticamente el cambio de mundo
+                    worldChangeInteraction->changeWorldState(*this, engine);
                 }
             }
             // Aquí podrían ir otras tipos de interacciones automáticas
