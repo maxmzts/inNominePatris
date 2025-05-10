@@ -21,10 +21,10 @@ Este fichero puede ser un PDF si la herramienta que gastáis lo requiere, pero *
 **TAREAS PARA FINAL DE PROYECTO**
 
 - Menú de pausa funcional y Sistema de guardado - Estrella Domínguez.
-- Ciclo de muerte (morir y ventana de KO) - Estrella Domínguez // Doing
+- Ciclo de muerte (morir y ventana de KO) - Estrella Domínguez // DONE
 - Tilear mundo 1 mínimo - David González y Jorge Pelegrín // Doing
 - Agregar el boss - Máximo Martínez
-- Añadir el bucle de salas.
+- Añadir el bucle de salas (State) - Estrella Domínguez // Doing
 - Render Interpolado.
 - Que funcionen los menús con el click del ratón - Estrella Domínguez.
 - Cambios menores en armas - Jorge Pelegrín.

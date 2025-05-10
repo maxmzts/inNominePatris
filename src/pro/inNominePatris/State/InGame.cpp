@@ -14,6 +14,8 @@
 #include <iostream>
 #include <algorithm>
 #include "EnemyBat.h"
+#include "LobbyState.h"
+#include "World1State.h"
 #include <EnemyManager.h>
 #include <EnemyNecromancer.h>
 #include <MusicManager.h>
@@ -26,7 +28,7 @@ InGame* InGame::instance = nullptr;
 InGame::InGame(GameEngine& engine)
     : engine(engine), player(), hud(800, 600), karmaSystem(player), shop(engine.getWindow(), karmaSystem) {
     // Cargar el mapa
-    if (!tileMap.loadFromFile("./maps/world_1.tmx", engine)) {
+    if (!tileMap.loadFromFile("./maps/lobby.tmx", engine)) {
         std::cerr << "Error cargando el mapa\n";
         exit(-1);
     }
@@ -37,7 +39,7 @@ InGame::InGame(GameEngine& engine)
     }
 
     // Hacer spawn al jugador
-    player.spawnAt(tileMap, 30, 44);
+    player.spawnAt(tileMap, 20, 44);
 
     // Crear las armas y colocarlas en los pilares
     Sword* sword = new Sword(&engine);
@@ -61,6 +63,12 @@ InGame::InGame(GameEngine& engine)
     }
     EnemyManager::getInstance()->addEnemy(std::make_shared<EnemyNecromancer>(sf::Vector2f(400.f / 16,400.f / 16), 10));
     MusicManager::getInstance().addTrack("resources/music/lobby_track.ogg");
+
+    // Inicializar los subestados del mundo
+    worldStates["lobby"] = std::make_unique<LobbyState>();
+    worldStates["world_1"] = std::make_unique<World1State>();
+
+    currentWorldState = worldStates["lobby"].get(); // Comienza en el lobby
 }
 
 InGame* InGame::getInstance(GameEngine& engine) {
@@ -81,6 +89,8 @@ InGame* InGame::getInstance(GameEngine& engine) {
 void InGame::update(Game& game) {
     sf::RenderWindow& window = game.getWindow();
     sf::Event event;
+
+    currentWorldState->update(*this, engine, player, tileMap);
 
     while (window.pollEvent(event)) {
         if (event.type == sf::Event::Closed) {
@@ -370,6 +380,8 @@ void InGame::render(Game& game, sf::RenderWindow& window) {
     engine.clear();
     tileMap.draw(engine);
 
+    currentWorldState->render(engine, player, tileMap);
+
     for (Weapon* weapon : weaponsOnGround) {
         weapon->render(engine.getRenderWindow()); // Usa el RenderWindow directamente
     }
@@ -436,4 +448,14 @@ void InGame::reset(GameEngine& engine) {
     // Reinicia enemigos, armas y otros elementos del juego
     EnemyManager::getInstance()->clearEnemies();
     weaponsOnGround.clear();
+}
+
+
+void InGame::changeWorldState(const std::string& stateName) {
+    if (worldStates.find(stateName) != worldStates.end()) {
+        currentWorldState = worldStates[stateName].get();
+        std::cout << "Cambiando al estado del mundo: " << stateName << std::endl;
+    } else {
+        std::cerr << "Error: Estado del mundo no encontrado: " << stateName << std::endl;
+    }
 }
