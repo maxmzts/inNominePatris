@@ -114,6 +114,8 @@ sf::Vector2f Character::getAimDirection() const {
     return aimDirection;
 }
 
+// Modificar la función update en Character.cpp para separar la dirección de movimiento y la dirección de apuntado
+
 void Character::update(const TileMap& tilemap, float deltaTime) {
     sf::Vector2f moveDirection(0.f, 0.f);
     updateInvencibility(deltaTime);
@@ -170,8 +172,19 @@ void Character::update(const TileMap& tilemap, float deltaTime) {
             }
         }
         
-        // Actualizar la dirección a la que mira el personaje para que siempre sea la dirección de apuntado
-        direction = aimDirection;
+        //Actualizar la dirección del personaje basada en el movimiento, no en el apuntado
+        if (velocity.x != 0 || velocity.y != 0) {
+            // Solo actualiza la dirección si el personaje está en movimiento
+            direction = sf::Vector2f(velocity.x, velocity.y);
+            
+            // Normalizar la dirección
+            float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+            if (length > 0) {
+                direction.x /= length;
+                direction.y /= length;
+            }
+        }
+        // Mantenemos la dirección anterior si el personaje no está en movimiento
     }
 
     // Manejar el dash
@@ -214,17 +227,18 @@ void Character::updateAnimation() {
     AnimationState newState = currentState;
     
     if (isMoving) {
-        // Si se está moviendo, determinar la dirección dominante
-        if (std::abs(aimDirection.x) > std::abs(aimDirection.y)) {
+        // CAMBIO: Usar la dirección del personaje (basada en movimiento) para la animación
+        // en lugar de la dirección de apuntado
+        if (std::abs(direction.x) > std::abs(direction.y)) {
             // Movimiento horizontal dominante
-            if (aimDirection.x > 0) {
+            if (direction.x > 0) {
                 newState = AnimationState::WALK_RIGHT;
             } else {
                 newState = AnimationState::WALK_LEFT;
             }
         } else {
             // Movimiento vertical dominante
-            if (aimDirection.y > 0) {
+            if (direction.y > 0) {
                 newState = AnimationState::WALK_DOWN;
             } else {
                 newState = AnimationState::WALK_UP;
@@ -310,9 +324,9 @@ void Character::draw(GameEngine& engine) {
 
     drawHearts(engine); // Dibujar corazones de vida
 
-    // Dibujar el arma equipada
+    // CAMBIO: Dibujar el arma equipada con la dirección de apuntado en lugar de la dirección del personaje
     if (equippedWeapon) {
-        equippedWeapon->renderOnPlayer(getPosition(), getDirection(), engine.getWindow());
+        equippedWeapon->renderOnPlayer(getPosition(), getAimDirection(), engine.getWindow());
     }
 
     if (isShieldActive) {

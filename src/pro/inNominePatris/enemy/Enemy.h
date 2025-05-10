@@ -24,6 +24,8 @@ protected:
     bool isInvincible;      // Estado de invencibilidad
     float invincibilityTimer; // Contador de invencibilidad
     float invincibilityDuration; // Duración máxima de invencibilidad
+
+    int KarmaPoints; // Puntos de karma que suelta al morir
     
     sf::Vector2f position;
     sf::Vector2f velocity;
@@ -107,6 +109,9 @@ public:
     // Para la detección de colisiones
     Hitbox* getHitbox() const { return hitbox; }
     Hurtbox* getHurtbox() const { return hurtbox; }
+
+    //Obtener los puntos de karma
+    int getKarmaPoints() const { return KarmaPoints; }
     
     // Cambio de estados
     virtual void changeState(int newState) = 0;

@@ -260,6 +260,9 @@ Arreglos menores en la tienda y el HUD. Subida a main para el Hito 2.
 ## 20250506 DavidGonzález @(2h)
 Spawn at funcionando correctamente con ida y vuelta + puliendo world_1
 
+## 20250507 EstrellaDomínguez @(1h)
+He implementado la pantalla de KO a la que se redirige cuando el personaje muere. Aunque estéticamente no está correcta y algunas funciones fallan.
+
 ## 20250506 JorgePelegrín @(1h)
 He hecho un poco de mapa y cambiado la mecánica del tp de la lanza, para que ahora se coloque el portal en la posición del jugador y no en la del ratón.
 
@@ -268,3 +271,6 @@ World_1 casi terminado (faltan los tps)
 
 ## 20250509 JorgePelegrín @(4h 30min)
 He añadido varios items para mejorar las armas y alguna que otra mecánica nueva para mejorarlas. También he añadido el sprite del personaje con su animación.
+
+## 200250510 EstrellaDomínguez @(30min)
+Ya funciona la ventana de KO y el personaje muere.

@@ -26,7 +26,7 @@ private:
 
 public:
     // Constructor y destructor
-    EnemyNecromancer(const sf::Vector2f& startPosition);
+    EnemyNecromancer(const sf::Vector2f& startPosition, int DropKarmaPoints);
 
     // Animaciones
     void loadAnimations() override;

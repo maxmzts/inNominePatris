@@ -8,6 +8,7 @@
 #include "MainMenu.h"
 #include "KarmaSystem.h"
 #include "PauseMenu.h"
+#include "KoScreen.h"
 #include "InteractionFactory.h"
 #include "SpawnPlayerInteraction.h"
 #include <iostream>
@@ -55,16 +56,19 @@ InGame::InGame(GameEngine& engine)
     //cargar enemigos
     for (size_t i = 0; i < 3; i++)
     {
-        enemy = std::make_shared<EnemyBat>(sf::Vector2f(100.f*i,100.f*i));
+        enemy = std::make_shared<EnemyBat>(sf::Vector2f(100.f*i,100.f*i), 2);
         EnemyManager::getInstance()->addEnemy(enemy);
     }
-    EnemyManager::getInstance()->addEnemy(std::make_shared<EnemyNecromancer>(sf::Vector2f(400.f,400.f)));
+    EnemyManager::getInstance()->addEnemy(std::make_shared<EnemyNecromancer>(sf::Vector2f(400.f,400.f), 10));
     MusicManager::getInstance().addTrack("resources/music/lobby_track.ogg");
 }
 
 InGame* InGame::getInstance(GameEngine& engine) {
     if (!instance) {
         instance = new InGame(engine);
+    } else {
+        // Reinicia el estado del juego si ya existe
+        instance->reset(engine);
     }
     return instance;
 }
@@ -231,7 +235,7 @@ void InGame::update(Game& game) {
                     }
                 } else if (Bow* bow = dynamic_cast<Bow*>(player.getEquippedWeapon())) {
                     // Usar habilidad del arco
-                    bow->useAbility(player.getPosition(), player.getDirection());
+                    bow->useAbility(player.getPosition(), player.getAimDirection());
                 }
                 //player.useAbility(window, enemies);
             }
@@ -243,11 +247,11 @@ void InGame::update(Game& game) {
     player.update(tileMap, deltaTime);
 
     // Verificar si la vida del jugador es 0
-    // if (player.getHealth() <= 0) {
-    //     std::cout << "El jugador ha muerto. Pantalla KO..." << std::endl;
-    //     game.changeState(KoScreen::getInstance(engine, 800, 600));
-    //     return; // Salir del método para evitar más actualizaciones
-    // }
+    if (player.getHealth() <= 0) {
+        std::cout << "El jugador ha muerto. Pantalla KO..." << std::endl;
+        game.changeState(KoScreen::getInstance());
+        return; // Salir del método para evitar más actualizaciones
+    }
     
     // Verificar interacciones automáticas (como los teletransportes)
     checkAutoInteractions();
@@ -359,36 +363,6 @@ InGame::~InGame() {
     weaponsOnGround.clear();
 }
 
-/**
- * Renderiza los elementos de InGame
- */
-// void InGame::render(Game& game, sf::RenderWindow& window) {
-//     engine.clear();
-//     tileMap.draw(engine);
-
-//     for (Weapon* weapon : weaponsOnGround) {
-//         weapon->render();
-//     }
-
-//     for (auto enemy : EnemyManager::getInstance()->getEnemyList()){
-//         enemy->render(window);
-//     }
-
-//     player.draw(engine);
-
-//     VFXManager::getInstance().render(window);
-
-//     // Mostrar el HUD
-//     hud.draw(window, player);
-
-//     // Renderizar la tienda si está abierta
-//     if (shop.isOpen()) {
-//         shop.render();
-//     }
-
-//     engine.display();
-// }
-
 
 void InGame::render(Game& game, sf::RenderWindow& window) {
     GameEngine& engine = game.getEngine();
@@ -452,4 +426,14 @@ bool InGame::checkEnemyWasHit(std::shared_ptr<Enemy> enemy, Character player){
 bool InGame::checkPlayerWasHit(Character& player, std::shared_ptr<Enemy> enemy){
     if (enemy->getHitbox() == nullptr) return false;
     return player.getHurtbox()->getGlobalBounds().intersects(enemy->getHitbox()->getGlobalBounds());
+}
+
+void InGame::reset(GameEngine& engine) {
+    // Reinicia los datos del estado del juego
+    player.spawnAt(tileMap, 30, 44); // Reinicia la posición del jugador
+    player.setHealth(player.getMaxHealth()); // Restaura la salud del jugador
+
+    // Reinicia enemigos, armas y otros elementos del juego
+    EnemyManager::getInstance()->clearEnemies();
+    weaponsOnGround.clear();
 }

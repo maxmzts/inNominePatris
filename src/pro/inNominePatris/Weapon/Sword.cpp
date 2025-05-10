@@ -155,6 +155,9 @@ void Sword::resetConsecutiveDashes() {
  * Luego llama a render para dibujar el espada.
  */
 void Sword::renderOnPlayer(sf::Vector2f position, sf::Vector2f direction, sf::RenderWindow& window) {
+    // NOTA: Aquí no necesitamos cambiar nada, ya que el parámetro 'direction' que recibe
+    // ahora será la dirección de apuntado (aimDirection) en lugar de la dirección del jugador
+    
     // Calcular el ángulo para la dirección de apuntado
     float angle = std::atan2(direction.y, direction.x) * 180 / M_PI;
     

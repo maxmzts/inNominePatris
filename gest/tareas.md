@@ -21,8 +21,8 @@ Este fichero puede ser un PDF si la herramienta que gastáis lo requiere, pero *
 **TAREAS PARA FINAL DE PROYECTO**
 
 - Menú de pausa funcional y Sistema de guardado - Estrella Domínguez.
-- Ciclo de muerte (morir y spawnear en el lobby) - Estrella Domínguez.
-- Tilear mundo 1 mínimo - David González y Jorge Pelegrín.
+- Ciclo de muerte (morir y ventana de KO) - Estrella Domínguez // Doing
+- Tilear mundo 1 mínimo - David González y Jorge Pelegrín // Doing
 - Agregar el boss - Máximo Martínez
 - Añadir el bucle de salas.
 - Render Interpolado.

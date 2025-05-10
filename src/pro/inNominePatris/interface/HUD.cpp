@@ -43,7 +43,7 @@ void HUD::update(const Character& character) {
     // Actualizar texto del arma equipada
     Weapon* equippedWeapon = character.getEquippedWeapon();
     if (equippedWeapon) {
-        weaponText.setString("Arma equipada: " + equippedWeapon->getName());
+        weaponText.setString("Arma equipada: " + equippedWeapon->getName() + ", Karma: " + std::to_string(character.getKarma()));
     } else {
         weaponText.setString("Sin arma equipada");
     }

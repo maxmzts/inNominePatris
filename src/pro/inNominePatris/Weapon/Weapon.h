@@ -6,6 +6,7 @@
 #include <vector>
 #include "GameEngine.h"
 #include "Hitbox.h"
+#include "SFXManager.h"
 
 #include "AbilityType.h"
 
@@ -31,7 +32,7 @@ class Weapon {
         // Atributos estáticos (globales para todas las armas)
         inline static float globalDamageMultiplier = 1.0f;
         inline static float globalAttackSpeedMultiplier = 1.0f;
-        inline static float globalCriticalChanceBonus = 0.0f;
+        inline static float globalCriticalChanceBonus = 0.50f;
         inline static float globalCriticalMultiplier = 0.0f;
         inline static float globalCooldownReduction = 0.0f;
     
@@ -66,6 +67,8 @@ class Weapon {
             damage *= (1.0f + comboDamageBonus * consecutiveAttacks); // Aumentar el daño por ataques consecutivos
             float randomValue = static_cast<float>(rand()) / RAND_MAX; // Generar un número aleatorio entre 0 y 1
             if (randomValue < baseCriticalChance + globalCriticalChanceBonus) {
+                float pitch = 0.8f + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (1.2f - 0.8f);
+                SFXManager::getInstance().addEffect("./resources/sfx/critico.wav", 60.f, pitch);
                 return damage * getCriticalMultiplier(); // Daño crítico
             }
             return damage; // Daño normal
