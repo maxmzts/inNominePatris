@@ -12,28 +12,7 @@ public:
     World1State(){
         RoomManager* roomManager = RoomManager::getInstance();
         std::shared_ptr<RoomState> room = nullptr;
-
-        room1();
-
-        room2();
-
-        // REGISTRAMOS LAS SALAS EN EL ROOM MANAGER
-        // for (int i = 3; i < 5; i++) {
-        //     std::string roomId = "room" + std::to_string(i);
-        //     std::vector<std::shared_ptr<Enemy>> enemies;
-        //     // cargar enemigos (de momento son siempre los mismos en todas las salas)
-        //     for (size_t i = 0; i < 3; i++)
-        //     {
-        //         enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(100.f*i / 16,100.f*i / 16), 2));
-        //     }
-        //     //enemies.push_back(std::make_shared<EnemyNecromancer>(sf::Vector2f(400.f / 16,400.f / 16), 10));
-        //     room = std::make_shared<DungeonRoom>(roomId, enemies);
-        //     roomManager->registerState(roomId, room);
-        // }
-
-        // // Sala del boss
-        // room = std::make_shared<DungeonRoom>("room5", std::vector<std::shared_ptr<Enemy>>{});
-        // roomManager->registerState("room5", room);
+        createRooms();
     }
 
     void initialize() override {
@@ -50,6 +29,14 @@ public:
 
     void render(GameEngine& engine) override {
         //renderizar algo si es necesario
+    }
+
+    void createRooms(){
+        room1();
+        room2();
+        room3();
+        room4();
+        room5();
     }
 
     void room1(){
@@ -84,6 +71,69 @@ public:
         );
         RoomManager* roomManager = RoomManager::getInstance();
         roomManager->registerState("room2", room);        
+    }
+
+    void room3(){
+        std::vector<std::shared_ptr<Enemy>> enemies;
+        // cargar enemigos (de momento son siempre los mismos en todas las salas)
+        for (size_t i = 0; i < 5; i++){
+            enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(100.f*i / 16,100.f*i / 16), 2));
+            //  añadir necromancer
+        }
+        
+        auto room = std::make_shared<DungeonRoom>(
+            "room3",
+            std::vector<std::shared_ptr<Enemy>>{},
+            [](TileMap& tileMap) {
+                // Puerta vertical: de (190,23) a (190,28)
+                for (int y = 23; y <= 28; ++y) {
+                    tileMap.removeCollisionByCoord(190, y);
+                }
+        
+                // Puerta horizontal: de (211,47) a (216,47)
+                for (int x = 211; x <= 216; ++x) {
+                    tileMap.removeCollisionByCoord(x, 47);
+                }
+            }
+        );
+        RoomManager* roomManager = RoomManager::getInstance();
+        roomManager->registerState("room5", room); 
+    }
+
+    void room4(){
+        std::vector<std::shared_ptr<Enemy>> enemies;
+        // cargar enemigos (de momento son siempre los mismos en todas las salas)
+        for (size_t i = 0; i < 5; i++){
+            enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(100.f*i / 16,100.f*i / 16), 2));
+            //  añadir necromancer
+        }
+        
+        auto room = std::make_shared<DungeonRoom>(
+            "room4",
+            std::vector<std::shared_ptr<Enemy>>{},
+            [](TileMap& tileMap) {
+                // Puerta horizontal: de (212,80) a (214,80)
+                for (int x = 212; x <= 214; ++x) {
+                    tileMap.removeCollisionByCoord(x, 80);
+                }
+        
+                // Puerta vertical: de (225,115) a (225,120)
+                for (int y = 115; y <= 120; ++y) {
+                    tileMap.removeCollisionByCoord(225, y);
+                }
+            }
+        );
+        
+        RoomManager* roomManager = RoomManager::getInstance();
+        roomManager->registerState("room4", room); 
+    }
+
+    void room5(){
+        RoomManager* roomManager = RoomManager::getInstance();
+        std::shared_ptr<RoomState> room = nullptr;
+        // Sala inicial, sin enemigos
+        room = std::make_shared<DungeonRoom>("room5", std::vector<std::shared_ptr<Enemy>>{}, [](TileMap&) {/*No hace nada*/});
+        roomManager->registerState("room5", room);
     }
 };
 

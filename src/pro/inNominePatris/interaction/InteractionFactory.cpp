@@ -39,7 +39,7 @@ std::shared_ptr<Interaction> InteractionFactory::createInteraction(int tileId) {
 
          // CAMBIOS DE MUNDO
         case 936: // Cambio al World 1
-            return std::make_shared<WorldChangeInteraction>(tileId, "Entrada al Mundo 1", "world_1", "./maps/world_1.tmx", "resources/music/lobby_track.ogg", 20, 44, true);
+            return std::make_shared<WorldChangeInteraction>(tileId, "Entrada al Mundo 1", "world_1", "./maps/world_1.tmx", "resources/music/hunt-the-hunter.ogg", 20, 44, true);
         
         default:
             return nullptr;

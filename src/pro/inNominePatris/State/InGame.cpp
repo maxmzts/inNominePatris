@@ -63,7 +63,7 @@ InGame::InGame(GameEngine& engine)
     //     EnemyManager::getInstance()->addEnemy(enemy);
     // }
     // EnemyManager::getInstance()->addEnemy(std::make_shared<EnemyNecromancer>(sf::Vector2f(400.f / 16,400.f / 16), 10));
-    MusicManager::getInstance().addTrack("resources/music/lobby_track.ogg");
+    MusicManager::getInstance().transitionTo("resources/music/lobby_track.ogg");
 
     // Inicializar los subestados del mundo
     worldStates["lobby"] = std::make_unique<LobbyState>();
@@ -332,6 +332,7 @@ void InGame::update(Game& game) {
     }
 
     hud.update(player);
+    MusicManager::getInstance().update(deltaTime);
 
     VFXManager::getInstance().update(deltaTime);
 }
@@ -474,7 +475,7 @@ void InGame::changeWorldState(std::string& stateName, std::string& mapFilePath, 
         
         // 3. Cargar la música del nuevo mundo
         MusicManager::getInstance().clear(); // Limpia la música anterior
-        MusicManager::getInstance().addTrack(musicFilePath);
+        // MusicManager::getInstance().transitionTo(musicFilePath);
         //std::cout << "Música cargada desde: " << musicFilePath << std::endl;
         currentWorldState = worldStates[stateName].get();
         currentWorldState->initialize();
