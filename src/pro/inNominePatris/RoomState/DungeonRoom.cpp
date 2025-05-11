@@ -15,19 +15,17 @@ void DungeonRoom::enter() {
         // Spawnear enemigos solo si la sala no ha sido completada
         EnemyManager::getInstance()->addEnemies(enemies);
     }
-    std::cout << "Entré en la sala" << std::endl;
-    // Aquí podrías añadir más lógica de inicialización específica de la sala
+    std::cout << "Entré en la sala " << roomId << std::endl;
 }
 
 void DungeonRoom::update() {   
     // Si no quedan enemigos, la sala está completada
+    int count = EnemyManager::getInstance()->getEnemyCount();
     if (!hasEnemies() && !completed) {
         completed = true;
         std::cout << "Maté a todos los enemigos, puedo salir" << std::endl;
-        // Aquí podrías añadir recompensas al completar la sala, etc.
+        // recompensas al completar la sala, etc.
     }
-    
-    // Aquí iría la lógica específica de actualización de la sala
 }
 
 void DungeonRoom::exit() {

@@ -354,6 +354,8 @@ void InGame::checkAutoInteractions() {
                 if (spawnInteraction->getAutoTrigger() && spawnInteraction->isAvailable(player, tileMap)) {
                     // Ejecutar automáticamente el teletransporte
                     spawnInteraction->execute(player, tileMap);
+                    //cambiar de sala
+                    RoomManager::getInstance()->changeState(spawnInteraction->getRoomInfo());
                 }
             }
             // Verificar si es una interacción de tipo WorldChangeInteraction con autoTrigger

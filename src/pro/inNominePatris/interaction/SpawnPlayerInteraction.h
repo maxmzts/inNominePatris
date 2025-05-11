@@ -13,6 +13,9 @@ private:
     float m_destX2;    // Segunda coordenada X de destino (en unidades de tile)
     float m_destY2;    // Segunda coordenada Y de destino (en unidades de tile)
     bool m_autoTrigger; // Si se activa automáticamente al pasar por encima (true) o requiere interacción (false)
+    std::string m_roomId;
+    std::string m_dest1RoomId;
+    std::string m_dest2RoomId;
     
     // Mapa estático para rastrear el estado de cada portal (si se ha usado o no)
     static std::unordered_map<int, bool> s_portalUsageState;
@@ -30,10 +33,14 @@ public:
      */
     SpawnPlayerInteraction(int id, const std::string& name, 
                           float destX1, float destY1, 
-                          float destX2, float destY2, 
+                          float destX2, float destY2,
+                          const std::string& dest1RoomId,
+                          const std::string& dest2RoomId, 
                           bool autoTrigger = true);
     
     void execute(Character& character, TileMap& tilemap) override;
+    // Devuelve el id de la sala a la que hay que ir
+    std::string getRoomInfo();
     bool isAvailable(Character& character, TileMap& tilemap) const override;
     
     // Método estático para reiniciar el estado de todos los portales

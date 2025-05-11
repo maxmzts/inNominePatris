@@ -16,5 +16,6 @@ void RoomState::setCompleted(bool value) {
 }
 
 bool RoomState::hasEnemies() const {
-    return (EnemyManager::getInstance()->getEnemyCount() == 0);
+    int count = EnemyManager::getInstance()->getEnemyCount();
+    return (count != 0);
 }

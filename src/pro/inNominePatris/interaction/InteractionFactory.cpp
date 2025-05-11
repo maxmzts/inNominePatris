@@ -24,13 +24,17 @@ std::shared_ptr<Interaction> InteractionFactory::createInteraction(int tileId) {
         // INTERFACES-------------------------------------------------------------------------------------------------------
         case 873: // Tile para la tienda
             return std::make_shared<UiTriggerInteraction>(tileId, "Tienda", "Tienda");
-
         // SPAWN POINTS----------------------------------------------------------------------------------------------------------------
         // WRLD 1
         case 68: // Nuevo tile para teletransporte
-            return std::make_shared<SpawnPlayerInteraction>(tileId, "Teletransporte 1-2", 121, 45, 29, 10);
-        case 926: // Nuevo tile para teletransporte
-            return std::make_shared<SpawnPlayerInteraction>(tileId, "Teletransporte 2-3", 193, 26, 142, 25);
+            return std::make_shared<SpawnPlayerInteraction>(tileId, "Teletransporte 1-2", 119, 40, 29, 10, "room2", "room1");
+        case 862: // Nuevo tile para teletransporte
+            return std::make_shared<SpawnPlayerInteraction>(tileId, "Teletransporte 2-3", 193, 26, 142, 25, "room3", "room1");
+        case 863:
+            return std::make_shared<SpawnPlayerInteraction>(tileId, "Teletransporte 3-4", 214, 82, 213, 46, "room4", "room3");
+        case 864:
+            return std::make_shared<SpawnPlayerInteraction>(tileId, "Teletransporte 4-5", 191, 190, 223, 117, "room5", "room4");
+        
         
 
          // CAMBIOS DE MUNDO

@@ -285,4 +285,5 @@ Estuve ayudando a David para gestionar los estados de las salas para definir su 
 Muchas cosas, sistema de estados por interacción para manejar el cambio entre mapas al pasar por zonas, cambios ligeros en los mapas, añadidas funcion clear en musicManager y en TileMap entre otras y debug.
 
 ## 20250511 MaximoMartinez @(4h)
-Me he ocupado de resolver una referencia circular entre InGame y WorldChangeInteraction. Luego he implementado un sistema con el patrón State para conocer en qué sala se encuentra el jugador y poder spawnear enemigos si es la primera vez que entra o cualquier otra lógica.
+Me he ocupado de resolver una referencia circular entre InGame y WorldChangeInteraction. Luego he implementado un sistema con el patrón State para definir las salas de un mundo y así conocer en qué sala se encuentra el jugador y poder spawnear enemigos si es la primera vez que entra o cualquier otra lógica.
+(18:40) He trabajado con dicho sistema para que funcione en el mundo 1. Ahora las salas están definidas, si entras a 1 aparecen enemigos (en posiciones estaticas de momento) y cuando son eliminados se puede ejecutar lógica adicional (agregar fuertas). 
