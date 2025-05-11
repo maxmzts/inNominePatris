@@ -93,7 +93,7 @@ void Lance::attack(sf::Vector2f position, sf::Vector2f direction) {
             damage *= revengeReturnDamageMultiplier; // Aplicar el multiplicador de daño
             std::cout << "Revenge return activated! Damage: " << damage << std::endl;
         } else {
-            std::cout << "Normal attack! Damage: " << damage << std::endl;
+            //std::cout << "Normal attack! Damage: " << damage << std::endl;
         }
     }
 }

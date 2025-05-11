@@ -33,11 +33,11 @@ void SpawnPlayerInteraction::execute(Character& character, TileMap& tilemap) {
     if (useFirstDest) {
         targetX = m_destX1;
         targetY = m_destY1;
-        std::cout << "Teletransportando jugador al primer destino (" << targetX << ", " << targetY << ") con " << getName() << std::endl;
+        //std::cout << "Teletransportando jugador al primer destino (" << targetX << ", " << targetY << ") con " << getName() << std::endl;
     } else {
         targetX = m_destX2;
         targetY = m_destY2;
-        std::cout << "Teletransportando jugador de regreso (" << targetX << ", " << targetY << ") con " << getName() << std::endl;
+        //std::cout << "Teletransportando jugador de regreso (" << targetX << ", " << targetY << ") con " << getName() << std::endl;
     }
     
     // Actualizar el estado para este portal

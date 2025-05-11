@@ -278,5 +278,11 @@ Implementación del patrón State para el lobby y mundo 1.
 El personaje spawnea en el lobby.
 Ahora los menús también funcionan con el clic del ratón y no solo con la tecla Enter.
 
+## 20250409 MaximoMartinez @(3h)
+Estuve ayudando a David para gestionar los estados de las salas para definir su bucle y poder empezar con otras tareas como spawnear enemigos. Por mi parte, no se terminó el trabajo en este día porque hubo erroes muy raros muy dificiles de debuggear en temas de casting de subclases.
+
 ## 20250511 DavidGonzález @(6h)
 Muchas cosas, sistema de estados por interacción para manejar el cambio entre mapas al pasar por zonas, cambios ligeros en los mapas, añadidas funcion clear en musicManager y en TileMap entre otras y debug.
+
+## 20250511 MaximoMartinez @(4h)
+Me he ocupado de resolver una referencia circular entre InGame y WorldChangeInteraction. Luego he implementado un sistema con el patrón State para conocer en qué sala se encuentra el jugador y poder spawnear enemigos si es la primera vez que entra o cualquier otra lógica.
