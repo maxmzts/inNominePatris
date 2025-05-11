@@ -1,10 +1,10 @@
 #include "InGame.h"
 #include "../Game.h"
-#include "../character/Character.h"
-#include "../interface/HUD.h"
-#include "../hboxes/Hitbox.h"
-#include "../Shop/Shop.h"
-#include "../interaction/Interaction.h"
+#include "Character.h"
+#include "HUD.h"
+#include "Hitbox.h"
+#include "Shop.h"
+#include "Interaction.h"
 #include "MainMenu.h"
 #include "KarmaSystem.h"
 #include "PauseMenu.h"
@@ -54,15 +54,15 @@ InGame::InGame(GameEngine& engine)
     lance->setPosition(234, 500);
     bow->setPosition(163, 578);
 
-    //TESTS ENEMIGOS
-    std::shared_ptr<EnemyBat> enemy = nullptr;
-    //cargar enemigos
-    for (size_t i = 0; i < 3; i++)
-    {
-        enemy = std::make_shared<EnemyBat>(sf::Vector2f(100.f*i / 16,100.f*i / 16), 2);
-        EnemyManager::getInstance()->addEnemy(enemy);
-    }
-    EnemyManager::getInstance()->addEnemy(std::make_shared<EnemyNecromancer>(sf::Vector2f(400.f / 16,400.f / 16), 10));
+    // //TESTS ENEMIGOS
+    // std::shared_ptr<EnemyBat> enemy = nullptr;
+    // //cargar enemigos
+    // for (size_t i = 0; i < 3; i++)
+    // {
+    //     enemy = std::make_shared<EnemyBat>(sf::Vector2f(100.f*i / 16,100.f*i / 16), 2);
+    //     EnemyManager::getInstance()->addEnemy(enemy);
+    // }
+    // EnemyManager::getInstance()->addEnemy(std::make_shared<EnemyNecromancer>(sf::Vector2f(400.f / 16,400.f / 16), 10));
     MusicManager::getInstance().addTrack("resources/music/lobby_track.ogg");
 
     // Inicializar los subestados del mundo
@@ -92,7 +92,7 @@ void InGame::update(Game& game) {
     sf::RenderWindow& window = game.getWindow();
     sf::Event event;
 
-    currentWorldState->update(*this, engine, player, tileMap);
+    currentWorldState->update(tileMap);
 
     while (window.pollEvent(event)) {
         if (event.type == sf::Event::Closed) {
@@ -185,7 +185,10 @@ void InGame::update(Game& game) {
                 }
             }
         }
-    
+        
+
+        //  MOSTRAR MENSAJE SI EXISTE UNA INTERACCIÓN CON EL JUGADOR DISPONIBLE
+
         proximityMessage.clear(); // Limpiar el mensaje por defecto
         sf::FloatRect playerBounds = player.getBounds();
         int tileId = -1;
@@ -279,7 +282,7 @@ void InGame::update(Game& game) {
                 if (!equippedWeapon->hasDealtDamage()) {
                     for (auto enemy : EnemyManager::getInstance()->getEnemyList()) {
                         if (equippedWeapon->getAttackHitbox()->getGlobalBounds().intersects(enemy->getHurtbox()->getGlobalBounds())) {
-                            std::cout << "Enemigo golpeado!" << std::endl;
+                            //std::cout << "Enemigo golpeado!" << std::endl;
                             enemy->takeDamage(equippedWeapon->calculateDamage(), equippedWeapon->getAttackHitbox()->getPosition()); // Infligir daño al enemigo
                         }
                     }
@@ -319,16 +322,6 @@ void InGame::update(Game& game) {
         }
     }
 
-    // TEST SISTEMA DE COMBATE
-    /**
-     * for (hitbox enemigo: enemigos){
-     *     player->hurtbox.intersect(hitbox)
-     * }
-     * for (hurtbox enemigo: enemigos){
-     *     player->arma->hitbox.intersect(hurtbox)
-     * }
-     */
-
     // Comprobar que el jugador recibe daño
     
     if(!player.getIsInvencible()){
@@ -361,13 +354,20 @@ void InGame::checkAutoInteractions() {
                 if (spawnInteraction->getAutoTrigger() && spawnInteraction->isAvailable(player, tileMap)) {
                     // Ejecutar automáticamente el teletransporte
                     spawnInteraction->execute(player, tileMap);
+                    //cambiar de sala
+                    RoomManager::getInstance()->changeState(spawnInteraction->getRoomInfo());
                 }
             }
             // Verificar si es una interacción de tipo WorldChangeInteraction con autoTrigger
             else if (auto worldChangeInteraction = std::dynamic_pointer_cast<WorldChangeInteraction>(interaction)) {
                 if (worldChangeInteraction->getAutoTrigger() && worldChangeInteraction->isAvailable(player, tileMap)) {
                     // Ejecutar automáticamente el cambio de mundo
-                    worldChangeInteraction->changeWorldState(*this, engine);
+                    //worldChangeInteraction->changeWorldState(*this, engine);
+                    std::string targetWorldState, mapFilePath, musicFilePath;
+                    sf::Vector2i spawnPosition;
+
+                    worldChangeInteraction->getWorldInfo(targetWorldState, mapFilePath, musicFilePath, spawnPosition);
+                    changeWorldState(targetWorldState, mapFilePath, musicFilePath, spawnPosition);
                 }
             }
             // Aquí podrían ir otras tipos de interacciones automáticas
@@ -389,7 +389,7 @@ void InGame::render(Game& game, sf::RenderWindow& window) {
     engine.clear();
     tileMap.draw(engine);
 
-    currentWorldState->render(engine, player, tileMap);
+    currentWorldState->render(engine);
 
     for (Weapon* weapon : weaponsOnGround) {
         weapon->render(engine.getRenderWindow()); // Usa el RenderWindow directamente
@@ -460,9 +460,24 @@ void InGame::reset(GameEngine& engine) {
 }
 
 
-void InGame::changeWorldState(const std::string& stateName) {
+void InGame::changeWorldState(std::string& stateName, std::string& mapFilePath, std::string& musicFilePath, sf::Vector2i& spawnPosition) {
     if (worldStates.find(stateName) != worldStates.end()) {
+        // 1. Cargar el nuevo mapa (la función loadFromFile ya incluye clear() ahora)
+        if (!getTileMap().loadFromFile(mapFilePath, engine)) {
+            //std::cerr << "Error cargando el mapa: " << mapFilePath << std::endl;
+            return;
+        }
+        
+        // 2. Hacer spawn al jugador en la nueva posición
+        getPlayer().spawnAt(getTileMap(), spawnPosition.x, spawnPosition.y);
+        //std::cout << "Jugador reposicionado en: (" << spawnPosition.x << ", " << spawnPosition.y << ")" << std::endl;
+        
+        // 3. Cargar la música del nuevo mundo
+        MusicManager::getInstance().clear(); // Limpia la música anterior
+        MusicManager::getInstance().addTrack(musicFilePath);
+        //std::cout << "Música cargada desde: " << musicFilePath << std::endl;
         currentWorldState = worldStates[stateName].get();
+        currentWorldState->initialize();
         std::cout << "Cambiando al estado del mundo: " << stateName << std::endl;
     } else {
         std::cerr << "Error: Estado del mundo no encontrado: " << stateName << std::endl;

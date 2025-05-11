@@ -50,6 +50,14 @@ void WorldChangeInteraction::changeWorldState(InGame& inGame, GameEngine& engine
     std::cout << "Música cargada desde: " << m_musicFilePath << std::endl;
     
     // 4. Cambiar al estado del mundo especificado
-    inGame.changeWorldState(m_targetWorldState);
+    //inGame.changeWorldState(m_targetWorldState);
     std::cout << "Estado cambiado a: " << m_targetWorldState << std::endl;
 }
+
+void WorldChangeInteraction::getWorldInfo(std::string& targetWorldState, std::string& mapFilePath, std::string& musicFilePath, sf::Vector2i& spawnPosition){
+    targetWorldState = m_targetWorldState;
+    mapFilePath = m_mapFilePath;
+    musicFilePath = m_musicFilePath;
+    spawnPosition = m_spawnPosition;
+}
+

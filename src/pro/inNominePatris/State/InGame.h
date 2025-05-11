@@ -54,7 +54,7 @@ public:
     bool checkEnemyWasHit(std::shared_ptr<Enemy> enemy, Character player);
     bool checkPlayerWasHit(Character& player, std::shared_ptr<Enemy> enemy);
 
-    void changeWorldState(const std::string& stateName);
+    void changeWorldState(std::string& stateName, std::string& mapFilePath, std::string& musicFilePath, sf::Vector2i& spawnPosition);
 
     TileMap& getTileMap() { return tileMap; }
     Character& getPlayer() { return player; }

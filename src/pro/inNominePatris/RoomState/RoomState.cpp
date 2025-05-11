@@ -1,0 +1,21 @@
+#include "RoomState.h"
+#include "EnemyManager.h"
+
+RoomState::RoomState() : completed(false) {
+}
+
+RoomState::~RoomState() {
+}
+
+bool RoomState::isCompleted() const {
+    return completed;
+}
+
+void RoomState::setCompleted(bool value) {
+    completed = value;
+}
+
+bool RoomState::hasEnemies() const {
+    int count = EnemyManager::getInstance()->getEnemyCount();
+    return (count != 0);
+}

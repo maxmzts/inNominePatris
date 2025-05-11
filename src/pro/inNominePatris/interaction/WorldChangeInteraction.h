@@ -36,6 +36,7 @@ public:
     
     void execute(Character& character, TileMap& tilemap) override;
     bool isAvailable(Character& character, TileMap& tilemap) const override;
+    void getWorldInfo(std::string& targetWorldState, std::string& mapFilePath, std::string& musicFilePath, sf::Vector2i& spawnPosition);
     
     // Getters
     std::string getTargetWorldState() const { return m_targetWorldState; }
