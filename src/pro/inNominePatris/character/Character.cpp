@@ -48,6 +48,7 @@ Character::Character()
     
     // Configurar animaciones
     setupAnimations();
+    initCollisionCircle();
     
     // Iniciar con animación idle
     animations->play("idle_down", 8.0f, true);
@@ -195,9 +196,9 @@ void Character::update(const TileMap& tilemap, float deltaTime) {
             velocity.y = 0;
         }
     }
-
+    collisionCircle.setPosition(sprite.getPosition() + sf::Vector2f(0.f,20.f));
     // Comprobación de colisiones antes de mover al personaje
-    sf::FloatRect nextBounds = sprite.getGlobalBounds();
+    sf::FloatRect nextBounds = collisionCircle.getGlobalBounds();
     nextBounds.left += velocity.x * deltaTime;
     nextBounds.top += velocity.y * deltaTime;
 
@@ -321,6 +322,9 @@ void Character::draw(GameEngine& engine) {
 
     // Dibujar el personaje
     engine.drawSprite(sprite);
+
+    // SOLO PARA DEBUG
+    engine.getRenderWindow().draw(collisionCircle); 
 
     drawHearts(engine); // Dibujar corazones de vida
 
@@ -636,4 +640,13 @@ void Character::enableTemporalyShield(float duration) {
 
 sf::FloatRect Character::getBounds() const {
     return sprite.getGlobalBounds();
+}
+
+void Character::initCollisionCircle() {
+    float radius = 15.f; // Ajusta según necesites
+    collisionCircle.setRadius(radius);
+    collisionCircle.setOrigin(radius, radius);
+    collisionCircle.setFillColor(sf::Color(0, 255, 0, 64)); // Verde semitransparente
+    collisionCircle.setOutlineColor(sf::Color(0, 200, 0, 200));
+    collisionCircle.setOutlineThickness(1.f);
 }
