@@ -10,7 +10,7 @@ public:
         // logica para cuando se carga el lobby si es necesario
     }
 
-    void update() override {
+    void update(TileMap tilemap) override {
         // Lógica específica del lobby
         // Transiciones al mundo 1
         // if (player.getPosition().x > 500) { // Ejemplo: si el jugador cruza un límite

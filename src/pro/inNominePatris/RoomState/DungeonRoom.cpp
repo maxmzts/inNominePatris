@@ -1,8 +1,8 @@
 #include "DungeonRoom.h"
 #include "EnemyManager.h"
 
-DungeonRoom::DungeonRoom(const std::string& id, std::vector<std::shared_ptr<Enemy>> enemies_list) 
-    : RoomState(), roomId(id) {
+DungeonRoom::DungeonRoom(const std::string& id, std::vector<std::shared_ptr<Enemy>> enemies_list, std::function<void(TileMap&)> openDoors) 
+    : RoomState(), roomId(id), openDoors(openDoors) {
     // Asignar los enemigos recibidos a la variable heredada
     this->enemies = std::move(enemies_list);
 }
@@ -18,12 +18,13 @@ void DungeonRoom::enter() {
     std::cout << "Entré en la sala " << roomId << std::endl;
 }
 
-void DungeonRoom::update() {   
+void DungeonRoom::update(TileMap tileMap) {   
     // Si no quedan enemigos, la sala está completada
     int count = EnemyManager::getInstance()->getEnemyCount();
     if (!hasEnemies() && !completed) {
         completed = true;
         std::cout << "Maté a todos los enemigos, puedo salir" << std::endl;
+        openDoors(tileMap);
         // recompensas al completar la sala, etc.
     }
 }

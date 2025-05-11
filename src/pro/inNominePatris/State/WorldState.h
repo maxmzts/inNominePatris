@@ -12,7 +12,7 @@ public:
     virtual ~WorldState() = default;
     virtual void initialize() = 0;
 
-    virtual void update() = 0;
+    virtual void update(TileMap tileMap) = 0;
     virtual void render(GameEngine& engine) = 0;
 };
 

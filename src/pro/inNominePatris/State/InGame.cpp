@@ -92,7 +92,7 @@ void InGame::update(Game& game) {
     sf::RenderWindow& window = game.getWindow();
     sf::Event event;
 
-    currentWorldState->update();
+    currentWorldState->update(tileMap);
 
     while (window.pollEvent(event)) {
         if (event.type == sf::Event::Closed) {

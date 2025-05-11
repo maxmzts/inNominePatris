@@ -19,7 +19,7 @@ public:
 
     // Métodos principales del patrón State
     virtual void enter() = 0;    // Cuando entramos a la sala
-    virtual void update() = 0;   // Actualización por frame
+    virtual void update(TileMap tileMap) = 0;   // Actualización por frame
     virtual void exit() = 0;     // Cuando salimos de la sala
     
     // Métodos adicionales
