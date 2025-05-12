@@ -4,10 +4,15 @@
 InteractionManager* InteractionManager::instance = nullptr;
 
 InteractionManager::InteractionManager() {
-    // Configurar los requisitos iniciales para la puerta principal (ID 69)
+    // Configurar los requisitos iniciales para la puerta principal (ID 69) en mundo 1
     // Requiere los tres botones (IDs 772, 773, 774)
-    std::vector<int> requiredButtons = {772, 773, 774};
-    setDoorRequirements(69, requiredButtons);
+    std::vector<int> requiredButtonsWorld1 = {772, 773, 774};
+    setDoorRequirements(69, requiredButtonsWorld1);
+    
+    // Configurar los requisitos para la puerta principal (ID 1242) en mundo 2
+    // Requiere los tres botones (IDs 1233, 1234, 1235)
+    std::vector<int> requiredButtonsWorld2 = {1233, 1234, 1235};
+    setDoorRequirements(1242, requiredButtonsWorld2);
 }
 
 InteractionManager* InteractionManager::getInstance() {

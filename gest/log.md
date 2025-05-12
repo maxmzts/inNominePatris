@@ -287,3 +287,6 @@ Muchas cosas, sistema de estados por interacción para manejar el cambio entre m
 ## 20250511 MaximoMartinez @(5h)
 Me he ocupado de resolver una referencia circular entre InGame y WorldChangeInteraction. Luego he implementado un sistema con el patrón State para definir las salas de un mundo y así conocer en qué sala se encuentra el jugador y poder spawnear enemigos si es la primera vez que entra o cualquier otra lógica.
 (18:40) He trabajado con dicho sistema para que funcione en el mundo 1. Ahora las salas están definidas, si entras a 1 aparecen enemigos (en posiciones estaticas de momento) y cuando son eliminados se puede ejecutar lógica adicional (abrir puertas por ejemplo). He añadido que se puedan pasar funciones por parametro a las salas para así meter las funciones que eliminan sus respectivas puertas sin hacer una clase para cada sala. 
+
+## 20250512 DavidGonzález @(7h)
+World_2 hecho, completamente funcional con spawn entre salas y puzzle del botón funcionando también porque soy una bestia, añadido World2State también completamente funcional, ahora cuando pasas por la puerta del mundo 2 (en el lobby) te lleva al mundo 2 con su estado y todo (he quitado la barrera de momento para probarlo). Tambien he puesto un tile para retornar al lobby (el 1492 por si quereis hacer pruebas).

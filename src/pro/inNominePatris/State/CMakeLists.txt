@@ -8,6 +8,7 @@ target_sources(libModulos PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/KoScreen.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/LobbyState.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/World1State.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/World2State.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/WorldState.h"
 
 )

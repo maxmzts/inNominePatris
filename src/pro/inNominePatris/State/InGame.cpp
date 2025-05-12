@@ -17,6 +17,7 @@
 #include "EnemyBat.h"
 #include "LobbyState.h"
 #include "World1State.h"
+#include "World2State.h"
 #include <EnemyManager.h>
 #include <EnemyNecromancer.h>
 #include <MusicManager.h>
@@ -68,6 +69,7 @@ InGame::InGame(GameEngine& engine)
     // Inicializar los subestados del mundo
     worldStates["lobby"] = std::make_unique<LobbyState>();
     worldStates["world_1"] = std::make_unique<World1State>();
+    worldStates["world_2"] = std::make_unique<World2State>();
 
     currentWorldState = worldStates["lobby"].get(); // Comienza en el lobby
 
