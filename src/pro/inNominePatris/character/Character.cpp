@@ -531,6 +531,7 @@ void Character::drawHearts(GameEngine& engine) {
 
 // INTERACTION STUFF-------------------------------------------------------------------------------------------------------------------------------
 
+// cambia los 
 void Character::InteractionCage(TileMap& tilemap, int centerX, int centerY) {
     // Coordenadas relativas desde el centro
     tilemap.setLocalTile("deco", centerX - 2, centerY, 64); // izquierda

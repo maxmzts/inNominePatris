@@ -9,7 +9,7 @@ class ButtonInteraction : public Interaction {
 private:
     int m_centerX;
     int m_centerY;
-    bool m_isActivated; // Nuevo: para saber si el botón ya fue activado
+    bool m_isActivated; // para saber si el botón ya fue activado
 
 public:
     ButtonInteraction(int id, const std::string& name, int centerX, int centerY);
