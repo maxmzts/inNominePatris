@@ -199,23 +199,38 @@ void Character::update(const TileMap& tilemap, float deltaTime) {
     collisionCircle.setPosition(sprite.getPosition() + sf::Vector2f(0.f,20.f));
     // Comprobación de colisiones antes de mover al personaje
     sf::FloatRect nextBounds = collisionCircle.getGlobalBounds();
-    nextBounds.left += velocity.x * deltaTime;
-    nextBounds.top += velocity.y * deltaTime;
 
-    if (!tilemap.isColliding(nextBounds)) {
-        sprite.move(velocity * deltaTime);
-    } else {
+    // Movimiento en eje X
+    sf::FloatRect nextXBounds = nextBounds;
+    nextXBounds.left += velocity.x * deltaTime;
+    if (!tilemap.isColliding(nextXBounds)) {
+        sf::Vector2f hvelocity = {velocity.x * deltaTime , 0.f};
+        sprite.move(hvelocity);
+    } else { // el movimiento se anula en este eje
+        velocity.x = 0;
         if (isDashing) {
-            // Si hay colisión durante el dash, detener el dash
             isDashing = false;
-            velocity = {0, 0};
-        } else {
-            velocity = {0, 0}; // Detiene el movimiento en caso de colisión
+        }
+    }
+
+    // Movimiento en eje Y
+    sf::FloatRect nextYBounds = nextBounds;
+    nextYBounds.top += velocity.y * deltaTime;
+    if (!tilemap.isColliding(nextYBounds)) {
+        sf::Vector2f vvelocity = {0.f, velocity.y * deltaTime};
+        sprite.move(vvelocity);
+    } else { // el movimiento se anula en este eje
+        velocity.y = 0;
+        if (isDashing) {
+            isDashing = false;
         }
     }
 
     // Actualizar animación basada en movimiento y dirección
     updateAnimation();
+
+    // DEBUG
+    // std::cout << "Mi posicion: " << collisionCircle.getPosition().x/16 << ", " << collisionCircle.getPosition().y/16 << std::endl;
     
     // Actualizar la animación
     animations->update(deltaTime);
