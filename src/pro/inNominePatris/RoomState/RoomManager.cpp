@@ -34,7 +34,7 @@ void RoomManager::changeState(const std::string& stateId) {
     }
 }
 
-void RoomManager::update(TileMap tileMap) {
+void RoomManager::update(TileMap& tileMap) {
     if (currentState) {
         currentState->update(tileMap);
     }

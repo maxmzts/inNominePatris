@@ -22,7 +22,7 @@ void DungeonRoom::enter() {
     std::cout << "Entré en la sala " << roomId << std::endl;
 }
 
-void DungeonRoom::update(TileMap tileMap) {   
+void DungeonRoom::update(TileMap& tileMap) {   
     // Si no quedan enemigos, la sala está completada
     int count = EnemyManager::getInstance()->getEnemyCount();
     if (!hasEnemies() && !completed) {

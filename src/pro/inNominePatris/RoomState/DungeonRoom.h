@@ -17,7 +17,7 @@ public:
     virtual ~DungeonRoom();
     
     void enter() override;
-    void update(TileMap tileMap) override;
+    void update(TileMap& tileMap) override;
     void exit() override;
 };
 

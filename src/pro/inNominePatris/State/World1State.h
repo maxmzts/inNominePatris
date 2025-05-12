@@ -20,7 +20,7 @@ public:
         roomManager->changeState("room1");
     }
 
-    void update(TileMap tileMap) override {
+    void update(TileMap& tileMap) override {
         // Lógica específica del mundo
         // actualizar salas
         RoomManager* roomManager = RoomManager::getInstance();

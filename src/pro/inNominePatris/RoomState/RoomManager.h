@@ -32,7 +32,7 @@ public:
     void changeState(const std::string& stateId);
     
     // Actualizar el estado actual
-    void update(TileMap tileMap);
+    void update(TileMap& tileMap);
     
     // Obtener el estado actual
     std::shared_ptr<RoomState> getCurrentState() const;

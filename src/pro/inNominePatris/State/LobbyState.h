@@ -10,11 +10,13 @@ public:
         // logica para cuando se carga el lobby si es necesario
     }
 
-    void update(TileMap tilemap) override {
-        // Lógica específica del lobby
-        // Transiciones al mundo 1
-        // if (player.getPosition().x > 500) { // Ejemplo: si el jugador cruza un límite
-        //     inGame.changeWorldState("world_1");
+    void update(TileMap& tileMap) override {
+        // Desbloquear mundos si estos han sido completados
+        // if(mundo1-completed) {
+        //    openDoor2()
+        // }
+        // if(mundo2-completed) {
+        //    openDoor3()
         // }
     }
 
