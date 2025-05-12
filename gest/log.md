@@ -292,3 +292,7 @@ Me he ocupado de resolver una referencia circular entre InGame y WorldChangeInte
 ## 20250512 DavidGonzález @(7h)
 World_2 hecho, completamente funcional con spawn entre salas y puzzle del botón funcionando también porque soy una bestia, añadido World2State también completamente funcional, ahora cuando pasas por la puerta del mundo 2 (en el lobby) te lleva al mundo 2 con su estado y todo (he quitado la barrera de momento para probarlo). Tambien he puesto un tile para retornar al lobby (el 1492 por si quereis hacer pruebas).
 
+## 20250511 MaximoMartinez @(2h)
+Arreglé un error por el que las puertas no se abrían al completar un combate, no pasaba el puntero de TileMap.
+He solucionado las asperezas del movimiento del personaje, ahora chocar con una pared no anula el movimiento en los dos ejes en movimientos diagonales.
+Luego me puse a poner los enemigos en sus sitios para cada sala pero me salió un error muy raro que desapareció solo (me lié o algo).

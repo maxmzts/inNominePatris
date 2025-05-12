@@ -24,10 +24,10 @@ void DungeonRoom::enter() {
 
 void DungeonRoom::update(TileMap& tileMap) {   
     // Si no quedan enemigos, la sala está completada
-    int count = EnemyManager::getInstance()->getEnemyCount();
     if (!hasEnemies() && !completed) {
         completed = true;
-        std::cout << "Maté a todos los enemigos, puedo salir" << std::endl;
+        // DEBUG
+        // std::cout << "Maté a todos los enemigos, puedo salir" << std::endl;
         openDoors(tileMap);
         MusicManager::getInstance().transitionTo("./resources/music/who_killed_them.ogg", 80.f);
         // recompensas al completar la sala, etc.

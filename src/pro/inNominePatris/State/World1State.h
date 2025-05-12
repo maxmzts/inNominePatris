@@ -12,10 +12,10 @@ public:
     World1State(){
         RoomManager* roomManager = RoomManager::getInstance();
         std::shared_ptr<RoomState> room = nullptr;
-        createRooms();
     }
 
     void initialize() override {
+        createRooms();
         RoomManager* roomManager = RoomManager::getInstance();
         roomManager->changeState("room1");
     }
@@ -49,9 +49,12 @@ public:
 
     void room2(){
         std::vector<std::shared_ptr<Enemy>> enemies;
-        // cargar enemigos (de momento son siempre los mismos en todas las salas)
-        for (size_t i = 0; i < 3; i++)
-            enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(100.f*i / 16,100.f*i / 16), 2));
+
+        enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(103.f, 12.f), 2));
+        enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(136.f, 11.f), 2));
+        enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(120.f, 24.f), 2));
+
+        std::cout << "No entiendo." << std::endl;
         
         // crear la sala
         auto room = std::make_shared<DungeonRoom>(
@@ -75,9 +78,9 @@ public:
 
     void room3(){
         std::vector<std::shared_ptr<Enemy>> enemies;
-        // cargar enemigos (de momento son siempre los mismos en todas las salas)
+        
         for (size_t i = 0; i < 5; i++){
-            enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(100.f*i / 16,100.f*i / 16), 2));
+            // enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(100.f*i / 16,100.f*i / 16), 2));
             //  añadir necromancer
         }
         
@@ -97,14 +100,14 @@ public:
             }
         );
         RoomManager* roomManager = RoomManager::getInstance();
-        roomManager->registerState("room5", room); 
+        roomManager->registerState("room3", room); 
     }
 
     void room4(){
         std::vector<std::shared_ptr<Enemy>> enemies;
-        // cargar enemigos (de momento son siempre los mismos en todas las salas)
+        
         for (size_t i = 0; i < 5; i++){
-            enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(100.f*i / 16,100.f*i / 16), 2));
+            // enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(100.f*i / 16,100.f*i / 16), 2));
             //  añadir necromancer
         }
         

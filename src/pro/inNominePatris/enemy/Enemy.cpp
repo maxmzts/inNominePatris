@@ -15,7 +15,7 @@ Enemy::Enemy(const std::string& name, float maxHealth, float movementSpeed, cons
     , maxHealth(maxHealth)
     , currentHealth(maxHealth)
     , movementSpeed(movementSpeed)
-    , position(startPosition)
+    , position(startPosition * 16.f)
     , isInvincible(false)
     , invincibilityTimer(0.0f)
     , invincibilityDuration(0.5f)  // Medio segundo de invencibilidad por defecto
@@ -32,7 +32,7 @@ Enemy::Enemy(const std::string& name, float maxHealth, float movementSpeed, cons
     , knockbackDuration(0.3f)
     , knockbackTimer(0.0f)
     , isInKnockback(false)
-{    
+{
     // Configuración inicial del sprite animado
     setTexture(texturePath);
     sprite.setPosition(position.x, position.y);

@@ -111,17 +111,16 @@ void MusicManager::transitionTo(
 
 // Depuración en update para ver qué está pasando
 void MusicManager::update(float deltaTime) {
-    // Imprimir estado actual para depuración
-    std::cout << "Estado MusicManager - Pistas regulares: " << tracks.size() 
-              << ", Transiciones: " << activeTransitions.size() << std::endl;
+    // DEBUG
+    // std::cout << "Estado MusicManager - Pistas regulares: " << tracks.size() 
+    //           << ", Transiciones: " << activeTransitions.size() << std::endl;
     
     // Actualizar las transiciones activas
     for (auto it = activeTransitions.begin(); it != activeTransitions.end(); ) {
         auto& transition = *it;
         
-        // Asegurarnos de que el puntero al track es válido
         if (!transition.track) {
-            std::cerr << "Error: Puntero nulo detectado en transición" << std::endl;
+            //std::cerr << "Error: Puntero nulo detectado en transición" << std::endl;
             it = activeTransitions.erase(it);
             continue;
         }

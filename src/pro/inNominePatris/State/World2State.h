@@ -62,9 +62,9 @@ public:
 
     void room2(){
         std::vector<std::shared_ptr<Enemy>> enemies;
-        // cargar enemigos (de momento son siempre los mismos en todas las salas)
-        for (size_t i = 0; i < 3; i++)
-            enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(100.f*i / 16,100.f*i / 16), 2));
+        
+        // for (size_t i = 0; i < 3; i++)
+        //     enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(100.f*i / 16,100.f*i / 16), 2));
         
         // crear la sala
         auto room = std::make_shared<DungeonRoom>(
