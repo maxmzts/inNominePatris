@@ -3,14 +3,12 @@
 #include <SFML/System/Time.hpp>
 
 // Constructor: inicializa el estado y las variables de control del fade.
-MusicTrack::MusicTrack(const std::string& filename, float volume, bool loop, float pitch) 
-: currentState(State::Stopped), fadeClock(), fadeDuration(0.0f), fadeTargetVolume(100.0f), fadeType(FadeType::None) 
-{
+MusicTrack::MusicTrack(const std::string& filename, float volume, bool loop, float pitch) {
     loadMusic(filename);
     setVolume(volume);
     setLoop(loop);
     setPitch(pitch);
-    play();
+    this->filename = filename;
 }
 
 // Carga un archivo de música en el reproductor.
@@ -23,19 +21,16 @@ void MusicTrack::loadMusic(const std::string& filename) {
 // Inicia la reproducción de la música.
 void MusicTrack::play() {
     music.play();
-    currentState = State::Playing;
 }
 
 // Pausa la música actual.
 void MusicTrack::pause() {
     music.pause();
-    currentState = State::Paused;
 }
 
 // Detiene la música actual.
 void MusicTrack::stop() {
     music.stop();
-    currentState = State::Stopped;
 }
 
 // Ajusta el volumen de la música.
@@ -61,13 +56,4 @@ bool MusicTrack::isPaused() const {
 // Comprueba si la música está detenida.
 bool MusicTrack::isStopped() const {
     return music.getStatus() == sf::Music::Stopped;
-}
-
-bool MusicTrack::isTransitioning() const {
-    return music.getStatus() == sf::Music::Stopped;
-}
-
-// Devuelve el estado actual del reproductor.
-MusicTrack::State MusicTrack::getState() const {
-    return currentState;
 }

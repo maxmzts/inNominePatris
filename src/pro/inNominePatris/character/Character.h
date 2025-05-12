@@ -105,6 +105,7 @@ protected:
     sf::Vector2f direction;
     sf::Vector2f mousePosition;
     sf::Vector2f aimDirection;
+    sf::CircleShape collisionCircle;
     
     float speed;
     float acceleration;
@@ -155,4 +156,6 @@ protected:
     AnimationState currentState;
     bool wasMoving;
     std::map<AnimationState, std::string> animationTextures;
+
+    void initCollisionCircle();
 };
