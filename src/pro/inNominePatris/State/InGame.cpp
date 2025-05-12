@@ -63,7 +63,7 @@ InGame::InGame(GameEngine& engine)
     //     EnemyManager::getInstance()->addEnemy(enemy);
     // }
     // EnemyManager::getInstance()->addEnemy(std::make_shared<EnemyNecromancer>(sf::Vector2f(400.f / 16,400.f / 16), 10));
-    MusicManager::getInstance().transitionTo("resources/music/lobby_track.ogg");
+    MusicManager::getInstance().transitionTo("resources/music/sanity.ogg");
 
     // Inicializar los subestados del mundo
     worldStates["lobby"] = std::make_unique<LobbyState>();

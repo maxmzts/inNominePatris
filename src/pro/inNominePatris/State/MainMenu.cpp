@@ -3,10 +3,12 @@
 #include "ConfMenu.h"
 #include "../Game.h"
 #include <iostream>
+#include <MusicManager.h>
 
 MainMenu* MainMenu::instance = nullptr;
 
 MainMenu::MainMenu(GameEngine& engine, float width, float height) :engine(engine), selectedItemIndex(0) {
+    MusicManager::getInstance().transitionTo("./resources/music/menu-track.ogg",100.f,1.f,0.01f);
     // Cargar fuente
     if (!font.loadFromFile("./assets/fonts/IMPACT.TTF")) {
         std::cerr << "Error al cargar la fuente. Usando texto sin fuente" << std::endl;
@@ -57,6 +59,7 @@ MainMenu* MainMenu::getInstance(GameEngine& engine, float width, float height) {
 
 void MainMenu::update(Game& game) {
     sf::RenderWindow& window = game.getWindow();
+    MusicManager::getInstance().update(engine.getDeltaTime());
 
     // Manejar eventos
     sf::Event event;
