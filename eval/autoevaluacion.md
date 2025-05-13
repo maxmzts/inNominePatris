@@ -4,7 +4,9 @@
 Reflejar tanto el progreso como los problemas encontrados con el grupo, código, juego... Si no se refleja ningún problema se asume que no existen.
 
 ## Estrella Dominguez
-
+Mi experiencia ha sido bastante agridulce. Desde el principio me he sentido muy perdida, desmotivada y en desventaja respecto a mis compañeros, tanto por mi bajo nivel de programación como por mi desconocimiento absoluto del mundo de los videojuegos. Muchos conceptos (como roguelike, hitbox, HUD, sprites, etc) se daban por sabidos, pero para mí eran completamente nuevos porque nunca he jugado a videojuegos.
+Además he tenido una gran dependencia de herramientas de IA para poder avanzar en las tareas. Me resultaba muy complicado saber por dónde empezar e incluso entender el origen de los errores que me aparecían. 
+Aún así, he intentado aportar lo mejor que podía y cada vez que conseguía que algo se viera bien y funcionara era bastante satisfactorio y creo que he aprendido muchísimo, tanto del mundo de los videojuegos como de C++ y patrones.
 
 ## David González
 Demasiada dependencia de IA por falta absoluta de conocimiento del lenguaje c++ en este ámbito, sensación grande de frustración por tener que trabajar a un nivel tan bajo como para tener que desarrollar un motor, aun asi satisfecho con el resultado.

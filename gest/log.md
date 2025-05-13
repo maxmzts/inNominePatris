@@ -302,3 +302,6 @@ He terminado de colocar los enemigos del primer y segundo mundo.
 He agregado funciones para liberar la memoria de las salas que usaremos más adelante cuando el jugador pueda completar un mundo o morir. 
 He invertido tiempo en planificar algunos posibles enemigos que implementar para los siguientes mundos.
 He arreglado un problema con la posición del necromancer.
+
+## 20250513 EstrellaDomínguez @(1h)
+He comenzado a desarrollar el ten sheet, puesto mi parte de autoevaluación, desarrollado el manual de usuario y dado estructura al archivo de tareas.
