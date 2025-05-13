@@ -36,6 +36,8 @@ public:
     
     // Obtener el estado actual
     std::shared_ptr<RoomState> getCurrentState() const;
+
+    void clearRooms(){ states.clear(); currentState.reset(); }
 };
 
 #endif // ROOM_MANAGER_H

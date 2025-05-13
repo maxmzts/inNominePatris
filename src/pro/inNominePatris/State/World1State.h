@@ -79,14 +79,15 @@ public:
     void room3(){
         std::vector<std::shared_ptr<Enemy>> enemies;
         
-        for (size_t i = 0; i < 5; i++){
-            // enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(100.f*i / 16,100.f*i / 16), 2));
-            //  añadir necromancer
-        }
-        
+        enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(197.f, 43.f), 2));
+        enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(197.f, 10.f), 2));
+        enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(236.f, 10.f), 2));
+        enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(236.f, 43.f), 2));
+        enemies.push_back(std::make_shared<EnemyNecromancer>(sf::Vector2f(223.f, 26.f), 2));
+
         auto room = std::make_shared<DungeonRoom>(
             "room3",
-            std::vector<std::shared_ptr<Enemy>>{},
+            enemies,
             [](TileMap& tileMap) {
                 // Puerta vertical: de (190,23) a (190,28)
                 for (int y = 23; y <= 28; ++y) {
@@ -106,14 +107,15 @@ public:
     void room4(){
         std::vector<std::shared_ptr<Enemy>> enemies;
         
-        for (size_t i = 0; i < 5; i++){
-            // enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(100.f*i / 16,100.f*i / 16), 2));
-            //  añadir necromancer
-        }
+        enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(214.f, 110.f), 2));
+        enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(214.f, 101.f), 2));
+        enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(214.f, 92.f), 2));
+        enemies.push_back(std::make_shared<EnemyNecromancer>(sf::Vector2f(209.f, 117.f), 2));
+        enemies.push_back(std::make_shared<EnemyNecromancer>(sf::Vector2f(221.f, 117.f), 2));
         
         auto room = std::make_shared<DungeonRoom>(
             "room4",
-            std::vector<std::shared_ptr<Enemy>>{},
+            enemies,
             [](TileMap& tileMap) {
                 // Puerta horizontal: de (212,80) a (214,80)
                 for (int x = 212; x <= 214; ++x) {
@@ -132,11 +134,16 @@ public:
     }
 
     void room5(){
-        RoomManager* roomManager = RoomManager::getInstance();
-        std::shared_ptr<RoomState> room = nullptr;
-        // Sala inicial, sin enemigos
-        room = std::make_shared<DungeonRoom>("room5", std::vector<std::shared_ptr<Enemy>>{}, [](TileMap&) {/*No hace nada*/});
-        roomManager->registerState("room5", room);
+        std::vector<std::shared_ptr<Enemy>> enemies;
+        
+        // Boss del mundo 1
+        // coordenadas boss (220, 192)
+
+        auto room = std::make_shared<DungeonRoom>(
+            "room4",
+            enemies,
+            [](TileMap& tileMap) {}
+        );
     }
 };
 
