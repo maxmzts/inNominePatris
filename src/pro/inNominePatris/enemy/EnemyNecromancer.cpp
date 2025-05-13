@@ -14,7 +14,7 @@ EnemyNecromancer::EnemyNecromancer(const sf::Vector2f& startPosition, int DropKa
         "Necromancer", 
         150.f, 
         80.f, 
-        startPosition * 16.f, 
+        startPosition, 
         "resources/enemies/necromancer.png"),
         spawnTimer(5.f),
         attacked(false), //spawnea nuevos enemigos cada 5 segundos
@@ -285,6 +285,8 @@ void EnemyNecromancer::update(float deltaTime, Character* player, const TileMap*
         case NecromancerState::DEAD:
             break;
     }
+    // DEBUG
+    std::cout << "Necromancer,   x: " << position.x << " y: " << position.y << std::endl;
 }
 
 void EnemyNecromancer::changeState(int newStateInt) {

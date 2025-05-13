@@ -296,3 +296,9 @@ World_2 hecho, completamente funcional con spawn entre salas y puzzle del botón
 Arreglé un error por el que las puertas no se abrían al completar un combate, no pasaba el puntero de TileMap.
 He solucionado las asperezas del movimiento del personaje, ahora chocar con una pared no anula el movimiento en los dos ejes en movimientos diagonales.
 Luego me puse a poner los enemigos en sus sitios para cada sala pero me salió un error muy raro que desapareció solo (me lié o algo).
+
+## 20250511 MaximoMartinez @(1h 30min)
+He terminado de colocar los enemigos del primer y segundo mundo. 
+He agregado funciones para liberar la memoria de las salas que usaremos más adelante cuando el jugador pueda completar un mundo o morir. 
+He invertido tiempo en planificar algunos posibles enemigos que implementar para los siguientes mundos.
+He arreglado un problema con la posición del necromancer.
