@@ -296,3 +296,6 @@ World_2 hecho, completamente funcional con spawn entre salas y puzzle del botón
 Arreglé un error por el que las puertas no se abrían al completar un combate, no pasaba el puntero de TileMap.
 He solucionado las asperezas del movimiento del personaje, ahora chocar con una pared no anula el movimiento en los dos ejes en movimientos diagonales.
 Luego me puse a poner los enemigos en sus sitios para cada sala pero me salió un error muy raro que desapareció solo (me lié o algo).
+
+## 20250513 EstrellaDomínguez @(1h)
+He comenzado a desarrollar el ten sheet, puesto mi parte de autoevaluación, desarrollado el manual de usuario y dado estructura al archivo de tareas.
