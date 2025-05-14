@@ -73,6 +73,7 @@ void DungeonRoom::update(TileMap& tileMap) {
             for (auto& otherItem : items) {
                 otherItem->Picked();
                 openDoors(tileMap);
+                HUD::getInstance().showItemNotification(item->getItemName(), item->getItemDescription());
             }
 
             auto weapons = player->getEquippedWeapons();

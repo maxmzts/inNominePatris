@@ -312,3 +312,6 @@ Añadidos los items al matar todos los enemigos, con sus sprites. Falta añadir 
 
 ## 20250511 MaximoMartinez @(1h)
 Haciendo pruebas con los enemigos detecté errores y me puse a solucionarlos. Ya no atraviesan paredes y voy a rehacer el pathfinding. 
+
+## 20250509 JorgePelegrín @(1h 30min)
+He hecho el HUD un singleton para mejor manejo, y he animado los items poniendo sus nombres encima, además de añadir un HUD temporal explicativo de lo que hace el item que se coge. 
