@@ -88,7 +88,8 @@ public:
     // Funciones requeridas
     virtual void takeDamage(float damage, const sf::Vector2f& attackPosition) = 0;
     virtual void attack() = 0;
-    void move(const sf::Vector2f& direction);
+    void calculateVelocity(const sf::Vector2f& direction);
+    void move(const TileMap* tileMap, float deltaTime);
     void setupKnockback(const sf::Vector2f& attackDirection, float force);
     void knockback(float deltaTime, const TileMap* tileMap);
     
