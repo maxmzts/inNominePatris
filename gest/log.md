@@ -310,6 +310,7 @@ He comenzado a desarrollar el ten sheet, puesto mi parte de autoevaluación, des
 ## 20250509 JorgePelegrín @(4h 45min)
 Añadidos los items al matar todos los enemigos, con sus sprites. Falta añadir un pequeño texto abajo que ponga lo que hace.
 
-## 20250511 MaximoMartinez @(1h)
-Haciendo pruebas con los enemigos detecté errores y me puse a solucionarlos. Ya no atraviesan paredes y voy a rehacer el pathfinding.
-He vuelto a invertir tiempo en poner eliminar la decoración de las puertas cuando una sala se completa (antes no estaban)
+## 20250511 MaximoMartinez @(3h)
+Haciendo pruebas con los enemigos detecté errores y me puse a solucionarlos. Ya no atraviesan paredes.
+He vuelto a invertir tiempo en eliminar la decoración de las puertas cuando una sala se completa (antes no estaban) y en añadir las puertas del mundo 2.
+Por la tarde he cambiado la clase de la sala para permitir distintos tipos de música.
