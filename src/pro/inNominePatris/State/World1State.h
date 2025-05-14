@@ -47,8 +47,7 @@ public:
             "room1",
             std::vector<std::shared_ptr<Enemy>>{},
             "./resources/music/who-killed-them.ogg",
-            "./resources/music/hunt-the-hunter.ogg",
-            [](TileMap&) {/*No hace nada*/});
+            "./resources/music/hunt-the-hunter.ogg");
         roomManager->registerState("room1", room);
     }
 
