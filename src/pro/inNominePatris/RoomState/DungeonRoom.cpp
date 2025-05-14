@@ -4,8 +4,8 @@
 #include "Character.h"
 #include "Item.h"
 
-DungeonRoom::DungeonRoom(const std::string& id, std::vector<std::shared_ptr<Enemy>> enemies_list, std::function<void(TileMap&)> openDoors) 
-    : RoomState(), roomId(id), openDoors(openDoors) {
+DungeonRoom::DungeonRoom(const std::string& id, std::vector<std::shared_ptr<Enemy>> enemies_list, const std::string& musicFilePath, const std::string& fightMusicFilePath, std::function<void(TileMap&)> openDoors) 
+    : RoomState(), roomId(id), musicFilePath(musicFilePath), fightMusicFilePath(fightMusicFilePath), openDoors(openDoors) {
     // Asignar los enemigos recibidos a la variable heredada
     this->enemies = std::move(enemies_list);
 }
@@ -18,7 +18,7 @@ void DungeonRoom::enter() {
         // Spawnear enemigos solo si la sala no ha sido completada
         if(enemies.size() != 0){
             EnemyManager::getInstance()->addEnemies(enemies);
-            MusicManager::getInstance().transitionTo("./resources/music/hunt-the-hunter.ogg", 80.f);
+            MusicManager::getInstance().transitionTo(fightMusicFilePath, 80.f);
         }
     }
     std::cout << "Entré en la sala " << roomId << std::endl;
@@ -59,7 +59,7 @@ void DungeonRoom::update(TileMap& tileMap) {
         }
         generateItems(player);
 
-        MusicManager::getInstance().transitionTo("./resources/music/who_killed_them.ogg", 80.f);
+        MusicManager::getInstance().transitionTo(musicFilePath, 80.f);
     }
 
     // Verificar si el jugador pasa por encima de algún ítem
@@ -91,5 +91,4 @@ void DungeonRoom::update(TileMap& tileMap) {
 
 void DungeonRoom::exit() {
     // Lógica al salir de la sala
-    // Por ejemplo, guardar el estado de la sala, etc.
 }

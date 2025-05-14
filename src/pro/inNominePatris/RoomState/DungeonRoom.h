@@ -11,11 +11,15 @@ private:
     std::function<void(TileMap&)> openDoors;
     std::vector<sf::Vector2f> itemPositions;
     std::vector<std::unique_ptr<Item>> items;
+    std::string musicFilePath;
+    std::string fightMusicFilePath;
 
 public:
     DungeonRoom(const std::string& id, 
                 std::vector<std::shared_ptr<Enemy>> enemies_list,
-                std::function<void(TileMap&)> openDoors);
+                const std::string& musicFilePath, 
+                const std::string& fightMusicFilePath = "./resources/music/hunt-the-hunter.ogg",
+                std::function<void(TileMap&)> openDoors = {});
     virtual ~DungeonRoom();
 
     void setItemPositions(const std::vector<sf::Vector2f>& positions);
