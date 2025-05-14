@@ -72,6 +72,9 @@ public:
                 }
             }
         );
+
+        room->setItemPositions({sf::Vector2f(113.f * 16.f, 25.f * 16.f), sf::Vector2f(125.f * 16.f, 25.f * 16.f)});
+
         RoomManager* roomManager = RoomManager::getInstance();
         roomManager->registerState("room2", room);        
     }
@@ -100,6 +103,10 @@ public:
                 }
             }
         );
+
+        room->setItemPositions({sf::Vector2f(219.f * 16.f, 25.f * 16.f), sf::Vector2f(226.f * 16.f, 25.f * 16.f)});
+
+
         RoomManager* roomManager = RoomManager::getInstance();
         roomManager->registerState("room3", room); 
     }
@@ -129,6 +136,8 @@ public:
             }
         );
         
+        room->setItemPositions({sf::Vector2f(211.f * 16.f, 100.f * 16.f), sf::Vector2f(218.f * 16.f, 100.f * 16.f)});
+
         RoomManager* roomManager = RoomManager::getInstance();
         roomManager->registerState("room4", room); 
     }
