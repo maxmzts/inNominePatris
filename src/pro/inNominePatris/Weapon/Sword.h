@@ -28,6 +28,7 @@ public:
     void setPosition(float x, float y) override { spriteFacade.setPosition(x, y); };
     sf::Vector2f getPosition() const override { return spriteFacade.getPosition(); };
     AbilityType getAbilityType() const override { return AbilityType::Dash; };
+    ItemType getItemType() const override { return ItemType::Sword; }
     float getAbilityCooldown() { return abilityCooldown; }
     float getLastAbilityTime() { return lastAbilityTime; }
     float getDashSpeed() { return dashSpeed; }

@@ -35,6 +35,8 @@ InGame::InGame(GameEngine& engine)
         exit(-1);
     }
 
+    Character::setInstance(&player); // Establecer la instancia del jugador
+
     // Cargar la fuente
     if (!font.loadFromFile("./assets/fonts/IMPACT.TTF")) {
         std::cerr << "Error al cargar la fuente para los mensajes de proximidad\n";
@@ -400,6 +402,16 @@ void InGame::render(Game& game, sf::RenderWindow& window) {
     
     for (auto enemy : EnemyManager::getInstance()->getEnemyList()) {
         enemy->render(engine.getRenderWindow()); // Usa el RenderWindow directamente
+    }
+
+
+    // Obtener la sala actual desde el RoomManager
+    auto currentRoom = RoomManager::getInstance()->getCurrentState();
+    if (auto dungeonRoom = std::dynamic_pointer_cast<DungeonRoom>(currentRoom)) {
+        const auto& items = dungeonRoom->getItems();
+        for (const auto& item : items) {
+            item->render(window);
+        }
     }
     
     VFXManager::getInstance().render(engine.getRenderWindow());

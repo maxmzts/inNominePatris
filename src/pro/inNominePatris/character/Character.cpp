@@ -4,6 +4,9 @@
 #include <iostream>
 #include <cmath>
 
+Character* Character::instance = nullptr; // Inicialización de la instancia
+
+
 Character::Character() 
     : speed(200.f), acceleration(1500.f), deceleration(2000.f), equippedWeapon(nullptr), 
       isDashing(false), dashSpeed(400.f), dashDuration(0.2f), weapons(), equippedIndex(0), 
@@ -665,4 +668,17 @@ void Character::initCollisionCircle() {
     collisionCircle.setFillColor(sf::Color(0, 255, 0, 64)); // Verde semitransparente
     collisionCircle.setOutlineColor(sf::Color(0, 200, 0, 200));
     collisionCircle.setOutlineThickness(1.f);
+}
+
+Character* Character::getInstance() {
+    if (instance == nullptr) {
+        instance = new Character();
+    }
+    return instance;
+}
+
+void Character::setInstance(Character* character) {
+    if (instance == nullptr) {
+        instance = character;
+    }
 }

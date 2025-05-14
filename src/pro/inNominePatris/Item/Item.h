@@ -24,7 +24,10 @@ public:
     void setPosition(float x, float y);
     void render(sf::RenderWindow& window);
     sf::FloatRect getBounds() const;
-    Item* generateRandomItemforWeapon(ItemType weapontype);
+    static Item* generateRandomItemforWeapon(ItemType weapontype);
+    void Picked() { isPickedUp = true; }
+    bool GetIsPickedUp() const { return isPickedUp; }
+    ItemType getType() const { return type; }
 
 protected:
     SpriteFacade spriteFacade;
@@ -35,35 +38,45 @@ protected:
 //--------------Espada-------------------//
 class DashBoostItem : public Item {
     public:
-        DashBoostItem() : Item(ItemType::Sword) {}
+        DashBoostItem() : Item(ItemType::Sword) {
+            spriteFacade.loadTexture("./resources/Items/DashBoost.png");
+        }
         void applyEffect(Weapon& weapon) override;
         void Picked();
 };
 
 class DashCooldownItem : public Item {
     public:
-        DashCooldownItem() : Item(ItemType::Sword) {}
+        DashCooldownItem() : Item(ItemType::Sword) {
+            spriteFacade.loadTexture("./resources/Items/DashCooldown.png");
+        }
         void applyEffect(Weapon& weapon) override;
         void Picked();
 };
 
 class AttackCooldownSwordItem : public Item {
     public:
-        AttackCooldownSwordItem() : Item(ItemType::Sword) {}
+        AttackCooldownSwordItem() : Item(ItemType::Sword) {
+            spriteFacade.loadTexture("./resources/Items/SwordAttackCooldown.png");
+        }
         void applyEffect(Weapon& weapon) override;
         void Picked();
 };
 
 class AttackDamageSwordItem : public Item {
     public:
-        AttackDamageSwordItem() : Item(ItemType::Sword) {}
+        AttackDamageSwordItem() : Item(ItemType::Sword) {
+            spriteFacade.loadTexture("./resources/Items/SwordAttackDamage.png");
+        }
         void applyEffect(Weapon& weapon) override;
         void Picked();
 };
 
 class DoubleDashItem : public Item {
     public:
-        DoubleDashItem() : Item(ItemType::Sword) {}
+        DoubleDashItem() : Item(ItemType::Sword) {
+            spriteFacade.loadTexture("./resources/Items/DoubleDash.png");
+        }
         void applyEffect(Weapon& weapon) override;
         void Picked();
 };
@@ -71,29 +84,36 @@ class DoubleDashItem : public Item {
 //--------------Lanza-------------------//
 class AttackCooldownLanceItem : public Item {
     public:
-        AttackCooldownLanceItem() : Item(ItemType::Lance) {}
+        AttackCooldownLanceItem() : Item(ItemType::Lance) {
+            spriteFacade.loadTexture("./resources/Items/LanceAttackCooldown.png");
+        }
         void applyEffect(Weapon& weapon) override;
         void Picked();
 };
 
 class AttackDamageLanceItem : public Item {
     public:
-        AttackDamageLanceItem() : Item(ItemType::Lance) {}
+        AttackDamageLanceItem() : Item(ItemType::Lance) {
+            spriteFacade.loadTexture("./resources/Items/LanceAttackDamage.png");
+        }
         void applyEffect(Weapon& weapon) override;
         void Picked();
 };
 
 class AttackHitboxLanceItem : public Item {
     public:
-        AttackHitboxLanceItem() : Item(ItemType::Lance) {}
+        AttackHitboxLanceItem() : Item(ItemType::Lance) {
+            spriteFacade.loadTexture("./resources/Items/LanceAttackHitbox.png");
+        }
         void applyEffect(Weapon& weapon) override;
         void Picked();
 };
-#endif // ITEM_H
 
 class RevengeReturnItem : public Item {
     public:
-        RevengeReturnItem() : Item(ItemType::Lance) {}
+        RevengeReturnItem() : Item(ItemType::Lance) {
+            spriteFacade.loadTexture("./resources/Items/RevengeReturn.png");
+        }
         void applyEffect(Weapon& weapon) override;
         void Picked();
 };
@@ -102,35 +122,47 @@ class RevengeReturnItem : public Item {
 
 class AttackDamageBowItem : public Item {
     public:
-        AttackDamageBowItem() : Item(ItemType::Bow) {}
+        AttackDamageBowItem() : Item(ItemType::Bow) {
+            spriteFacade.loadTexture("./resources/Items/BowAttackDamage.png");
+        }
         void applyEffect(Weapon& weapon) override;
         void Picked();
 };
 
 class ArrowSpeedItem : public Item {
     public:
-        ArrowSpeedItem() : Item(ItemType::Bow) {}
+        ArrowSpeedItem() : Item(ItemType::Bow) {
+            spriteFacade.loadTexture("./resources/Items/ArrowSpeed.png");
+        }
         void applyEffect(Weapon& weapon) override;
         void Picked();
 };
 
 class ArrowCountItem : public Item {
     public:
-        ArrowCountItem() : Item(ItemType::Bow) {}
+        ArrowCountItem() : Item(ItemType::Bow) {
+            spriteFacade.loadTexture("./resources/Items/ArrowCount.png");
+        }
         void applyEffect(Weapon& weapon) override;
         void Picked();
 };
 
 class QuickShotItem : public Item {
     public:
-        QuickShotItem() : Item(ItemType::Bow) {}
+        QuickShotItem() : Item(ItemType::Bow) {
+            spriteFacade.loadTexture("./resources/Items/QuickShot.png");
+        }
         void applyEffect(Weapon& weapon) override;
         void Picked();
 };
 
 class DecreaseAbilityCooldownBowItem : public Item {
     public:
-        DecreaseAbilityCooldownBowItem() : Item(ItemType::Bow) {}
+        DecreaseAbilityCooldownBowItem() : Item(ItemType::Bow) {
+            spriteFacade.loadTexture("./resources/Items/BowAbilityCooldown.png");
+        }
         void applyEffect(Weapon& weapon) override;
         void Picked();
 };
+
+#endif // ITEM_H

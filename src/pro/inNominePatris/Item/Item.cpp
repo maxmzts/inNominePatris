@@ -60,31 +60,17 @@ void DashBoostItem::applyEffect(Weapon& weapon) {
         sword->increaseDashSpeed(80.f);
     }
 }
-
-void DashBoostItem::Picked() {
-    isPickedUp = true;
-}
-
 //Disminuir el cooldown del dash
 void DashCooldownItem::applyEffect(Weapon& weapon) {
     if (Sword* sword = dynamic_cast<Sword*>(&weapon)) {
         sword->decreaseDashCooldown(0.5f); // Disminuir el cooldown del dash
     }
 }
-
-void DashCooldownItem::Picked() {
-    isPickedUp = true;
-}
-
 //Disminuir el cooldown del ataque
 void AttackCooldownSwordItem::applyEffect(Weapon& weapon) {
     if (Sword* sword = dynamic_cast<Sword*>(&weapon)) {
         sword->decreaseAttackCooldown(0.2f); // Disminuir el cooldown del ataque
     }
-}
-
-void AttackCooldownSwordItem::Picked() {
-    isPickedUp = true;
 }
 
 //Aumentar el daño del ataque
@@ -93,11 +79,6 @@ void AttackDamageSwordItem::applyEffect(Weapon& weapon) {
         sword->increaseAttackDamage(10.f); // Aumentar el daño del ataque
     }
 }
-
-void AttackDamageSwordItem::Picked() {
-    isPickedUp = true;
-}
-
 void DoubleDashItem::applyEffect(Weapon& weapon) {
     Sword* sword = dynamic_cast<Sword*>(&weapon);
     if (sword) {
@@ -106,11 +87,6 @@ void DoubleDashItem::applyEffect(Weapon& weapon) {
     } else {
         std::cerr << "El ítem DoubleDash solo puede aplicarse a una espada." << std::endl;
     }
-}
-
-void DoubleDashItem::Picked() {
-    isPickedUp = true;
-    std::cout << "¡Has recogido el ítem DoubleDash!" << std::endl;
 }
 
 //--------------Lanza-------------------//
@@ -122,19 +98,11 @@ void AttackCooldownLanceItem::applyEffect(Weapon& weapon) {
     }
 }
 
-void AttackCooldownLanceItem::Picked() {
-    isPickedUp = true;
-}
-
 //Aumentar el daño del ataque
 void AttackDamageLanceItem::applyEffect(Weapon& weapon) {
     if (Lance* lance = dynamic_cast<Lance*>(&weapon)) {
         lance->increaseAttackDamage(10.f); // Aumentar el daño del ataque
     }
-}
-
-void AttackDamageLanceItem::Picked() {
-    isPickedUp = true;
 }
 
 //Aumentar el tamaño de la hitbox del ataque
@@ -144,19 +112,11 @@ void AttackHitboxLanceItem::applyEffect(Weapon& weapon) {
     }
 }
 
-void AttackHitboxLanceItem::Picked() {
-    isPickedUp = true;
-}
-
 //Activar el ataque de venganza
 void RevengeReturnItem::applyEffect(Weapon& weapon) {
     if (Lance* lance = dynamic_cast<Lance*>(&weapon)) {
         lance->activateRevengeReturn();
     }
-}
-
-void RevengeReturnItem::Picked() {
-    isPickedUp = true;
 }
 
 //--------------Arco-------------------//
@@ -168,19 +128,11 @@ void AttackDamageBowItem::applyEffect(Weapon& weapon) {
     }
 }
 
-void AttackDamageBowItem::Picked() {
-    isPickedUp = true;
-}
-
 //Aumentar la velocidad de la flecha
 void ArrowSpeedItem::applyEffect(Weapon& weapon) {
     if (Bow* bow = dynamic_cast<Bow*>(&weapon)) {
         bow->increaseArrowSpeed(150.f); // Aumentar la velocidad de la flecha
     }
-}
-
-void ArrowSpeedItem::Picked() {
-    isPickedUp = true;
 }
 
 //Aumentar la cantidad de flechas disparadas por la habilidad
@@ -190,10 +142,6 @@ void ArrowCountItem::applyEffect(Weapon& weapon) {
     }
 }
 
-void ArrowCountItem::Picked() {
-    isPickedUp = true;
-}
-
 //Tirar flechas más rápido
 void QuickShotItem::applyEffect(Weapon& weapon) {
     if (Bow* bow = dynamic_cast<Bow*>(&weapon)) {
@@ -201,17 +149,9 @@ void QuickShotItem::applyEffect(Weapon& weapon) {
     }
 }
 
-void QuickShotItem::Picked() {
-    isPickedUp = true;
-}
-
 //Disminuir el cooldown de la habilidad
 void DecreaseAbilityCooldownBowItem::applyEffect(Weapon& weapon) {
     if (Bow* bow = dynamic_cast<Bow*>(&weapon)) {
         bow->decreaseAbilityCooldown(1.f); // Disminuir el cooldown de la habilidad
     }
-}
-
-void DecreaseAbilityCooldownBowItem::Picked() {
-    isPickedUp = true;
 }

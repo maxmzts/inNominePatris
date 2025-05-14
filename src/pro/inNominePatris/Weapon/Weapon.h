@@ -8,6 +8,7 @@
 #include "Hitbox.h"
 #include "SFXManager.h"
 
+#include "ItemType.h"
 #include "AbilityType.h"
 
 class Weapon {
@@ -46,6 +47,7 @@ class Weapon {
         virtual void useAbility(sf::Vector2f characterPosition) = 0;
         virtual void useAbility(sf::Vector2f position, sf::Vector2f direction) = 0;
         virtual AbilityType getAbilityType() const = 0;
+        virtual ItemType getItemType() const = 0;
 
         // Método para dibujar el arma, ajustado al personaje
         //virtual void draw(sf::Vector2f position, sf::Vector2f direction) = 0;
