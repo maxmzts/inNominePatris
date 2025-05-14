@@ -292,12 +292,12 @@ Me he ocupado de resolver una referencia circular entre InGame y WorldChangeInte
 ## 20250512 DavidGonzález @(7h)
 World_2 hecho, completamente funcional con spawn entre salas y puzzle del botón funcionando también porque soy una bestia, añadido World2State también completamente funcional, ahora cuando pasas por la puerta del mundo 2 (en el lobby) te lleva al mundo 2 con su estado y todo (he quitado la barrera de momento para probarlo). Tambien he puesto un tile para retornar al lobby (el 1492 por si quereis hacer pruebas).
 
-## 20250511 MaximoMartinez @(2h)
+## 20250512 MaximoMartinez @(2h)
 Arreglé un error por el que las puertas no se abrían al completar un combate, no pasaba el puntero de TileMap.
 He solucionado las asperezas del movimiento del personaje, ahora chocar con una pared no anula el movimiento en los dos ejes en movimientos diagonales.
 Luego me puse a poner los enemigos en sus sitios para cada sala pero me salió un error muy raro que desapareció solo (me lié o algo).
 
-## 20250511 MaximoMartinez @(1h 30min)
+## 20250513 MaximoMartinez @(1h 30min)
 He terminado de colocar los enemigos del primer y segundo mundo. 
 He agregado funciones para liberar la memoria de las salas que usaremos más adelante cuando el jugador pueda completar un mundo o morir. 
 He invertido tiempo en planificar algunos posibles enemigos que implementar para los siguientes mundos.
@@ -309,3 +309,6 @@ He comenzado a desarrollar el ten sheet, puesto mi parte de autoevaluación, des
 
 ## 20250509 JorgePelegrín @(4h 45min)
 Añadidos los items al matar todos los enemigos, con sus sprites. Falta añadir un pequeño texto abajo que ponga lo que hace.
+
+## 20250511 MaximoMartinez @(1h)
+Haciendo pruebas con los enemigos detecté errores y me puse a solucionarlos. Ya no atraviesan paredes y voy a rehacer el pathfinding. 
