@@ -32,7 +32,7 @@ public:
         //renderizar algo si es necesario
     }
 
-    void createRooms(){
+    void createRooms() override{
         room1();
         room2();
         room3();
@@ -63,14 +63,9 @@ public:
             "room2",
             enemies,
             [](TileMap& tileMap) {
-                // Puerta horizontal: de (116, 45) a (121, 45)
-                for (int x = 116; x <= 121; ++x) {
-                    tileMap.removeCollisionByCoord(x, 45);
-                }
-        
-                // Puerta vertical: de (143, 28) a (143, 23)
-                for (int y = 28; y >= 23; --y) {
-                    tileMap.removeCollisionByCoord(143, y);
+                for (int x = 126; x <= 131; ++x) {
+                    tileMap.removeCollisionByCoord(x, 35);
+                    tileMap.setLocalTile("deco", x, 35, -1);
                 }
             }
         );
@@ -94,14 +89,9 @@ public:
             "room3",
             enemies,
             [](TileMap& tileMap) {
-                // Puerta horizontal: de (116, 45) a (121, 45)
-                for (int x = 116; x <= 121; ++x) {
-                    tileMap.removeCollisionByCoord(x, 45);
-                }
-        
-                // Puerta vertical: de (143, 28) a (143, 23)
-                for (int y = 28; y >= 23; --y) {
-                    tileMap.removeCollisionByCoord(143, y);
+                for (int x = 150, y = 90; y >= 85; --y) {
+                    tileMap.removeCollisionByCoord(x, y);
+                    tileMap.setLocalTile("deco", x, y, -1);
                 }
             }
         );
@@ -125,14 +115,9 @@ public:
             "room4",
             enemies,
             [](TileMap& tileMap) {
-                // Puerta horizontal: de (116, 45) a (121, 45)
-                for (int x = 116; x <= 121; ++x) {
-                    tileMap.removeCollisionByCoord(x, 45);
-                }
-        
-                // Puerta vertical: de (143, 28) a (143, 23)
-                for (int y = 28; y >= 23; --y) {
-                    tileMap.removeCollisionByCoord(143, y);
+                for (int x = 95, y = 159; x <= 100; ++x) {
+                    tileMap.removeCollisionByCoord(x, y);
+                    tileMap.setLocalTile("deco", x, y, -1);
                 }
             }
         );

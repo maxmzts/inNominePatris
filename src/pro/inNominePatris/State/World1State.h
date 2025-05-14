@@ -64,11 +64,15 @@ public:
                 // Puerta horizontal: de (116, 45) a (121, 45)
                 for (int x = 116; x <= 121; ++x) {
                     tileMap.removeCollisionByCoord(x, 45);
+                    tileMap.setLocalTile("deco", x, 44, -1);
                 }
         
                 // Puerta vertical: de (143, 28) a (143, 23)
                 for (int y = 28; y >= 23; --y) {
                     tileMap.removeCollisionByCoord(143, y);
+                }
+                for (int y = 27; y >= 24; --y) {
+                    tileMap.setLocalTile("deco", 142, y, -1);
                 }
             }
         );
@@ -89,14 +93,17 @@ public:
             "room3",
             enemies,
             [](TileMap& tileMap) {
-                // Puerta vertical: de (190,23) a (190,28)
                 for (int y = 23; y <= 28; ++y) {
                     tileMap.removeCollisionByCoord(190, y);
                 }
-        
-                // Puerta horizontal: de (211,47) a (216,47)
+                for (int y = 24; y <= 27; ++y) {
+                    tileMap.setLocalTile("deco", 190, y, -1);
+                }
                 for (int x = 211; x <= 216; ++x) {
                     tileMap.removeCollisionByCoord(x, 47);
+                }
+                for (int x = 212; x <= 215; ++x) {
+                    tileMap.setLocalTile("deco", x, 47, -1);
                 }
             }
         );
@@ -121,10 +128,15 @@ public:
                 for (int x = 212; x <= 214; ++x) {
                     tileMap.removeCollisionByCoord(x, 80);
                 }
-        
+                for (int x = 213; x <= 216; ++x) {
+                    tileMap.setLocalTile("deco", x, 80, -1);
+                }
                 // Puerta vertical: de (225,115) a (225,120)
                 for (int y = 115; y <= 120; ++y) {
                     tileMap.removeCollisionByCoord(225, y);
+                }
+                for (int y = 116; y <= 119; ++y) {
+                    tileMap.setLocalTile("deco", 225, y, -1);
                 }
             }
         );
