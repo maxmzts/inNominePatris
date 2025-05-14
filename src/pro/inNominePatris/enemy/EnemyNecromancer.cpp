@@ -284,7 +284,7 @@ void EnemyNecromancer::update(float deltaTime, Character* player, const TileMap*
             break;
     }
     // DEBUG
-    std::cout << "Necromancer,   x: " << position.x << " y: " << position.y << std::endl;
+    // std::cout << "Necromancer,   x: " << position.x << " y: " << position.y << std::endl;
 }
 
 void EnemyNecromancer::changeState(int newStateInt) {
@@ -315,7 +315,7 @@ bool EnemyNecromancer::isDead() const{
 
 void EnemyNecromancer::spawn(){
     EnemyManager::getInstance()->addEnemy(
-        std::make_shared<EnemyBat>(position, 0)
+        std::make_shared<EnemyBat>((position/16.f), 0)
     );
     // anyadir efecto en el futuro
 }
