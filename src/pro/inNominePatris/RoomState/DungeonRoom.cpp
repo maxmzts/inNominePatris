@@ -4,8 +4,8 @@
 #include "Character.h"
 #include "Item.h"
 
-DungeonRoom::DungeonRoom(const std::string& id, std::vector<std::shared_ptr<Enemy>> enemies_list, std::function<void(TileMap&)> openDoors) 
-    : RoomState(), roomId(id), openDoors(openDoors) {
+DungeonRoom::DungeonRoom(const std::string& id, std::vector<std::shared_ptr<Enemy>> enemies_list, const std::string& musicFilePath, const std::string& fightMusicFilePath, std::function<void(TileMap&)> openDoors) 
+    : RoomState(), roomId(id), musicFilePath(musicFilePath), fightMusicFilePath(fightMusicFilePath), openDoors(openDoors) {
     // Asignar los enemigos recibidos a la variable heredada
     this->enemies = std::move(enemies_list);
 }
@@ -18,10 +18,11 @@ void DungeonRoom::enter() {
         // Spawnear enemigos solo si la sala no ha sido completada
         if(enemies.size() != 0){
             EnemyManager::getInstance()->addEnemies(enemies);
-            MusicManager::getInstance().transitionTo("./resources/music/hunt-the-hunter.ogg", 80.f);
+            MusicManager::getInstance().transitionTo(fightMusicFilePath, 80.f);
         }
     }
-    std::cout << "Entré en la sala " << roomId << std::endl;
+    // DEBUG
+    // std::cout << "Entré en la sala " << roomId << std::endl;
 }
 
 void DungeonRoom::setItemPositions(const std::vector<sf::Vector2f>& positions) {
@@ -30,8 +31,9 @@ void DungeonRoom::setItemPositions(const std::vector<sf::Vector2f>& positions) {
 
 void DungeonRoom::generateItems(Character* player) {
     auto weapons = player->getEquippedWeapons();
-    std::cout << "Armas equipadas: " << weapons.size() << std::endl;
-    std::cout << "Posiciones de ítems: " << itemPositions.size() << std::endl;
+    // DEBUG
+    // std::cout << "Armas equipadas: " << weapons.size() << std::endl;
+    // std::cout << "Posiciones de ítems: " << itemPositions.size() << std::endl;
 
     for (size_t i = 0; i < std::min(itemPositions.size(), weapons.size()); ++i) {
         ItemType weaponType = weapons[i]->getItemType();
@@ -40,7 +42,8 @@ void DungeonRoom::generateItems(Character* player) {
         if (newItem) {
             newItem->setPosition(itemPositions[i].x, itemPositions[i].y);
             items.emplace_back(newItem);
-            std::cout << "Generé un ítem en la posición: " << itemPositions[i].x << ", " << itemPositions[i].y << std::endl;
+            // DEBUG
+            // std::cout << "Generé un ítem en la posición: " << itemPositions[i].x << ", " << itemPositions[i].y << std::endl;
         }
     }
 }
@@ -49,7 +52,8 @@ void DungeonRoom::update(TileMap& tileMap) {
     // Si no quedan enemigos, la sala está completada
     if (!hasEnemies() && !completed) {
         completed = true;
-        std::cout << "Maté a todos los enemigos, puedo salir" << std::endl;
+        // DEBUG
+        // std::cout << "Maté a todos los enemigos, debo coger el objeto" << std::endl;
 
         // Generar ítems en las posiciones especificadas
         Character* player = Character::getInstance();
@@ -59,7 +63,7 @@ void DungeonRoom::update(TileMap& tileMap) {
         }
         generateItems(player);
 
-        MusicManager::getInstance().transitionTo("./resources/music/who_killed_them.ogg", 80.f);
+        MusicManager::getInstance().transitionTo(musicFilePath, 80.f);
     }
 
     // Verificar si el jugador pasa por encima de algún ítem
@@ -80,17 +84,17 @@ void DungeonRoom::update(TileMap& tileMap) {
             for (auto* weapon : weapons) {
                 if (weapon->getItemType() == item->getType()) { // Comparar el tipo del arma con el tipo del ítem
                     item->applyEffect(*weapon); // Aplicar el efecto al arma correspondiente
-                    std::cout << "Ítem aplicado al arma de tipo: " << static_cast<int>(weapon->getItemType()) << std::endl;
+                    // DEBUG
+                    // std::cout << "Ítem aplicado al arma de tipo: " << static_cast<int>(weapon->getItemType()) << std::endl;
                     break;
                 }
             }
-            
-            std::cout << "Ítem recogido en posición: " << item->getBounds().left << ", " << item->getBounds().top << std::endl;
+            // DEBUG
+            // std::cout << "Ítem recogido en posición: " << item->getBounds().left << ", " << item->getBounds().top << std::endl;
         }
     }
 }
 
 void DungeonRoom::exit() {
     // Lógica al salir de la sala
-    // Por ejemplo, guardar el estado de la sala, etc.
 }

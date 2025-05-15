@@ -316,3 +316,8 @@ He vuelto a invertir tiempo en poner eliminar la decoración de las puertas cuan
 
 ## 20250509 JorgePelegrín @(1h 30min)
 He hecho el HUD un singleton para mejor manejo, y he animado los items poniendo sus nombres encima, además de añadir un HUD temporal explicativo de lo que hace el item que se coge. 
+
+## 20250511 MaximoMartinez @(3h)
+Haciendo pruebas con los enemigos detecté errores y me puse a solucionarlos. Ya no atraviesan paredes.
+He vuelto a invertir tiempo en eliminar la decoración de las puertas cuando una sala se completa (antes no estaban) y en añadir las puertas del mundo 2.
+Por la tarde he cambiado la clase de la sala para permitir distintos tipos de música.

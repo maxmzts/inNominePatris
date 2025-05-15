@@ -43,7 +43,11 @@ public:
         RoomManager* roomManager = RoomManager::getInstance();
         std::shared_ptr<RoomState> room = nullptr;
         // Sala inicial, sin enemigos
-        room = std::make_shared<DungeonRoom>("room1", std::vector<std::shared_ptr<Enemy>>{}, [](TileMap&) {/*No hace nada*/});
+        room = std::make_shared<DungeonRoom>(
+            "room1",
+            std::vector<std::shared_ptr<Enemy>>{},
+            "./resources/music/who-killed-them.ogg",
+            "./resources/music/hunt-the-hunter.ogg");
         roomManager->registerState("room1", room);
     }
 
@@ -60,6 +64,8 @@ public:
         auto room = std::make_shared<DungeonRoom>(
             "room2",
             enemies,
+            "./resources/music/who-killed-them.ogg",
+            "./resources/music/hunt-the-hunter.ogg",
             [](TileMap& tileMap) {
                 // Puerta horizontal: de (116, 45) a (121, 45)
                 for (int x = 116; x <= 121; ++x) {
@@ -95,6 +101,8 @@ public:
         auto room = std::make_shared<DungeonRoom>(
             "room3",
             enemies,
+            "./resources/music/who-killed-them.ogg",
+            "./resources/music/hunt-the-hunter.ogg",
             [](TileMap& tileMap) {
                 for (int y = 23; y <= 28; ++y) {
                     tileMap.removeCollisionByCoord(190, y);
@@ -130,6 +138,8 @@ public:
         auto room = std::make_shared<DungeonRoom>(
             "room4",
             enemies,
+            "./resources/music/who-killed-them.ogg",
+            "./resources/music/hunt-the-hunter.ogg",
             [](TileMap& tileMap) {
                 // Puerta horizontal: de (212,80) a (214,80)
                 for (int x = 212; x <= 214; ++x) {
@@ -163,7 +173,8 @@ public:
         auto room = std::make_shared<DungeonRoom>(
             "room4",
             enemies,
-            [](TileMap& tileMap) {}
+            "./resources/music/memories.ogg",
+            "./resources/music/vengeance-part-i.ogg"
         );
     }
 };

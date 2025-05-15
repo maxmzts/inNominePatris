@@ -113,9 +113,17 @@ void InGame::update(Game& game) {
         
         player.handleInput(event);
 
+        // CHEATCODE PARA LA PRESENTACION
+        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Num0) {
+            const std::vector<std::shared_ptr<Enemy>> enemies = EnemyManager::getInstance()->getEnemyList();
+            for( std::shared_ptr<Enemy> enemy : enemies ){
+                enemy->takeDamage(50000.f, {0.f,0.f});
+            }
+        }
+
         // Abrir la tienda (tecla B)
         if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::B) {
-            std::cout << "Abriendo tienda..." << std::endl;
+            // std::cout << "Abriendo tienda..." << std::endl;
             shop.open();
         }
 
@@ -479,21 +487,19 @@ void InGame::changeWorldState(std::string& stateName, std::string& mapFilePath, 
     if (worldStates.find(stateName) != worldStates.end()) {
         // 1. Cargar el nuevo mapa (la función loadFromFile ya incluye clear() ahora)
         if (!getTileMap().loadFromFile(mapFilePath, engine)) {
-            //std::cerr << "Error cargando el mapa: " << mapFilePath << std::endl;
+            std::cerr << "Error cargando el mapa: " << mapFilePath << std::endl;
             return;
         }
         
         // 2. Hacer spawn al jugador en la nueva posición
         getPlayer().spawnAt(getTileMap(), spawnPosition.x, spawnPosition.y);
+        // DEBUG
         //std::cout << "Jugador reposicionado en: (" << spawnPosition.x << ", " << spawnPosition.y << ")" << std::endl;
         
-        // 3. Cargar la música del nuevo mundo
-        MusicManager::getInstance().clear(); // Limpia la música anterior
-        // MusicManager::getInstance().transitionTo(musicFilePath);
-        //std::cout << "Música cargada desde: " << musicFilePath << std::endl;
         currentWorldState = worldStates[stateName].get();
         currentWorldState->initialize();
-        std::cout << "Cambiando al estado del mundo: " << stateName << std::endl;
+        // DEBUG
+        // std::cout << "Cambiando al estado del mundo: " << stateName << std::endl;
     } else {
         std::cerr << "Error: Estado del mundo no encontrado: " << stateName << std::endl;
     }
