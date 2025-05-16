@@ -12,7 +12,9 @@ KarmaSystem::KarmaSystem(Character& character)
     upgrades.push_back(Upgrade("Probabilidad de esquivar ataques", KarmaType::Pecado, 200, [&](){
         character.increaseDodgeChance(0.05f); // Aumentar la probabilidad de esquivar ataques
     })); // Mejora de Pecado
-    upgrades.push_back(Upgrade("Bonus de monedas", KarmaType::Absolucion, 200, [&]() {})); // Mejora de Absolución
+    upgrades.push_back(Upgrade("Bonus de monedas", KarmaType::Absolucion, 200, [&]() {
+        character.enableCoinBonus(); // Habilitar el bonus de monedas
+    })); // Mejora de Absolución
     
     upgrades.push_back(Upgrade("Probabilidad de critico", KarmaType::Pecado, 300, [&](){
         Weapon::increaseGlobalCriticalChanceBonus(0.05f); // Aumentar la probabilidad de crítico global

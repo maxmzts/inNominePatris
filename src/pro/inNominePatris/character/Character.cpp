@@ -610,6 +610,9 @@ int Character::getKarma() const {
 }
 
 void Character::addKarma(int amount) {
+    if(CoinBonusEnabled) {
+        amount *= 2; 
+    }
     karmaPoints += amount;
 }
 
@@ -681,4 +684,8 @@ void Character::setInstance(Character* character) {
     if (instance == nullptr) {
         instance = character;
     }
+}
+
+void Character::enableCoinBonus() {
+    CoinBonusEnabled = true;
 }

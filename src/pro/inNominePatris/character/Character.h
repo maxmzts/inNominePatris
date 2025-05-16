@@ -82,6 +82,7 @@ public:
     void updateInvencibility(float deltaTime);
     int getKarma() const;
     void addKarma(int amount);
+    void enableCoinBonus();
     void updateHealthRegeneration(float deltaTime);
     bool tryDodge() const;
     void increaseMovementSpeed(float amount);
@@ -156,6 +157,7 @@ protected:
     float dodgeChance = 0.0f;
     
     // Karma system
+    bool CoinBonusEnabled = false;
     int karmaPoints = 2000;
     
     // Animation system
