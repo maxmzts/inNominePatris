@@ -28,7 +28,7 @@ InGame* InGame::instance = nullptr;
  * Constructor de InGame. Carga el motor y el lobby con el jugador.
  */
 InGame::InGame(GameEngine& engine)
-    : engine(engine), player(), hud(800, 600), karmaSystem(player), shop(engine.getWindow(), karmaSystem) {
+    : engine(engine), player(), karmaSystem(player), shop(engine.getWindow(), karmaSystem) {
     // Cargar el mapa
     if (!tileMap.loadFromFile("./maps/lobby.tmx", engine)) {
         std::cerr << "Error cargando el mapa\n";
@@ -343,7 +343,7 @@ void InGame::update(Game& game) {
         }
     }
 
-    hud.update(player);
+    HUD::getInstance().update(player);
     MusicManager::getInstance().update(deltaTime);
 
     VFXManager::getInstance().update(deltaTime);
@@ -427,7 +427,7 @@ void InGame::render(Game& game, sf::RenderWindow& window) {
     player.draw(engine);
 
     // Mostrar el HUD
-    hud.draw(engine.getRenderWindow(), player);
+    HUD::getInstance().draw(engine.getRenderWindow(), player);
 
     // Dibujar el mensaje de proximidad
     if (!proximityMessage.empty()) {
