@@ -94,7 +94,7 @@ void Boss3::takeDamage(float damage, const sf::Vector2f& attackPosition) {
     }
     
     // Cambiar al estado de herido, pero no se inmuta si está atacando
-    if(currentBoss3State != Boss3State::ATTACKING || currentBoss3State != Boss3State::JUMPING)
+    if(currentBoss3State != Boss3State::ATTACKING && currentBoss3State != Boss3State::JUMPING)
         changeState(static_cast<int>(Boss3State::HURT));
     
     // Activar invencibilidad
