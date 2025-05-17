@@ -10,15 +10,12 @@
 class World2State : public WorldState {
 public:
     World2State(){
-        RoomManager* roomManager = RoomManager::getInstance();
-        std::shared_ptr<RoomState> room = nullptr;
-
-        createRooms();
     }
 
     void initialize() override {
+        createRooms();
         RoomManager* roomManager = RoomManager::getInstance();
-        roomManager->changeState("room1");
+        roomManager->changeState("room1"); 
     }
 
     void update(TileMap& tileMap) override {
@@ -32,7 +29,7 @@ public:
         //renderizar algo si es necesario
     }
 
-    void createRooms(){
+    void createRooms() override{
         room1();
         room2();
         room3();
@@ -44,7 +41,11 @@ public:
         RoomManager* roomManager = RoomManager::getInstance();
         std::shared_ptr<RoomState> room = nullptr;
         // Sala inicial, sin enemigos
-        room = std::make_shared<DungeonRoom>("room1", std::vector<std::shared_ptr<Enemy>>{}, [](TileMap&) {/*No hace nada*/});
+        room = std::make_shared<DungeonRoom>(
+            "room1", 
+            std::vector<std::shared_ptr<Enemy>>{},
+            "./resources/music/dungeon-crawler.ogg",
+            "./resources/music/hunt-the-hunter.ogg");
         roomManager->registerState("room1", room);
     }
 
@@ -62,18 +63,18 @@ public:
         auto room = std::make_shared<DungeonRoom>(
             "room2",
             enemies,
+            "./resources/music/dungeon-crawler.ogg",
+            "./resources/music/hunt-the-hunter.ogg",
             [](TileMap& tileMap) {
-                // Puerta horizontal: de (116, 45) a (121, 45)
-                for (int x = 116; x <= 121; ++x) {
-                    tileMap.removeCollisionByCoord(x, 45);
-                }
-        
-                // Puerta vertical: de (143, 28) a (143, 23)
-                for (int y = 28; y >= 23; --y) {
-                    tileMap.removeCollisionByCoord(143, y);
+                for (int x = 126; x <= 131; ++x) {
+                    tileMap.removeCollisionByCoord(x, 35);
+                    tileMap.setLocalTile("deco", x, 35, -1);
                 }
             }
         );
+
+        room->setItemPositions({sf::Vector2f(145.f * 16.f, 14.f * 16.f), sf::Vector2f(145.f * 16.f, 20.f * 16.f)});
+
         RoomManager* roomManager = RoomManager::getInstance();
         roomManager->registerState("room2", room);        
     }
@@ -93,18 +94,18 @@ public:
         auto room = std::make_shared<DungeonRoom>(
             "room3",
             enemies,
+            "./resources/music/dungeon-crawler.ogg",
+            "./resources/music/hunt-the-hunter.ogg",
             [](TileMap& tileMap) {
-                // Puerta horizontal: de (116, 45) a (121, 45)
-                for (int x = 116; x <= 121; ++x) {
-                    tileMap.removeCollisionByCoord(x, 45);
-                }
-        
-                // Puerta vertical: de (143, 28) a (143, 23)
-                for (int y = 28; y >= 23; --y) {
-                    tileMap.removeCollisionByCoord(143, y);
+                for (int x = 150, y = 90; y >= 85; --y) {
+                    tileMap.removeCollisionByCoord(x, y);
+                    tileMap.setLocalTile("deco", x, y, -1);
                 }
             }
         );
+        
+        room->setItemPositions({sf::Vector2f(170.f * 16.f, 90.f * 16.f), sf::Vector2f(179.f * 16.f, 90.f * 16.f)});
+
         RoomManager* roomManager = RoomManager::getInstance();
         roomManager->registerState("room3", room);        
     }
@@ -124,18 +125,18 @@ public:
         auto room = std::make_shared<DungeonRoom>(
             "room4",
             enemies,
+            "./resources/music/dungeon-crawler.ogg",
+            "./resources/music/hunt-the-hunter.ogg",
             [](TileMap& tileMap) {
-                // Puerta horizontal: de (116, 45) a (121, 45)
-                for (int x = 116; x <= 121; ++x) {
-                    tileMap.removeCollisionByCoord(x, 45);
-                }
-        
-                // Puerta vertical: de (143, 28) a (143, 23)
-                for (int y = 28; y >= 23; --y) {
-                    tileMap.removeCollisionByCoord(143, y);
+                for (int x = 95, y = 159; x <= 100; ++x) {
+                    tileMap.removeCollisionByCoord(x, y);
+                    tileMap.setLocalTile("deco", x, y, -1);
                 }
             }
         );
+
+        room->setItemPositions({sf::Vector2f(93.f * 16.f, 190.f * 16.f), sf::Vector2f(102.f * 16.f, 190.f * 16.f)});
+
         RoomManager* roomManager = RoomManager::getInstance();
         roomManager->registerState("room4", room);        
     }
@@ -149,17 +150,8 @@ public:
         auto room = std::make_shared<DungeonRoom>(
             "room5",
             enemies,
-            [](TileMap& tileMap) {
-                // Puerta horizontal: de (116, 45) a (121, 45)
-                for (int x = 116; x <= 121; ++x) {
-                    tileMap.removeCollisionByCoord(x, 45);
-                }
-        
-                // Puerta vertical: de (143, 28) a (143, 23)
-                for (int y = 28; y >= 23; --y) {
-                    tileMap.removeCollisionByCoord(143, y);
-                }
-            }
+            "./resources/music/memories.ogg",
+            "./resources/music/vengeance-part-ii.ogg"
         );
         RoomManager* roomManager = RoomManager::getInstance();
         roomManager->registerState("room5", room);        

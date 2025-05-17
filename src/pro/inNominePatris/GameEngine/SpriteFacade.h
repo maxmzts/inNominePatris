@@ -38,6 +38,9 @@ public:
     // Escalar el sprite
     void setScale(float scaleX, float scaleY);
 
+    // Escalar el sprite
+    sf::Vector2f getScale(){ return sprite.getScale(); };
+
     // Rotar el sprite
     void rotate(float angle);
 

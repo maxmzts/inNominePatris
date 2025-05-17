@@ -5,6 +5,9 @@
 #include <memory>
 #include "Enemy.h"
 #include "Character.h"
+#include "Projectile.h"
+
+
 
 class EnemyManager {
 private:
@@ -13,6 +16,8 @@ private:
     
     // Lista de enemigos con punteros inteligentes
     std::vector<std::shared_ptr<Enemy>> enemies;
+    std::vector<Projectile*> activeProjectiles;  // Lista de proyectiles activos
+
     
     // Constructor privado (patrón singleton)
     EnemyManager() {}
@@ -57,7 +62,14 @@ public:
     
     // Obtener cantidad de enemigos
     size_t getEnemyCount() const;
+
+    size_t getAliveEnemyCount() const;
     
     // Comprobar colisiones entre todos los enemigos y otro objeto
     bool checkCollisions(Hitbox* hitbox);
+
+    // Crear proyectil
+    void createProjectile(sf::Vector2f position, sf::Vector2f velocity, float damage, float lifetime);
+
+    void updateProjectiles(float deltaTime, Character* player);
 };

@@ -4,6 +4,9 @@
 #include <iostream>
 #include <cmath>
 
+Character* Character::instance = nullptr; // Inicialización de la instancia
+
+
 Character::Character() 
     : speed(200.f), acceleration(1500.f), deceleration(2000.f), equippedWeapon(nullptr), 
       isDashing(false), dashSpeed(400.f), dashDuration(0.2f), weapons(), equippedIndex(0), 
@@ -496,6 +499,7 @@ void Character::takeDamage(int damage) {
             return; // Si se esquiva, no se recibe daño
         }
         setHealth(currentHealth - damage);
+        std::cout << "Te han hecho daño! Vida actual: " << currentHealth << std::endl;
         isInvencible = true;
         if(invencibilityDuration == 4.0f) {
             isShieldActive = true; // Activar el escudo temporal
@@ -510,6 +514,7 @@ void Character::heal(int amount) {
 
 void Character::hurt(int amount) {
     takeDamage(amount);
+    std::cout << "Te han hecho daño! Vida actual: " << currentHealth << std::endl;
 }
 
 void Character::drawHearts(GameEngine& engine) {
@@ -607,6 +612,9 @@ int Character::getKarma() const {
 }
 
 void Character::addKarma(int amount) {
+    if(CoinBonusEnabled) {
+        amount *= 2; 
+    }
     karmaPoints += amount;
 }
 
@@ -665,4 +673,21 @@ void Character::initCollisionCircle() {
     collisionCircle.setFillColor(sf::Color(0, 255, 0, 64)); // Verde semitransparente
     collisionCircle.setOutlineColor(sf::Color(0, 200, 0, 200));
     collisionCircle.setOutlineThickness(1.f);
+}
+
+Character* Character::getInstance() {
+    if (instance == nullptr) {
+        instance = new Character();
+    }
+    return instance;
+}
+
+void Character::setInstance(Character* character) {
+    if (instance == nullptr) {
+        instance = character;
+    }
+}
+
+void Character::enableCoinBonus() {
+    CoinBonusEnabled = true;
 }

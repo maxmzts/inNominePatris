@@ -28,7 +28,7 @@ Este fichero puede ser un PDF si la herramienta que gastáis lo requiere, pero *
 * `[X]` - `20250507; Tilear mundo 1 mínimo; fin; JorgePelegrín & DavidGonzález`
 * `[X]` - `20250507; Sprite del personaje principal; fin; JorgePelegrín`
 * `[X]` - `20250507; Añadir items para las armas; fin; JorgePelegrín`
-* `[.]` - `20250507; Cambios menores en armas; en_progreso; JorgePelegrín`
+* `[X]` - `20250507; Cambios menores en armas; en_progreso; fin; JorgePelegrín`
 * `[.]` - `20250507; Agregar el boss; nueva; MaximoMartínez`
 * `[.]` - `20250507; Añadir más efectos de sonido (algunos más); en_progreso; MaximoMartínez`
 * `[.]` - `20250507; Añadir input de recibir daño, y algún efecto de sonido.; nueva; `

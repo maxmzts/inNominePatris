@@ -14,7 +14,9 @@ public:
     void update(int playerKarma);
     void render(sf::RenderWindow& window);
     void handleInput(const sf::Event& event);
-    
+    bool shouldConnectNodes(size_t index1, size_t index2);
+
+
 private:
     void initializeTree();
     void createConnectionLines();

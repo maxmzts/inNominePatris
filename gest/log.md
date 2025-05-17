@@ -306,5 +306,28 @@ He arreglado un problema con la posición del necromancer.
 ## 20250513 EstrellaDomínguez @(1h)
 He comenzado a desarrollar el ten sheet, puesto mi parte de autoevaluación, desarrollado el manual de usuario y dado estructura al archivo de tareas.
 
-## 20250511 MaximoMartinez @(1h)
+
+## 20250509 JorgePelegrín @(4h 45min)
+Añadidos los items al matar todos los enemigos, con sus sprites. Falta añadir un pequeño texto abajo que ponga lo que hace.
+
+## 20250514 MaximoMartinez @(2h)
 Haciendo pruebas con los enemigos detecté errores y me puse a solucionarlos. Ya no atraviesan paredes y voy a rehacer el pathfinding. 
+He vuelto a invertir tiempo en poner eliminar la decoración de las puertas cuando una sala se completa (antes no estaban).
+
+## 20250509 JorgePelegrín @(1h 30min)
+He hecho el HUD un singleton para mejor manejo, y he animado los items poniendo sus nombres encima, además de añadir un HUD temporal explicativo de lo que hace el item que se coge. 
+
+## 20250515 MaximoMartinez @(3h)
+Haciendo pruebas con los enemigos detecté errores y me puse a solucionarlos. Ya no atraviesan paredes.
+He vuelto a invertir tiempo en eliminar la decoración de las puertas cuando una sala se completa (antes no estaban) y en añadir las puertas del mundo 2.
+Por la tarde he cambiado la clase de la sala para permitir distintos tipos de música.
+
+## 20250516 MaximoMartinez @(1h 30min)
+Me he puesto a diseñar los bosses y configurar los sprites que elegimos para ellos.
+Hecho esto empecé a programar el primero de ellos. No terminé.
+
+## 20250517 MaximoMartinez @(3h)
+He seguido trabajando en el primer boss. Ha quedado totalmente implementado. También he implementado (con la base del EnemyBat) un Minion quee es una copia del boss pequeña que el boss genera de vez en cuando. Para terminarlo he tenido que editar AnimatedSprite y el movimiento de los enemigos, porque forzaban la escala del sprite a 1 (no se podía asignar una escala personalizada).
+
+## 20250509 JorgePelegrín @(4h 30min)
+He implementado el segundo boss al completo. Lo único que falta es añadirle los efectos de sonidos a sus ataques, etc.

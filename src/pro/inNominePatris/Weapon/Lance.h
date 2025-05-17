@@ -54,6 +54,7 @@ class Lance : public Weapon {
         void setPosition(float x, float y) override { spriteFacade.setPosition(x, y); };
         sf::Vector2f getPosition() const override { return spriteFacade.getPosition(); };
         AbilityType getAbilityType() const override { return AbilityType::Teleport; };
+        ItemType getItemType() const override { return ItemType::Lance; }
         bool getIsPortalDropped() const { return isPortalDropped; }
         std::shared_ptr<Hitbox> getAttackHitbox() const override;
 

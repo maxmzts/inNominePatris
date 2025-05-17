@@ -47,6 +47,7 @@ public:
     void setWeapon(int index);
     int getWeaponCount() const;
     Weapon* getEquippedWeapon() const;
+    std::vector<Weapon*> getEquippedWeapons() const { return weapons; }
     void setPosition(float x, float y);
     sf::Vector2f getDirection() const;
     void setDirection(float x, float y);
@@ -81,6 +82,7 @@ public:
     void updateInvencibility(float deltaTime);
     int getKarma() const;
     void addKarma(int amount);
+    void enableCoinBonus();
     void updateHealthRegeneration(float deltaTime);
     bool tryDodge() const;
     void increaseMovementSpeed(float amount);
@@ -92,6 +94,10 @@ public:
     sf::FloatRect getBounds() const;
     
     sf::Vector2f getPosition() const { return sprite.getPosition(); }
+
+
+    static Character* getInstance();
+    void static setInstance(Character* instance);
 
 protected:
     // Animation methods
@@ -135,6 +141,8 @@ protected:
     
     Hurtbox* hurtbox; // Hurtbox para detección de colisión con enemigos
     
+    static Character* instance; // Instancia única
+
     // Shield related
     bool isShieldActive = false;
     SpriteFacade shieldsprite;
@@ -149,7 +157,8 @@ protected:
     float dodgeChance = 0.0f;
     
     // Karma system
-    int karmaPoints = 0;
+    bool CoinBonusEnabled = false;
+    int karmaPoints = 2000;
     
     // Animation system
     AnimatedSprite* animations;

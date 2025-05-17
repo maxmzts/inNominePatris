@@ -176,10 +176,14 @@ void Enemy::calculateVelocity(const sf::Vector2f& direction) {
 
         // Ajusta la dirección del sprite
         if (direction.x > 0 && !facingRight) {
-            sprite.setScale(1.f, 1.f);
+            sf::Vector2f scale = sprite.getScale();
+            if(scale.x < 0)
+                scale.x = scale.x*(-1.f);
+            sprite.setScale(scale.x, scale.y);
             facingRight = true;
         } else if (direction.x < 0 && facingRight) {
-            sprite.setScale(-1.f, 1.f);
+            sf::Vector2f scale = sprite.getScale();
+            sprite.setScale(scale.x*(-1.f), scale.y);
             facingRight = false;
         }
     } else {
@@ -675,7 +679,7 @@ void Enemy::setInvincible(bool invincible) {
     if (invincible) {
         invincibilityTimer = invincibilityDuration;
         
-        // Efecto visual de invencibilidad (parpadeo)
+        // Efecto visual de invencibilidad 
         sprite.setColor(sf::Color(255, 76, 76, 128));  // Semi-transparente
     } else {
         sprite.setColor(sf::Color(255, 255, 255, 255));  // Opaco

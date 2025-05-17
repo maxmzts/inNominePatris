@@ -1,4 +1,5 @@
 #include "Item.h"
+#include <cmath>
 
 void Item::setTexture(const std::string& texturePath) {
     spriteFacade.loadTexture(texturePath);
@@ -8,14 +9,93 @@ void Item::setPosition(float x, float y) {
     spriteFacade.setPosition(x, y);
 }
 
+
+// Modificar el método render para mostrar también el texto:
 void Item::render(sf::RenderWindow& window) {
     if (!isPickedUp) {
+        // Añadimos un efecto de levitación suave para el ítem
+        static float totalTime = 0.0f;
+        static sf::Clock clock;
+        totalTime += clock.restart().asSeconds();
+        
+        // Movimiento vertical suave (levitación)
+        float offsetY = sin(totalTime * 2.0f) * 5.0f;
+        sf::Vector2f basePos = spriteFacade.getPosition();
+        spriteFacade.setPosition(basePos.x, basePos.y + offsetY);
+        
+        // Dibujamos el ítem con un ligero efecto de rotación
+        spriteFacade.setRotation(sin(totalTime * 1.5f) * 5.0f);
         spriteFacade.draw(window);
+        
+        // Restauramos la posición base para el texto
+        spriteFacade.setPosition(basePos.x, basePos.y);
+        
+        // Actualizar posición del texto para que siga al objeto
+        itemNameText.setPosition(basePos.x, basePos.y - 30.0f); // Colocar el texto más arriba del objeto
+        
+        // Efecto de parpadeo suave para el texto
+        // Oscilación de color entre blanco y un tono dorado más brillante
+        float alpha = (sin(totalTime * 2.0f) + 1.0f) / 2.0f; // Valor entre 0 y 1
+        sf::Color textColor(
+            255, 
+            210 + static_cast<int>(45 * alpha), 
+            60 + static_cast<int>(140 * alpha), 
+            255
+        );
+        
+        itemNameText.setFillColor(textColor);
+        
+        // Crear un efecto de resplandor para texto pixelado
+        // Este efecto es más visible en fuentes como Impact
+        
+        // Dibujar el texto
+        window.draw(itemNameText);
+        
+        // Efecto de partículas brillantes alrededor del ítem (simulado con pequeños círculos)
+        if (rand() % 5 == 0) { // Controlar la densidad de partículas
+            sf::CircleShape particle;
+            particle.setRadius(1.0f + (rand() % 2));
+            
+            // Color dorado brillante para las partículas
+            sf::Color particleColor(
+                255, 
+                220 + rand() % 35, 
+                100 + rand() % 100,
+                150 + rand() % 105
+            );
+            
+            particle.setFillColor(particleColor);
+            
+            // Posición aleatoria alrededor del ítem
+            float angle = static_cast<float>(rand() % 360) * 3.14159f / 180.0f;
+            float distance = 20.0f + static_cast<float>(rand() % 15);
+            float particleX = basePos.x + cos(angle) * distance;
+            float particleY = basePos.y + sin(angle) * distance;
+            
+            particle.setPosition(particleX, particleY);
+            window.draw(particle);
+        }
     }
 }
 
 sf::FloatRect Item::getBounds() const {
     return spriteFacade.getGlobalBounds();
+}
+
+void Item::setupItemName(const std::string& name) {
+    itemName = name;
+    itemNameText.setString(name);
+    
+    // Aumentar el tamaño de la fuente para mejor visibilidad
+    itemNameText.setCharacterSize(16);
+    
+    // Hacer el texto más brillante y con mayor contraste
+    itemNameText.setOutlineThickness(2.0f);
+    itemNameText.setOutlineColor(sf::Color(0, 0, 0, 255)); // Negro sólido para el contorno
+    
+    // Centrar el texto
+    sf::FloatRect textBounds = itemNameText.getLocalBounds();
+    itemNameText.setOrigin(textBounds.width / 2.0f, textBounds.height + 5.0f);
 }
 
 Item* Item::generateRandomItemforWeapon(ItemType weapontype) {
@@ -60,31 +140,17 @@ void DashBoostItem::applyEffect(Weapon& weapon) {
         sword->increaseDashSpeed(80.f);
     }
 }
-
-void DashBoostItem::Picked() {
-    isPickedUp = true;
-}
-
 //Disminuir el cooldown del dash
 void DashCooldownItem::applyEffect(Weapon& weapon) {
     if (Sword* sword = dynamic_cast<Sword*>(&weapon)) {
         sword->decreaseDashCooldown(0.5f); // Disminuir el cooldown del dash
     }
 }
-
-void DashCooldownItem::Picked() {
-    isPickedUp = true;
-}
-
 //Disminuir el cooldown del ataque
 void AttackCooldownSwordItem::applyEffect(Weapon& weapon) {
     if (Sword* sword = dynamic_cast<Sword*>(&weapon)) {
         sword->decreaseAttackCooldown(0.2f); // Disminuir el cooldown del ataque
     }
-}
-
-void AttackCooldownSwordItem::Picked() {
-    isPickedUp = true;
 }
 
 //Aumentar el daño del ataque
@@ -93,11 +159,6 @@ void AttackDamageSwordItem::applyEffect(Weapon& weapon) {
         sword->increaseAttackDamage(10.f); // Aumentar el daño del ataque
     }
 }
-
-void AttackDamageSwordItem::Picked() {
-    isPickedUp = true;
-}
-
 void DoubleDashItem::applyEffect(Weapon& weapon) {
     Sword* sword = dynamic_cast<Sword*>(&weapon);
     if (sword) {
@@ -106,11 +167,6 @@ void DoubleDashItem::applyEffect(Weapon& weapon) {
     } else {
         std::cerr << "El ítem DoubleDash solo puede aplicarse a una espada." << std::endl;
     }
-}
-
-void DoubleDashItem::Picked() {
-    isPickedUp = true;
-    std::cout << "¡Has recogido el ítem DoubleDash!" << std::endl;
 }
 
 //--------------Lanza-------------------//
@@ -122,19 +178,11 @@ void AttackCooldownLanceItem::applyEffect(Weapon& weapon) {
     }
 }
 
-void AttackCooldownLanceItem::Picked() {
-    isPickedUp = true;
-}
-
 //Aumentar el daño del ataque
 void AttackDamageLanceItem::applyEffect(Weapon& weapon) {
     if (Lance* lance = dynamic_cast<Lance*>(&weapon)) {
         lance->increaseAttackDamage(10.f); // Aumentar el daño del ataque
     }
-}
-
-void AttackDamageLanceItem::Picked() {
-    isPickedUp = true;
 }
 
 //Aumentar el tamaño de la hitbox del ataque
@@ -144,19 +192,11 @@ void AttackHitboxLanceItem::applyEffect(Weapon& weapon) {
     }
 }
 
-void AttackHitboxLanceItem::Picked() {
-    isPickedUp = true;
-}
-
 //Activar el ataque de venganza
 void RevengeReturnItem::applyEffect(Weapon& weapon) {
     if (Lance* lance = dynamic_cast<Lance*>(&weapon)) {
         lance->activateRevengeReturn();
     }
-}
-
-void RevengeReturnItem::Picked() {
-    isPickedUp = true;
 }
 
 //--------------Arco-------------------//
@@ -168,19 +208,11 @@ void AttackDamageBowItem::applyEffect(Weapon& weapon) {
     }
 }
 
-void AttackDamageBowItem::Picked() {
-    isPickedUp = true;
-}
-
 //Aumentar la velocidad de la flecha
 void ArrowSpeedItem::applyEffect(Weapon& weapon) {
     if (Bow* bow = dynamic_cast<Bow*>(&weapon)) {
         bow->increaseArrowSpeed(150.f); // Aumentar la velocidad de la flecha
     }
-}
-
-void ArrowSpeedItem::Picked() {
-    isPickedUp = true;
 }
 
 //Aumentar la cantidad de flechas disparadas por la habilidad
@@ -190,10 +222,6 @@ void ArrowCountItem::applyEffect(Weapon& weapon) {
     }
 }
 
-void ArrowCountItem::Picked() {
-    isPickedUp = true;
-}
-
 //Tirar flechas más rápido
 void QuickShotItem::applyEffect(Weapon& weapon) {
     if (Bow* bow = dynamic_cast<Bow*>(&weapon)) {
@@ -201,17 +229,9 @@ void QuickShotItem::applyEffect(Weapon& weapon) {
     }
 }
 
-void QuickShotItem::Picked() {
-    isPickedUp = true;
-}
-
 //Disminuir el cooldown de la habilidad
 void DecreaseAbilityCooldownBowItem::applyEffect(Weapon& weapon) {
     if (Bow* bow = dynamic_cast<Bow*>(&weapon)) {
         bow->decreaseAbilityCooldown(1.f); // Disminuir el cooldown de la habilidad
     }
-}
-
-void DecreaseAbilityCooldownBowItem::Picked() {
-    isPickedUp = true;
 }
