@@ -7,17 +7,17 @@
 #include <iostream>
 
 Boss2::Boss2(const sf::Vector2f& startPosition, int DropKarmaPoints)
-    : Enemy("Boss2", 1500.f, 128.f, startPosition, "resources/enemies/boss2.png"),
+    : Enemy("Boss2", 500.f, 128.f, startPosition, "resources/enemies/boss2.png"),
       currentBoss2State(Boss2State::IDLE),
       idleTimer(0.f),
       moveTimer(0.f),
       attackCooldown(2.f),
       attackTimer(0.f),
-      invincibilityDuration(0.5f),
+      invincibilityDuration(1.5f),
       meleeRange(100.f),        // Aumentado para mejor detección
       rangedRange(400.f),       // Aumentado para mejor detección
       attackPattern(0),
-      projectileSpeed(300.f),   // Aumentado para proyectiles más efectivos
+      projectileSpeed(220.f),   // Aumentado para proyectiles más efectivos
       attacked(false),
       stateTimer(0.f)           // Inicializado explícitamente
 {
@@ -208,7 +208,6 @@ void Boss2::attackRanged(const sf::Vector2f& playerPos) {
 }
 
 void Boss2::calculateVelocity(const sf::Vector2f& direction) {
-    std::cout << "[Boss2] Calculando velocidad hacia: " << direction.x << ", " << direction.y << std::endl;
     sf::Vector2f dir = direction;
     float len = std::sqrt(dir.x * dir.x + dir.y * dir.y);
     if (len > 0) dir /= len;
@@ -377,7 +376,7 @@ void Boss2::update(float deltaTime, Character* player, const TileMap* tileMap) {
         
         case Boss2State::ATTACKING_RANGED: {
             // Frame específico para disparar el proyectil
-                if (!attacked && stateTimer >= 0.4f) {
+                if (!attacked && stateTimer >= 0.6f) {
                 if (player) {
                     attackRanged(player->getPosition());
                     attacked = true;
@@ -390,7 +389,7 @@ void Boss2::update(float deltaTime, Character* player, const TileMap* tileMap) {
             // Segundo disparo 0.4s después
             if (secondRangedAttackPending) {
                 secondRangedAttackTimer += deltaTime;
-                if (secondRangedAttackTimer >= 0.4f) {
+                if (secondRangedAttackTimer >= 0.3f) {
                     if (player) {
                         attackRanged(player->getPosition());
                     }
@@ -399,7 +398,7 @@ void Boss2::update(float deltaTime, Character* player, const TileMap* tileMap) {
             }
             
             // Cuando termina el tiempo del ataque a distancia
-            if (stateTimer >= 0.8f) {
+            if (stateTimer >= 1.0f) {
                 attacked = false;
                 
                 // Mayor probabilidad de moverse después de un ataque a distancia
@@ -414,11 +413,10 @@ void Boss2::update(float deltaTime, Character* player, const TileMap* tileMap) {
         
         case Boss2State::HURT: {
             // Aplicar knockback y procesar estado de daño
-            knockback(deltaTime, tileMap);
             updateHitboxes();
             
             // Cuando termina el tiempo de invulnerabilidad o animación de daño
-            if (stateTimer >= invincibilityDuration) {
+            if (stateTimer >= (invincibilityDuration/2.f)) {
                 if (player) {
                     sf::Vector2f toPlayer = player->getPosition() - position;
                     float dist = std::sqrt(toPlayer.x * toPlayer.x + toPlayer.y * toPlayer.y);
