@@ -48,7 +48,7 @@ public:
         // Sala inicial, sin enemigos
         room = std::make_shared<DungeonRoom>(
             "room1",
-            std::vector<std::shared_ptr<Enemy>>{std::make_shared<Boss1>(sf::Vector2f(20.f,10.f), 0)},
+            std::vector<std::shared_ptr<Enemy>>{},
             "./resources/music/who-killed-them.ogg",
             "./resources/music/hunt-the-hunter.ogg");
         roomManager->registerState("room1", room);
@@ -60,7 +60,7 @@ public:
         enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(103.f, 12.f), 2));
         enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(136.f, 11.f), 2));
         enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(120.f, 24.f), 2));
-        enemies.push_back(std::make_shared<Boss2>(sf::Vector2f(120.f, 20.f), 2));
+        enemies.push_back(std::make_shared<Boss2>(sf::Vector2f(120.f, 20.f), 50));
 
         std::cout << "No entiendo." << std::endl;
         
@@ -170,8 +170,8 @@ public:
 
     void room5(){
         
-        // Boss del mundo 1
-        // coordenadas boss (220, 192)
+        std::vector<std::shared_ptr<Enemy>> enemies;
+        enemies.push_back(std::make_shared<Boss1>(sf::Vector2f(219.f, 189.f), 200));
 
         auto room = std::make_shared<DungeonRoom>(
             "room4",

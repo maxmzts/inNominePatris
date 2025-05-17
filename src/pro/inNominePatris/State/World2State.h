@@ -6,6 +6,8 @@
 #include <DungeonRoom.h>
 #include <EnemyBat.h>
 #include <EnemyNecromancer.h>
+#include <Boss1.h>
+#include <Boss2.h>
 
 class World2State : public WorldState {
 public:
@@ -145,7 +147,7 @@ public:
         std::vector<std::shared_ptr<Enemy>> enemies;
         
         // Boss
-
+        enemies.push_back(std::make_shared<Boss2>(sf::Vector2f(155.f * 16.f, 273.f * 16.f),1000));
         // crear la sala
         auto room = std::make_shared<DungeonRoom>(
             "room5",
