@@ -7,7 +7,7 @@
 #include <VFXManager.h>
 #include <unordered_set>
 #include <EnemyManager.h>
-#include "EnemyBat.h"
+#include "Boss1Minion.h"
 
 Boss1::Boss1(const sf::Vector2f& startPosition, int DropKarmaPoints)
     : Enemy(
@@ -17,10 +17,16 @@ Boss1::Boss1(const sf::Vector2f& startPosition, int DropKarmaPoints)
         startPosition, 
         "resources/enemies/boss1.png"),
         spawnTimer(5.f),
-        attacked(false), //spawnea nuevos enemigos cada 5 segundos
+        attacked(false),
+        targeted(false), 
         currentBoss1State(Boss1State::IDLE)
 {
-    sprite.setTextureRect(sf::IntRect(0, 0, 64, 96));
+    sprite.setTextureRect(sf::IntRect(0,0, 220, 112));
+    sprite.setOrigin(220/2, 112/2);
+    sprite.setScale(1.5f,1.5f);
+    hurtbox->setOffset({-8, 60.f});
+    // hurtbox->setSize();
+    hitbox->setSize({45,45});
     loadAnimations();
     attackCooldown = 4.f;
     KarmaPoints = DropKarmaPoints; 
@@ -30,15 +36,11 @@ Boss1::Boss1(const sf::Vector2f& startPosition, int DropKarmaPoints)
  * Carga las animaciones de este enemigo.
  */
 void Boss1::loadAnimations() {
-    animator->addAnimation("idle", 8, sf::Vector2i(0, 0), sf::Vector2i(64, 96), true);
-    animator->addAnimation("moving", 8, sf::Vector2i(0, 96), sf::Vector2i(64, 96), true);
-    // spawns a bat
-    animator->addAnimation("spawning", 13, sf::Vector2i(0, 96*2), sf::Vector2i(64, 96), false);
-    // heals himself and the rest of enemies
-    animator->addAnimation("healing", 13, sf::Vector2i(0, 96*3), sf::Vector2i(64, 96), false);
-    animator->addAnimation("attacking", 17, sf::Vector2i(0, 96*4), sf::Vector2i(64, 96), false);
-    animator->addAnimation("hurt", 5, sf::Vector2i(0, 96*5), sf::Vector2i(64, 96), false);
-    animator->addAnimation("dying", 12, sf::Vector2i(0, 96*6), sf::Vector2i(64, 96), false);
+    sf::Vector2i resolution = sf::Vector2i(220, 112);
+    animator->addAnimation("idle",      10, sf::Vector2i(0, 0),                 resolution, true);
+    animator->addAnimation("moving",    12, sf::Vector2i(0, resolution.y),      resolution, true);
+    animator->addAnimation("attacking", 16, sf::Vector2i(0, resolution.y*2),    resolution, false);
+    animator->addAnimation("dying",     17, sf::Vector2i(0, resolution.y*3),    resolution, false);
 }
 
 /**
@@ -59,14 +61,11 @@ void Boss1::changeAnimation(int newStateInt) {
         case Boss1State::ATTACKING:
             animator->play("attacking", 8.f, false);
             break;
-        case Boss1State::HEALING:
-            animator->play("healing", 8.f, false);
-            break;
         case Boss1State::SPAWNING:
-            animator->play("spawning", 8.f, false);
+            animator->play("idle", 8.f);
             break;
         case Boss1State::HURT:
-            animator->play("hurt", 8.f, false);
+            animator->play("idle", 0.f, false);
             break;
         case Boss1State::DYING:
             animator->play("dying", 8.f, false);
@@ -91,8 +90,8 @@ void Boss1::takeDamage(float damage, const sf::Vector2f& attackPosition) {
         currentHealth = 0;
     }
     
-    // Cambiar al estado de herido, pero no se inmuta si te está atacando o está spawneando murcielagos
-    if(currentBoss1State != Boss1State::ATTACKING && currentBoss1State != Boss1State::SPAWNING)
+    // Cambiar al estado de herido, pero no se inmuta si está atacando
+    if(currentBoss1State != Boss1State::ATTACKING)
         changeState(static_cast<int>(Boss1State::HURT));
     
     // Activar invencibilidad
@@ -128,20 +127,47 @@ void Boss1::attack() {
 /**
  * Funcion de dibujado de los enemigos.
  */
-void Boss1::render(sf::RenderWindow& window) {
+void Boss1::render(sf::RenderWindow& window) {    
+    // Dibujar el sprite del enemigo
+    sprite.draw(window);
+
     // DEBUG
     hitbox->render(window);
     hurtbox->render(window);
-    
-    // Dibujar el sprite del enemigo
-    sprite.draw(window);
 }
-
 
 void Boss1::update(float deltaTime, Character* player, const TileMap* tileMap) {
     updateTimers(deltaTime);
     animator->update(deltaTime);
+
+    // parpadea si spawnea
+    if(currentBoss1State == Boss1State::SPAWNING) {
+        r += std::max(1.f, deltaTime) * t * 5;
+        g += std::max(1.f, deltaTime) * t * 5;
+        b += std::max(1.f, deltaTime) * t * 5;
+
+        // std::cout << "r: " << r << "   g: " << g <<  "   b: " << b << "   t: " << t << std::endl; 
     
+        if(r <= 75 || g <= 75 || b <= 75){
+            t = 1;
+        } else if (r >= 255 || g >= 255 || b >= 255){
+            t = -1;
+        }
+    
+        // Limita los valores entre 0 y 255 para evitar overflow o underflow
+        r = std::max(0, std::min(255, r));
+        g = std::max(0, std::min(255, g));
+        b = std::max(0, std::min(255, b));
+        sprite.setColor(sf::Color(r, g, b, 255)); 
+    }
+    else {
+        r=255;g=255;b=255;
+        sprite.setColor(sf::Color(255, 255, 255, 255));
+    }
+
+    sf::Vector2f toPlayer = player->getPosition() - position;
+    float distanceSquared = toPlayer.x * toPlayer.x + toPlayer.y * toPlayer.y;
+
     // Lógica basada en el estado actual
     switch (currentBoss1State) {
 
@@ -169,9 +195,10 @@ void Boss1::update(float deltaTime, Character* player, const TileMap* tileMap) {
             
             // Verificar si podemos atacar al jugador
             if (player && attackTimer <= 0) {
-                attackPosition = player->getPosition();
-                VFXManager::getInstance().addEffect("./resources/vfx/anticipation.png",attackPosition,{45 , 45},12,12.f);
-                attack();
+                if (distanceSquared <= 100.f * 100.f) {
+                    attackPosition = player->getPosition();
+                    attack();
+                }
             } // spawnear murcielago
             else if (player && spawnTimer <= 0)
                 changeState(static_cast<int>(Boss1State::SPAWNING));
@@ -179,18 +206,35 @@ void Boss1::update(float deltaTime, Character* player, const TileMap* tileMap) {
             break;
             
         case Boss1State::ATTACKING:
-            // ataca después de 1.5s que dura la anticipación
-            if (stateTimer >= 1.5f && !attacked) {  // Duración de la animación de ataque
+            // clava el objetivo en el jugador o su direccion
+            if(stateTimer >= 1 && !targeted){
+                if (distanceSquared <= 100.f * 100.f) {
+                    attackPosition = player->getPosition();
+                    targeted = true;
+                }
+                else {
+                    float distance = std::sqrt(distanceSquared);
+                    sf::Vector2f direction = toPlayer / distance;  // Normalizamos
+                    attackPosition = position + direction * 100.f;
+                    targeted = true;
+                }
+                
+            }
+            // la hitbox aparece
+            if (stateTimer >= 1.375f && !attacked) {  // Duración de la animación de ataque
                 hitbox->setPosition(attackPosition);
                 hitbox->setActive(true);
-                VFXManager::getInstance().addEffect("./resources/vfx/explosion64x64.png",attackPosition,{64 , 64},10,16.f);
+                VFXManager::getInstance().addEffect("./resources/vfx/smash.png",hitbox->getPosition(),{48 , 48},7,8.f);
                 attacked = true;
+            }
+            if(stateTimer >= 1.5f){
+                hitbox->setActive(false);
             }
             // La animación de ataque duraría un tiempo fijo
             if (stateTimer >= 2.f) {  // Duración de la animación de ataque
                 changeState(static_cast<int>(Boss1State::IDLE));
-                hitbox->setActive(false);
                 attacked = false;
+                targeted = false;
             }
             break;
 
@@ -206,24 +250,28 @@ void Boss1::update(float deltaTime, Character* player, const TileMap* tileMap) {
             break;
 
         case Boss1State::SPAWNING:
-            // La animación de spawn
-            if (stateTimer >= 1.f) {  // Duración de la animación de daño
-                // spawnea un enemigo
-                spawn();
+            spawnIntervalTimer += deltaTime;
+            // Verifica si ya ha spawneado todos los enemigos
+            if (spawnedEnemiesCount < 6) {
+                // Espera 1 segundo entre cada spawn
+                if (spawnIntervalTimer >= 1.f) {
+                    spawn(); // Spawnea un enemigo
+                    spawnedEnemiesCount++;
+                    spawnIntervalTimer = 0.f; // Reinicia el temporizador de intervalo
+                }
+            } else {
+                // Ha terminado de spawnear los 6 enemigos
                 changeState(static_cast<int>(Boss1State::IDLE));
-                spawnTimer = 5.f;
+                spawnTimer = 10.f;
+                spawnedEnemiesCount = 0; // Reinicia el contador para el futuro
             }
             break;
-
-        case Boss1State::HEALING:
-            // La animación de daño duraría un tiempo fijo
-            
-            break;
+        
             
         case Boss1State::DYING:
             hitbox->setActive(false);
             hurtbox->setActive(false);
-            if (stateTimer >= 1.f) {  // Duración de la animación de muerte
+            if (stateTimer >= 2.f) {  // Duración de la animación de muerte
                 changeState(static_cast<int>(Boss1State::DEAD));
             }
             break;
@@ -255,6 +303,26 @@ void Boss1::updateTimers(float deltaTime){
     pathUpdateTimer += deltaTime;
 }
 
+void Boss1::move(const TileMap* tileMap, float deltaTime){
+    sf::FloatRect nextBounds = hurtbox->getGlobalBounds();
+    sf::FloatRect nextXBounds = nextBounds;
+    sf::FloatRect nextYBounds = nextBounds;
+
+    // Movimiento en eje X
+    nextXBounds.left += velocity.x * deltaTime;
+    if (tileMap->isColliding(nextXBounds)) {
+        velocity.x = 0;
+    }
+
+    // Movimiento en eje Y
+    nextYBounds.top += velocity.y * deltaTime;
+    if (tileMap->isColliding(nextYBounds)) {
+        velocity.y = 0;
+    }
+    position += velocity * deltaTime;
+    sprite.move(velocity * deltaTime);
+}
+
 void Boss1::changeState(int newStateInt) {
     if (!isValidBoss1State(newStateInt)) return;
     Boss1State newState = static_cast<Boss1State>(newStateInt);
@@ -280,7 +348,6 @@ bool Boss1::isDead() const{
 
 void Boss1::spawn(){
     EnemyManager::getInstance()->addEnemy(
-        std::make_shared<EnemyBat>((position/16.f), 0)
+        std::make_shared<Boss1Minion>((position/16.f), 0)
     );
-    // anyadir efecto en el futuro
 }

@@ -93,6 +93,8 @@ void AnimatedSprite::update(float deltaTime)
     if (!currentAnimation || !isPlaying || isPaused) {
         return;
     }
+
+    sf::Vector2f scale = spriteFacade.getScale();
     
     // Actualizar el tiempo acumulado
     currentTime += deltaTime;
@@ -138,6 +140,7 @@ void AnimatedSprite::update(float deltaTime)
         );
         
         spriteFacade.setTextureRect(rect);
+        spriteFacade.setScale(scale.x, scale.y);
     }
 }
 
