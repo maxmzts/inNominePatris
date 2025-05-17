@@ -8,6 +8,7 @@
 #include <EnemyNecromancer.h>
 #include <Boss1.h>
 #include <Boss2.h>
+#include <Boss3.h>
 
 class World1State : public WorldState {
 public:
@@ -33,7 +34,7 @@ public:
         //renderizar algo si es necesario
     }
 
-    void createRooms(){
+    void createRooms() override{
         room1();
         room2();
         room3();
@@ -48,7 +49,8 @@ public:
         // Sala inicial, sin enemigos
         room = std::make_shared<DungeonRoom>(
             "room1",
-            std::vector<std::shared_ptr<Enemy>>{std::make_shared<Boss1>(sf::Vector2f(20.f,10.f), 0)},
+            //std::vector<std::shared_ptr<Enemy>>{std::make_shared<Boss1>(sf::Vector2f(20.f,10.f), 0)},
+            std::vector<std::shared_ptr<Enemy>>{std::make_shared<Boss3>(sf::Vector2f(20.f, 20.f), 2)},
             "./resources/music/who-killed-them.ogg",
             "./resources/music/hunt-the-hunter.ogg");
         roomManager->registerState("room1", room);
