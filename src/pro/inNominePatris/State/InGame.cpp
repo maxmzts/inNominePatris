@@ -408,9 +408,7 @@ void InGame::render(Game& game, sf::RenderWindow& window) {
         weapon->render(engine.getRenderWindow()); // Usa el RenderWindow directamente
     }
     
-    for (auto enemy : EnemyManager::getInstance()->getEnemyList()) {
-        enemy->render(engine.getRenderWindow()); // Usa el RenderWindow directamente
-    }
+    EnemyManager::getInstance()->renderEnemies(engine.getRenderWindow());
 
 
     // Obtener la sala actual desde el RoomManager
