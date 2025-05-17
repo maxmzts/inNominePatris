@@ -7,23 +7,24 @@
 #include <iostream>
 
 Boss2::Boss2(const sf::Vector2f& startPosition, int DropKarmaPoints)
-    : Enemy("Boss2", 500.f, 128.f, startPosition, "resources/enemies/boss2.png"),
+    : Enemy("Boss2", 1.f, 128.f, startPosition, "resources/enemies/boss2.png"),
       currentBoss2State(Boss2State::IDLE),
       idleTimer(0.f),
       moveTimer(0.f),
-      attackCooldown(2.f),
+      stateTimer(0.f),
       attackTimer(0.f),
+      attackCooldown(2.f),
       invincibilityDuration(1.5f),
       meleeRange(100.f),        // Aumentado para mejor detección
       rangedRange(400.f),       // Aumentado para mejor detección
       attackPattern(0),
       projectileSpeed(220.f),   // Aumentado para proyectiles más efectivos
-      attacked(false),
-      stateTimer(0.f)           // Inicializado explícitamente
+      attacked(false)           // Inicializado explícitamente
 {
     std::cout << "[Boss2] Constructor llamado en posición: " << startPosition.x << ", " << startPosition.y << std::endl;
     loadAnimations();
     KarmaPoints = DropKarmaPoints;
+    sprite.setScale(1.5f,1.5f);
     
     // HITBOX - ajustada para mejor colisión
     hitbox->setSize(sf::Vector2f(100.f, 100.f));
@@ -105,13 +106,13 @@ void Boss2::takeDamage(float damage, const sf::Vector2f& attackPosition) {
     currentHealth -= damage;
     if (currentHealth < 0) currentHealth = 0;
 
-    // Efectos de sonido y visuales al recibir daño
-    // try {
-    //     SFXManager::getInstance()->playSFX("boss_hurt");
-    //     VFXManager::getInstance()->createEffect("blood_splatter", position);
-    // } catch (const std::exception& e) {
-    //     std::cerr << "[ERROR] No se pudo reproducir efectos: " << e.what() << std::endl;
-    // }
+    //Efectos de sonido y visuales al recibir daño
+    try {
+        //SFXManager::getInstance()->playSFX("boss_hurt");
+        VFXManager::getInstance().addEffect("./resources/vfx/blood.png",hitbox->getPosition(),{45 , 45},5,8.f);
+    } catch (const std::exception& e) {
+        std::cerr << "[ERROR] No se pudo reproducir efectos: " << e.what() << std::endl;
+    }
     
     setInvincible(true);
     invincibilityTimer = invincibilityDuration;
@@ -147,12 +148,13 @@ void Boss2::attackMelee() {
     std::cout << "[Boss2] Hitbox de ataque activada en " << hitboxPos.x << ", " << hitboxPos.y << std::endl;
     
     // Efectos de sonido y visuales
-    // try {
-    //     SFXManager::getInstance()->playSFX("boss_melee_attack");
-    //     VFXManager::getInstance()->createEffect("melee_impact", hitboxPos);
-    // } catch (const std::exception& e) {
-    //     std::cerr << "[ERROR] No se pudo reproducir efectos: " << e.what() << std::endl;
-    // }
+    try {
+        float pitch = 0.8f + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (1.2f - 0.8f);
+        SFXManager::getInstance().addEffect("./resources/sfx/blood_slash.wav", 100.f, pitch);        
+        //VFXManager::getInstance()->createEffect("melee_impact", hitboxPos);
+    } catch (const std::exception& e) {
+        std::cerr << "[ERROR] No se pudo reproducir efectos: " << e.what() << std::endl;
+    }
     
     // Verificar colisión con el jugador directamente
     Character* player = Character::getInstance();
@@ -205,23 +207,6 @@ void Boss2::attackRanged(const sf::Vector2f& playerPos) {
     
     attacked = true;
     attackTimer = attackCooldown;
-}
-
-void Boss2::calculateVelocity(const sf::Vector2f& direction) {
-    sf::Vector2f dir = direction;
-    float len = std::sqrt(dir.x * dir.x + dir.y * dir.y);
-    if (len > 0) dir /= len;
-    
-    // Actualizar la dirección a la que mira el boss
-    if (dir.x > 0) {
-        facingRight = true;
-        sprite.setScale(1.f, 1.f);
-    } else if (dir.x < 0) {
-        facingRight = false;
-        sprite.setScale(-1.f, 1.f);
-    }
-    
-    velocity = dir * movementSpeed;
 }
 
 void Boss2::render(sf::RenderWindow& window) {
@@ -441,7 +426,8 @@ void Boss2::update(float deltaTime, Character* player, const TileMap* tileMap) {
             hitbox->setActive(false);
             hurtbox->setActive(false);
             attackHitbox->setActive(false);
-            
+            float pitch = 0.8f + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (1.2f - 0.8f);
+            SFXManager::getInstance().addEffect("./resources/sfx/Boss2_die.wav", 100.f, pitch);        
             // Cuando termina la animación de muerte
             if (stateTimer >= 2.2f) {
                 changeState(static_cast<int>(Boss2State::DEAD));
@@ -450,7 +436,7 @@ void Boss2::update(float deltaTime, Character* player, const TileMap* tileMap) {
                 try {
                     Character::getInstance()->addKarma(KarmaPoints);
                     // VFXManager::getInstance()->createEffect("karma_gain", position);
-                    // SFXManager::getInstance()->playSFX("karma_collect");
+                    //SFXManager::getInstance()->playSFX("karma_collect");
                 } catch (const std::exception& e) {
                     std::cerr << "[ERROR] No se pudo otorgar karma: " << e.what() << std::endl;
                 }

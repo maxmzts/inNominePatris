@@ -57,6 +57,8 @@ public:
     TileMap& getTileMap() { return tileMap; }
     Character& getPlayer() { return player; }
 
+    static void resetInstance(); // Método para reiniciar la instancia
+
 };
 
 #endif // INGAME_H

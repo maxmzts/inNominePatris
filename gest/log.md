@@ -326,8 +326,10 @@ Por la tarde he cambiado la clase de la sala para permitir distintos tipos de m�
 Me he puesto a diseñar los bosses y configurar los sprites que elegimos para ellos.
 Hecho esto empecé a programar el primero de ellos. No terminé.
 
-## 20250517 MaximoMartinez @(3h)
-He seguido trabajando en el primer boss. Ha quedado totalmente implementado. También he implementado (con la base del EnemyBat) un Minion quee es una copia del boss pequeña que el boss genera de vez en cuando. Para terminarlo he tenido que editar AnimatedSprite y el movimiento de los enemigos, porque forzaban la escala del sprite a 1 (no se podía asignar una escala personalizada).
+## 20250517 MaximoMartinez @(4h 30min)
+He seguido trabajando en el primer boss. Ha quedado totalmente implementado. 
+Para ello también he implementado un Minion quee es una copia del boss pequeña que el boss genera de vez en cuando. Para terminarlo he tenido que editar AnimatedSprite y el movimiento de los enemigos, porque forzaban la escala del sprite a 1 (no se podía asignar una escala personalizada).
+He implementado el tecer boss.
 
 ## 20250509 JorgePelegrín @(4h 30min)
 He implementado el segundo boss al completo. Lo único que falta es añadirle los efectos de sonidos a sus ataques, etc.

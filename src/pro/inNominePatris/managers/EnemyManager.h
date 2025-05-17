@@ -72,4 +72,11 @@ public:
     void createProjectile(sf::Vector2f position, sf::Vector2f velocity, float damage, float lifetime);
 
     void updateProjectiles(float deltaTime, Character* player);
+
+    void resetInstance() {
+        if (instance) {
+            delete &instance;
+            instance = nullptr;
+        }
+    }
 };

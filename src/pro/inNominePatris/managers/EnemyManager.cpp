@@ -1,4 +1,5 @@
 #include "EnemyManager.h"
+#include "VFXManager.h"
 #include <algorithm>
 
 // Inicialización del singleton
@@ -135,6 +136,9 @@ void EnemyManager::updateProjectiles(float deltaTime, Character* player) {
             // Causar daño al jugador
             std::cout << "[EnemyManager] Proyectil impacta al jugador" << std::endl;
             player->takeDamage(projectile->getDamage());
+            float pitch = 0.8f + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (1.2f - 0.8f);
+            SFXManager::getInstance().addEffect("./resources/sfx/Projectile_sound.wav", 100.f, pitch);
+            VFXManager::getInstance().addEffect("./resources/vfx/explosion64x64.png",player->getPosition(),{64 , 64},10,8.f);
             
             // Efectos al impactar
             // VFXManager::getInstance()->createEffect("projectile_impact", projectile->getPosition());

@@ -387,7 +387,8 @@ void Character::equipWeapon() {
 
 void Character::startDash(float speed, float duration) {
     if (!isDashing) {
-        std::cout << "startea el dashhhhhhh" << std::endl;
+        // DEBUG
+        // std::cout << "startea el dashhhhhhh" << std::endl;
         isDashing = true;
         dashSpeed = speed;
         dashDuration = duration;
@@ -495,11 +496,13 @@ int Character::getMaxHealth() const {
 void Character::takeDamage(int damage) {
     if(!isInvencible){
         if(tryDodge()) {
-            std::cout << "Esquivas el ataque!" << std::endl;
+            // DEBUG
+            // std::cout << "Esquivas el ataque!" << std::endl;
             return; // Si se esquiva, no se recibe daño
         }
         setHealth(currentHealth - damage);
-        std::cout << "Te han hecho daño! Vida actual: " << currentHealth << std::endl;
+        // DEBUG
+        // std::cout << "Te han hecho daño! Vida actual: " << currentHealth << std::endl;
         isInvencible = true;
         if(invencibilityDuration == 4.0f) {
             isShieldActive = true; // Activar el escudo temporal
@@ -514,7 +517,8 @@ void Character::heal(int amount) {
 
 void Character::hurt(int amount) {
     takeDamage(amount);
-    std::cout << "Te han hecho daño! Vida actual: " << currentHealth << std::endl;
+    // DEBUG
+    // std::cout << "Te han hecho daño! Vida actual: " << currentHealth << std::endl;
 }
 
 void Character::drawHearts(GameEngine& engine) {
@@ -563,7 +567,8 @@ void Character::InteractionCage(TileMap& tilemap, int centerX, int centerY) {
 }
 
 void Character::InteractionOpenDoor() {
-    std::cout << "PUERTA ABIERTA (SE HAN PULSADO LOS 3 BOTONES DE SALA 1)" << std::endl;
+    // DEBUG
+    // std::cout << "PUERTA ABIERTA (SE HAN PULSADO LOS 3 BOTONES DE SALA 1)" << std::endl;
 }
 
 void Character::interact(TileMap& tilemap) {
@@ -584,15 +589,18 @@ void Character::interact(TileMap& tilemap) {
                 // Si es una puerta y se han cumplido los requisitos, abrirla
                 if (auto doorInteraction = std::dynamic_pointer_cast<DoorInteraction>(interaction)) {
                     if (InteractionManager::getInstance()->checkDoorRequirements(tileId)) {
-                        std::cout << "Se han cumplido todos los requisitos para abrir la puerta." << std::endl;
+                        // DEBUG
+                        // std::cout << "Se han cumplido todos los requisitos para abrir la puerta." << std::endl;
                     }
                 }
             }
         } else {
-            std::cout << "No hay interacción definida para el tile " << tileId << std::endl;
+            // DEBUG
+            // std::cout << "No hay interacción definida para el tile " << tileId << std::endl;
         }
     } else {
-        std::cout << "No hay nada con lo que interactuar aquí." << std::endl;
+        // DEBUG
+        // std::cout << "No hay nada con lo que interactuar aquí." << std::endl;
     }
 }
 
@@ -627,7 +635,8 @@ void Character::updateHealthRegeneration(float deltaTime) {
 
             if (currentHealth < maxHealth) {
                 currentHealth++;
-                std::cout << "Vida regenerada. Vidas actuales: " << currentHealth << std::endl;
+                // DEBUG
+                // std::cout << "Vida regenerada. Vidas actuales: " << currentHealth << std::endl;
             }
         }
     }
@@ -641,7 +650,8 @@ bool Character::tryDodge() const {
 void Character::increaseMovementSpeed(float amount) {
     float oldSpeed = speed;
     speed += amount;
-    std::cout << "Velocidad aumentada de " << oldSpeed << " a " << speed << std::endl;
+    // DEBUG
+    // std::cout << "Velocidad aumentada de " << oldSpeed << " a " << speed << std::endl;
 }
 
 void Character::increaseDodgeChance(float amount) {

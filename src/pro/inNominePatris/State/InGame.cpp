@@ -474,12 +474,10 @@ bool InGame::checkPlayerWasHit(Character& player, std::shared_ptr<Enemy> enemy){
 
 void InGame::reset(GameEngine& engine) {
     // Reinicia los datos del estado del juego
-    player.spawnAt(tileMap, 30, 44); // Reinicia la posición del jugador
-    player.setHealth(player.getMaxHealth()); // Restaura la salud del jugador
-
-    // Reinicia enemigos, armas y otros elementos del juego
+    player.spawnAt(tileMap, 20, 44); // Posición inicial del lobby
+    player.setHealth(player.getMaxHealth());
     EnemyManager::getInstance()->clearEnemies();
-    weaponsOnGround.clear();
+    currentWorldState = worldStates["lobby"].get(); // Fuerza el lobby como mundo actual
 }
 
 
@@ -505,3 +503,9 @@ void InGame::changeWorldState(std::string& stateName, std::string& mapFilePath, 
     }
 }
 
+
+void InGame::resetInstance() {
+    // Borra la instancia actual y la establece en nullptr
+    delete instance;
+    instance = nullptr;
+}
