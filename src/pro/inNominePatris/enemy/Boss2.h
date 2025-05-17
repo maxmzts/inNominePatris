@@ -35,10 +35,11 @@ private:
     Boss2State currentBoss2State;
     float idleTimer;
     float moveTimer;
-    float attackCooldown;
-    float attackTimer;
-    float invincibilityDuration;
     float stateTimer;          // Timer para controlar la duración de los estados
+    float attackTimer;
+    float attackCooldown;
+    float invincibilityDuration;
+    
 
     // Rangos de ataque
     float meleeRange;
@@ -59,7 +60,6 @@ private:
     // Métodos internos
     void loadAnimations();
     void changeAnimation(int newStateInt);
-    void calculateVelocity(const sf::Vector2f& direction);
     void attack() override {};
     void attackMelee();
     void attackRanged(const sf::Vector2f& playerPos);
