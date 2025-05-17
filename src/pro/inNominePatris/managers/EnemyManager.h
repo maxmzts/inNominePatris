@@ -62,6 +62,8 @@ public:
     
     // Obtener cantidad de enemigos
     size_t getEnemyCount() const;
+
+    size_t getAliveEnemyCount() const;
     
     // Comprobar colisiones entre todos los enemigos y otro objeto
     bool checkCollisions(Hitbox* hitbox);

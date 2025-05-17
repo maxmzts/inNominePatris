@@ -100,6 +100,14 @@ size_t EnemyManager::getEnemyCount() const {
     return enemies.size();
 }
 
+size_t EnemyManager::getAliveEnemyCount() const {
+    size_t count = 0;
+    for (const auto& enemy : enemies) {
+        if (!enemy->isDead())
+            count++;
+    }
+    return count;
+}
 
 // reconsiderar
 bool EnemyManager::checkCollisions(Hitbox* hitbox) {

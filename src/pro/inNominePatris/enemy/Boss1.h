@@ -14,13 +14,18 @@ private:
         ATTACKING,
         HURT,
         SPAWNING,
-        HEALING,
         DYING,
         DEAD
     };
 
-    float spawnTimer;
-    bool attacked;
+    // variables auxiliares para el spawn
+    float spawnTimer = 10.f;
+    int spawnedEnemiesCount = 0; 
+    int enemiesToSpawn = 0;
+    float spawnIntervalTimer = 0.f;
+    int r = 0, g = 0, b = 0, t = 1;
+
+    bool attacked, targeted;
     sf::Vector2f attackPosition;
     Boss1State currentBoss1State;
 
@@ -41,6 +46,7 @@ public:
     void update(float deltaTime, Character* player, const TileMap* tileMap) override;
     void updateTimers(float deltaTime);
 
+    void move(const TileMap* tileMap, float deltaTime);
     void changeState(int newState) override;
     bool isValidBoss1State(int state);
     bool isDead() const override;
