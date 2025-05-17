@@ -38,6 +38,13 @@ public:
     std::shared_ptr<RoomState> getCurrentState() const;
 
     void clearRooms(){ states.clear(); currentState.reset(); }
+
+    void resetInstance() {
+        if (instance) {
+            delete instance;
+            instance = nullptr;
+        }
+    }
 };
 
 #endif // ROOM_MANAGER_H

@@ -2,6 +2,8 @@
 #include "../Game.h"
 #include "MainMenu.h"
 #include "InGame.h"
+#include "RoomManager.h"
+#include "EnemyManager.h"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
@@ -107,14 +109,8 @@ void KoScreen::update(Game& game) {
             } else if (event.key.code == sf::Keyboard::S) {
                 moveDown();
             } else if (event.key.code == sf::Keyboard::Enter) {
-                if (selectedItemIndex == 0) {
-                    // Jugar de nuevo
-                    game.changeState(InGame::getInstance(game.getEngine()));
-                    return;
-                } else if (selectedItemIndex == 1) {
-                    // Salir
-                    window.close();
-                }
+                handleSelection(game);
+                return;
             }
         } else if (event.type == sf::Event::MouseButtonPressed) {
             if (event.mouseButton.button == sf::Mouse::Left) {
@@ -139,8 +135,16 @@ void KoScreen::handleMouseClick(Game& game, sf::RenderWindow& window) {
 
 void KoScreen::handleSelection(Game& game) {
     if (selectedItemIndex == 0) {
-        // Jugar de nuevo
-        game.changeState(InGame::getInstance(game.getEngine()));
+        // Usar el método público para reiniciar la instancia
+        InteractionManager::getInstance()->resetButtons();
+        RoomManager::getInstance()->clearRooms();
+        EnemyManager::getInstance()->clearEnemies();
+        InGame::resetInstance();
+        
+        // Obtener una nueva instancia limpia de InGame
+        InGame* inGame = InGame::getInstance(game.getEngine());
+        
+        game.changeState(inGame);
         return;
     } else if (selectedItemIndex == 1) {
         // Salir
