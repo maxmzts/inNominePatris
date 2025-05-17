@@ -499,6 +499,7 @@ void Character::takeDamage(int damage) {
             return; // Si se esquiva, no se recibe daño
         }
         setHealth(currentHealth - damage);
+        std::cout << "Te han hecho daño! Vida actual: " << currentHealth << std::endl;
         isInvencible = true;
         if(invencibilityDuration == 4.0f) {
             isShieldActive = true; // Activar el escudo temporal
@@ -513,6 +514,7 @@ void Character::heal(int amount) {
 
 void Character::hurt(int amount) {
     takeDamage(amount);
+    std::cout << "Te han hecho daño! Vida actual: " << currentHealth << std::endl;
 }
 
 void Character::drawHearts(GameEngine& engine) {

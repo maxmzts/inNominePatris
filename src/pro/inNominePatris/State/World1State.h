@@ -7,6 +7,7 @@
 #include <EnemyBat.h>
 #include <EnemyNecromancer.h>
 #include <Boss1.h>
+#include <Boss2.h>
 
 class World1State : public WorldState {
 public:
@@ -59,6 +60,7 @@ public:
         enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(103.f, 12.f), 2));
         enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(136.f, 11.f), 2));
         enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(120.f, 24.f), 2));
+        enemies.push_back(std::make_shared<Boss2>(sf::Vector2f(120.f, 20.f), 2));
 
         std::cout << "No entiendo." << std::endl;
         
