@@ -44,10 +44,11 @@ public:
     void room1(){
         RoomManager* roomManager = RoomManager::getInstance();
         std::shared_ptr<RoomState> room = nullptr;
-
+        
+        // Sala inicial, sin enemigos
         room = std::make_shared<DungeonRoom>(
             "room1",
-            std::vector<std::shared_ptr<Enemy>>{},
+            std::vector<std::shared_ptr<Enemy>>{std::make_shared<Boss1>(sf::Vector2f(20.f,10.f), 0)},
             "./resources/music/who-killed-them.ogg",
             "./resources/music/hunt-the-hunter.ogg");
         roomManager->registerState("room1", room);
@@ -168,14 +169,13 @@ public:
     }
 
     void room5(){
-        std::vector<std::shared_ptr<Enemy>> enemies;
         
         // Boss del mundo 1
         // coordenadas boss (220, 192)
 
         auto room = std::make_shared<DungeonRoom>(
             "room4",
-            enemies,
+            std::vector<std::shared_ptr<Enemy>>{std::make_shared<Boss1>(sf::Vector2f(220.f,192.f), 0)},
             "./resources/music/memories.ogg",
             "./resources/music/vengeance-part-i.ogg"
         );
