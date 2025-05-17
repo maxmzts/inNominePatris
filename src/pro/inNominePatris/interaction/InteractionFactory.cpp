@@ -53,7 +53,9 @@ std::shared_ptr<Interaction> InteractionFactory::createInteraction(int tileId) {
             return std::make_shared<SpawnPlayerInteraction>(tileId, "Teletransporte 1-4", 97, 163, 89, 104, "room4", "room1");
         case 1108:
             return std::make_shared<SpawnPlayerInteraction>(tileId, "Teletransporte 1-5", 176, 268, 223, 117, "room5", "room1");
-        
+        // WRLD 3
+        case 1241:
+            return std::make_shared<SpawnPlayerInteraction>(tileId, "Teletransporte 1-2", 45, 65, 45, 116, "room2", "room1");
         
         
 
@@ -62,7 +64,9 @@ std::shared_ptr<Interaction> InteractionFactory::createInteraction(int tileId) {
             return std::make_shared<WorldChangeInteraction>(tileId, "Entrada al Mundo 1", "world_1", "./maps/world_1.tmx", "resources/music/who-killed-them.ogg", 20, 44, true);
         case 937: // Cambio al World 2
             return std::make_shared<WorldChangeInteraction>(tileId, "Entrada al Mundo 2", "world_2", "./maps/world_2.tmx", "resources/music/dungeon-crawler.ogg", 41, 114, true);
-        case 1492: // Cambio al World 2
+        case 1001: // Cambio al World 3
+            return std::make_shared<WorldChangeInteraction>(tileId, "Entrada al Mundo 3", "world_3", "./maps/world_3.tmx", "resources/music/dungeon-crawler.ogg", 45, 116, true);
+        case 1492: // Cambio al lobby
             return std::make_shared<WorldChangeInteraction>(tileId, "Entrada al lobby", "lobby", "./maps/lobby.tmx", "resources/music/lobby_track.ogg", 20, 44, true);
         
         default:
