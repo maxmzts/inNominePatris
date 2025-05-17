@@ -11,19 +11,20 @@ Boss2::Boss2(const sf::Vector2f& startPosition, int DropKarmaPoints)
       currentBoss2State(Boss2State::IDLE),
       idleTimer(0.f),
       moveTimer(0.f),
-      attackCooldown(2.f),
+      stateTimer(0.f),
       attackTimer(0.f),
+      attackCooldown(2.f),
       invincibilityDuration(1.5f),
       meleeRange(100.f),        // Aumentado para mejor detección
       rangedRange(400.f),       // Aumentado para mejor detección
       attackPattern(0),
       projectileSpeed(220.f),   // Aumentado para proyectiles más efectivos
-      attacked(false),
-      stateTimer(0.f)           // Inicializado explícitamente
+      attacked(false)           // Inicializado explícitamente
 {
     std::cout << "[Boss2] Constructor llamado en posición: " << startPosition.x << ", " << startPosition.y << std::endl;
     loadAnimations();
     KarmaPoints = DropKarmaPoints;
+    sprite.setScale(1.5f,1.5f);
     
     // HITBOX - ajustada para mejor colisión
     hitbox->setSize(sf::Vector2f(100.f, 100.f));
@@ -205,23 +206,6 @@ void Boss2::attackRanged(const sf::Vector2f& playerPos) {
     
     attacked = true;
     attackTimer = attackCooldown;
-}
-
-void Boss2::calculateVelocity(const sf::Vector2f& direction) {
-    sf::Vector2f dir = direction;
-    float len = std::sqrt(dir.x * dir.x + dir.y * dir.y);
-    if (len > 0) dir /= len;
-    
-    // Actualizar la dirección a la que mira el boss
-    if (dir.x > 0) {
-        facingRight = true;
-        sprite.setScale(1.f, 1.f);
-    } else if (dir.x < 0) {
-        facingRight = false;
-        sprite.setScale(-1.f, 1.f);
-    }
-    
-    velocity = dir * movementSpeed;
 }
 
 void Boss2::render(sf::RenderWindow& window) {
