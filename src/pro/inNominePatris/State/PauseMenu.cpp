@@ -1,5 +1,5 @@
 #include "PauseMenu.h"
-#include "ConfMenu.h"
+#include "ControlsMenu.h" 
 #include "MainMenu.h"
 #include "InGame.h"
 #include "../Game.h"
@@ -25,7 +25,7 @@ PauseMenu::PauseMenu(float width, float height) : selectedItemIndex(0) {
     backgroundSprite.setPosition(0, 0); // Asegurarse de que esté centrado
 
     // Opciones del menú
-    std::vector<std::string> opciones = {"Continuar", "Configuracion", "Salir"};
+    std::vector<std::string> opciones = {"Continuar", "Controles", "Salir"}; // Changed "Configuracion" to "Controles"
 
     for (size_t i = 0; i < opciones.size(); ++i) {
         // Crear fondo del texto
@@ -78,8 +78,8 @@ void PauseMenu::update(Game& game) {
                     game.changeState(InGame::getInstance(game.getEngine()));
                     return;
                 } else if (selectedItemIndex == 1) {
-                    // Configuración
-                    game.changeState(ConfMenu::getInstance(800, 600));
+                    // Controles
+                    game.changeState(ControlsMenu::getInstance(game.getEngine(), 800, 600)); // Changed to ControlsMenu
                     return;
                 } else if (selectedItemIndex == 2) {
                     // Salir
@@ -114,8 +114,8 @@ void PauseMenu::handleSelection(Game& game) {
         // Continuar
         game.changeState(InGame::getInstance(game.getEngine()));
     } else if (selectedItemIndex == 1) {
-        // Configuración
-        game.changeState(ConfMenu::getInstance(800, 600));
+        // Controles
+        game.changeState(ControlsMenu::getInstance(game.getEngine(), 800, 600)); // Changed to ControlsMenu
     } else if (selectedItemIndex == 2) {
         // Salir
         game.getWindow().close();
