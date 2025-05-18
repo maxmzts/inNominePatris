@@ -156,8 +156,17 @@ public:
             "./resources/music/memories.ogg",
             "./resources/music/vengeance-part-ii.ogg",
             [](TileMap& tileMap) {
-                for (int x = 0; x < 2 ; ++x) {
-                    for (int y = 0; y < 3; ++y) {
+                VFXManager::getInstance().addEffect(
+                    "resources/vfx/Dimensional_Portal-sheet.png",
+                    {155.f*16, 280.f*16},
+                    {32, 32},
+                    6,
+                    8,
+                    false,
+                    true
+                );
+                for (int x = 0; x < 1 ; ++x) {
+                    for (int y = 0; y < 2; ++y) {
                         tileMap.setLocalTile("interaction", 155+x, 280+y, 1492);
                     }
                 }

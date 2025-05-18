@@ -67,14 +67,18 @@ public:
                 // Efecto visual o cambios en el mapa al entrar en la sala del boss
                 VFXManager::getInstance().addEffect(
                     "resources/vfx/Dimensional_Portal-sheet.png",
-                    {44.f*16, 31.f*16},
+                    {44.f*16, 25.f*16},
                     {32, 32},
                     6,
                     8,
                     false,
                     true
                 );
-                // Aquí puedes poner más lógica de sala si lo necesitas
+                for (int x = 0; x < 1 ; ++x) {
+                    for (int y = 0; y < 2; ++y) {
+                        tileMap.setLocalTile("interaction", 44+x, 25+y, 1492);
+                    }
+                }
             }
         );
         

@@ -338,6 +338,9 @@ He implementado el segundo boss al completo. Lo único que falta es añadirle lo
 ## 20250509 JorgePelegrín @(1h 30min)
 He movido la logica de creacion de las armas al lobby, restringiendo su creacion dependiendo de los mundos que te hayas pasado. World3State hecho, falta poner el tile de interaccion para volver al lobby.
 
+## 20250518 EstrellaDomínguez @(2h)
+El estado de KO funciona prácticamente al completo. Ya se restauran todos los items, enemigos, armas, karma, botones y música, sin embargo cuando mueres una segunda vez falla algo.
+
 ## 20250517 MaximoMartinez @(3h 40min)
 He añadido un portal al final de cada mundo para volver al lobby. 
 He asegurado que los mundos se reinicien bien cuando se vuelve al lobby.
@@ -350,3 +353,7 @@ El estado de KO funciona prácticamente al completo. Ya se restauran todos los i
 ## 20250509 JorgePelegrín @(1h 30min)
 Ahora el efecto de los items se revierten al morir o salir del mundo al lobby. 
 Otros ajustes varios.
+
+## 20250518 EstrellaDomínguez @(1h)
+Implementada la ventana de Controles desde el menu principal y de pausa.
+He resuelto la excepción que salía al navegar entre menús.
