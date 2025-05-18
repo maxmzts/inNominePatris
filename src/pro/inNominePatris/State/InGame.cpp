@@ -122,6 +122,14 @@ void InGame::update(Game& game) {
                 enemy->takeDamage(50000.f, {0.f,0.f});
             }
         }
+        // CHEATCODE PARA LA PRESENTACION
+        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Num2) {
+            LobbyState::setWorld1completed();
+        }
+        // CHEATCODE PARA LA PRESENTACION
+        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Num3) {
+            LobbyState::setWorld2completed();
+        }
 
         // Abrir la tienda (tecla B)
         if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::B) {
@@ -358,7 +366,10 @@ void InGame::checkAutoInteractions() {
     
     if (tileMap.isPlayerInteractingWithTile(playerBounds, tileId)) {
         // Ajustar el ID del tile
-        tileId -= 1;
+
+        if(tileId != 1492){
+            tileId -= 1;
+        }
         
         // Crear la interacción correspondiente usando la fábrica
         auto interaction = InteractionFactory::createInteraction(tileId);
@@ -488,12 +499,20 @@ void InGame::changeWorldState(std::string& stateName, std::string& mapFilePath, 
             std::cerr << "Error cargando el mapa: " << mapFilePath << std::endl;
             return;
         }
+
+        // 2. Restablecer el mundo a su estado natural 
+        // Reiniciar salas
+        RoomManager::getInstance()->clearRooms();
+        // Resetear estado de portales
+        SpawnPlayerInteraction::resetPortalStates();
+        // Reiniciar items y mejoras
         
-        // 2. Hacer spawn al jugador en la nueva posición
+        // 3. Hacer spawn al jugador en la nueva posición
         getPlayer().spawnAt(getTileMap(), spawnPosition.x, spawnPosition.y);
         // DEBUG
         //std::cout << "Jugador reposicionado en: (" << spawnPosition.x << ", " << spawnPosition.y << ")" << std::endl;
         
+        // 4. Cambiar el estado actual de mundo e inicializar
         currentWorldState = worldStates[stateName].get();
         currentWorldState->initialize();
         // DEBUG

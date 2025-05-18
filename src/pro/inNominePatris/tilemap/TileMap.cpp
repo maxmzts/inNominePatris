@@ -368,6 +368,11 @@ bool TileMap::setLocalTile(const std::string& layerName, int x, int y, int local
         int globalTileId = (localTileId < 0) ? 0 : localTileId;
         return setTile(layerName, x, y, globalTileId);
     }
+
+    if (layerName == "interaction") {
+        int globalTileId = (localTileId < 0) ? 0 : localTileId;
+        return setTile(layerName, x, y, globalTileId);
+    }
     
     // Para otras capas
     auto layerIndexIt = m_layerIndices.find(layerName);

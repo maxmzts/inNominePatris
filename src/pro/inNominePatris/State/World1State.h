@@ -2,6 +2,7 @@
 #define WORLD1STATE_H
 
 #include "WorldState.h"
+#include "LobbyState.h"
 #include "RoomManager.h"
 #include <DungeonRoom.h>
 #include <EnemyBat.h>
@@ -9,6 +10,7 @@
 #include <Boss1.h>
 #include <Boss2.h>
 #include <Boss3.h>
+#include <VFXManager.h>
 
 class World1State : public WorldState {
 public:
@@ -49,8 +51,9 @@ public:
         // Sala inicial, sin enemigos
         room = std::make_shared<DungeonRoom>(
             "room1",
-            //std::vector<std::shared_ptr<Enemy>>{std::make_shared<Boss1>(sf::Vector2f(20.f,10.f), 0)},
-            std::vector<std::shared_ptr<Enemy>>{std::make_shared<Boss3>(sf::Vector2f(20.f, 20.f), 2)},
+            std::vector<std::shared_ptr<Enemy>>{},
+            // std::vector<std::shared_ptr<Enemy>>{std::make_shared<Boss1>(sf::Vector2f(20.f,10.f), 0)},
+            // std::vector<std::shared_ptr<Enemy>>{std::make_shared<Boss3>(sf::Vector2f(20.f, 20.f), 2)},
             "./resources/music/who-killed-them.ogg",
             "./resources/music/hunt-the-hunter.ogg");
         roomManager->registerState("room1", room);
@@ -62,10 +65,8 @@ public:
         enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(103.f, 12.f), 2));
         enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(136.f, 11.f), 2));
         enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(120.f, 24.f), 2));
-        enemies.push_back(std::make_shared<Boss2>(sf::Vector2f(120.f, 20.f), 50));
+        enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(120.f, 20.f), 50));
 
-        std::cout << "No entiendo." << std::endl;
-        
         // crear la sala
         auto room = std::make_shared<DungeonRoom>(
             "room2",
@@ -171,16 +172,32 @@ public:
     }
 
     void room5(){
-        
-        std::vector<std::shared_ptr<Enemy>> enemies;
-        enemies.push_back(std::make_shared<Boss1>(sf::Vector2f(219.f, 189.f), 200));
 
         auto room = std::make_shared<DungeonRoom>(
-            "room4",
+            "room5",
             std::vector<std::shared_ptr<Enemy>>{std::make_shared<Boss1>(sf::Vector2f(220.f,192.f), 0)},
             "./resources/music/memories.ogg",
-            "./resources/music/vengeance-part-i.ogg"
+            "./resources/music/vengeance-part-i.ogg",
+            [](TileMap& tileMap) {
+                VFXManager::getInstance().addEffect(
+                    "resources/vfx/Dimensional_Portal-sheet.png",
+                    {240.f*16,188.f*16},
+                    {32, 32},
+                    6,
+                    8, 
+                    false,
+                    true 
+                );
+                for (int x = 1; x <= 3; ++x) {
+                    for( int y = 1; y <= 4; ++y){
+                        tileMap.setLocalTile("interaction", 240+x, 188+y, 1492);
+                    }
+                }
+                LobbyState::setWorld1completed();
+            }
         );
+        RoomManager* roomManager = RoomManager::getInstance();
+        roomManager->registerState("room5", room); 
     }
 };
 

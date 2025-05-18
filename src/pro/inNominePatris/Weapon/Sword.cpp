@@ -69,7 +69,7 @@ void Sword::attack(sf::Vector2f position, sf::Vector2f direction) {
         SFXManager::getInstance().addEffect("resources/sfx/stab.wav", 60.f, pitch);
 
         float damage = calculateDamage();
-        std::cout << "Sword attack: Dealt " << damage << " damage!" << std::endl;
+        // std::cout << "Sword attack: Dealt " << damage << " damage!" << std::endl;
     }
 }
 
@@ -113,13 +113,13 @@ bool Sword::useAbility() {
         
         float pitch = 0.9f + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * 0.2f;
         SFXManager::getInstance().addEffect("resources/sfx/dash.wav", 50.f, pitch);
-        std::cout << "Dash realizado. Dashes restantes: " << consecutiveDashes << std::endl;
+        // std::cout << "Dash realizado. Dashes restantes: " << consecutiveDashes << std::endl;
         return true;
     }
     
     // Verificar si la habilidad está en cooldown
     if (elapsedTime - lastAbilityTime < abilityCooldown) {
-        std::cout << "Ability on cooldown!" << std::endl;
+        // std::cout << "Ability on cooldown!" << std::endl;
         return false;
     }
     
@@ -129,7 +129,7 @@ bool Sword::useAbility() {
     
     float pitch = 0.9f + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * 0.2f;
     SFXManager::getInstance().addEffect("resources/sfx/dash.wav", 50.f, pitch);
-    std::cout << "Sword ability used! Dashes restantes: " << consecutiveDashes << std::endl;
+    // std::cout << "Sword ability used! Dashes restantes: " << consecutiveDashes << std::endl;
     
     // Solo iniciar cooldown si no quedan más dashes
     if (consecutiveDashes == 0) {
@@ -199,7 +199,7 @@ void Sword::update(float deltaTime) {
     // Verificar si el cooldown ha terminado para recargar los dashes
     if (consecutiveDashes == 0 && (elapsedTime - lastAbilityTime >= abilityCooldown)) {
         resetConsecutiveDashes();
-        std::cout << "Dashes recargados: " << consecutiveDashes << std::endl;
+        // std::cout << "Dashes recargados: " << consecutiveDashes << std::endl;
     }
 
     if(isAnimating){
@@ -216,27 +216,27 @@ std::shared_ptr<Hitbox> Sword::getAttackHitbox() const {
 }
 
 void Sword::increaseDashSpeed(float speed) {
-    std::cout << "Dash speed increased!" << std::endl;
+    // std::cout << "Dash speed increased!" << std::endl;
     dashSpeed += speed;
 }
 
 void Sword::decreaseDashCooldown(float cooldown) {
-    std::cout << "Dash cooldown decreased!" << std::endl;
+    // std::cout << "Dash cooldown decreased!" << std::endl;
     abilityCooldown -= cooldown;
 }
 
 void Sword::decreaseAttackCooldown(float cooldown) {
-    std::cout << "Attack cooldown decreased!" << std::endl;
+    // std::cout << "Attack cooldown decreased!" << std::endl;
     attackCooldown -= cooldown;
 }
 
 void Sword::increaseAttackDamage(float damage) {
-    std::cout << "Attack damage increased!" << std::endl;
+    // std::cout << "Attack damage increased!" << std::endl;
     baseDamage += damage;
 }
 
 void Sword::enableDoubleDash() {
-    std::cout << "Doble dash habilitado para la espada." << std::endl;
+    // std::cout << "Doble dash habilitado para la espada." << std::endl;
     canDoubleDash = true;
     resetConsecutiveDashes(); // Actualiza inmediatamente el número de dashes disponibles
 }

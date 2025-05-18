@@ -142,12 +142,14 @@ void MusicManager::update(float deltaTime) {
         // Asegurarnos de que el volumen está en un rango válido
         currentVolume = std::max(0.0f, std::min(100.0f, currentVolume));
         
-        // Aplicar el volumen a la pista
-        transition.track->setVolume(currentVolume);
+        // Aplicar el volumen a la pista si existe 
+        if(transition.track){
+            transition.track->setVolume(currentVolume);
+        }
         
         // Verificar que la pista esté reproduciéndose
         if (!transition.track->isPlaying() && !transition.fadeOut) {
-            std::cout << "Reiniciando reproducción de pista en transición" << std::endl;
+            // std::cout << "Reiniciando reproducción de pista en transición" << std::endl;
             transition.track->play();
         }
         
@@ -160,7 +162,7 @@ void MusicManager::update(float deltaTime) {
             } else {
                 // Si la pista estaba apareciendo, moverla a las pistas regulares
                 transition.track->setVolume(transition.targetVolume);
-                std::cout << "Transición completada, volumen final: " << transition.targetVolume << std::endl;
+                // std::cout << "Transición completada, volumen final: " << transition.targetVolume << std::endl;
                 tracks.push_back(std::move(transition.track));
                 it = activeTransitions.erase(it);
             }
@@ -179,7 +181,7 @@ void MusicManager::update(float deltaTime) {
         tracks.end()
     );
     if (beforeSize != tracks.size()) {
-        std::cout << "Se eliminaron " << (beforeSize - tracks.size()) << " pistas detenidas" << std::endl;
+        // std::cout << "Se eliminaron " << (beforeSize - tracks.size()) << " pistas detenidas" << std::endl;
     }
 }
 

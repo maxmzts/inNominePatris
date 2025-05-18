@@ -9,6 +9,8 @@ class DungeonRoom : public RoomState {
 private:
     std::string roomId;
     std::function<void(TileMap&)> openDoors;
+    bool hasItems = false;
+    bool doorsOpened = false;
     std::vector<sf::Vector2f> itemPositions;
     std::vector<std::unique_ptr<Item>> items;
     std::string musicFilePath;

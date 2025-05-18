@@ -8,6 +8,7 @@
 #include <EnemyNecromancer.h>
 #include <Boss1.h>
 #include <Boss2.h>
+#include "LobbyState.h"
 
 class World2State : public WorldState {
 public:
@@ -153,7 +154,15 @@ public:
             "room5",
             enemies,
             "./resources/music/memories.ogg",
-            "./resources/music/vengeance-part-ii.ogg"
+            "./resources/music/vengeance-part-ii.ogg",
+            [](TileMap& tileMap) {
+                for (int x = 0; x < 2 ; ++x) {
+                    for (int y = 0; y < 3; ++y) {
+                        tileMap.setLocalTile("interaction", 155+x, 280+y, 1492);
+                    }
+                }
+                LobbyState::setWorld2completed();
+            }
         );
         RoomManager* roomManager = RoomManager::getInstance();
         roomManager->registerState("room5", room);        

@@ -28,7 +28,8 @@ public:
         sf::Vector2i frameSize,
         int frameCount,
         float frameDuration,
-        bool invert = false
+        bool invert = false,
+        bool loop = false
     );
 
     void update(float deltaTime);

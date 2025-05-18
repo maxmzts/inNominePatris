@@ -22,11 +22,12 @@ void DungeonRoom::enter() {
         }
     }
     // DEBUG
-    // std::cout << "Entré en la sala " << roomId << std::endl;
+    std::cout << "Entré en la sala " << roomId << std::endl;
 }
 
 void DungeonRoom::setItemPositions(const std::vector<sf::Vector2f>& positions) {
     itemPositions = positions;
+    hasItems = true;
 }
 
 void DungeonRoom::generateItems(Character* player) {
@@ -38,12 +39,12 @@ void DungeonRoom::generateItems(Character* player) {
     for (size_t i = 0; i < std::min(itemPositions.size(), weapons.size()); ++i) {
         ItemType weaponType = weapons[i]->getItemType();
         Item* newItem = Item::generateRandomItemforWeapon(weaponType);
-        std::cout << "Generando ítem para el arma: " << static_cast<int>(weaponType) << std::endl;
+        // std::cout << "Generando ítem para el arma: " << static_cast<int>(weaponType) << std::endl;
         if (newItem) {
             newItem->setPosition(itemPositions[i].x, itemPositions[i].y);
             items.emplace_back(newItem);
             // DEBUG
-            // std::cout << "Generé un ítem en la posición: " << itemPositions[i].x << ", " << itemPositions[i].y << std::endl;
+            std::cout << "Generé un ítem en la posición: " << itemPositions[i].x << ", " << itemPositions[i].y << std::endl;
         }
     }
 }
@@ -70,28 +71,36 @@ void DungeonRoom::update(TileMap& tileMap) {
     Character* player = Character::getInstance();
     sf::FloatRect playerBounds = player->getBounds();
 
-    for (auto& item : items) {
-        if (!item->GetIsPickedUp() && item->getBounds().intersects(playerBounds)) {
-            
-            // Marcar todos los ítems como recogidos
-            for (auto& otherItem : items) {
-                otherItem->Picked();
-                openDoors(tileMap);
-                HUD::getInstance().showItemNotification(item->getItemName(), item->getItemDescription());
-            }
-
-            auto weapons = player->getEquippedWeapons();
-            for (auto* weapon : weapons) {
-                if (weapon->getItemType() == item->getType()) { // Comparar el tipo del arma con el tipo del ítem
-                    item->applyEffect(*weapon); // Aplicar el efecto al arma correspondiente
-                    // DEBUG
-                    // std::cout << "Ítem aplicado al arma de tipo: " << static_cast<int>(weapon->getItemType()) << std::endl;
-                    break;
+    if(hasItems){
+        for (auto& item : items) {
+            if (!item->GetIsPickedUp() && item->getBounds().intersects(playerBounds)) {
+                
+                // Marcar todos los ítems como recogidos
+                for (auto& otherItem : items) {
+                    otherItem->Picked();
+                    openDoors(tileMap);
+                    HUD::getInstance().showItemNotification(item->getItemName(), item->getItemDescription());
                 }
+    
+                auto weapons = player->getEquippedWeapons();
+                for (auto* weapon : weapons) {
+                    if (weapon->getItemType() == item->getType()) { // Comparar el tipo del arma con el tipo del ítem
+                        item->applyEffect(*weapon); // Aplicar el efecto al arma correspondiente
+                        // DEBUG
+                        // std::cout << "Ítem aplicado al arma de tipo: " << static_cast<int>(weapon->getItemType()) << std::endl;
+                        break;
+                    }
+                }
+                // DEBUG
+                // std::cout << "Ítem recogido en posición: " << item->getBounds().left << ", " << item->getBounds().top << std::endl;
             }
-            // DEBUG
-            // std::cout << "Ítem recogido en posición: " << item->getBounds().left << ", " << item->getBounds().top << std::endl;
         }
+    }
+    else {
+        if (openDoors && completed && !doorsOpened) {
+            openDoors(tileMap);
+            doorsOpened = true;
+        } 
     }
 }
 
