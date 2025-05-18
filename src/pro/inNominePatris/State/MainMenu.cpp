@@ -1,6 +1,6 @@
 #include "MainMenu.h"
 #include "InGame.h"
-#include "ConfMenu.h"
+#include "ControlsMenu.h" // Include the new ControlsMenu
 #include "../Game.h"
 #include <iostream>
 #include <MusicManager.h>
@@ -22,7 +22,7 @@ MainMenu::MainMenu(GameEngine& engine, float width, float height) :engine(engine
     backgroundSprite.setScale(width / backgroundTexture.getSize().x, height / backgroundTexture.getSize().y);
 
     // Opciones del menú
-    std::vector<std::string> opciones = {"Nueva Partida", "Continuar partida", "Configuracion", "Salir"};
+    std::vector<std::string> opciones = {"Nueva Partida", "Continuar partida", "Controles", "Salir"}; // Changed "Configuracion" to "Controles"
 
     for (size_t i = 0; i < opciones.size(); ++i) {
         // Crear fondo del texto
@@ -80,8 +80,8 @@ void MainMenu::update(Game& game) {
                     std::cout << "Continuar partida seleccionada\n";
                     game.changeState(InGame::getInstance(engine));
                 } else if (selectedItemIndex == 2) {
-                    std::cout << "Configuración seleccionada\n";
-                    game.changeState(ConfMenu::getInstance(800, 600));
+                    std::cout << "Controles seleccionada\n";
+                    game.changeState(ControlsMenu::getInstance(engine, 800, 600)); // Changed to ControlsMenu
                 } else if (selectedItemIndex == 3) {
                     std::cout << "Salir seleccionado\n";
                     window.close();
@@ -116,8 +116,8 @@ void MainMenu::handleSelection(Game& game) {
         std::cout << "Continuar partida seleccionada\n";
         game.changeState(InGame::getInstance(engine));
     } else if (selectedItemIndex == 2) {
-        std::cout << "Configuración seleccionada\n";
-        game.changeState(ConfMenu::getInstance(800, 600));
+        std::cout << "Controles seleccionada\n";
+        game.changeState(ControlsMenu::getInstance(engine, 800, 600)); // Changed to ControlsMenu
     } else if (selectedItemIndex == 3) {
         std::cout << "Salir seleccionado\n";
         game.getWindow().close();
