@@ -4,20 +4,24 @@
 #include "Character.h"
 #include "Item.h"
 
-DungeonRoom::DungeonRoom(const std::string& id, std::vector<std::shared_ptr<Enemy>> enemies_list, const std::string& musicFilePath, const std::string& fightMusicFilePath, std::function<void(TileMap&)> openDoors) 
-    : RoomState(), roomId(id), musicFilePath(musicFilePath), fightMusicFilePath(fightMusicFilePath), openDoors(openDoors) {
-    // Asignar los enemigos recibidos a la variable heredada
-    this->enemies = std::move(enemies_list);
+DungeonRoom::DungeonRoom(const std::string& id, std::vector<std::shared_ptr<Enemy>> enemies_list, const std::string& musicFilePath, const std::string& fightMusicFilePath, std::function<void(TileMap&)> openDoors)
+    : RoomState(), roomId(id), musicFilePath(musicFilePath), fightMusicFilePath(fightMusicFilePath), openDoors(openDoors), enemies(std::move(enemies_list)) {
 }
 
 DungeonRoom::~DungeonRoom() {
+    // Limpiar los items al destruir la sala
+    for (auto& item : items) {
+        delete item;
+    }
+    items.clear();
 }
 
 void DungeonRoom::enter() {
     if (!completed) {
         // Spawnear enemigos solo si la sala no ha sido completada
-        if(enemies.size() != 0){
+        if (!enemiesSpawned && !enemies.empty()) {
             EnemyManager::getInstance()->addEnemies(enemies);
+            enemiesSpawned = true; // Marcar que los enemigos han sido spawned
             MusicManager::getInstance().transitionTo(fightMusicFilePath, 80.f);
         }
     }
@@ -31,6 +35,12 @@ void DungeonRoom::setItemPositions(const std::vector<sf::Vector2f>& positions) {
 }
 
 void DungeonRoom::generateItems(Character* player) {
+    // Limpiar los items existentes antes de generar nuevos
+    for (auto& item : items) {
+        delete item;
+    }
+    items.clear();
+
     auto weapons = player->getEquippedWeapons();
     // DEBUG
     // std::cout << "Armas equipadas: " << weapons.size() << std::endl;
@@ -42,14 +52,14 @@ void DungeonRoom::generateItems(Character* player) {
         // std::cout << "Generando ítem para el arma: " << static_cast<int>(weaponType) << std::endl;
         if (newItem) {
             newItem->setPosition(itemPositions[i].x, itemPositions[i].y);
-            items.emplace_back(newItem);
+            items.push_back(newItem);
             // DEBUG
             std::cout << "Generé un ítem en la posición: " << itemPositions[i].x << ", " << itemPositions[i].y << std::endl;
         }
     }
 }
 
-void DungeonRoom::update(TileMap& tileMap) {   
+void DungeonRoom::update(TileMap& tileMap) {
     // Si no quedan enemigos, la sala está completada
     if (!hasEnemies() && !completed) {
         completed = true;
@@ -71,17 +81,17 @@ void DungeonRoom::update(TileMap& tileMap) {
     Character* player = Character::getInstance();
     sf::FloatRect playerBounds = player->getBounds();
 
-    if(hasItems){
+    if (hasItems) {
         for (auto& item : items) {
             if (!item->GetIsPickedUp() && item->getBounds().intersects(playerBounds)) {
-                
+
                 // Marcar todos los ítems como recogidos
                 for (auto& otherItem : items) {
                     otherItem->Picked();
                     openDoors(tileMap);
                     HUD::getInstance().showItemNotification(item->getItemName(), item->getItemDescription());
                 }
-    
+
                 auto weapons = player->getEquippedWeapons();
                 for (auto* weapon : weapons) {
                     if (weapon->getItemType() == item->getType()) { // Comparar el tipo del arma con el tipo del ítem
@@ -100,10 +110,31 @@ void DungeonRoom::update(TileMap& tileMap) {
         if (openDoors && completed && !doorsOpened) {
             openDoors(tileMap);
             doorsOpened = true;
-        } 
+        }
     }
 }
 
 void DungeonRoom::exit() {
     // Lógica al salir de la sala
+}
+
+const std::vector<Item*>& DungeonRoom::getItems() const { return items; }
+
+
+void DungeonRoom::reset() {
+    // Resetear el estado de la sala
+    completed = false;
+    doorsOpened = false;
+    enemiesSpawned = false;
+
+    // Limpiar los items existentes
+    for (auto& item : items) {
+        delete item;
+    }
+    items.clear();
+
+    // Respawnear los enemigos
+    EnemyManager::getInstance()->clearEnemies();
+    EnemyManager::getInstance()->addEnemies(enemies);
+    enemiesSpawned = true;
 }

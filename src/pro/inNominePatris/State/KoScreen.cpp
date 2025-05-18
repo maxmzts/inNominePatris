@@ -136,13 +136,13 @@ void KoScreen::handleMouseClick(Game& game, sf::RenderWindow& window) {
 void KoScreen::handleSelection(Game& game) {
     if (selectedItemIndex == 0) {
         // Usar el método público para reiniciar la instancia
+        Character::getInstance()->reset();
         InteractionManager::getInstance()->resetButtons();
         RoomManager::getInstance()->clearRooms();
         EnemyManager::getInstance()->clearEnemies();
-        InGame::resetInstance();
         
-        // Obtener una nueva instancia limpia de InGame
         InGame* inGame = InGame::getInstance(game.getEngine());
+        inGame->reset(game.getEngine());
         
         game.changeState(inGame);
         return;

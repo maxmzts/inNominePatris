@@ -39,6 +39,8 @@ public:
 
     void clearRooms(){ states.clear(); currentState.reset(); }
 
+    void resetAllRooms();
+
     void resetInstance() {
         if (instance) {
             delete instance;

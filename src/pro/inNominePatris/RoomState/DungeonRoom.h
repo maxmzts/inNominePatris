@@ -4,6 +4,8 @@
 #include "Item.h"
 #include <string>
 #include "RoomState.h"
+#include <vector>
+#include <memory>
 
 class DungeonRoom : public RoomState {
 private:
@@ -11,17 +13,19 @@ private:
     std::function<void(TileMap&)> openDoors;
     bool hasItems = false;
     bool doorsOpened = false;
+    bool enemiesSpawned = false;
     std::vector<sf::Vector2f> itemPositions;
-    std::vector<std::unique_ptr<Item>> items;
+    std::vector<Item*> items; // Cambiado a punteros crudos
     std::string musicFilePath;
     std::string fightMusicFilePath;
+    std::vector<std::shared_ptr<Enemy>> enemies; // Guardar la lista original de enemigos
 
 public:
-    DungeonRoom(const std::string& id, 
-                std::vector<std::shared_ptr<Enemy>> enemies_list,
-                const std::string& musicFilePath, 
-                const std::string& fightMusicFilePath = "./resources/music/hunt-the-hunter.ogg",
-                std::function<void(TileMap&)> openDoors = {});
+    DungeonRoom(const std::string& id,
+        std::vector<std::shared_ptr<Enemy>> enemies_list,
+        const std::string& musicFilePath,
+        const std::string& fightMusicFilePath = "./resources/music/hunt-the-hunter.ogg",
+        std::function<void(TileMap&)> openDoors = {});
     virtual ~DungeonRoom();
 
     void setItemPositions(const std::vector<sf::Vector2f>& positions);
@@ -30,7 +34,9 @@ public:
     void update(TileMap& tileMap) override;
     void exit() override;
 
-    const std::vector<std::unique_ptr<Item>>& getItems() const { return items; }
+    const std::vector<Item*>& getItems() const; // Cambiado a punteros crudos
+
+    void reset();
 };
 
 #endif // DUNGEON_ROOM_H

@@ -12,6 +12,7 @@
 #include "InteractionFactory.h"
 #include "SpawnPlayerInteraction.h"
 #include "WorldChangeInteraction.h"
+#include "RoomManager.h"
 #include <iostream>
 #include <algorithm>
 #include "EnemyBat.h"
@@ -484,11 +485,43 @@ bool InGame::checkPlayerWasHit(Character& player, std::shared_ptr<Enemy> enemy){
 }
 
 void InGame::reset(GameEngine& engine) {
-    // Reinicia los datos del estado del juego
+    // Reset the tilemap
+    if (!tileMap.loadFromFile("./maps/lobby.tmx", engine)) {
+        std::cerr << "Error cargando el mapa\n";
+        exit(-1);
+    }
+
+    // Reset player
     player.spawnAt(tileMap, 20, 44); // Posición inicial del lobby
     player.setHealth(player.getMaxHealth());
+
+    // Clear enemies
     EnemyManager::getInstance()->clearEnemies();
-    currentWorldState = worldStates["lobby"].get(); // Fuerza el lobby como mundo actual
+
+    // Reset world state to lobby
+    currentWorldState = worldStates["lobby"].get();
+    currentWorldState->initialize();
+
+    // Restore weapons on ground
+    Sword* sword = new Sword(&engine);
+    Lance* lance = new Lance(&engine);
+    Bow* bow = new Bow(&engine);
+
+    weaponsOnGround = { sword, lance, bow };
+
+    // Posiciones de los pilares
+    sword->setPosition(183, 530);
+    lance->setPosition(234, 500);
+    bow->setPosition(163, 578);
+
+    // Reset dungeon rooms
+    RoomManager* roomManager = RoomManager::getInstance();
+    roomManager->resetAllRooms();
+
+    // Reset karma
+    player.resetKarma();
+
+    MusicManager::getInstance().transitionTo("resources/music/sanity.ogg");
 }
 
 
@@ -506,6 +539,8 @@ void InGame::changeWorldState(std::string& stateName, std::string& mapFilePath, 
         // Resetear estado de portales
         SpawnPlayerInteraction::resetPortalStates();
         // Reiniciar items y mejoras
+
+        EnemyManager::getInstance()->clearEnemies();
         
         // 3. Hacer spawn al jugador en la nueva posición
         getPlayer().spawnAt(getTileMap(), spawnPosition.x, spawnPosition.y);
