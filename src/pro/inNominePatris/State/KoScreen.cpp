@@ -2,15 +2,13 @@
 #include "../Game.h"
 #include "MainMenu.h"
 #include "InGame.h"
-#include "RoomManager.h"
-#include "EnemyManager.h"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
 KoScreen* KoScreen::instance = nullptr;
 
 KoScreen* KoScreen::getInstance() {
-    if (!instance) {
+    if (!instance || instance == nullptr) {
         instance = new KoScreen();
     }
     return instance;
@@ -134,16 +132,12 @@ void KoScreen::handleMouseClick(Game& game, sf::RenderWindow& window) {
 }
 
 void KoScreen::handleSelection(Game& game) {
-    if (selectedItemIndex == 0) {
-        // Usar el método público para reiniciar la instancia
-        Character::getInstance()->reset();
-        InteractionManager::getInstance()->resetButtons();
-        RoomManager::getInstance()->clearRooms();
-        EnemyManager::getInstance()->clearEnemies();
-        
+    if (selectedItemIndex == 0) {   
+        Character::getInstance()->reset();     
         InGame* inGame = InGame::getInstance(game.getEngine());
-        inGame->reset(game.getEngine());
-        
+        std::string targetWorldState = "lobby", mapFilePath = "./maps/lobby.tmx", musicFilePath = "resources/music/lobby_track.ogg";
+        sf::Vector2i spawnPosition = {20, 44};
+        inGame->changeWorldState(targetWorldState, mapFilePath, musicFilePath, spawnPosition);
         game.changeState(inGame);
         return;
     } else if (selectedItemIndex == 1) {

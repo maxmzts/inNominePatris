@@ -35,10 +35,10 @@ void Game::changeState(State* newState) {
     if (currentState) {
         std::cout << "Eliminando estado actual\n";
 
-        // Si el estado actual no es un singleton, elimínalo
-        if (dynamic_cast<InGame*>(currentState) == nullptr) {
-            delete currentState;
-        }
+        // // Si el estado actual no es un singleton, elimínalo
+        // if (dynamic_cast<InGame*>(currentState) == nullptr) {
+        //     delete currentState;
+        // }
     }
     currentState = newState; // Cambia al nuevo estado
     std::cout << "Nuevo estado asignado\n";
