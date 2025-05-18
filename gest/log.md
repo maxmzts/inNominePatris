@@ -334,5 +334,10 @@ He implementado el tecer boss.
 ## 20250509 JorgePelegrín @(4h 30min)
 He implementado el segundo boss al completo. Lo único que falta es añadirle los efectos de sonidos a sus ataques, etc.
 
-## 20250418 EstrellaDomínguez @(2h)
+## 20250518 EstrellaDomínguez @(2h)
 El estado de KO funciona prácticamente al completo. Ya se restauran todos los items, enemigos, armas, karma, botones y música, sin embargo cuando mueres una segunda vez falla algo.
+
+## 20250518 EstrellaDomínguez @(1h)
+Arreglado estado de KO: ya puedes morir varias veces.
+Implementada la ventana de Controles desde el menu principal y de pausa.
+Ya se puede navegar entre controles sin que salga segmentation fault.
