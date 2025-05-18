@@ -8,7 +8,7 @@
 KoScreen* KoScreen::instance = nullptr;
 
 KoScreen* KoScreen::getInstance() {
-    if (!instance) {
+    if (!instance || instance == nullptr) {
         instance = new KoScreen();
     }
     return instance;
