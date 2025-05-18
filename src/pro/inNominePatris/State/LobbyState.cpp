@@ -35,3 +35,30 @@ void LobbyState::openDoor3(TileMap& tileMap){
         tileMap.setLocalTile("deco", x, 7, -1);
     }
 }
+
+void LobbyState::spawnWeaponsOnGround(std::vector<Weapon*>& weaponsOnGround, GameEngine* engine) {
+    // Limpia las armas anteriores
+    for (Weapon* weapon : weaponsOnGround) {
+        delete weapon;
+    }
+    weaponsOnGround.clear();
+
+    // Siempre aparece la espada
+    Sword* sword = new Sword(engine);
+    sword->setPosition(183, 530);
+    weaponsOnGround.push_back(sword);
+
+    // Si has pasado mundo 1, aparece el arco
+    if (isWorld1Completed()) {
+        Bow* bow = new Bow(engine);
+        bow->setPosition(163, 578);
+        weaponsOnGround.push_back(bow);
+    }
+
+    // Si has pasado mundo 2, aparece la lanza
+    if (isWorld2Completed()) {
+        Lance* lance = new Lance(engine);
+        lance->setPosition(234, 500);
+        weaponsOnGround.push_back(lance);
+    }
+}

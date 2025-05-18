@@ -59,6 +59,7 @@ public:
 
     static void resetInstance(); // Método para reiniciar la instancia
 
+    void spawnWeaponsInLobby();
 };
 
 #endif // INGAME_H
