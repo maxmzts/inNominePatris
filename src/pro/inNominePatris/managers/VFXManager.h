@@ -34,5 +34,6 @@ public:
 
     void update(float deltaTime);
     void render(sf::RenderWindow& window);
+    void clear(){ effects.clear(); }
 };
 

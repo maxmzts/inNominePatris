@@ -550,6 +550,8 @@ void InGame::changeWorldState(std::string& stateName, std::string& mapFilePath, 
         InteractionManager::getInstance()->resetButtons(); 
         // Reiniciar items y mejoras
 
+        // Vaciar listas de enemigos y de efectos visuales permanentes
+        VFXManager::getInstance().clear();
         EnemyManager::getInstance()->clearEnemies();
         
         // 3. Hacer spawn al jugador en la nueva posición

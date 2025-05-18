@@ -188,8 +188,8 @@ public:
                     false,
                     true 
                 );
-                for (int x = 1; x <= 3; ++x) {
-                    for( int y = 1; y <= 4; ++y){
+                for (int x = 0; x < 1; ++x) {
+                    for( int y = 0; y < 2; ++y){
                         tileMap.setLocalTile("interaction", 240+x, 188+y, 1492);
                     }
                 }
