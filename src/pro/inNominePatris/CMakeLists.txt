@@ -21,6 +21,7 @@ add_subdirectory(interaction)
 add_subdirectory(Item)
 add_subdirectory(Shop)
 add_subdirectory(RoomState)
+add_subdirectory(SaveSystem)
 
 
 # Añadir Game.cpp al target libModulos para patron State

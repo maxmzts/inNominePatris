@@ -341,14 +341,16 @@ He movido la logica de creacion de las armas al lobby, restringiendo su creacion
 ## 20250518 EstrellaDomínguez @(2h)
 El estado de KO funciona prácticamente al completo. Ya se restauran todos los items, enemigos, armas, karma, botones y música, sin embargo cuando mueres una segunda vez falla algo.
 
-## 20250517 MaximoMartinez @(3h 40min)
+## 20250418 EstrellaDomínguez @(2h)
+El estado de KO funciona prácticamente al completo. Ya se restauran todos los items, enemigos, armas, karma, botones y música, sin embargo cuando mueres una segunda vez falla algo.
+
+## 20250518 MaximoMartinez @(6h)
 He añadido un portal al final de cada mundo para volver al lobby. 
 He asegurado que los mundos se reinicien bien cuando se vuelve al lobby.
 He implementado que se abran las puertas de cada mundo cuando se completa el anterior.
 He resuelto la excepción que saltaba al morir por segunda vez.
-
-## 20250418 EstrellaDomínguez @(2h)
-El estado de KO funciona prácticamente al completo. Ya se restauran todos los items, enemigos, armas, karma, botones y música, sin embargo cuando mueres una segunda vez falla algo.
+Con todo eso **el juego puede por fin jugarse de principio a fin**.
+Por la noche trabajé en implementar el sistema de guardado. Conseguí que guardara pero no hice tests de la carga de datos.
 
 ## 20250509 JorgePelegrín @(1h 30min)
 Ahora el efecto de los items se revierten al morir o salir del mundo al lobby. 

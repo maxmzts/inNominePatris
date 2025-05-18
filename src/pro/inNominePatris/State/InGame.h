@@ -57,6 +57,7 @@ public:
 
     TileMap& getTileMap() { return tileMap; }
     Character& getPlayer() { return player; }
+    KarmaSystem& getKarmaSystem() { return karmaSystem; }
 
     static void resetInstance(); // Método para reiniciar la instancia
 

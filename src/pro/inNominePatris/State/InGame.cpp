@@ -24,6 +24,7 @@
 #include <EnemyManager.h>
 #include <EnemyNecromancer.h>
 #include <MusicManager.h>
+#include <SaveSystem.h>
 
 InGame* InGame::instance = nullptr;
 
@@ -47,41 +48,6 @@ InGame::InGame(GameEngine& engine)
 
     // Hacer spawn al jugador
     player.spawnAt(tileMap, 20, 44);
-
-//     // Crear las armas y colocarlas en los pilares
-//     Sword* sword = new Sword(&engine);
-//     Lance* lance = new Lance(&engine);
-//     Bow* bow = new Bow(&engine);
-
-//     // Solo la espada está disponible inicialmente
-//     weaponsOnGround = { sword };
-
-//     // Añadir otras armas según el progreso
-//     if (LobbyState::isWorld1Completed()) {
-//         weaponsOnGround.push_back(bow);
-//     }
-    
-//     if (LobbyState::isWorld2Completed()) {
-//         weaponsOnGround.push_back(lance);
-//     }
-// ;
-
-//     // Posiciones de los pilares
-//     sword->setPosition(183, 530);
-//     lance->setPosition(234, 500);
-//     bow->setPosition(163, 578);
-
-
-
-    // //TESTS ENEMIGOS
-    // std::shared_ptr<EnemyBat> enemy = nullptr;
-    // //cargar enemigos
-    // for (size_t i = 0; i < 3; i++)
-    // {
-    //     enemy = std::make_shared<EnemyBat>(sf::Vector2f(100.f*i / 16,100.f*i / 16), 2);
-    //     EnemyManager::getInstance()->addEnemy(enemy);
-    // }
-    // EnemyManager::getInstance()->addEnemy(std::make_shared<EnemyNecromancer>(sf::Vector2f(400.f / 16,400.f / 16), 10));
     MusicManager::getInstance().transitionTo("resources/music/sanity.ogg");
 
     // Inicializar los subestados del mundo
@@ -92,15 +58,37 @@ InGame::InGame(GameEngine& engine)
 
     currentWorldState = worldStates["lobby"].get(); // Comienza en el lobby
     spawnWeaponsInLobby();
+
+    // TEST SAVE FILE
+    
+    SaveSystem::getInstance().setSaveFilePath("./savefile.txt");
+    bool saveSuccess = SaveSystem::getInstance().saveGameState(karmaSystem);
+    if (saveSuccess) {
+        std::cout << "Partida guardada correctamente." << std::endl;
+    } else {
+        std::cerr << "Error al guardar la partida." << std::endl;
+    }
+
+    // if (!SaveSystem::getInstance().loadGameState(karmaSystem)) {
+    //     // Si no hay partida guardada, inicializar con valores por defecto
+    //     Character::getInstance()->addKarma(0);
+    //     LobbyState::setWorld1completed();
+    //     LobbyState::setWorld2completed();
+    //     // No hay mejoras iniciales
+    //     std::cout << "No se encontró partida guardada. Usando valores por defecto." << std::endl;
+    // } else {
+    //     std::cout << "Partida cargada correctamente." << std::endl;    
+    // }
 }
 
 InGame* InGame::getInstance(GameEngine& engine) {
     if (!instance) {
         instance = new InGame(engine);
-    } else {
-        // Reinicia el estado del juego si ya existe
-        instance->reset(engine);
-    }
+    } 
+    // else {
+    //     // Reinicia el estado del juego si ya existe
+    //     instance->reset(engine);
+    // }
     return instance;
 }
 

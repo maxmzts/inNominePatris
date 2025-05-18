@@ -3,35 +3,35 @@
 KarmaSystem::KarmaSystem(Character& character)
     : pecadoCount(0), absolucionCount(0), character(character) {
     // Inicializar las mejoras permanentes
-    upgrades.push_back(Upgrade("Dano aumentado", KarmaType::Pecado, 100, [&](){
+    upgrades.push_back(Upgrade(1, "Dano aumentado", KarmaType::Pecado, 100, [&](){
         Weapon::increaseGlobalDamageMultiplier(0.2f); // Aumentar el daño global
     })); // Mejora de Pecado
-    upgrades.push_back(Upgrade("Velocidad de movimiento", KarmaType::Absolucion, 100, [&]() {
+    upgrades.push_back(Upgrade(2, "Velocidad de movimiento", KarmaType::Absolucion, 100, [&]() {
         character.increaseMovementSpeed(75.0f);
     })); // Mejora de Absolución
-    upgrades.push_back(Upgrade("Probabilidad de esquivar ataques", KarmaType::Pecado, 200, [&](){
+    upgrades.push_back(Upgrade(3, "Probabilidad de esquivar ataques", KarmaType::Pecado, 200, [&](){
         character.increaseDodgeChance(0.05f); // Aumentar la probabilidad de esquivar ataques
     })); // Mejora de Pecado
-    upgrades.push_back(Upgrade("Bonus de monedas", KarmaType::Absolucion, 200, [&]() {
+    upgrades.push_back(Upgrade(4, "Bonus de monedas", KarmaType::Absolucion, 200, [&]() {
         character.enableCoinBonus(); // Habilitar el bonus de monedas
     })); // Mejora de Absolución
     
-    upgrades.push_back(Upgrade("Probabilidad de critico", KarmaType::Pecado, 300, [&](){
+    upgrades.push_back(Upgrade(5, "Probabilidad de critico", KarmaType::Pecado, 300, [&](){
         Weapon::increaseGlobalCriticalChanceBonus(0.05f); // Aumentar la probabilidad de crítico global
     })); // Mejora de Pecado
-    upgrades.push_back(Upgrade("Cantidad de vidas", KarmaType::Absolucion, 300, [&](){
+    upgrades.push_back(Upgrade(6, "Cantidad de vidas", KarmaType::Absolucion, 300, [&](){
         character.increaseMaxHealth(1);
     })); // Mejora de Absolución
-    upgrades.push_back(Upgrade("Dano critico aumentado", KarmaType::Pecado, 500, [&](){
+    upgrades.push_back(Upgrade(7, "Dano critico aumentado", KarmaType::Pecado, 500, [&](){
         Weapon::increaseGlobalCriticalMultiplier(0.25f); // Aumentar el daño crítico global
     })); // Mejora avanzada de Pecado
-    upgrades.push_back(Upgrade("Regeneracion de vida", KarmaType::Absolucion, 500, [&](){
+    upgrades.push_back(Upgrade(8, "Regeneracion de vida", KarmaType::Absolucion, 500, [&](){
         character.enableHealthRegeneration(); // Habilitar regeneración de vida
     })); // Mejora avanzada de Absolución
-    upgrades.push_back(Upgrade("Combo de ataques", KarmaType::Pecado, 700, [&](){
+    upgrades.push_back(Upgrade(9, "Combo de ataques", KarmaType::Pecado, 700, [&](){
         Weapon::enableComboDamageBonus(0.1f); // Aumentar el daño por combo
     })); // Mejora avanzada de Pecado
-    upgrades.push_back(Upgrade("Escudo temporal", KarmaType::Absolucion, 700, [&](){
+    upgrades.push_back(Upgrade(10, "Escudo temporal", KarmaType::Absolucion, 700, [&](){
         character.enableTemporalyShield(4.0f); // Habilitar escudo temporal durante 4 segundos
     })); // Mejora avanzada de Absolución
 }
@@ -61,6 +61,11 @@ bool KarmaSystem::purchaseUpgrade(int upgradeIndex) {
         return false;
     }
 
+    return setUpgrade(upgradeIndex);
+}
+
+bool KarmaSystem::setUpgrade(int upgradeIndex){
+    Upgrade& upgrade = upgrades[upgradeIndex];
     // Verificar si se pueden desbloquear según el orden
     // Nivel 1: Mejoras iniciales disponibles siempre
     // Nivel 2+: Solo disponible si el nivel anterior tiene al menos una mejora comprada
