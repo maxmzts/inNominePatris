@@ -34,9 +34,7 @@ public:
     void update(TileMap& tileMap) override;
     void exit() override;
 
-    const std::vector<Item*>& getItems() const; // Cambiado a punteros crudos
-
-    void reset();
+    const std::vector<Item*>& getItems() const;
 };
 
 #endif // DUNGEON_ROOM_H

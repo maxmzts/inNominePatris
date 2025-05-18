@@ -19,6 +19,7 @@ public:
     void decreaseAttackCooldown(float cooldown);
     void increaseAttackDamage(float damage); 
     void enableDoubleDash();
+    void disableDoubleDash();
     bool canPerformDoubleDash() const;
     void createHitbox(sf::Vector2f position, sf::Vector2f direction);
     // void draw(GameEngine& engine, sf::Vector2f position, sf::Vector2f direction) override;

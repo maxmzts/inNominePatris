@@ -44,11 +44,3 @@ void RoomManager::update(TileMap& tileMap) {
 std::shared_ptr<RoomState> RoomManager::getCurrentState() const {
     return currentState;
 }
-
-void RoomManager::resetAllRooms() {
-    for (auto& pair : states) {
-        if (auto dungeonRoom = std::dynamic_pointer_cast<DungeonRoom>(pair.second)) {
-            dungeonRoom->reset();
-        }
-    }
-}

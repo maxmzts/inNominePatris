@@ -10,6 +10,7 @@
 #include "PauseMenu.h"
 #include "KoScreen.h"
 #include "InteractionFactory.h"
+#include "ItemManager.h"
 #include "SpawnPlayerInteraction.h"
 #include "WorldChangeInteraction.h"
 #include "RoomManager.h"
@@ -143,6 +144,10 @@ void InGame::update(Game& game) {
         // CHEATCODE PARA LA PRESENTACION
         if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Num3) {
             LobbyState::setWorld2completed();
+        }
+
+        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Num7) {
+            player.addKarma(2000);
         }
 
         // Abrir la tienda (tecla B)
@@ -520,6 +525,9 @@ void InGame::reset(GameEngine& engine) {
     player.spawnAt(tileMap, 20, 44); // Posición inicial del lobby
     player.setHealth(player.getMaxHealth());
 
+    //Reset items
+    ItemManager::getInstance()->clearRunItemEffects(player.getEquippedWeapons());
+    
     // Clear enemies
     EnemyManager::getInstance()->clearEnemies();
     currentWorldState = worldStates["lobby"].get();
@@ -564,6 +572,7 @@ void InGame::changeWorldState(std::string& stateName, std::string& mapFilePath, 
         // Si entramos al lobby, crear las armas allí
         if (stateName == "lobby") {
             static_cast<LobbyState*>(currentWorldState)->spawnWeaponsOnGround(weaponsOnGround, &engine);
+            ItemManager::getInstance()->clearRunItemEffects(getPlayer().getEquippedWeapons());
         }
         // DEBUG
         // std::cout << "Cambiando al estado del mundo: " << stateName << std::endl;

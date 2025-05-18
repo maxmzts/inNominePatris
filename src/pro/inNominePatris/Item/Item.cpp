@@ -140,16 +140,39 @@ void DashBoostItem::applyEffect(Weapon& weapon) {
         sword->increaseDashSpeed(80.f);
     }
 }
+
+//Revertir el aumento de velocidad del dash
+void DashBoostItem::revertEffect(Weapon& weapon) {
+    if (Sword* sword = dynamic_cast<Sword*>(&weapon)) {
+        sword->increaseDashSpeed(-80.f); // Reducir en la misma cantidad que se aumentó
+    }
+}
+
 //Disminuir el cooldown del dash
 void DashCooldownItem::applyEffect(Weapon& weapon) {
     if (Sword* sword = dynamic_cast<Sword*>(&weapon)) {
         sword->decreaseDashCooldown(0.5f); // Disminuir el cooldown del dash
     }
 }
+
+//Revertir la disminución del cooldown del dash
+void DashCooldownItem::revertEffect(Weapon& weapon) {
+    if (Sword* sword = dynamic_cast<Sword*>(&weapon)) {
+        sword->decreaseDashCooldown(-0.5f); // Aumentar en la misma cantidad que se disminuyó
+    }
+}
+
 //Disminuir el cooldown del ataque
 void AttackCooldownSwordItem::applyEffect(Weapon& weapon) {
     if (Sword* sword = dynamic_cast<Sword*>(&weapon)) {
         sword->decreaseAttackCooldown(0.2f); // Disminuir el cooldown del ataque
+    }
+}
+
+//Revertir la disminución del cooldown del ataque
+void AttackCooldownSwordItem::revertEffect(Weapon& weapon) {
+    if (Sword* sword = dynamic_cast<Sword*>(&weapon)) {
+        sword->decreaseAttackCooldown(-0.2f); // Aumentar en la misma cantidad que se disminuyó
     }
 }
 
@@ -159,6 +182,15 @@ void AttackDamageSwordItem::applyEffect(Weapon& weapon) {
         sword->increaseAttackDamage(10.f); // Aumentar el daño del ataque
     }
 }
+
+//Revertir el aumento del daño del ataque
+void AttackDamageSwordItem::revertEffect(Weapon& weapon) {
+    if (Sword* sword = dynamic_cast<Sword*>(&weapon)) {
+        sword->increaseAttackDamage(-10.f); // Disminuir en la misma cantidad que se aumentó
+    }
+}
+
+//Habilitar el doble dash
 void DoubleDashItem::applyEffect(Weapon& weapon) {
     Sword* sword = dynamic_cast<Sword*>(&weapon);
     if (sword) {
@@ -166,6 +198,15 @@ void DoubleDashItem::applyEffect(Weapon& weapon) {
         std::cout << "¡Doble dash habilitado para la espada!" << std::endl;
     } else {
         std::cerr << "El ítem DoubleDash solo puede aplicarse a una espada." << std::endl;
+    }
+}
+
+//Deshabilitar el doble dash
+void DoubleDashItem::revertEffect(Weapon& weapon) {
+    Sword* sword = dynamic_cast<Sword*>(&weapon);
+    if (sword) {
+        sword->disableDoubleDash(); // Deshabilitar el doble dash en la espada
+        std::cout << "Doble dash deshabilitado para la espada." << std::endl;
     }
 }
 
@@ -178,6 +219,13 @@ void AttackCooldownLanceItem::applyEffect(Weapon& weapon) {
     }
 }
 
+//Revertir la disminución del cooldown del ataque
+void AttackCooldownLanceItem::revertEffect(Weapon& weapon) {
+    if (Lance* lance = dynamic_cast<Lance*>(&weapon)) {
+        lance->decreaseAttackCooldown(-0.2f); // Aumentar en la misma cantidad que se disminuyó
+    }
+}
+
 //Aumentar el daño del ataque
 void AttackDamageLanceItem::applyEffect(Weapon& weapon) {
     if (Lance* lance = dynamic_cast<Lance*>(&weapon)) {
@@ -185,10 +233,24 @@ void AttackDamageLanceItem::applyEffect(Weapon& weapon) {
     }
 }
 
+//Revertir el aumento del daño del ataque
+void AttackDamageLanceItem::revertEffect(Weapon& weapon) {
+    if (Lance* lance = dynamic_cast<Lance*>(&weapon)) {
+        lance->increaseAttackDamage(-10.f); // Disminuir en la misma cantidad que se aumentó
+    }
+}
+
 //Aumentar el tamaño de la hitbox del ataque
 void AttackHitboxLanceItem::applyEffect(Weapon& weapon) {
     if (Lance* lance = dynamic_cast<Lance*>(&weapon)) {
-        lance->increaseAttackHitbox(250,40); // Crear la hitbox de ataque
+        lance->increaseAttackHitbox(250, 40); // Crear la hitbox de ataque
+    }
+}
+
+//Revertir el aumento del tamaño de la hitbox del ataque
+void AttackHitboxLanceItem::revertEffect(Weapon& weapon) {
+    if (Lance* lance = dynamic_cast<Lance*>(&weapon)) {
+        lance->increaseAttackHitbox(-250, -40); // Reducir la hitbox de ataque
     }
 }
 
@@ -196,6 +258,13 @@ void AttackHitboxLanceItem::applyEffect(Weapon& weapon) {
 void RevengeReturnItem::applyEffect(Weapon& weapon) {
     if (Lance* lance = dynamic_cast<Lance*>(&weapon)) {
         lance->activateRevengeReturn();
+    }
+}
+
+//Desactivar el ataque de venganza
+void RevengeReturnItem::revertEffect(Weapon& weapon) {
+    if (Lance* lance = dynamic_cast<Lance*>(&weapon)) {
+        lance->deactivateRevengeReturn();
     }
 }
 
@@ -208,10 +277,24 @@ void AttackDamageBowItem::applyEffect(Weapon& weapon) {
     }
 }
 
+//Revertir el aumento del daño del ataque
+void AttackDamageBowItem::revertEffect(Weapon& weapon) {
+    if (Bow* bow = dynamic_cast<Bow*>(&weapon)) {
+        bow->increaseAttackDamage(-8.f); // Disminuir en la misma cantidad que se aumentó
+    }
+}
+
 //Aumentar la velocidad de la flecha
 void ArrowSpeedItem::applyEffect(Weapon& weapon) {
     if (Bow* bow = dynamic_cast<Bow*>(&weapon)) {
         bow->increaseArrowSpeed(150.f); // Aumentar la velocidad de la flecha
+    }
+}
+
+//Revertir el aumento de la velocidad de la flecha
+void ArrowSpeedItem::revertEffect(Weapon& weapon) {
+    if (Bow* bow = dynamic_cast<Bow*>(&weapon)) {
+        bow->increaseArrowSpeed(-150.f); // Disminuir en la misma cantidad que se aumentó
     }
 }
 
@@ -222,6 +305,13 @@ void ArrowCountItem::applyEffect(Weapon& weapon) {
     }
 }
 
+//Revertir el aumento de la cantidad de flechas disparadas por la habilidad
+void ArrowCountItem::revertEffect(Weapon& weapon) {
+    if (Bow* bow = dynamic_cast<Bow*>(&weapon)) {
+        bow->increaseAbilityArrowCount(-2); // Disminuir en la misma cantidad que se aumentó
+    }
+}
+
 //Tirar flechas más rápido
 void QuickShotItem::applyEffect(Weapon& weapon) {
     if (Bow* bow = dynamic_cast<Bow*>(&weapon)) {
@@ -229,9 +319,23 @@ void QuickShotItem::applyEffect(Weapon& weapon) {
     }
 }
 
+//Deshabilitar el disparo rápido
+void QuickShotItem::revertEffect(Weapon& weapon) {
+    if (Bow* bow = dynamic_cast<Bow*>(&weapon)) {
+        bow->disableQuickShot(); // Deshabilitar el disparo rápido
+    }
+}
+
 //Disminuir el cooldown de la habilidad
 void DecreaseAbilityCooldownBowItem::applyEffect(Weapon& weapon) {
     if (Bow* bow = dynamic_cast<Bow*>(&weapon)) {
         bow->decreaseAbilityCooldown(1.f); // Disminuir el cooldown de la habilidad
+    }
+}
+
+//Revertir la disminución del cooldown de la habilidad
+void DecreaseAbilityCooldownBowItem::revertEffect(Weapon& weapon) {
+    if (Bow* bow = dynamic_cast<Bow*>(&weapon)) {
+        bow->decreaseAbilityCooldown(-1.f); // Aumentar en la misma cantidad que se disminuyó
     }
 }

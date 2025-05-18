@@ -36,6 +36,7 @@ public:
     void increaseAttackDamage(float damage);
     void decreaseAbilityCooldown(float cooldown);
     void enableQuickShot(float chance);
+    void disableQuickShot();
     std::vector<Arrow>& getArrows() { return arrows; }
 private:
     SpriteFacade spriteFacade;

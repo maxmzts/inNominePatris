@@ -12,6 +12,7 @@
 #include "Enemy.h"
 #include "Shop.h"
 #include "HUD.h"
+#include "Item.h"
 #include "WorldState.h"
 #include <SFML/Graphics.hpp>
 #include <vector>

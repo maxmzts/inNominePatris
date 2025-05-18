@@ -36,6 +36,7 @@ public:
     virtual ~Item() = default;
 
     virtual void applyEffect(Weapon& weapon) = 0; // Efecto específico del ítem
+    virtual void revertEffect(Weapon& weapon) = 0; // Revertir el efecto del ítem
     void setTexture(const std::string& texturePath);
     void setPosition(float x, float y);
     void render(sf::RenderWindow& window);
@@ -77,6 +78,7 @@ class DashBoostItem : public Item {
             setItemDescription("+ Velocidad de dash");
         }
         void applyEffect(Weapon& weapon) override;
+        void revertEffect(Weapon& weapon) override;
         void Picked(HUD* hud = nullptr) { Item::Picked(hud); }
 };
 
@@ -88,6 +90,7 @@ class DashCooldownItem : public Item {
             setItemDescription("- Recarga de dash");
         }
         void applyEffect(Weapon& weapon) override;
+        void revertEffect(Weapon& weapon) override;
         void Picked(HUD* hud = nullptr) { Item::Picked(hud); }
 };
 
@@ -99,6 +102,7 @@ class AttackCooldownSwordItem : public Item {
             setItemDescription("- Tiempo entre ataques");
         }
         void applyEffect(Weapon& weapon) override;
+        void revertEffect(Weapon& weapon) override;
         void Picked(HUD* hud = nullptr) { Item::Picked(hud); }
 };
 
@@ -110,6 +114,7 @@ class AttackDamageSwordItem : public Item {
             setItemDescription("+ Daño con espada");
         }
         void applyEffect(Weapon& weapon) override;
+        void revertEffect(Weapon& weapon) override;
         void Picked(HUD* hud = nullptr) { Item::Picked(hud); }
 };
 
@@ -121,6 +126,7 @@ class DoubleDashItem : public Item {
             setItemDescription("Dash doble");
         }
         void applyEffect(Weapon& weapon) override;
+        void revertEffect(Weapon& weapon) override;
         void Picked(HUD* hud = nullptr) { Item::Picked(hud); }
 };
 
@@ -133,6 +139,7 @@ class AttackCooldownLanceItem : public Item {
             setItemDescription("Tiempo entre ataques");
         }
         void applyEffect(Weapon& weapon) override;
+        void revertEffect(Weapon& weapon) override;
         void Picked(HUD* hud = nullptr) { Item::Picked(hud); }
 };
 
@@ -144,6 +151,7 @@ class AttackDamageLanceItem : public Item {
             setItemDescription("+ Fuerza con lanza");
         }
         void applyEffect(Weapon& weapon) override;
+        void revertEffect(Weapon& weapon) override;
         void Picked(HUD* hud = nullptr) { Item::Picked(hud); }
 };
 
@@ -155,6 +163,7 @@ class AttackHitboxLanceItem : public Item {
             setItemDescription("+ Alcance de ataques");
         }
         void applyEffect(Weapon& weapon) override;
+        void revertEffect(Weapon& weapon) override;
         void Picked(HUD* hud = nullptr) { Item::Picked(hud); }
 };
 
@@ -166,6 +175,7 @@ class RevengeReturnItem : public Item {
             setItemDescription("+ Fuerza post-teletransporte");
         }
         void applyEffect(Weapon& weapon) override;
+        void revertEffect(Weapon& weapon) override;
         void Picked(HUD* hud = nullptr) { Item::Picked(hud); }
 };
 
@@ -179,6 +189,7 @@ class AttackDamageBowItem : public Item {
             setItemDescription("+ Fuerza con arco");
         }
         void applyEffect(Weapon& weapon) override;
+        void revertEffect(Weapon& weapon) override;
         void Picked(HUD* hud = nullptr) { Item::Picked(hud); }
 };
 
@@ -190,6 +201,7 @@ class ArrowSpeedItem : public Item {
             setItemDescription("+ Velocidad de flechas");
         }
         void applyEffect(Weapon& weapon) override;
+        void revertEffect(Weapon& weapon) override;
         void Picked(HUD* hud = nullptr) { Item::Picked(hud); }
 };
 
@@ -201,6 +213,7 @@ class ArrowCountItem : public Item {
             setItemDescription("+ Flechas por disparo");
         }
         void applyEffect(Weapon& weapon) override;
+        void revertEffect(Weapon& weapon) override;
         void Picked(HUD* hud = nullptr) { Item::Picked(hud); }
 };
 
@@ -212,6 +225,7 @@ class QuickShotItem : public Item {
             setItemDescription("Disparos instantáneos");
         }
         void applyEffect(Weapon& weapon) override;
+        void revertEffect(Weapon& weapon) override;
         void Picked(HUD* hud = nullptr) { Item::Picked(hud); }
 };
 
@@ -223,6 +237,7 @@ class DecreaseAbilityCooldownBowItem : public Item {
             setItemDescription("- Recarga de habilidad");
         }
         void applyEffect(Weapon& weapon) override;
+        void revertEffect(Weapon& weapon) override;
         void Picked(HUD* hud = nullptr) { Item::Picked(hud); }
 };
 

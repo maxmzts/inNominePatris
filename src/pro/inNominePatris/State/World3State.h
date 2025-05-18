@@ -37,15 +37,18 @@ public:
 
     void room1() {
         RoomManager* roomManager = RoomManager::getInstance();
-        std::shared_ptr<RoomState> room = nullptr;
 
         // Sala inicial, sin enemigos
-        room = std::make_shared<DungeonRoom>(
+        auto room = std::make_shared<DungeonRoom>(
             "room1",
             std::vector<std::shared_ptr<Enemy>>{},
             "./resources/music/who-killed-them.ogg",
-            "./resources/music/hunt-the-hunter.ogg"
+            "./resources/music/hunt-the-hunter.ogg",
+            [](TileMap&){}
         );
+
+        room->setItemPositions({sf::Vector2f(35.f * 16.f, 111.f * 16.f), sf::Vector2f(57.f * 16.f, 111.f * 16.f)});
+
         roomManager->registerState("room1", room);
     }
 

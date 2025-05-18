@@ -180,6 +180,12 @@ void Bow::enableQuickShot(float chance) {
     std::cout << "Quick Shot enabled with " << quickShotChance * 100 << "% chance!" << std::endl;
 }
 
+void Bow::disableQuickShot() {
+    quickShotEnabled = false;
+    quickShotChance = 0.0f; // Reset the chance
+    std::cout << "Quick Shot disabled!" << std::endl;
+}
+
 void Bow::decreaseAbilityCooldown(float cooldown) {
     abilityCooldown -= cooldown; // Disminuir el cooldown de la habilidad
     if (abilityCooldown < 1.0f) abilityCooldown = 1.0f; // Cap at 1 second to prevent it from becoming too powerful

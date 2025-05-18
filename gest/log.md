@@ -346,3 +346,7 @@ He resuelto la excepción que saltaba al morir por segunda vez.
 
 ## 20250418 EstrellaDomínguez @(2h)
 El estado de KO funciona prácticamente al completo. Ya se restauran todos los items, enemigos, armas, karma, botones y música, sin embargo cuando mueres una segunda vez falla algo.
+
+## 20250509 JorgePelegrín @(1h 30min)
+Ahora el efecto de los items se revierten al morir o salir del mundo al lobby. 
+Otros ajustes varios.

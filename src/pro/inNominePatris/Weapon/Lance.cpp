@@ -303,6 +303,10 @@ void Lance::activateRevengeReturn() {
     RevengeReturnItemPicked = true;
 }
 
+void Lance::deactivateRevengeReturn() {
+    RevengeReturnItemPicked = false;
+}
+
 bool Lance::HasRevengeReturn() const {
     return RevengeReturnActive;
 }

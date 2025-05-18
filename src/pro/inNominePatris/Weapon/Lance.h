@@ -63,6 +63,7 @@ class Lance : public Weapon {
         void SetRevengeReturn(); // Activa o desactiva el ataque de venganza
         void ConsumeRevengeReturn(); // Consume el ataque de venganza
         void activateRevengeReturn(); // Activa el ataque de venganza
+        void deactivateRevengeReturn(); // Desactiva el ataque de venganza
     private:
         SpriteFacade spriteFacade;
         bool isPortalDropped;

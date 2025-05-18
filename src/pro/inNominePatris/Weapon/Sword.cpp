@@ -240,3 +240,9 @@ void Sword::enableDoubleDash() {
     canDoubleDash = true;
     resetConsecutiveDashes(); // Actualiza inmediatamente el número de dashes disponibles
 }
+
+void Sword::disableDoubleDash() {
+    // std::cout << "Doble dash deshabilitado para la espada." << std::endl;
+    canDoubleDash = false;
+    resetConsecutiveDashes(); // Actualiza inmediatamente el número de dashes disponibles
+}

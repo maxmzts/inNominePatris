@@ -10,7 +10,7 @@ Character* Character::instance = nullptr; // Inicialización de la instancia
 Character::Character() 
     : speed(200.f), acceleration(1500.f), deceleration(2000.f), equippedWeapon(nullptr), 
       isDashing(false), dashSpeed(400.f), dashDuration(0.2f), weapons(), equippedIndex(0), 
-      direction(0.f, 0.f), maxHealth(5), currentHealth(maxHealth), isInvencible(false),
+      direction(0.f, 0.f), maxHealth(6), currentHealth(maxHealth), isInvencible(false),
       currentState(AnimationState::IDLE_DOWN), wasMoving(false) {
 
     velocity = sf::Vector2f(0.f, 0.f);
@@ -624,10 +624,6 @@ void Character::addKarma(int amount) {
         amount *= 2; 
     }
     karmaPoints += amount;
-}
-
-void Character::resetKarma() {
-    karmaPoints = 2000;
 }
 
 void Character::updateHealthRegeneration(float deltaTime) {
