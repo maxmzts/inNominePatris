@@ -334,5 +334,11 @@ He implementado el tecer boss.
 ## 20250509 JorgePelegrín @(4h 30min)
 He implementado el segundo boss al completo. Lo único que falta es añadirle los efectos de sonidos a sus ataques, etc.
 
+## 20250517 MaximoMartinez @(3h 40min)
+He añadido un portal al final de cada mundo para volver al lobby. 
+He asegurado que los mundos se reinicien bien cuando se vuelve al lobby.
+He implementado que se abran las puertas de cada mundo cuando se completa el anterior.
+He resuelto la excepción que saltaba al morir por segunda vez.
+
 ## 20250418 EstrellaDomínguez @(2h)
 El estado de KO funciona prácticamente al completo. Ya se restauran todos los items, enemigos, armas, karma, botones y música, sin embargo cuando mueres una segunda vez falla algo.

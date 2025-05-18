@@ -536,8 +536,9 @@ void InGame::changeWorldState(std::string& stateName, std::string& mapFilePath, 
         // 2. Restablecer el mundo a su estado natural 
         // Reiniciar salas
         RoomManager::getInstance()->clearRooms();
-        // Resetear estado de portales
+        // Resetear estado de portales y botones
         SpawnPlayerInteraction::resetPortalStates();
+        InteractionManager::getInstance()->resetButtons(); 
         // Reiniciar items y mejoras
 
         EnemyManager::getInstance()->clearEnemies();
