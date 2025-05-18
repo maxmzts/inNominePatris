@@ -11,7 +11,9 @@ private:
     bool door2Opened = false;
     bool door3Opened = false;
 public:
-    void initialize() override { door2Opened = false; door3Opened = false;}
+    void initialize() override { 
+        door2Opened = false; door3Opened = false;
+    }
 
     void update(TileMap& tileMap) override;
 
@@ -20,10 +22,16 @@ public:
     static void setWorld1completed(){ world1Completed = true; }
 
     static void setWorld2completed(){ world2Completed = true; }
+    
+    static bool isWorld1Completed() { return world1Completed; }
+    
+    static bool isWorld2Completed() { return world2Completed; }
 
     void openDoor2(TileMap& tileMap);
 
     void openDoor3(TileMap& tileMap);
+
+    void spawnWeaponsOnGround(std::vector<Weapon*>& weaponsOnGround, GameEngine* engine);
 };
 
 #endif // LOBBYSTATE_H

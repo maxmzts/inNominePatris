@@ -333,3 +333,7 @@ He implementado el tecer boss.
 
 ## 20250509 JorgePelegrín @(4h 30min)
 He implementado el segundo boss al completo. Lo único que falta es añadirle los efectos de sonidos a sus ataques, etc.
+
+
+## 20250509 JorgePelegrín @(1h 30min)
+He movido la logica de creacion de las armas al lobby, restringiendo su creacion dependiendo de los mundos que te hayas pasado. World3State hecho, falta poner el tile de interaccion para volver al lobby.

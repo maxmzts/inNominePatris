@@ -46,17 +46,30 @@ InGame::InGame(GameEngine& engine)
     // Hacer spawn al jugador
     player.spawnAt(tileMap, 20, 44);
 
-    // Crear las armas y colocarlas en los pilares
-    Sword* sword = new Sword(&engine);
-    Lance* lance = new Lance(&engine);
-    Bow* bow = new Bow(&engine);
+//     // Crear las armas y colocarlas en los pilares
+//     Sword* sword = new Sword(&engine);
+//     Lance* lance = new Lance(&engine);
+//     Bow* bow = new Bow(&engine);
 
-    weaponsOnGround = { sword, lance, bow };
+//     // Solo la espada está disponible inicialmente
+//     weaponsOnGround = { sword };
 
-    // Posiciones de los pilares
-    sword->setPosition(183, 530);
-    lance->setPosition(234, 500);
-    bow->setPosition(163, 578);
+//     // Añadir otras armas según el progreso
+//     if (LobbyState::isWorld1Completed()) {
+//         weaponsOnGround.push_back(bow);
+//     }
+    
+//     if (LobbyState::isWorld2Completed()) {
+//         weaponsOnGround.push_back(lance);
+//     }
+// ;
+
+//     // Posiciones de los pilares
+//     sword->setPosition(183, 530);
+//     lance->setPosition(234, 500);
+//     bow->setPosition(163, 578);
+
+
 
     // //TESTS ENEMIGOS
     // std::shared_ptr<EnemyBat> enemy = nullptr;
@@ -73,10 +86,10 @@ InGame::InGame(GameEngine& engine)
     worldStates["lobby"] = std::make_unique<LobbyState>();
     worldStates["world_1"] = std::make_unique<World1State>();
     worldStates["world_2"] = std::make_unique<World2State>();
-    worldStates["world_3"] = std::make_unique<World2State>();
+    worldStates["world_3"] = std::make_unique<World3State>();
 
     currentWorldState = worldStates["lobby"].get(); // Comienza en el lobby
-
+    spawnWeaponsInLobby();
 }
 
 InGame* InGame::getInstance(GameEngine& engine) {
@@ -175,10 +188,22 @@ void InGame::update(Game& game) {
             // Verificar si el jugador está cerca de un arma en el suelo
             auto it = std::find_if(weaponsOnGround.begin(), weaponsOnGround.end(), [&](Weapon* weapon) {
                 sf::Vector2f weaponPosition = weapon->getPosition();
-                return std::abs(playerPosition.x - weaponPosition.x) < 50 &&
-                       std::abs(playerPosition.y - weaponPosition.y) < 50;
+                
+                // Comprobar si el arma es accesible según el progreso
+                bool canInteract = true;
+                
+                // Verificar que el jugador pueda interactuar con este tipo de arma
+                if (dynamic_cast<Lance*>(weapon) && !LobbyState::isWorld2Completed()) {
+                    canInteract = false; // La lanza no está disponible si no se ha completado el mundo 2
+                } else if (dynamic_cast<Bow*>(weapon) && !LobbyState::isWorld1Completed()) {
+                    canInteract = false; // El arco no está disponible si no se ha completado el mundo 1
+                }
+                
+                return canInteract && 
+                    std::abs(playerPosition.x - weaponPosition.x) < 50 &&
+                    std::abs(playerPosition.y - weaponPosition.y) < 50;
             });
-        
+
             if (it != weaponsOnGround.end()) {
                 Weapon* weapon = *it;
                 sf::Vector2f weaponPos = weapon->getPosition();
@@ -484,15 +509,22 @@ bool InGame::checkPlayerWasHit(Character& player, std::shared_ptr<Enemy> enemy){
 }
 
 void InGame::reset(GameEngine& engine) {
-    // Reinicia los datos del estado del juego
-    player.spawnAt(tileMap, 20, 44); // Posición inicial del lobby
+    player.spawnAt(tileMap, 20, 44);
     player.setHealth(player.getMaxHealth());
     EnemyManager::getInstance()->clearEnemies();
-    currentWorldState = worldStates["lobby"].get(); // Fuerza el lobby como mundo actual
+    currentWorldState = worldStates["lobby"].get();
+    // Repoblar armas en el lobby
+    static_cast<LobbyState*>(currentWorldState)->spawnWeaponsOnGround(weaponsOnGround, &engine);
 }
 
 
 void InGame::changeWorldState(std::string& stateName, std::string& mapFilePath, std::string& musicFilePath, sf::Vector2i& spawnPosition) {
+    // Eliminar todas las armas del suelo al cambiar de mundo
+    for (Weapon* weapon : weaponsOnGround) {
+        delete weapon;
+    }
+    weaponsOnGround.clear();
+
     if (worldStates.find(stateName) != worldStates.end()) {
         // 1. Cargar el nuevo mapa (la función loadFromFile ya incluye clear() ahora)
         if (!getTileMap().loadFromFile(mapFilePath, engine)) {
@@ -515,6 +547,11 @@ void InGame::changeWorldState(std::string& stateName, std::string& mapFilePath, 
         // 4. Cambiar el estado actual de mundo e inicializar
         currentWorldState = worldStates[stateName].get();
         currentWorldState->initialize();
+
+        // Si entramos al lobby, crear las armas allí
+        if (stateName == "lobby") {
+            static_cast<LobbyState*>(currentWorldState)->spawnWeaponsOnGround(weaponsOnGround, &engine);
+        }
         // DEBUG
         // std::cout << "Cambiando al estado del mundo: " << stateName << std::endl;
     } else {
@@ -527,4 +564,11 @@ void InGame::resetInstance() {
     // Borra la instancia actual y la establece en nullptr
     delete instance;
     instance = nullptr;
+}
+
+// Añadir aquí el nuevo método para el LobbyState
+void InGame::spawnWeaponsInLobby() {
+    if (currentWorldState == worldStates["lobby"].get()) {
+        static_cast<LobbyState*>(currentWorldState)->spawnWeaponsOnGround(weaponsOnGround, &engine);
+    }
 }
