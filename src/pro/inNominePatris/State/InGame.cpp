@@ -12,6 +12,7 @@
 #include "InteractionFactory.h"
 #include "SpawnPlayerInteraction.h"
 #include "WorldChangeInteraction.h"
+#include "RoomManager.h"
 #include <iostream>
 #include <algorithm>
 #include "EnemyBat.h"
@@ -509,8 +510,17 @@ bool InGame::checkPlayerWasHit(Character& player, std::shared_ptr<Enemy> enemy){
 }
 
 void InGame::reset(GameEngine& engine) {
-    player.spawnAt(tileMap, 20, 44);
+    // Reset the tilemap
+    if (!tileMap.loadFromFile("./maps/lobby.tmx", engine)) {
+        std::cerr << "Error cargando el mapa\n";
+        exit(-1);
+    }
+
+    // Reset player
+    player.spawnAt(tileMap, 20, 44); // Posición inicial del lobby
     player.setHealth(player.getMaxHealth());
+
+    // Clear enemies
     EnemyManager::getInstance()->clearEnemies();
     currentWorldState = worldStates["lobby"].get();
     // Repoblar armas en el lobby
@@ -535,9 +545,12 @@ void InGame::changeWorldState(std::string& stateName, std::string& mapFilePath, 
         // 2. Restablecer el mundo a su estado natural 
         // Reiniciar salas
         RoomManager::getInstance()->clearRooms();
-        // Resetear estado de portales
+        // Resetear estado de portales y botones
         SpawnPlayerInteraction::resetPortalStates();
+        InteractionManager::getInstance()->resetButtons(); 
         // Reiniciar items y mejoras
+
+        EnemyManager::getInstance()->clearEnemies();
         
         // 3. Hacer spawn al jugador en la nueva posición
         getPlayer().spawnAt(getTileMap(), spawnPosition.x, spawnPosition.y);

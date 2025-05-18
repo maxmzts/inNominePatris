@@ -10,7 +10,7 @@ Character* Character::instance = nullptr; // Inicialización de la instancia
 Character::Character() 
     : speed(200.f), acceleration(1500.f), deceleration(2000.f), equippedWeapon(nullptr), 
       isDashing(false), dashSpeed(400.f), dashDuration(0.2f), weapons(), equippedIndex(0), 
-      direction(0.f, 0.f), maxHealth(300), currentHealth(maxHealth), isInvencible(false),
+      direction(0.f, 0.f), maxHealth(5), currentHealth(maxHealth), isInvencible(false),
       currentState(AnimationState::IDLE_DOWN), wasMoving(false) {
 
     velocity = sf::Vector2f(0.f, 0.f);
@@ -626,6 +626,10 @@ void Character::addKarma(int amount) {
     karmaPoints += amount;
 }
 
+void Character::resetKarma() {
+    karmaPoints = 2000;
+}
+
 void Character::updateHealthRegeneration(float deltaTime) {
     if (healthRegenerationEnabled) {
         healthRegenTimer += deltaTime;
@@ -683,6 +687,32 @@ void Character::initCollisionCircle() {
     collisionCircle.setFillColor(sf::Color(0, 255, 0, 64)); // Verde semitransparente
     collisionCircle.setOutlineColor(sf::Color(0, 200, 0, 200));
     collisionCircle.setOutlineThickness(1.f);
+}
+
+void Character::reset() {
+    // Reset character's state to initial values
+    currentHealth = maxHealth;
+    velocity = sf::Vector2f(0.f, 0.f);
+    movingLeft = false;
+    movingRight = false;
+    movingUp = false;
+    movingDown = false;
+    isDashing = false;
+    direction = sf::Vector2f(0.0f, 1.0f);
+    invencibilityTimer = 0;
+    isInvencible = false;
+    equippedIndex = 0;
+
+    // Clear weapons
+    for (Weapon* weapon : weapons) {
+        delete weapon;
+    }
+    weapons.clear();
+    weaponOriginalPositions.clear();
+    equippedWeapon = nullptr;
+
+    // Reset animation state
+    changeAnimationState(AnimationState::IDLE_DOWN);
 }
 
 Character* Character::getInstance() {
