@@ -1,37 +1,40 @@
-# Tareas Actuales
-Formato libre, pero debe tener estos items como mínimo:
+# **TAREAS PARA FINAL DE PROYECTO**
 
-`fecha_inicio; tarea; tiempo_dedicado; estado [nueva;en_progreso;fin]; usuario_git_encargado`
+**NO HEMOS GESTIONADO LAS TAREAS SEMANALMENTE** por eso solo vamos a mostrar las tareas/sistemas realizadas por cada uno sin orden.
 
-Debe estar lógicamente vinculado a las tareas generales planficadas en el hito.
+## MáximoMartínez
+- Sistema de sonido y música.
+- Sistema de enemigos + hurtbox y hitbox.
+- Diseño de todos los enemigos y jefes menos el segundo jefe.
+- Sistema de guardado.
+- Sistema de animaciones y efectos visuales.
+- Sistema de salas y gestión de estas en los mundos.
+- Búsqueda de elementos visuales y sonoros para decorar el juego.
+- Pathfinding.
+- Resolución de bugs en general.
 
-Ejemplo:
+## DavidGonzález
+- Sistema de interacción.
+- Todo lo relacionado con el tilemap (carga, gestión de capas, tilesets).
+- Diseño de mapas.
+- La mayor parte del sistema del jugador y su movimiento.
+- Puzzles.
+- Salto entre mundos y entre salas.
 
-* `[X]` - `20230107; Revisar formato de documentación; 120'; fidelaznar`
-* `[.]` - `20230108; Acabar plantilla; 120'; fidelaznar`
+## JorgePelegrín
+- Armas + el sistema de combate.
+- Mejoras.
+- Economía del juego (karma).
+- Items.
+- Tienda.
+- GameEngine y SpriteFacade.
+- Segundo boss del juego.
 
-# Otras cuestiones relacionadas
-Se recomienda gastar alguna herramienta que permita medir el tiempo y administrar las tareas:
-
-* https://clockify.me/
-* Todo+: Plugin de VSCODE: fabiospampinato.vscode-todo-plus
-
-Este fichero puede ser un PDF si la herramienta que gastáis lo requiere, pero **debe estar actualizado semanalmente**.
-
-**TAREAS PARA FINAL DE PROYECTO**
-* `fecha_inicio; tarea; estado [nueva;en_progreso;fin]; usuario_git_encargado`
-
-* `[X]` - `20250507; Ciclo de muerte (morir y ventana de KO); fin; EstrellaDomínguez`
-* `[X]` - `20250507; Añadir el bucle de salas (State); fin; EstrellaDomínguez`
-* `[X]` - `20250507; Que funcionen los menús con el click del ratón; fin; EstrellaDomínguez`
-* `[X]` - `20250507; Menú de pausa funcional; fin; EstrellaDomínguez`
-* `[X]` - `20250507; Tilear mundo 1,2 y 3; fin; JorgePelegrín & DavidGonzález`
-* `[X]` - `20250507; Sprite del personaje principal; fin; JorgePelegrín`
-* `[X]` - `20250507; Añadir items para las armas; fin; JorgePelegrín`
-* `[X]` - `20250507; Añadir reinicio de mejoras de items al salir del mundo al lobby; fin; JorgePelegrín`
-* `[X]` - `20250507; Cambios menores en armas; en_progreso; fin; JorgePelegrín`
-* `[.]` - `20250507; Agregar el boss; fin; MaximoMartínez y JorgePelegrín`
-* `[.]` - `20250507; Añadir más efectos de sonido (algunos más); fin; MaximoMartínez`
-* `[.]` - `20250507; Sistema de guardado; fin; MaximoMartínez`
+## EstrellaDomínguez
+- Todo lo relacionado con la gestión de estados (menos los de sala).
+- Todos los menús y sus visuales.
+- Todo el HUD y mensajes en pantalla.
+- Script para cargar los recursos de Dropbox.
+- Ciclo de muerte (morir y ventana de KO).
 
  
