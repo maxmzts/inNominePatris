@@ -19,6 +19,7 @@ private:
     std::string musicFilePath;
     std::string fightMusicFilePath;
     std::vector<std::shared_ptr<Enemy>> enemies; // Guardar la lista original de enemigos
+    std::shared_ptr<Enemy> boss;
 
 public:
     DungeonRoom(const std::string& id,
@@ -33,7 +34,9 @@ public:
     void enter() override;
     void update(TileMap& tileMap) override;
     void exit() override;
+    void setBoss(std::shared_ptr<Enemy> boss);
 
+    std::shared_ptr<Enemy> getBoss() const;
     const std::vector<Item*>& getItems() const;
 };
 

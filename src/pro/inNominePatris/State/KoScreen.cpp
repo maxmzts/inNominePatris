@@ -16,7 +16,7 @@ KoScreen* KoScreen::getInstance() {
 
 KoScreen::KoScreen() : selectedItemIndex(0) {
     // Cargar fuente
-    if (!font.loadFromFile("./assets/fonts/IMPACT.TTF")) {
+    if (!font.loadFromFile("./assets/fonts/PIXEL.ttf")) {
         std::cerr << "Error al cargar la fuente para la pantalla de KO\n";
     }
 
@@ -38,7 +38,7 @@ KoScreen::KoScreen() : selectedItemIndex(0) {
     title.setFont(font);
     title.setString("Has muerto");
     title.setCharacterSize(50);
-    title.setFillColor(sf::Color::Red);
+    title.setFillColor(sf::Color(194, 199, 162));
 
     // Centrar el título en la parte superior
     sf::FloatRect titleBounds = title.getLocalBounds();
@@ -48,28 +48,25 @@ KoScreen::KoScreen() : selectedItemIndex(0) {
     // Configurar las opciones
     std::vector<std::string> opciones = {"Jugar de nuevo", "Salir"};
     for (size_t i = 0; i < opciones.size(); ++i) {
-        // Crear fondo del texto
-        sf::RectangleShape background(sf::Vector2f(300, 50));
-        float spacing = windowSize.y / (opciones.size() + 2);
-        background.setPosition((windowSize.x - 300) / 2, spacing * (i + 2));
-        background.setFillColor(sf::Color(50, 50, 50, 200)); // Color gris con transparencia
-        background.setOutlineThickness(2);
-        background.setOutlineColor(sf::Color::White);
-        menuBackgrounds.push_back(background);
-
         // Crear texto del menú
         sf::Text option;
         option.setFont(font);
         option.setString(opciones[i]);
         option.setCharacterSize(30);
-        option.setFillColor(i == 0 ? sf::Color::Red : sf::Color::White);
+        option.setFillColor(i == 0 ? sf::Color(194, 199, 162) : sf::Color::White);
 
-        // Centrar el texto dentro del recuadro
+        // Centrar el texto
         sf::FloatRect optionBounds = option.getLocalBounds();
-        option.setOrigin(optionBounds.width / 2, optionBounds.height / 2);
-        option.setPosition(background.getPosition().x + 300 / 2, background.getPosition().y + 50 / 2);
+        float spacing = windowSize.y / (opciones.size() + 2);
+        option.setPosition((windowSize.x - optionBounds.width) / 2, spacing * (i + 2));
 
         menuOptions.push_back(option);
+
+        // Crear el underline
+        sf::RectangleShape underline(sf::Vector2f(optionBounds.width, 2));
+        underline.setFillColor(sf::Color(194, 199, 162));
+        underline.setPosition(option.getPosition().x, option.getPosition().y + optionBounds.height + 8);
+        underlines.push_back(underline);
     }
 }
 
@@ -87,8 +84,10 @@ void KoScreen::render(Game& game, sf::RenderWindow& window) {
 
     // Dibujar las opciones del menú
     for (size_t i = 0; i < menuOptions.size(); ++i) {
-        window.draw(menuBackgrounds[i]);
         window.draw(menuOptions[i]);
+        if (i == selectedItemIndex) {
+            window.draw(underlines[i]);
+        }
     }
 
     window.display();
@@ -122,8 +121,8 @@ void KoScreen::handleMouseClick(Game& game, sf::RenderWindow& window) {
     sf::Vector2i mousePos = sf::Mouse::getPosition(window);
     sf::Vector2f worldPos = window.mapPixelToCoords(mousePos);
 
-    for (size_t i = 0; i < menuBackgrounds.size(); ++i) {
-        if (menuBackgrounds[i].getGlobalBounds().contains(worldPos)) {
+    for (size_t i = 0; i < menuOptions.size(); ++i) {
+        if (menuOptions[i].getGlobalBounds().contains(worldPos)) {
             selectedItemIndex = i;
             handleSelection(game);
             break;
@@ -150,7 +149,7 @@ void KoScreen::moveUp() {
     if (selectedItemIndex > 0) {
         menuOptions[selectedItemIndex].setFillColor(sf::Color::White);
         selectedItemIndex--;
-        menuOptions[selectedItemIndex].setFillColor(sf::Color::Red);
+        menuOptions[selectedItemIndex].setFillColor(sf::Color(194, 199, 162));
     }
 }
 
@@ -158,6 +157,6 @@ void KoScreen::moveDown() {
     if (selectedItemIndex < menuOptions.size() - 1) {
         menuOptions[selectedItemIndex].setFillColor(sf::Color::White);
         selectedItemIndex++;
-        menuOptions[selectedItemIndex].setFillColor(sf::Color::Red);
+        menuOptions[selectedItemIndex].setFillColor(sf::Color(194, 199, 162));
     }
 }

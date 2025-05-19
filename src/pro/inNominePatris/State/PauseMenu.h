@@ -18,10 +18,12 @@ private:
 
     sf::Texture backgroundTexture;
     sf::Sprite backgroundSprite;
-    std::vector<sf::RectangleShape> menuBackgrounds;
+    //std::vector<sf::RectangleShape> menuBackgrounds; REMOVE THIS LINE
     std::vector<sf::Text> menuItems;
     sf::Font font;
     int selectedItemIndex;
+    std::vector<sf::RectangleShape> underlines;
+    sf::Color defaultButtonTextColor;
 
     void moveUp();
     void moveDown();

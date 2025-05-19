@@ -1,5 +1,6 @@
 #include "ControlsMenu.h"
 #include "MainMenu.h"
+#include "PauseMenu.h"
 #include "../Game.h"
 #include <iostream>
 
@@ -14,34 +15,28 @@ ControlsMenu::ControlsMenu(GameEngine& engine, float width, float height) : engi
     loadingSprite.setScale(width / loadingTexture.getSize().x, height / loadingTexture.getSize().y);
 
     // Load font
-    if (!font.loadFromFile("./assets/fonts/IMPACT.TTF")) {
+    if (!font.loadFromFile("./assets/fonts/PIXEL.ttf")) {
         std::cerr << "Error loading font" << std::endl;
     }
 
     // Back button setup
     backButtonText.setFont(font);
-    backButtonText.setString("Menu principal");
+    backButtonText.setString("Volver");
     backButtonText.setCharacterSize(30);
 
-    // Background for the back button
-    backButtonBackground.setSize(sf::Vector2f(300, 50));
-    backButtonBackground.setFillColor(sf::Color(50, 50, 50, 200));
-    backButtonBackground.setOutlineThickness(2);
-    backButtonBackground.setOutlineColor(sf::Color::White);
-
     // Position the button at the bottom center
-    float buttonX = (width - 300) / 2;
+    float buttonX = (width - backButtonText.getLocalBounds().width) / 2;
     float buttonY = height - 100;
-    backButtonBackground.setPosition(buttonX, buttonY);
-
-    // Center the text within the button
-    sf::FloatRect textBounds = backButtonText.getLocalBounds();
-    backButtonText.setOrigin(textBounds.width / 2, textBounds.height / 2);
-    backButtonText.setPosition(buttonX + 150, buttonY + 25 - 5);
+    backButtonText.setPosition(buttonX, buttonY);
 
     // Store the default colors
     defaultButtonTextColor = backButtonText.getFillColor();
-    defaultButtonOutlineColor = backButtonBackground.getOutlineColor();
+
+    // Initialize the underline
+    underline.setSize(sf::Vector2f(backButtonText.getLocalBounds().width, 2)); // Set the line's thickness
+    underline.setFillColor(sf::Color(194, 199, 162)); // Set the line's color to #c2c7a2
+    underline.setPosition(backButtonText.getPosition().x, backButtonText.getPosition().y + backButtonText.getLocalBounds().height + 8); // Position under the text with a small offset
+    underlineVisible = false; // Initially hide the underline
 }
 
 ControlsMenu* ControlsMenu::getInstance(GameEngine& engine, float width, float height) {
@@ -64,17 +59,17 @@ void ControlsMenu::update(Game& game) {
         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
         sf::Vector2f worldPos = window.mapPixelToCoords(mousePos);
 
-        if (backButtonBackground.getGlobalBounds().contains(worldPos)) {
-            backButtonText.setFillColor(sf::Color::Red);
-            backButtonBackground.setOutlineColor(sf::Color::Red);
+        if (backButtonText.getGlobalBounds().contains(worldPos)) {
+            backButtonText.setFillColor(sf::Color(194, 199, 162)); // Set the text color to #c2c7a2
+            underlineVisible = true; // Show the underline
         } else {
             backButtonText.setFillColor(defaultButtonTextColor);
-            backButtonBackground.setOutlineColor(defaultButtonOutlineColor);
+            underlineVisible = false; // Hide the underline
         }
 
         if (event.type == sf::Event::MouseButtonPressed) {
             if (event.mouseButton.button == sf::Mouse::Left) {
-                if (backButtonBackground.getGlobalBounds().contains(worldPos)) {
+                if (backButtonText.getGlobalBounds().contains(worldPos)) {
                     game.changeState(MainMenu::getInstance(engine, 800, 600));
                 }
             }
@@ -87,8 +82,10 @@ void ControlsMenu::render(Game& game, sf::RenderWindow& window) {
     GameEngine& engine = game.getEngine();
 
     engine.drawSprite(loadingSprite);
-    engine.drawRectangle(backButtonBackground);
     engine.drawText(backButtonText);
+    if (underlineVisible) {
+        window.draw(underline); // Draw the underline if it's visible
+    }
 
     engine.display();
 }

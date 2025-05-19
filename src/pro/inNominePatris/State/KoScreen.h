@@ -20,7 +20,7 @@ private:
     sf::Font font;                 // Fuente para el texto
     sf::Text title;                // Título de la pantalla
     std::vector<sf::Text> menuOptions; // Opciones del menú
-    std::vector<sf::RectangleShape> menuBackgrounds; // Fondos de las opciones del menú
+    std::vector<sf::RectangleShape> underlines; // Underlines para las opciones del menú
     int selectedItemIndex;         // Índice de la opción seleccionada
 
     void moveUp();

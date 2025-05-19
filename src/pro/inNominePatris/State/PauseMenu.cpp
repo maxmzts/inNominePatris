@@ -9,7 +9,7 @@ PauseMenu* PauseMenu::instance = nullptr;
 
 PauseMenu::PauseMenu(float width, float height) : selectedItemIndex(0) {
     // Cargar fuente
-    if (!font.loadFromFile("./assets/fonts/IMPACT.TTF")) {
+    if (!font.loadFromFile("./assets/fonts/PIXEL.ttf")) {
         std::cerr << "Error al cargar la fuente. Usando texto sin fuente" << std::endl;
     }
 
@@ -28,31 +28,30 @@ PauseMenu::PauseMenu(float width, float height) : selectedItemIndex(0) {
     std::vector<std::string> opciones = {"Continuar", "Controles", "Salir"}; // Changed "Configuracion" to "Controles"
 
     for (size_t i = 0; i < opciones.size(); ++i) {
-        // Crear fondo del texto
-        sf::RectangleShape background(sf::Vector2f(300, 50));
         float spacing = height / (opciones.size() + 1);
-        background.setPosition((width - 300) / 2, spacing * (i + 1));
-        background.setFillColor(sf::Color(50, 50, 50, 200)); // Color gris con transparencia
-        background.setOutlineThickness(2);
-        background.setOutlineColor(sf::Color::White);
-        menuBackgrounds.push_back(background);
 
         // Crear texto del menú
         sf::Text text;
         text.setFont(font);
         text.setString(opciones[i]);
-        text.setFillColor(i == 0 ? sf::Color::Red : sf::Color::White);
+        text.setFillColor(i == 0 ? sf::Color(194, 199, 162) : sf::Color::White);
+        defaultButtonTextColor = text.getFillColor();
         text.setCharacterSize(30);
 
         // Centrar el texto dentro del recuadro
         sf::FloatRect textBounds = text.getLocalBounds();
-        text.setOrigin(textBounds.width / 2, textBounds.height / 2);
-        text.setPosition(background.getPosition().x + background.getSize().x / 2,
-                         background.getPosition().y + background.getSize().y / 2);
+        text.setPosition((width - textBounds.width) / 2, spacing * (i + 1));
+
+        // Initialize the underline
+        sf::RectangleShape underline(sf::Vector2f(textBounds.width, 2)); // Set the line's thickness
+        underline.setFillColor(sf::Color(194, 199, 162)); // Set the line's color to #c2c7a2
+        underline.setPosition(text.getPosition().x, text.getPosition().y + textBounds.height + 8); // Position under the text with a small offset
+        underlines.push_back(underline);
 
         menuItems.push_back(text);
     }
 }
+
 PauseMenu* PauseMenu::getInstance(float width, float height) {
     if (!instance) {
         instance = new PauseMenu(width, height);
@@ -79,9 +78,10 @@ void PauseMenu::update(Game& game) {
                     return;
                 } else if (selectedItemIndex == 1) {
                     // Controles
-                    game.changeState(ControlsMenu::getInstance(game.getEngine(), 800, 600)); // Changed to ControlsMenu
+                    ControlsMenu* controlsMenu = ControlsMenu::getInstance(game.getEngine(), 800, 600);
+                    game.changeState(controlsMenu);
                     return;
-                } else if (selectedItemIndex == 2) {
+                }  else if (selectedItemIndex == 2) {
                     // Salir
                     window.close();
                 }
@@ -100,8 +100,8 @@ void PauseMenu::handleMouseClick(Game& game, sf::RenderWindow& window) {
     sf::Vector2f worldPos = window.mapPixelToCoords(mousePos);
 
     // Verificar si el ratón está sobre alguna opción del menú
-    for (size_t i = 0; i < menuBackgrounds.size(); ++i) {
-        if (menuBackgrounds[i].getGlobalBounds().contains(worldPos)) {
+    for (size_t i = 0; i < menuItems.size(); ++i) {
+        if (menuItems[i].getGlobalBounds().contains(worldPos)) {
             selectedItemIndex = i; // Actualizar la opción seleccionada
             handleSelection(game); // Ejecutar la acción correspondiente
             break;
@@ -115,7 +115,10 @@ void PauseMenu::handleSelection(Game& game) {
         game.changeState(InGame::getInstance(game.getEngine()));
     } else if (selectedItemIndex == 1) {
         // Controles
-        game.changeState(ControlsMenu::getInstance(game.getEngine(), 800, 600)); // Changed to ControlsMenu
+        ControlsMenu* controlsMenu = ControlsMenu::getInstance(game.getEngine(), 800, 600);
+        //controlsMenu->setPreviousState(this, this); REMOVE THIS LINE
+        game.changeState(controlsMenu);
+        return;
     } else if (selectedItemIndex == 2) {
         // Salir
         game.getWindow().close();
@@ -130,9 +133,11 @@ void PauseMenu::render(Game& game, sf::RenderWindow& window) {
     window.draw(backgroundSprite);
 
     // Dibujar las opciones del menú
-    for (size_t i = 0; i < menuBackgrounds.size(); ++i) {
-        window.draw(menuBackgrounds[i]);
+    for (size_t i = 0; i < menuItems.size(); ++i) {
         window.draw(menuItems[i]);
+         if (i == selectedItemIndex) {
+           window.draw(underlines[i]);
+        }
     }
 }
 
@@ -140,7 +145,7 @@ void PauseMenu::moveUp() {
     if (selectedItemIndex > 0) {
         menuItems[selectedItemIndex].setFillColor(sf::Color::White);
         selectedItemIndex--;
-        menuItems[selectedItemIndex].setFillColor(sf::Color::Red);
+        menuItems[selectedItemIndex].setFillColor(sf::Color(194, 199, 162)); // Set the text color to #c2c7a2
     }
 }
 
@@ -148,6 +153,6 @@ void PauseMenu::moveDown() {
     if (selectedItemIndex < menuItems.size() - 1) {
         menuItems[selectedItemIndex].setFillColor(sf::Color::White);
         selectedItemIndex++;
-        menuItems[selectedItemIndex].setFillColor(sf::Color::Red);
+        menuItems[selectedItemIndex].setFillColor(sf::Color(194, 199, 162)); // Set the text color to #c2c7a2
     }
 }

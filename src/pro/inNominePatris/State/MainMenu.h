@@ -18,8 +18,10 @@ private:
     sf::Sprite backgroundSprite;
 
     std::vector<sf::Text> menuItems;
-    std::vector<sf::RectangleShape> menuBackgrounds;
+    //std::vector<sf::RectangleShape> menuBackgrounds; REMOVE THIS LINE
+    std::vector<sf::RectangleShape> underlines;
     int selectedItemIndex;
+    sf::Color defaultButtonTextColor;
 
     MainMenu(GameEngine& engine, float width, float height); // Constructor modificado
 
@@ -27,7 +29,7 @@ private:
     void handleSelection(Game& game); // Manejar la selección de una opción
 
 public:
-    static MainMenu* getInstance(GameEngine& engine, float width, float height); // Método modificado
+    static MainMenu* getInstance(GameEngine& engine, float width, float height); 
 
     void update(Game& game) override;
     void render(Game& game, sf::RenderWindow& window) override;

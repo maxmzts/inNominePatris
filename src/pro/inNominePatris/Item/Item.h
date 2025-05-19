@@ -111,7 +111,7 @@ class AttackDamageSwordItem : public Item {
         AttackDamageSwordItem() : Item(ItemType::Sword) {
             spriteFacade.loadTexture("./resources/Items/SwordAttackDamage.png");
             setupItemName("Emery Tears");
-            setItemDescription("+ Daño con espada");
+            setItemDescription("+ Danyo con espada");
         }
         void applyEffect(Weapon& weapon) override;
         void revertEffect(Weapon& weapon) override;
@@ -222,7 +222,7 @@ class QuickShotItem : public Item {
         QuickShotItem() : Item(ItemType::Bow) {
             spriteFacade.loadTexture("./resources/Items/QuickShot.png");
             setupItemName("Mercury Fingers");
-            setItemDescription("Disparos instantáneos");
+            setItemDescription("Disparos instantaneos");
         }
         void applyEffect(Weapon& weapon) override;
         void revertEffect(Weapon& weapon) override;

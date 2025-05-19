@@ -11,6 +11,7 @@ private:
     sf::RectangleShape inventoryBackground;
     sf::Font font;
     sf::Text weaponText;
+    sf::Text karmaText;
     sf::Text secondaryWeaponText;
 
     // Notificación de ítem recogido
@@ -36,4 +37,15 @@ public:
     void update(const Character& character);
     void draw(sf::RenderWindow& window, const Character& character);
     void showItemNotification(const std::string& itemName, const std::string& itemDescription);
+
+    // Boss Health Bar methods
+    void setBossHealthBarVisibility(bool visible);
+    void setBossHealth(float currentHealth, float maxHealth);
+
+    // Boss Health Bar
+    sf::RectangleShape bossHealthBarBackground;
+    sf::RectangleShape bossHealthBar;
+    bool bossHealthBarVisible = false;
+    float bossMaxHealth = 100.f; // Default value
+    float bossCurrentHealth = 100.f; // Default value
 };
