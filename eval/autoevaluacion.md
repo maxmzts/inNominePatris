@@ -1,7 +1,7 @@
 # Autoevaluación individual
 
 ## Jorge Pelegrín
-Reflejar tanto el progreso como los problemas encontrados con el grupo, código, juego... Si no se refleja ningún problema se asume que no existen.
+Al principio iba bastante pérdido con el tema de la plantilla y el escaso nivel de c++ comparado con el requerido para la realización del trabajo. Con el paso del tiempo y con ayuda de la IA, me he ido desenvolviendo mejor en el trabajo, aunque nos pasamos bastante de ambición y hemos tenido que recortar algunas cosas para poder dejarlo un juego completo. Ahora, echando la vista atrás, puedo ver la evolución que he tenido durante estos 3 meses trabajando en el juego, entendiendo mucho mejor conceptos básicos de como se realizan.
 
 ## Estrella Dominguez
 Mi experiencia ha sido bastante agridulce. Desde el principio me he sentido muy perdida, desmotivada y en desventaja respecto a mis compañeros, tanto por mi bajo nivel de programación como por mi desconocimiento absoluto del mundo de los videojuegos. Muchos conceptos (como roguelike, hitbox, HUD, sprites, etc) se daban por sabidos, pero para mí eran completamente nuevos porque nunca he jugado a videojuegos.
