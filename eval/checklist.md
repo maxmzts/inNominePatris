@@ -1,13 +1,13 @@
 # Sobre la documentación:
-- Se ha agregado toda la información requerida en `sobre_nosotros.md` // HECHO
+- Se ha agregado toda la información requerida en `sobre_nosotros.md`
 - Actualizado fichero `doc/ten_sheet.md` para reflejar todo el proyecto (y subproyectos/entregables que lo formen)
-- Actualizado manual de usuario (`doc/manual_usuario.md`) para el proyecto o subproyectos (si corresponde) // HECHO
+- Actualizado manual de usuario (`doc/manual_usuario.md`) para el proyecto o subproyectos (si corresponde)
 
 # Sobre la gestión:
-- He rellenado todas las tareas que he realizado dia a dia // HECHO
+- He rellenado todas las tareas que he realizado dia a dia
 - El fichero de reparto está actualizado con respecto a la información del GDD
 - Las tareas se han introducido correctamente, se han organizado en subproyectos y se han marcado las completadas con su duración y personas asignadas 
-- Si gasto una herramienta externa de control de horas la he sincronizado con el proyecto (fichero de texto o pdf) // No procede
+- Si gasto una herramienta externa de control de horas la he sincronizado con el proyecto (fichero de texto o pdf)
 
 # Sobre el desarrollo:
 - Se han agregado los subproyectos necesarios en VSCODE. Estos compilan en todos los equipos del grupo 
