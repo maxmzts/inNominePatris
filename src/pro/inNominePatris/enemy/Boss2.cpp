@@ -19,8 +19,7 @@ Boss2::Boss2(const sf::Vector2f& startPosition, int DropKarmaPoints)
       rangedRange(400.f),       // Aumentado para mejor detección
       attackPattern(0),
       projectileSpeed(220.f),   // Aumentado para proyectiles más efectivos
-      attacked(false),
-      karmaPoints(DropKarmaPoints)
+      attacked(false)
 {
    // std::cout << "[Boss2] Constructor llamado en posición: " << startPosition.x << ", " << startPosition.y << std::endl;
     loadAnimations();
@@ -44,6 +43,8 @@ Boss2::Boss2(const sf::Vector2f& startPosition, int DropKarmaPoints)
     facingRight = true;
     isInvincible = false;
     invincibilityTimer = 0.f;
+
+    KarmaPoints = DropKarmaPoints; // Puntos de karma que suelta al morir
 }
 
 Boss2::~Boss2() {
@@ -525,8 +526,4 @@ void Boss2::changeState(int newStateInt) {
 
 bool Boss2::isDead() const {
     return currentBoss2State == Boss2State::DEAD;
-}
-
-int Boss2::getKarmaPoints() const {
-    return karmaPoints;
 }

@@ -58,9 +58,9 @@ public:
         enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(136.f, 17.f), 2));
         enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(140.f, 17.f), 2));
         enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(140.f, 23.f), 2));
-        enemies.push_back(std::make_shared<EnemyNecromancer>(sf::Vector2f(138.f, 7.f), 2));
-        enemies.push_back(std::make_shared<EnemyNecromancer>(sf::Vector2f(157.f, 7.f), 2));
-        enemies.push_back(std::make_shared<EnemyNecromancer>(sf::Vector2f(157.f, 22.f), 2));
+        enemies.push_back(std::make_shared<EnemyNecromancer>(sf::Vector2f(138.f, 7.f), 10));
+        enemies.push_back(std::make_shared<EnemyNecromancer>(sf::Vector2f(157.f, 7.f), 10));
+        enemies.push_back(std::make_shared<EnemyNecromancer>(sf::Vector2f(157.f, 22.f), 10));
 
         // crear la sala
         auto room = std::make_shared<DungeonRoom>(
@@ -89,9 +89,9 @@ public:
         enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(159.f, 107.f), 2));
         enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(196.f, 74.f), 2));
         enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(196.f, 107.f), 2));
-        enemies.push_back(std::make_shared<EnemyNecromancer>(sf::Vector2f(196.f, 74.f), 2));
-        enemies.push_back(std::make_shared<EnemyNecromancer>(sf::Vector2f(196.f, 107.f), 2));
-        enemies.push_back(std::make_shared<EnemyNecromancer>(sf::Vector2f(189.f, 91.f), 2));
+        enemies.push_back(std::make_shared<EnemyNecromancer>(sf::Vector2f(196.f, 74.f), 10));
+        enemies.push_back(std::make_shared<EnemyNecromancer>(sf::Vector2f(196.f, 107.f), 10));
+        enemies.push_back(std::make_shared<EnemyNecromancer>(sf::Vector2f(189.f, 91.f), 10));
 
         // crear la sala
         auto room = std::make_shared<DungeonRoom>(
@@ -120,9 +120,9 @@ public:
         enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(114.f, 189.f), 2));
         enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(91.f, 201.f), 2));
         enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(105.f, 201.f), 2));
-        enemies.push_back(std::make_shared<EnemyNecromancer>(sf::Vector2f(84.f, 208.f), 2));
-        enemies.push_back(std::make_shared<EnemyNecromancer>(sf::Vector2f(114.f, 208.f), 2));
-        enemies.push_back(std::make_shared<EnemyNecromancer>(sf::Vector2f(98.f, 191.f), 2));
+        enemies.push_back(std::make_shared<EnemyNecromancer>(sf::Vector2f(84.f, 208.f), 10));
+        enemies.push_back(std::make_shared<EnemyNecromancer>(sf::Vector2f(114.f, 208.f), 10));
+        enemies.push_back(std::make_shared<EnemyNecromancer>(sf::Vector2f(98.f, 191.f), 10));
 
         // crear la sala
         auto room = std::make_shared<DungeonRoom>(

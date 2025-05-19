@@ -28,7 +28,6 @@ public:
     void render(sf::RenderWindow& window);
     void takeDamage(float damage, const sf::Vector2f& attackPosition) override;
     bool isDead() const override;
-    int getKarmaPoints() const;
 
 private:
     // Estado y timers
@@ -53,9 +52,6 @@ private:
     float projectileSpeed;
     bool attacked;             // Flag para controlar si ya atacó en este ciclo
     Hitbox* attackHitbox;      // Hitbox específica para los ataques
-
-    // Puntos de karma al derrotar
-    int karmaPoints;
 
     // Métodos internos
     void loadAnimations();

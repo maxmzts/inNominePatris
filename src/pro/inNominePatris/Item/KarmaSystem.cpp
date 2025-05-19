@@ -10,12 +10,11 @@ KarmaSystem::KarmaSystem(Character& character)
         character.increaseMovementSpeed(75.0f);
     })); // Mejora de Absolución
     upgrades.push_back(Upgrade(3, "Probabilidad de esquivar ataques", KarmaType::Pecado, 200, [&](){
-        character.increaseDodgeChance(0.05f); // Aumentar la probabilidad de esquivar ataques
+        character.increaseDodgeChance(0.1f); // Aumentar la probabilidad de esquivar ataques
     })); // Mejora de Pecado
     upgrades.push_back(Upgrade(4, "Bonus de monedas", KarmaType::Absolucion, 200, [&]() {
         character.enableCoinBonus(); // Habilitar el bonus de monedas
     })); // Mejora de Absolución
-    
     upgrades.push_back(Upgrade(5, "Probabilidad de critico", KarmaType::Pecado, 300, [&](){
         Weapon::increaseGlobalCriticalChanceBonus(0.05f); // Aumentar la probabilidad de crítico global
     })); // Mejora de Pecado
@@ -50,7 +49,7 @@ bool KarmaSystem::purchaseUpgrade(int upgradeIndex) {
     }
 
     if(setUpgrade(upgradeIndex)) {
-        character.addKarma(-upgrade.cost);
+        character.QuitKarma(upgrade.cost);
         return true;
     }
     return false;

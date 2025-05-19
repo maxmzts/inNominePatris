@@ -82,6 +82,7 @@ public:
     void updateInvencibility(float deltaTime);
     int getKarma() const;
     void addKarma(int amount);
+    void QuitKarma(int amount);
     void enableCoinBonus();
     void updateHealthRegeneration(float deltaTime);
     bool tryDodge() const;
