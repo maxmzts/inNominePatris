@@ -137,7 +137,7 @@ void InGame::update(Game& game) {
         // Abrir la tienda (tecla B)
         if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::B) {
             if (m_playerInShopArea) {  // Solo abre la tienda si el jugador está en una zona de tienda
-                std::cout << "Abriendo tienda..." << std::endl;
+                //std::cout << "Abriendo tienda..." << std::endl;
                 shop.open();
             }
         }
@@ -546,6 +546,7 @@ void InGame::reset(GameEngine& engine) {
 
     //Reset items
     ItemManager::getInstance()->clearRunItemEffects(player.getEquippedWeapons());
+
     
     // Clear enemies
     EnemyManager::getInstance()->clearEnemies();

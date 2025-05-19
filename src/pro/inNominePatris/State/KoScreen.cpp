@@ -136,6 +136,7 @@ void KoScreen::handleSelection(Game& game) {
         InGame* inGame = InGame::getInstance(game.getEngine());
         std::string targetWorldState = "lobby", mapFilePath = "./maps/lobby.tmx", musicFilePath = "resources/music/lobby_track.ogg";
         sf::Vector2i spawnPosition = {20, 44};
+        HUD::getInstance().setBossHealthBarVisibility(false);
         inGame->changeWorldState(targetWorldState, mapFilePath, musicFilePath, spawnPosition);
         game.changeState(inGame);
         return;

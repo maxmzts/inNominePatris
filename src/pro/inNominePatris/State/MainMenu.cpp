@@ -79,7 +79,7 @@ void MainMenu::update(Game& game) {
                     // std::cout << "Continuar partida seleccionada\n";
                     game.changeState(InGame::getInstance(engine));
                 } else if (selectedItemIndex == 2) {
-                    std::cout << "Controles seleccionada\n";
+                    //std::cout << "Controles seleccionada\n";
                     game.changeState(ControlsMenu::getInstance(engine, 800, 600)); // Changed to ControlsMenu
                 } else if (selectedItemIndex == 3) {
                     // std::cout << "Salir seleccionado\n";
@@ -115,7 +115,7 @@ void MainMenu::handleSelection(Game& game) {
         // std::cout << "Continuar partida seleccionada\n";
         game.changeState(InGame::getInstance(engine, true));
     } else if (selectedItemIndex == 2) {
-        std::cout << "Controles seleccionada\n";
+        //std::cout << "Controles seleccionada\n";
         game.changeState(ControlsMenu::getInstance(engine, 800, 600)); // Changed to ControlsMenu
     } else if (selectedItemIndex == 3) {
         // std::cout << "Salir seleccionado\n";

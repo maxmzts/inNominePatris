@@ -24,7 +24,7 @@ void SFXManager::update() {
         }
     }
 
-    std::cout << effects.size() << std::endl;
+    // std::cout << effects.size() << std::endl;
     
     // Eliminar los efectos terminados
     effects.erase(

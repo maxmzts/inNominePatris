@@ -15,6 +15,8 @@ public:
     void render(sf::RenderWindow& window);
     void handleInput(const sf::Event& event);
     bool shouldConnectNodes(size_t index1, size_t index2);
+    std::string normalizarTexto(const std::string& texto);
+
 
 
 private:
@@ -33,6 +35,7 @@ private:
     sf::RectangleShape background;
     sf::Text titleText;
     sf::Text descriptionText;
+    sf::Text textoNormalizado;
     sf::Text karmaText;
     sf::Text pecadoTitleText;
     sf::Text absolucionTitleText;

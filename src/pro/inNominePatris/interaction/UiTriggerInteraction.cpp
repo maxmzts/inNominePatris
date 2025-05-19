@@ -24,7 +24,7 @@ void UiTriggerInteraction::setUiTriggerState(InGame& inGame, bool state) {
         inGame.setPlayerInShopArea(state);
     }
     // Puedes añadir más condiciones para diferentes tipos de UIs
-    std::cout << "Estado de UI '" << m_uiName << "' actualizado a: " << (state ? "activado" : "desactivado") << std::endl;
+    //std::cout << "Estado de UI '" << m_uiName << "' actualizado a: " << (state ? "activado" : "desactivado") << std::endl;
 }
 
 std::string UiTriggerInteraction::getProximityMessage() const {

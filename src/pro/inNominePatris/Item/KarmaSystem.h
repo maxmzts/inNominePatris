@@ -41,7 +41,7 @@ public:
     int getPecadoCount() const;
     int getAbsolucionCount() const;
     int getKarmaPoints() const;
-    const std::vector<Upgrade> getUpgrades() const { return upgrades; }
+    const std::vector<Upgrade>& getUpgrades() const { return upgrades; }
     std::vector<int> getPurchasedUpgrades() const { 
         std::vector<int> upgradesIndexes = {};
         for(Upgrade upgrade : upgrades) {

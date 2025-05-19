@@ -307,14 +307,14 @@ He arreglado un problema con la posición del necromancer.
 He comenzado a desarrollar el ten sheet, puesto mi parte de autoevaluación, desarrollado el manual de usuario y dado estructura al archivo de tareas.
 
 
-## 20250509 JorgePelegrín @(4h 45min)
+## 20250513 JorgePelegrín @(4h 45min)
 Añadidos los items al matar todos los enemigos, con sus sprites. Falta añadir un pequeño texto abajo que ponga lo que hace.
 
 ## 20250514 MaximoMartinez @(2h)
 Haciendo pruebas con los enemigos detecté errores y me puse a solucionarlos. Ya no atraviesan paredes y voy a rehacer el pathfinding. 
 He vuelto a invertir tiempo en poner eliminar la decoración de las puertas cuando una sala se completa (antes no estaban).
 
-## 20250509 JorgePelegrín @(1h 30min)
+## 202505015 JorgePelegrín @(1h 30min)
 He hecho el HUD un singleton para mejor manejo, y he animado los items poniendo sus nombres encima, además de añadir un HUD temporal explicativo de lo que hace el item que se coge. 
 
 ## 20250515 MaximoMartinez @(3h)
@@ -331,11 +331,11 @@ He seguido trabajando en el primer boss. Ha quedado totalmente implementado.
 Para ello también he implementado un Minion quee es una copia del boss pequeña que el boss genera de vez en cuando. Para terminarlo he tenido que editar AnimatedSprite y el movimiento de los enemigos, porque forzaban la escala del sprite a 1 (no se podía asignar una escala personalizada).
 He implementado el tecer boss.
 
-## 20250509 JorgePelegrín @(4h 30min)
+## 20250517 JorgePelegrín @(4h 30min)
 He implementado el segundo boss al completo. Lo único que falta es añadirle los efectos de sonidos a sus ataques, etc.
 
 
-## 20250509 JorgePelegrín @(1h 30min)
+## 20250517 JorgePelegrín @(1h 30min)
 He movido la logica de creacion de las armas al lobby, restringiendo su creacion dependiendo de los mundos que te hayas pasado. World3State hecho, falta poner el tile de interaccion para volver al lobby.
 
 ## 20250518 EstrellaDomínguez @(2h)
@@ -352,7 +352,7 @@ He resuelto la excepción que saltaba al morir por segunda vez.
 Con todo eso **el juego puede por fin jugarse de principio a fin**.
 Por la noche trabajé en implementar el sistema de guardado. Conseguí que guardara pero no hice tests de la carga de datos.
 
-## 20250509 JorgePelegrín @(1h 30min)
+## 20250518 JorgePelegrín @(1h 30min)
 Ahora el efecto de los items se revierten al morir o salir del mundo al lobby. 
 Otros ajustes varios.
 
