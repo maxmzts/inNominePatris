@@ -372,7 +372,7 @@ void InGame::update(Game& game) {
 
     HUD::getInstance().update(player);
     MusicManager::getInstance().update(deltaTime);
-
+    SFXManager::getInstance().update();
     VFXManager::getInstance().update(deltaTime);
 }
 

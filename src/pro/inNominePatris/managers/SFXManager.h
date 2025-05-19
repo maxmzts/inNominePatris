@@ -27,6 +27,10 @@ public:
         float pitch = 1.f
     );
 
-    void update(float deltaTime);
+    void update();
+
+    const std::vector<std::unique_ptr<SoundEffect>>& getEffects() const { 
+        return effects; 
+    }
 };
 
