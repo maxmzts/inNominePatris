@@ -225,11 +225,10 @@ bool SaveSystem::loadGameState(KarmaSystem& karmaSystem) {
         Character::getInstance()->addKarma(karma);
         
         // Establece el estado de los mundos
-        LobbyState::setWorld1completed();
-        LobbyState::setWorld2completed();
+        if(world1Completed) LobbyState::setWorld1completed();
+        if(world2Completed) LobbyState::setWorld2completed();
         
         // Procesa y establece las mejoras
-        std::vector<Upgrade> upgrades;
         std::stringstream ss(upgradesStr);
         std::string item;
         
@@ -237,7 +236,7 @@ bool SaveSystem::loadGameState(KarmaSystem& karmaSystem) {
         while (std::getline(ss, item, ',')) {
             if (!item.empty()) {
                 int id = std::stoi(item);
-                karmaSystem.setUpgrade(id);
+                karmaSystem.setUpgrade(id-1);
             }
         }
         

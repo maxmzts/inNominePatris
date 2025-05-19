@@ -30,7 +30,7 @@ private:
     std::vector<Weapon*> weaponsOnGround;
     sf::Clock clock;
 
-    InGame(GameEngine& engine); // Constructor privado
+    InGame(GameEngine& engine, bool loadSaveFile = false); // Constructor privado
     
     // Método para verificar interacciones automáticas (como los teletransportes)
     void checkAutoInteractions();
@@ -42,7 +42,7 @@ private:
     WorldState* currentWorldState;
 
 public:
-    static InGame* getInstance(GameEngine& engine); // Método para obtener la instancia
+    static InGame* getInstance(GameEngine& engine, bool loadSaveFile = false); // Método para obtener la instancia
     ~InGame();  
 
     void update(Game& game) override;
