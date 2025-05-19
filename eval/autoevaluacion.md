@@ -9,7 +9,7 @@ Además he tenido una gran dependencia de herramientas de IA para poder avanzar 
 Aún así, he intentado aportar lo mejor que podía y cada vez que conseguía que algo se viera bien y funcionara era bastante satisfactorio y creo que he aprendido muchísimo, tanto del mundo de los videojuegos como de C++ y patrones.
 
 ## David González
-Demasiada dependencia de IA por falta absoluta de conocimiento del lenguaje c++ en este ámbito, sensación grande de frustración por tener que trabajar a un nivel tan bajo como para tener que desarrollar un motor, aun asi satisfecho con el resultado.
+Demasiada dependencia de IA por falta absoluta de conocimiento del lenguaje c++ en este ámbito, sensación grande de frustración por tener que trabajar a un nivel tan bajo como para tener que desarrollar un motor, aun asi satisfecho con el resultado, mapas que no están mal considerando las herramientas que teníamos, algo de fluidez adquirida con el lenguaje de c++ y mucha, mucha resiliencia obtenida.
 
 ## Máximo Martínez Torres
 He tenido muchos problemas con el nivel exigido de C++ respecto al poco que se enseña en la carrera. Tuve aprender sobre la marcha y eso ha retrasado tanto mi trabajo como mi motivación. Además nos pasamos de ambición y esto añadió un extra de presión al trabajo. 
@@ -17,4 +17,4 @@ Acabé apañándome, trabajé paso a paso ayudado de la IA, entendí conceptos y
 El juego podría ser mucho mejor si desde principio de curso hubieramos tenido el mismo nivel (o me atrevo a decir que el 50% de este) que tuvimos a partir de finales de marzo.
 
 # Autoevaluación general
-Requiere añadir una propuesta de nota sobre 10
+10
