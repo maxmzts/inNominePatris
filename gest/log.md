@@ -359,3 +359,6 @@ Otros ajustes varios.
 ## 20250518 EstrellaDomínguez @(1h)
 Implementada la ventana de Controles desde el menu principal y de pausa.
 He resuelto la excepción que salía al navegar entre menús.
+
+## 20250519 MaximoMartinez @(1h)
+He testeado el SaveSystem que hice ayer y he resuelto los problemas que tenía. He agregado una función para cargar partida en el InGame y he puesto el comando para guardar partida donde era necesario. Durante el proceso he comentado los std::cout de muchos archivos (no de todos).

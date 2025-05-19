@@ -195,7 +195,7 @@ void DoubleDashItem::applyEffect(Weapon& weapon) {
     Sword* sword = dynamic_cast<Sword*>(&weapon);
     if (sword) {
         sword->enableDoubleDash(); // Habilitar el doble dash en la espada
-        std::cout << "¡Doble dash habilitado para la espada!" << std::endl;
+      // std::cout << "¡Doble dash habilitado para la espada!" << std::endl;
     } else {
         std::cerr << "El ítem DoubleDash solo puede aplicarse a una espada." << std::endl;
     }
@@ -206,7 +206,7 @@ void DoubleDashItem::revertEffect(Weapon& weapon) {
     Sword* sword = dynamic_cast<Sword*>(&weapon);
     if (sword) {
         sword->disableDoubleDash(); // Deshabilitar el doble dash en la espada
-        std::cout << "Doble dash deshabilitado para la espada." << std::endl;
+      // std::cout << "Doble dash deshabilitado para la espada." << std::endl;
     }
 }
 

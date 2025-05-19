@@ -55,7 +55,7 @@ private:
     Hitbox* attackHitbox;      // Hitbox específica para los ataques
 
     // Puntos de karma al derrotar
-    int KarmaPoints;
+    int karmaPoints;
 
     // Métodos internos
     void loadAnimations();
@@ -65,6 +65,7 @@ private:
     void attackRanged(const sf::Vector2f& playerPos);
     void updateTimers(float deltaTime);
     void updateHitboxes();
+    void move(const TileMap* tileMap, float deltaTime);
     void changeState(int newStateInt);
 };
 

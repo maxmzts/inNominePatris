@@ -12,9 +12,15 @@ void MusicManager::addTrack(
     bool loop,
     float pitch
 ) {
-    tracks.emplace_back(std::make_unique<MusicTrack>(
-        texturePath, volume, pitch
-    ));
+    // tracks.emplace_back(std::make_unique<MusicTrack>(
+    //     texturePath, volume, pitch
+    // ));
+    auto newTrack = std::make_unique<MusicTrack>(texturePath, volume, pitch);
+    if (newTrack->isValid()) {
+        tracks.emplace_back(std::move(newTrack));
+    } else {
+        std::cerr << "Error al cargar pista en addTrack: " << texturePath << std::endl;
+    }
 }
 
 void MusicManager::transitionTo(
@@ -35,7 +41,7 @@ void MusicManager::transitionTo(
     
     // Primero revisamos en activeTransitions
     for (auto& transition : activeTransitions) {
-        if (transition.track && transition.track->getFilename() == soundPath) {
+        if (transition.track && transition.track->isValid() && transition.track->getFilename() == soundPath) {
             // La pista ya está en transición, actualizamos sus parámetros
             transition.targetVolume = volume;
             transition.transitionDuration = transitionDuration;
@@ -57,7 +63,9 @@ void MusicManager::transitionTo(
             
             TrackTransition transition;
             transition.track = std::move(*it);
-            transition.initialVolume = transition.track->getVolume();
+            if (transition.track && transition.track->isValid()) {
+                transition.initialVolume = transition.track->getVolume();
+            }
             transition.targetVolume = volume;
             transition.transitionDuration = transitionDuration;
             transition.transitionTime = 0.0f;
@@ -71,7 +79,9 @@ void MusicManager::transitionTo(
             // Para todas las demás pistas, configúralas para desvanecerse
             TrackTransition transition;
             transition.track = std::move(*it);
-            transition.initialVolume = transition.track->getVolume();
+            if (transition.track && transition.track->isValid()) {
+                transition.initialVolume = transition.track->getVolume();
+            }
             transition.targetVolume = 0.0f;
             transition.transitionDuration = transitionDuration;
             transition.transitionTime = 0.0f;
@@ -143,27 +153,30 @@ void MusicManager::update(float deltaTime) {
         currentVolume = std::max(0.0f, std::min(100.0f, currentVolume));
         
         // Aplicar el volumen a la pista si existe 
-        if(transition.track){
-            transition.track->setVolume(currentVolume);
+        if(transition.track && transition.track->isValid()){
+            try {
+                transition.track->setVolume(currentVolume);
+            } catch (...) {
+                std::cerr << "Excepción al establecer volumen en MusicTrack." << std::endl;
+            }
         }
         
         // Verificar que la pista esté reproduciéndose
-        if (!transition.track->isPlaying() && !transition.fadeOut) {
+        if (transition.track->isValid() && !transition.track->isPlaying() && !transition.fadeOut) {
             // std::cout << "Reiniciando reproducción de pista en transición" << std::endl;
             transition.track->play();
         }
         
         // Comprobar si la transición ha terminado
-        if (transition.transitionTime >= transition.transitionDuration) {
-            if (transition.fadeOut) {
-                // Si la pista se estaba desvaneciendo, detenerla
+        if (transition.track->isValid() && transition.transitionTime >= transition.transitionDuration) {
+            if (transition.fadeOut ) {
                 transition.track->stop();
                 it = activeTransitions.erase(it);
             } else {
-                // Si la pista estaba apareciendo, moverla a las pistas regulares
-                transition.track->setVolume(transition.targetVolume);
-                // std::cout << "Transición completada, volumen final: " << transition.targetVolume << std::endl;
-                tracks.push_back(std::move(transition.track));
+                // GUARDA TEMPORALMENTE EL PUNTERO ANTES DEL MOVE
+                auto track = std::move(transition.track);
+                track->setVolume(transition.targetVolume);
+                tracks.push_back(std::move(track));
                 it = activeTransitions.erase(it);
             }
         } else {
@@ -186,17 +199,12 @@ void MusicManager::update(float deltaTime) {
 }
 
 void MusicManager::clear() {
-    // Detener y eliminar todas las pistas de música
     for (auto& track : tracks) {
-        track->stop();
+        if (track && track->isValid()) track->stop();
     }
-    tracks.clear();
-    
-    // También detener y eliminar las pistas en transición
     for (auto& transition : activeTransitions) {
-        transition.track->stop();
+        if (transition.track && transition.track->isValid()) transition.track->stop();
     }
-    activeTransitions.clear();
 }
 
 

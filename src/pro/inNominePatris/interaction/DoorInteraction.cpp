@@ -14,7 +14,7 @@ void DoorInteraction::execute(Character& character, TileMap& tilemap) {
     // Verificar si todos los botones requeridos están activados
     if (InteractionManager::getInstance()->checkDoorRequirements(getId())) {
         if (!m_isOpen) {
-            std::cout << "¡Abriendo puerta " << getName() << "!" << std::endl;
+          // std::cout << "¡Abriendo puerta " << getName() << "!" << std::endl;
             m_isOpen = true;
             
             // Eliminar barrera de decoración
@@ -36,10 +36,10 @@ void DoorInteraction::execute(Character& character, TileMap& tilemap) {
             // Eliminar barrera de colisiones
             // Aquí puedes añadir el código para quitar los bloques de colisión
         } else {
-            std::cout << "La puerta " << getName() << " ya está abierta." << std::endl;
+          // std::cout << "La puerta " << getName() << " ya está abierta." << std::endl;
         }
     } else {
-        std::cout << "No se puede abrir la puerta " << getName() << ". Faltan botones por activar." << std::endl;
+      // std::cout << "No se puede abrir la puerta " << getName() << ". Faltan botones por activar." << std::endl;
     }
 }
 

@@ -7,7 +7,7 @@ UiTriggerInteraction::UiTriggerInteraction(int id, const std::string& name, cons
 }
 
 void UiTriggerInteraction::execute(Character& character, TileMap& tilemap) {
-    std::cout << "Abriendo interfaz de " << m_uiName << std::endl;
+  // std::cout << "Abriendo interfaz de " << m_uiName << std::endl;
     
     // Aquí se implementaría la lógica para mostrar la interfaz
     // Por ahora, solo imprimimos un mensaje para simular la acción

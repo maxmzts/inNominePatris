@@ -39,12 +39,12 @@ void Game::render() {
 
 void Game::changeState(State* newState) {
     if (currentState == newState) {
-        std::cout << "El estado actual ya es el mismo. No se realiza el cambio.\n";
+        // std::cout << "El estado actual ya es el mismo. No se realiza el cambio.\n";
         return;
     }
 
     if (currentState) {
-        std::cout << "Eliminando estado actual\n";
+        // std::cout << "Eliminando estado actual\n";
         // If the current state is not a singleton, delete it
         if (currentState != MainMenu::getInstance(engine, 800, 600) && 
             dynamic_cast<InGame*>(currentState) == nullptr &&
@@ -52,16 +52,16 @@ void Game::changeState(State* newState) {
             currentState != PauseMenu::getInstance(800, 600) &&
             currentState != KoScreen::getInstance()) {
             delete currentState;
-            std::cout << "Estado actual eliminado\n";
+            // std::cout << "Estado actual eliminado\n";
         }
     }
 
     currentState = newState; // Cambia al nuevo estado
-    std::cout << "Nuevo estado asignado\n";
+    // std::cout << "Nuevo estado asignado\n";
 }
 
 void Game::restartGame() {
-    std::cout << "Reiniciando el juego...\n";
+    // std::cout << "Reiniciando el juego...\n";
     // Implementar la lógica para reiniciar el juego
     // Por ejemplo, volver al estado inicial (MainMenu)
 }

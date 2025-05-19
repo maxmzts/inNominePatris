@@ -31,7 +31,7 @@ InGame* InGame::instance = nullptr;
 /** 
  * Constructor de InGame. Carga el motor y el lobby con el jugador.
  */
-InGame::InGame(GameEngine& engine)
+InGame::InGame(GameEngine& engine, bool loadSaveFile)
     : engine(engine), player(), karmaSystem(player), shop(engine.getWindow(), karmaSystem) {
     // Cargar el mapa
     if (!tileMap.loadFromFile("./maps/lobby.tmx", engine)) {
@@ -59,31 +59,23 @@ InGame::InGame(GameEngine& engine)
     currentWorldState = worldStates["lobby"].get(); // Comienza en el lobby
     spawnWeaponsInLobby();
 
-    // TEST SAVE FILE
-    
+    // SETUP SAVESYSTEM
     SaveSystem::getInstance().setSaveFilePath("./savefile.txt");
-    bool saveSuccess = SaveSystem::getInstance().saveGameState(karmaSystem);
-    if (saveSuccess) {
-        std::cout << "Partida guardada correctamente." << std::endl;
-    } else {
-        std::cerr << "Error al guardar la partida." << std::endl;
-    }
 
-    // if (!SaveSystem::getInstance().loadGameState(karmaSystem)) {
-    //     // Si no hay partida guardada, inicializar con valores por defecto
-    //     Character::getInstance()->addKarma(0);
-    //     LobbyState::setWorld1completed();
-    //     LobbyState::setWorld2completed();
-    //     // No hay mejoras iniciales
-    //     std::cout << "No se encontró partida guardada. Usando valores por defecto." << std::endl;
-    // } else {
-    //     std::cout << "Partida cargada correctamente." << std::endl;    
-    // }
+    if (!loadSaveFile || !SaveSystem::getInstance().loadGameState(karmaSystem)) {
+        // Si no hay partida guardada, inicializar con valores por defecto
+        Character::getInstance()->addKarma(0);
+        SaveSystem::getInstance().saveGameState(karmaSystem);
+        // No hay mejoras iniciales
+        //std::cout << "No se encontró partida guardada. Usando valores por defecto." << std::endl;
+    } else {
+        // std::cout << "Partida cargada correctamente." << std::endl;    
+    }
 }
 
-InGame* InGame::getInstance(GameEngine& engine) {
+InGame* InGame::getInstance(GameEngine& engine, bool loadSaveFile) {
     if (!instance) {
-        instance = new InGame(engine);
+        instance = new InGame(engine, loadSaveFile);
     } 
     // else {
     //     // Reinicia el estado del juego si ya existe
@@ -207,7 +199,7 @@ void InGame::update(Game& game) {
                     player.addWeaponWithPosition(weapon, weaponPos);
                     weaponsOnGround.erase(it); // Remove from ground
                     player.equipWeapon();
-                    std::cout << "Arma equipada!" << std::endl;
+                    // std::cout << "Arma equipada!" << std::endl;
                 } else {
                     // Player already has 2 weapons, replace the first one
                     sf::Vector2f oldWeaponPos;
@@ -222,7 +214,7 @@ void InGame::update(Game& game) {
                     weaponsOnGround.push_back(oldWeapon);
                     
                     player.equipWeapon();
-                    std::cout << "Arma reemplazada y equipada!" << std::endl;
+                    // std::cout << "Arma reemplazada y equipada!" << std::endl;
                 }
             }
         }
@@ -304,7 +296,7 @@ void InGame::update(Game& game) {
 
     // Verificar si la vida del jugador es 0
     if (player.getHealth() <= 0) {
-        std::cout << "El jugador ha muerto. Pantalla KO..." << std::endl;
+        // std::cout << "El jugador ha muerto. Pantalla KO..." << std::endl;
         game.changeState(KoScreen::getInstance());
         return; // Salir del método para evitar más actualizaciones
     }
@@ -338,7 +330,7 @@ void InGame::update(Game& game) {
         for (Arrow& arrow : bow->getArrows()) {
             for (auto enemy : EnemyManager::getInstance()->getEnemyList()) {
                 if (arrow.getBounds().intersects(enemy->getHurtbox()->getGlobalBounds())) {
-                    std::cout << "Enemy hit by arrow!" << std::endl;
+                    // std::cout << "Enemy hit by arrow!" << std::endl;
                     enemy->takeDamage(bow->calculateDamage(), arrow.getPosition()); // Infligir daño al enemigo
                     arrow.markforRemoval(); // Marcar la flecha para eliminación
                     break; // Salir del bucle para evitar múltiples colisiones con la misma flecha
@@ -564,6 +556,10 @@ void InGame::changeWorldState(std::string& stateName, std::string& mapFilePath, 
             static_cast<LobbyState*>(currentWorldState)->spawnWeaponsOnGround(weaponsOnGround, &engine);
             ItemManager::getInstance()->clearRunItemEffects(getPlayer().getEquippedWeapons());
         }
+
+        // 5. Guardar partida en cualquier caso
+        SaveSystem::getInstance().saveGameState(karmaSystem);
+
         // DEBUG
         // std::cout << "Cambiando al estado del mundo: " << stateName << std::endl;
     } else {

@@ -91,7 +91,7 @@ void Lance::attack(sf::Vector2f position, sf::Vector2f direction) {
 
         if(RevengeReturnActive) {
             damage *= revengeReturnDamageMultiplier; // Aplicar el multiplicador de daño
-            std::cout << "Revenge return activated! Damage: " << damage << std::endl;
+          // std::cout << "Revenge return activated! Damage: " << damage << std::endl;
         } else {
             //std::cout << "Normal attack! Damage: " << damage << std::endl;
         }
@@ -101,7 +101,7 @@ void Lance::attack(sf::Vector2f position, sf::Vector2f direction) {
 // REIMPLEMENTAR
 void Lance::useAbility(sf::Vector2f characterPosition) {
     if (abilityTimer > 0.f) {
-        std::cout << "Ability on cooldown! Time remaining: " << abilityTimer << " seconds" << std::endl;
+      // std::cout << "Ability on cooldown! Time remaining: " << abilityTimer << " seconds" << std::endl;
         return;
     }
 
@@ -124,7 +124,7 @@ const sf::Vector2f& Lance::teleportToPortal() {
 
     if (RevengeReturnItemPicked) {
         SetRevengeReturn();
-        std::cout << "Retorno vengador preparado para el próximo ataque!" << std::endl;
+      // std::cout << "Retorno vengador preparado para el próximo ataque!" << std::endl;
     }
 
     return portal.getPosition();
@@ -291,12 +291,12 @@ std::shared_ptr<Hitbox> Lance::getAttackHitbox() const {
 void Lance::decreaseAttackCooldown(float cooldown) {
     attackCooldown -= cooldown;
     if (attackCooldown < 0.1f) attackCooldown = 0.1f; // Limitar el cooldown mínimo
-    std::cout << "Attack cooldown decreased!" << std::endl;
+  // std::cout << "Attack cooldown decreased!" << std::endl;
 }
 
 void Lance::increaseAttackDamage(float damage) {
     baseDamage += damage;
-    std::cout << "Attack damage increased!" << std::endl;
+  // std::cout << "Attack damage increased!" << std::endl;
 }
 
 void Lance::activateRevengeReturn() {
@@ -321,5 +321,5 @@ void Lance::ConsumeRevengeReturn() {
 
 void Lance::increaseAttackHitbox(float width, float height) {
     attackHitbox->setSize(sf::Vector2f(width, height));
-    std::cout << "Attack hitbox size increased!" << std::endl;
+  // std::cout << "Attack hitbox size increased!" << std::endl;
 }

@@ -310,7 +310,7 @@ void Boss3::move(const TileMap* tileMap, float deltaTime){
     }
 
     //DEBUG
-    std::cout << "Velocity   X: " << velocity.x << "    Y: " << velocity.y << std::endl;
+  // std::cout << "Velocity   X: " << velocity.x << "    Y: " << velocity.y << std::endl;
 
     position += velocity * deltaTime;
     sprite.move(velocity * deltaTime);

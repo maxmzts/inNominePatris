@@ -124,7 +124,7 @@ bool EnemyManager::checkCollisions(Hitbox* hitbox) {
 void EnemyManager::createProjectile(sf::Vector2f position, sf::Vector2f velocity, float damage, float lifetime) {
     Projectile* projectile = new Projectile(position, velocity, damage, lifetime);
     activeProjectiles.push_back(projectile);
-    std::cout << "[EnemyManager] Proyectil creado en posición: " << position.x << ", " << position.y << std::endl;
+  // std::cout << "[EnemyManager] Proyectil creado en posición: " << position.x << ", " << position.y << std::endl;
 }
 
 void EnemyManager::updateProjectiles(float deltaTime, Character* player) {
@@ -134,7 +134,7 @@ void EnemyManager::updateProjectiles(float deltaTime, Character* player) {
         
         if (projectile->checkCollision(player)) {
             // Causar daño al jugador
-            std::cout << "[EnemyManager] Proyectil impacta al jugador" << std::endl;
+            // std::cout << "[EnemyManager] Proyectil impacta al jugador" << std::endl;
             player->takeDamage(projectile->getDamage());
             float pitch = 0.8f + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (1.2f - 0.8f);
             SFXManager::getInstance().addEffect("./resources/sfx/Projectile_sound.wav", 100.f, pitch);

@@ -2,7 +2,7 @@
 #include <stdexcept>
 #include <algorithm>
 
-SoundEffect::SoundEffect(const std::string& filename, float volume, float pitch) {
+SoundEffect::SoundEffect(const std::string& filename, float volume, float pitch) : currentStatus(Status::Playing) {
     loadSound(filename);
     setVolume(volume);
     setPitch(pitch);

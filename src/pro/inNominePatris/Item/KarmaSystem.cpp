@@ -37,31 +37,23 @@ KarmaSystem::KarmaSystem(Character& character)
 }
 
 bool KarmaSystem::purchaseUpgrade(int upgradeIndex) {
-    if (upgradeIndex < 0 || upgradeIndex >= upgrades.size()) {
-        std::cout << "Índice de mejora inválido." << std::endl;
+    if (upgradeIndex < 0 || upgradeIndex >= static_cast<int>(upgrades.size())) {
+        // std::cout << "Índice de mejora inválido." << std::endl;
         return false;
     }
 
     Upgrade& upgrade = upgrades[upgradeIndex];
 
-    // Verificar si la mejora ya está desbloqueada o bloqueada
-    if (upgrade.isUnlocked) {
-        std::cout << "Esta mejora ya está desbloqueada." << std::endl;
-        return false;
-    }
-    
-    if (upgrade.isBlocked) {
-        std::cout << "Esta mejora está bloqueada y no puede ser comprada." << std::endl;
+    // Verificar si la mejora ya está desbloqueada, bloqueada o no hay suficiente karma
+    if (upgrade.isUnlocked || upgrade.isBlocked || character.getKarma() < upgrade.cost) {
         return false;
     }
 
-    // Verificar si hay suficiente karma
-    if (character.getKarma() < upgrade.cost) {
-        std::cout << "No tienes suficiente karma para esta mejora." << std::endl;
-        return false;
+    if(setUpgrade(upgradeIndex)) {
+        character.addKarma(-upgrade.cost);
+        return true;
     }
-
-    return setUpgrade(upgradeIndex);
+    return false;
 }
 
 bool KarmaSystem::setUpgrade(int upgradeIndex){
@@ -72,7 +64,7 @@ bool KarmaSystem::setUpgrade(int upgradeIndex){
     int level = upgradeIndex / 2;
     if (level > 0) {
         bool previousLevelUnlocked = false;
-        for (int i = (level-1)*2; i < level*2 && i < upgrades.size(); i++) {
+        for (int i = (level-1)*2; i < level*2 && i < static_cast<int>(upgrades.size()); i++) {
             if (upgrades[i].isUnlocked) {
                 previousLevelUnlocked = true;
                 break;
@@ -80,25 +72,24 @@ bool KarmaSystem::setUpgrade(int upgradeIndex){
         }
         
         if (!previousLevelUnlocked) {
-            std::cout << "Debes desbloquear al menos una mejora del nivel anterior." << std::endl;
+            // std::cout << "Debes desbloquear al menos una mejora del nivel anterior." << std::endl;
             return false;
         }
     }
 
     // Desbloquear la mejora seleccionada
-    character.addKarma(-upgrade.cost); // Restar el costo de karma
     upgrade.isUnlocked = true;
     
     // Ejecutar la acción de la mejora
     if (upgrade.action) {
-        std::cout << "Ejecutando acción para: " << upgrade.name << std::endl;
+        // std::cout << "Ejecutando acción para: " << upgrade.name << std::endl;
         upgrade.action();
-        std::cout << "Acción ejecutada correctamente" << std::endl;
+        // std::cout << "Acción ejecutada correctamente" << std::endl;
     }
 
     // Bloquear la mejora opuesta del mismo nivel
     int pairedIndex = (upgradeIndex % 2 == 0) ? upgradeIndex + 1 : upgradeIndex - 1;
-    if (pairedIndex >= 0 && pairedIndex < upgrades.size() && !upgrades[pairedIndex].isUnlocked) {
+    if (pairedIndex >= 0 && pairedIndex < static_cast<int>(upgrades.size()) && !upgrades[pairedIndex].isUnlocked) {
         upgrades[pairedIndex].isBlocked = true;
     }
 
@@ -109,12 +100,16 @@ bool KarmaSystem::setUpgrade(int upgradeIndex){
         absolucionCount++;
     }
 
-    std::cout << "Mejora desbloqueada: " << upgrade.name << std::endl;
+    // std::cout << "Mejora desbloqueada: " << upgrade.name << std::endl;
+
+    // std::cout << "Aplicada mejora: " << upgradeIndex << std::endl;
+    // std::cout << "Aplicada mejora: " << upgrade.id << std::endl;
+
     return true;
 }
 
 void KarmaSystem::displayUpgrades() const {
-    std::cout << "Mejoras disponibles:" << std::endl;
+    // std::cout << "Mejoras disponibles:" << std::endl;
     for (size_t i = 0; i < upgrades.size(); i++) {
         const Upgrade& upgrade = upgrades[i];
         std::cout << i << ". " << upgrade.name

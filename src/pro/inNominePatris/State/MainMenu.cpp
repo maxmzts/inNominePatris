@@ -73,17 +73,16 @@ void MainMenu::update(Game& game) {
             } else if (event.key.code == sf::Keyboard::Enter) {
                 // Acción según la opción seleccionada
                 if (selectedItemIndex == 0) {
-                    std::cout << "Nueva Partida seleccionada\n";
+                    // std::cout << "Nueva Partida seleccionada\n";
                     game.changeState(InGame::getInstance(engine));
                 } else if (selectedItemIndex == 1) {
-                    std::cout << "Continuar partida seleccionada\n";
+                    // std::cout << "Continuar partida seleccionada\n";
                     game.changeState(InGame::getInstance(engine));
                 } else if (selectedItemIndex == 2) {
                     std::cout << "Controles seleccionada\n";
-                    ControlsMenu* controlsMenu = ControlsMenu::getInstance(engine, 800, 600);
-                    game.changeState(controlsMenu);
+                    game.changeState(ControlsMenu::getInstance(engine, 800, 600)); // Changed to ControlsMenu
                 } else if (selectedItemIndex == 3) {
-                    std::cout << "Salir seleccionado\n";
+                    // std::cout << "Salir seleccionado\n";
                     window.close();
                 }
             }
@@ -110,18 +109,16 @@ void MainMenu::handleMouseClick(Game& game, sf::RenderWindow& window) {
 
 void MainMenu::handleSelection(Game& game) {
     if (selectedItemIndex == 0) {
-        std::cout << "Nueva Partida seleccionada\n";
+        // std::cout << "Nueva Partida seleccionada\n";
         game.changeState(InGame::getInstance(engine));
     } else if (selectedItemIndex == 1) {
-        std::cout << "Continuar partida seleccionada\n";
-        game.changeState(InGame::getInstance(engine));
+        // std::cout << "Continuar partida seleccionada\n";
+        game.changeState(InGame::getInstance(engine, true));
     } else if (selectedItemIndex == 2) {
         std::cout << "Controles seleccionada\n";
-        ControlsMenu* controlsMenu = ControlsMenu::getInstance(engine, 800, 600);
-        //controlsMenu->setPreviousState(this, this); REMOVE THIS LINE
-        game.changeState(controlsMenu);
+        game.changeState(ControlsMenu::getInstance(engine, 800, 600)); // Changed to ControlsMenu
     } else if (selectedItemIndex == 3) {
-        std::cout << "Salir seleccionado\n";
+        // std::cout << "Salir seleccionado\n";
         game.getWindow().close();
     }
 }

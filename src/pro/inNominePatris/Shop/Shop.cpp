@@ -2,6 +2,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <cmath>
+#include <SaveSystem.h>
 
 Shop::Shop(sf::RenderWindow& window, KarmaSystem& karmaSystem)
     : window(window), karmaSystem(karmaSystem), openState(false), selectedNodeIndex(-1) {
@@ -220,13 +221,14 @@ void Shop::handleInput(const sf::Event& event) {
         
         if (selectedNodeIndex != -1) {
             if (karmaSystem.purchaseUpgrade(selectedNodeIndex)) {
-                std::cout << "Mejora comprada: " << karmaSystem.getUpgrades()[selectedNodeIndex].name << std::endl;
+                 // std::cout << "Mejora comprada: " << karmaSystem.getUpgrades()[selectedNodeIndex].name << std::endl;
                 updateNodeVisuals();
                 // Activar el efecto de la mejora
                 createConnectionLines();
                 //karmaSystem.getUpgrades()[selectedNodeIndex].action();
+                SaveSystem::getInstance().saveGameState(karmaSystem);
             } else {
-                std::cout << "No puedes comprar esta mejora." << std::endl;
+                 // std::cout << "No puedes comprar esta mejora." << std::endl;
             }
         }
     }
