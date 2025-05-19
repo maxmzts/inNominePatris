@@ -99,7 +99,7 @@ class Weapon {
 
         static void enableComboDamageBonus(float amount) {
             comboDamageBonus += amount;
-            std::cout << "Daño por combo aumentado en " << amount * 100 << "%." << std::endl;
+          // std::cout << "Daño por combo aumentado en " << amount * 100 << "%." << std::endl;
         }
 
         float getDamage() const {

@@ -148,7 +148,7 @@ public:
         std::vector<std::shared_ptr<Enemy>> enemies;
         
         // Boss
-        enemies.push_back(std::make_shared<Boss2>(sf::Vector2f(155.f, 273.f),1000));
+        enemies.push_back(std::make_shared<Boss2>(sf::Vector2f(155.f, 273.f), 1000));
         // crear la sala
         auto room = std::make_shared<DungeonRoom>(
             "room5",

@@ -55,7 +55,7 @@ public:
     Weapon* removeFirstWeapon(sf::Vector2f& outOriginalPosition);
     int getEquippedIndex() const { return equippedIndex; }
     Weapon* getWeaponAtIndex(int index) const {
-        if (index >= 0 && index < weapons.size()) {
+        if (index >= 0 && index < static_cast<int>(weapons.size())) {
             return weapons[index];
         }
         return nullptr;

@@ -13,7 +13,8 @@ MusicTrack::MusicTrack(const std::string& filename, float volume, bool loop, flo
 
 // Carga un archivo de música en el reproductor.
 void MusicTrack::loadMusic(const std::string& filename) {
-    if (!music.openFromFile(filename)) {
+    loadedSuccessfully = music.openFromFile(filename);
+    if (!loadedSuccessfully) {
         throw std::runtime_error("Error cargando la música: " + filename);
     }
 }
@@ -56,4 +57,8 @@ bool MusicTrack::isPaused() const {
 // Comprueba si la música está detenida.
 bool MusicTrack::isStopped() const {
     return music.getStatus() == sf::Music::Stopped;
+}
+
+bool MusicTrack::isValid() const {
+    return loadedSuccessfully;
 }

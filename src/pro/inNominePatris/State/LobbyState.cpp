@@ -9,12 +9,12 @@ void LobbyState::update(TileMap& tileMap) {
         openDoor2(tileMap);
         door2Opened = true;
         // DEBUG
-        std::cout << "------ PUERTA MUNDO 2 ABIERTA ----------\n";
+      // std::cout << "------ PUERTA MUNDO 2 ABIERTA ----------\n";
     }
     if(world2Completed && !door3Opened) {
         openDoor3(tileMap);
         door3Opened = true;
-        std::cout << "------ PUERTA MUNDO 3 ABIERTA ----------\n";
+      // std::cout << "------ PUERTA MUNDO 3 ABIERTA ----------\n";
     }
 }
 

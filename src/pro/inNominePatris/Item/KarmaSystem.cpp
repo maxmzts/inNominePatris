@@ -37,7 +37,7 @@ KarmaSystem::KarmaSystem(Character& character)
 }
 
 bool KarmaSystem::purchaseUpgrade(int upgradeIndex) {
-    if (upgradeIndex < 0 || upgradeIndex >= upgrades.size()) {
+    if (upgradeIndex < 0 || upgradeIndex >= static_cast<int>(upgrades.size())) {
         // std::cout << "Índice de mejora inválido." << std::endl;
         return false;
     }
@@ -64,7 +64,7 @@ bool KarmaSystem::setUpgrade(int upgradeIndex){
     int level = upgradeIndex / 2;
     if (level > 0) {
         bool previousLevelUnlocked = false;
-        for (int i = (level-1)*2; i < level*2 && i < upgrades.size(); i++) {
+        for (int i = (level-1)*2; i < level*2 && i < static_cast<int>(upgrades.size()); i++) {
             if (upgrades[i].isUnlocked) {
                 previousLevelUnlocked = true;
                 break;
@@ -89,7 +89,7 @@ bool KarmaSystem::setUpgrade(int upgradeIndex){
 
     // Bloquear la mejora opuesta del mismo nivel
     int pairedIndex = (upgradeIndex % 2 == 0) ? upgradeIndex + 1 : upgradeIndex - 1;
-    if (pairedIndex >= 0 && pairedIndex < upgrades.size() && !upgrades[pairedIndex].isUnlocked) {
+    if (pairedIndex >= 0 && pairedIndex < static_cast<int>(upgrades.size()) && !upgrades[pairedIndex].isUnlocked) {
         upgrades[pairedIndex].isBlocked = true;
     }
 
