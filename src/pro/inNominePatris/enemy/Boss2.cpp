@@ -7,7 +7,7 @@
 #include <iostream>
 
 Boss2::Boss2(const sf::Vector2f& startPosition, int DropKarmaPoints)
-    : Enemy("Boss2", 1.f, 128.f, startPosition, "resources/enemies/boss2.png"),
+    : Enemy("Boss2", 650.f, 128.f, startPosition, "resources/enemies/boss2.png"),
       currentBoss2State(Boss2State::IDLE),
       idleTimer(0.f),
       moveTimer(0.f),
