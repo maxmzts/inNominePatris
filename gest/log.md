@@ -362,3 +362,10 @@ He resuelto la excepción que salía al navegar entre menús.
 
 ## 20250519 MaximoMartinez @(1h)
 He testeado el SaveSystem que hice ayer y he resuelto los problemas que tenía. He agregado una función para cargar partida en el InGame y he puesto el comando para guardar partida donde era necesario. Durante el proceso he comentado los std::cout de muchos archivos (no de todos).
+
+## 20250519 EstrellaDomínguez @(3h)
+He implementado la barra de vida del enemigo.
+He cambiado completamente la estética de todos los menús.
+He corregido la ortografía de los items que hacía que salieran caracteres raros.
+He cambiado la caligrafía de todo el juego.
+He cambiado la estética del inventario.
