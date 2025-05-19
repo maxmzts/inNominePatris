@@ -27,7 +27,13 @@ public:
     // Ajustar el pitch de un sonido
     void setPitch(float pitch);
 
-    bool isStopped();
+    bool isStopped() const {
+        return currentStatus == Status::Stopped || sound.getStatus() == sf::Sound::Stopped;
+    }
+
+    bool hasFinished() const {
+        return sound.getStatus() == sf::Sound::Stopped;
+    }
 
 private:
     sf::SoundBuffer soundBuffer;
