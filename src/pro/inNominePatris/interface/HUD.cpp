@@ -1,5 +1,6 @@
 #include "HUD.h"
 #include <iostream>
+#include <cmath>
 
 // Constructor privado
 HUD::HUD(float width, float height) {
@@ -53,14 +54,45 @@ itemNotificationDesc.setPosition(width - 400, height - 70);
         exit(-1);
     }
 
-    // Configurar barra de vida del boss
-    bossHealthBarBackground.setSize(sf::Vector2f(400, 20));
-    bossHealthBarBackground.setFillColor(sf::Color(50, 50, 50, 200));
-    bossHealthBarBackground.setPosition(10, 10);
-
-    bossHealthBar.setSize(sf::Vector2f(400, 20));
-    bossHealthBar.setFillColor(sf::Color::Red);
-    bossHealthBar.setPosition(10, 10);
+    float bossBarWidth = 400;
+    float bossBarHeight = 30; // Incrementado para mayor visibilidad
+    // Fondo de la barra con gradiente oscuro
+        bossHealthBarBackground.setSize(sf::Vector2f(bossBarWidth, bossBarHeight));
+        bossHealthBarBackground.setFillColor(sf::Color(20, 0, 0, 230));
+        bossHealthBarBackground.setOutlineColor(sf::Color(80, 10, 10, 255));
+        bossHealthBarBackground.setOutlineThickness(2.0f);
+        bossHealthBarBackground.setPosition(20, 20);
+        
+        // Barra de salud principal con efecto de degradado
+        bossHealthBar.setSize(sf::Vector2f(bossBarWidth, bossBarHeight));
+        bossHealthBar.setFillColor(sf::Color(180, 0, 0, 255));
+        bossHealthBar.setPosition(20, 20);
+        
+        // Efecto de sombra para la barra de salud
+        healthBarShadow.setPrimitiveType(sf::Quads);
+        healthBarShadow.resize(4);
+        healthBarShadow[0].position = sf::Vector2f(20, 20 + bossBarHeight);
+        healthBarShadow[1].position = sf::Vector2f(20 + bossBarWidth, 20 + bossBarHeight);
+        healthBarShadow[2].position = sf::Vector2f(20 + bossBarWidth, 20 + bossBarHeight + 10);
+        healthBarShadow[3].position = sf::Vector2f(20, 20 + bossBarHeight + 10);
+        
+        healthBarShadow[0].color = sf::Color(0, 0, 0, 150);
+        healthBarShadow[1].color = sf::Color(0, 0, 0, 150);
+        healthBarShadow[2].color = sf::Color(0, 0, 0, 0);
+        healthBarShadow[3].color = sf::Color(0, 0, 0, 0);
+        
+        // Configurar nombre del jefe
+        bossNameText.setFont(font);
+        bossNameText.setString("DEMONIO DEL PURGATORIO");
+        bossNameText.setCharacterSize(16);
+        bossNameText.setFillColor(sf::Color(255, 180, 180, 255));
+        bossNameText.setPosition(25, 3);
+        bossNameText.setOutlineColor(sf::Color(100, 0, 0, 255));
+        bossNameText.setOutlineThickness(1.0f);
+        
+        // Inicializar variables para el efecto de pulso
+        pulseFactor = 0.0f;
+        pulseDirection = true;
 }
 
 // Obtener la instancia única
@@ -121,6 +153,36 @@ void HUD::update(const Character& character) {
             itemNotificationDesc.setFillColor(descColor);
         }
     }
+
+    // Actualizar efecto de pulso para la barra del jefe
+    if (bossHealthBarVisible) {
+        float pulseTime = pulseEffectClock.getElapsedTime().asSeconds();
+        
+        // Efecto de pulso dependiendo de la salud del jefe
+        float pulseSpeed = 1.0f;
+        float pulseIntensity = 0.2f;
+        
+        // Cuando el jefe está debajo del 30% de salud, el pulso se intensifica
+        if (bossCurrentHealth / bossMaxHealth < 0.3f) {
+            pulseSpeed = 4.0f;
+            pulseIntensity = 0.4f;
+            
+            // Hacer que el nombre del jefe también pulse
+            float nameScale = 1.0f + 0.05f * sin(pulseTime * 8.0f);
+            bossNameText.setScale(nameScale, nameScale);
+        } else {
+            bossNameText.setScale(1.0f, 1.0f);
+        }
+        
+        pulseFactor = pulseIntensity * (0.5f + 0.5f * sin(pulseTime * pulseSpeed));
+        
+        // Actualizar color de la barra basado en el pulso
+        sf::Color baseColor(180, 0, 0, 255);
+        sf::Color pulseColor = baseColor;
+        pulseColor.r = std::min(255, baseColor.r + static_cast<int>(75 * pulseFactor));
+        
+        bossHealthBar.setFillColor(pulseColor);
+    }
 }
 
 void HUD::showItemNotification(const std::string& itemName, const std::string& itemDescription) {
@@ -166,8 +228,17 @@ void HUD::draw(sf::RenderWindow& window, const Character& character) {
 
     // Dibujar barra de vida del boss si está visible
     if (bossHealthBarVisible) {
+        // Primero dibujar el efecto de sombra
+        window.draw(healthBarShadow);
+        
+        // Luego el fondo y la barra
         window.draw(bossHealthBarBackground);
         window.draw(bossHealthBar);
+        window.draw(bossNameText);
+        
+        // Efecto de desgaste en los bordes
+        // Este es un patrón de "salpicaduras" de sangre en los bordes
+        // Para implementar esto, necesitarías sprites o shaders adicionales
     }
 
     // Restaurar la vista original
@@ -189,5 +260,23 @@ void HUD::setBossHealth(float currentHealth, float maxHealth) {
     healthPercentage = std::max(0.0f, std::min(1.0f, healthPercentage));
 
     // Establecer el tamaño de la barra de vida en función del porcentaje
-    bossHealthBar.setSize(sf::Vector2f(400 * healthPercentage, 20));
+    bossHealthBar.setSize(sf::Vector2f(400 * healthPercentage, bossHealthBar.getSize().y));
+    
+    // Cambiar el color de la barra según la salud restante
+    if (healthPercentage < 0.3f) {
+        // Efecto de destello para salud crítica
+        float flashIntensity = 0.7f + 0.3f * sin(pulseEffectClock.getElapsedTime().asSeconds() * 10.0f);
+        bossHealthBar.setFillColor(sf::Color(
+            static_cast<sf::Uint8>(255 * flashIntensity),
+            0,
+            0,
+            255
+        ));
+    } else if (healthPercentage < 0.5f) {
+        // Naranja-rojizo para salud media
+        bossHealthBar.setFillColor(sf::Color(220, 60, 0, 255));
+    } else {
+        // Rojo sangre para salud alta
+        bossHealthBar.setFillColor(sf::Color(180, 0, 0, 255));
+    }
 }

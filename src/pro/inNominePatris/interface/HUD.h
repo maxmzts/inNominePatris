@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "../character/Character.h"
 #include "../Weapon/Weapon.h"
+#include <cmath> // Para funciones trigonométricas como sin()
 
 class HUD {
 private:
@@ -21,6 +22,15 @@ private:
     bool itemNotificationActive;
     float itemNotificationDuration;
     sf::Clock deltaClock; // Reloj para medir el delta time
+
+    // Nuevos atributos para la barra de salud del jefe
+    sf::Texture bossHealthBarTexture;
+    sf::Sprite bossHealthBarFrame;
+    sf::Text bossNameText;
+    sf::Clock pulseEffectClock;
+    float pulseFactor;
+    bool pulseDirection;
+    sf::VertexArray healthBarShadow;
 
     // Constructor privado para Singleton
     HUD(float width, float height);
