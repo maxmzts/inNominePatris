@@ -34,7 +34,6 @@ void DungeonRoom::enter() {
     }
     // DEBUG
     // std::cout << "Entré en la sala " << roomId << std::endl;
-    std::cout << "Entré en la sala " << roomId << std::endl;
 
     // Make boss health bar visible if there's a boss
     if (boss) {

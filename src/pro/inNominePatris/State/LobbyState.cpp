@@ -1,4 +1,5 @@
 #include "LobbyState.h"
+#include "Character.h"
 
 bool LobbyState::world1Completed = false;
 bool LobbyState::world2Completed = false;
@@ -43,20 +44,32 @@ void LobbyState::spawnWeaponsOnGround(std::vector<Weapon*>& weaponsOnGround, Gam
     }
     weaponsOnGround.clear();
 
-    // Siempre aparece la espada
-    Sword* sword = new Sword(engine);
-    sword->setPosition(183, 530);
-    weaponsOnGround.push_back(sword);
+    // Obtener las armas equipadas por el jugador
+    auto equippedWeapons = Character::getInstance()->getEquippedWeapons();
 
-    // Si has pasado mundo 1, aparece el arco
-    if (isWorld1Completed()) {
+    auto hasWeaponType = [&](ItemType type) {
+        for (auto* weapon : equippedWeapons) {
+            if (weapon->getItemType() == type) return true;
+        }
+        return false;
+    };
+
+    // Siempre aparece la espada si no la tienes
+    if (!hasWeaponType(ItemType::Sword)) {
+        Sword* sword = new Sword(engine);
+        sword->setPosition(183, 530);
+        weaponsOnGround.push_back(sword);
+    }
+
+    // Si has pasado mundo 1, aparece el arco si no lo tienes
+    if (isWorld1Completed() && !hasWeaponType(ItemType::Bow)) {
         Bow* bow = new Bow(engine);
         bow->setPosition(163, 578);
         weaponsOnGround.push_back(bow);
     }
 
-    // Si has pasado mundo 2, aparece la lanza
-    if (isWorld2Completed()) {
+    // Si has pasado mundo 2, aparece la lanza si no la tienes
+    if (isWorld2Completed() && !hasWeaponType(ItemType::Lance)) {
         Lance* lance = new Lance(engine);
         lance->setPosition(234, 500);
         weaponsOnGround.push_back(lance);

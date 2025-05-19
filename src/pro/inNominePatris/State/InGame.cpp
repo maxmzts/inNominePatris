@@ -594,6 +594,7 @@ void InGame::changeWorldState(std::string& stateName, std::string& mapFilePath, 
         if (stateName == "lobby") {
             static_cast<LobbyState*>(currentWorldState)->spawnWeaponsOnGround(weaponsOnGround, &engine);
             ItemManager::getInstance()->clearRunItemEffects(getPlayer().getEquippedWeapons());
+            Character::getInstance()->setHealth(Character::getInstance()->getMaxHealth());
         }
 
         // 5. Guardar partida en cualquier caso
