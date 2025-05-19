@@ -4,12 +4,21 @@
 #include "Character.h"
 #include "Item.h"
 #include "InGame.h"
+#include "HUD.h"
 #include "ItemManager.h"
 
-DungeonRoom::DungeonRoom(const std::string& id, std::vector<std::shared_ptr<Enemy>> enemies_list, const std::string& musicFilePath, const std::string& fightMusicFilePath, std::function<void(TileMap&)> openDoors) 
+DungeonRoom::DungeonRoom(const std::string& id, std::vector<std::shared_ptr<Enemy>> enemies_list, const std::string& musicFilePath, const std::string& fightMusicFilePath, std::function<void(TileMap&)> openDoors)
     : RoomState(), roomId(id), musicFilePath(musicFilePath), fightMusicFilePath(fightMusicFilePath), openDoors(openDoors) {
     // Asignar los enemigos recibidos a la variable heredada
     this->enemies = std::move(enemies_list);
+    if (!this->enemies.empty()) {
+        for (auto& enemy : this->enemies) {
+            if (enemy->getName() == "Boss1" || enemy->getName() == "Boss2" || enemy->getName() == "Boss3") {
+                this->boss = enemy;
+                break;
+            }
+        }
+    }
 }
 
 DungeonRoom::~DungeonRoom() {
@@ -25,6 +34,13 @@ void DungeonRoom::enter() {
     }
     // DEBUG
     std::cout << "Entré en la sala " << roomId << std::endl;
+
+    // Make boss health bar visible if there's a boss
+    if (boss) {
+        HUD& hud = HUD::getInstance();
+        hud.setBossHealthBarVisibility(true);
+        hud.setBossHealth(boss->getCurrentHealth(), boss->getMaxHealth());
+    }
 }
 
 void DungeonRoom::setItemPositions(const std::vector<sf::Vector2f>& positions) {
@@ -105,12 +121,32 @@ void DungeonRoom::update(TileMap& tileMap) {
             doorsOpened = true;
         } 
     }
+
+    // Update boss health bar
+    if (boss) {
+        HUD& hud = HUD::getInstance();
+        if (hud.bossHealthBarVisible) {
+            hud.setBossHealth(boss->getCurrentHealth(), boss->getMaxHealth());
+        }
+        if (boss->isDead()) {
+            hud.setBossHealthBarVisibility(false);
+            boss = nullptr;
+        }
+    }
 }
+
+    
 
 const std::vector<Item*>& DungeonRoom::getItems() const {
     return items;
 }
 
 void DungeonRoom::exit() {
-    // Lógica al salir de la sala
+    // Hide boss health bar
+    HUD& hud = HUD::getInstance();
+    hud.setBossHealthBarVisibility(false);
+}
+
+std::shared_ptr<Enemy> DungeonRoom::getBoss() const {
+    return boss;
 }
