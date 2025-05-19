@@ -26,7 +26,7 @@ void InteractionManager::registerButtonPress(int buttonId) {
     m_activatedButtons[buttonId] = true;
     
     // Imprimir el estado actual para depuración
-    std::cout << "Botón " << buttonId << " activado." << std::endl;
+  // std::cout << "Botón " << buttonId << " activado." << std::endl;
     
     // Verificar todas las puertas que puedan verse afectadas por este botón
     for (const auto& pair : m_doorRequirements) {
@@ -36,7 +36,7 @@ void InteractionManager::registerButtonPress(int buttonId) {
         // Verificar si este botón es relevante para esta puerta
         if (requirements.find(buttonId) != requirements.end()) {
             if (checkDoorRequirements(doorId)) {
-                std::cout << "¡Todos los botones activados para la puerta " << doorId << "!" << std::endl;
+              // std::cout << "¡Todos los botones activados para la puerta " << doorId << "!" << std::endl;
             }
         }
     }

@@ -19,11 +19,10 @@ Boss2::Boss2(const sf::Vector2f& startPosition, int DropKarmaPoints)
       rangedRange(400.f),       // Aumentado para mejor detección
       attackPattern(0),
       projectileSpeed(220.f),   // Aumentado para proyectiles más efectivos
-      attacked(false)           // Inicializado explícitamente
+      attacked(false)
 {
-    std::cout << "[Boss2] Constructor llamado en posición: " << startPosition.x << ", " << startPosition.y << std::endl;
+   // std::cout << "[Boss2] Constructor llamado en posición: " << startPosition.x << ", " << startPosition.y << std::endl;
     loadAnimations();
-    KarmaPoints = DropKarmaPoints;
     sprite.setScale(1.5f,1.5f);
     
     // HITBOX - ajustada para mejor colisión
@@ -32,8 +31,8 @@ Boss2::Boss2(const sf::Vector2f& startPosition, int DropKarmaPoints)
     hitbox->setActive(true);    // Aseguramos que la hitbox esté activa
 
     // HURTBOX - ajustada para mejor detección de daño
-    hurtbox->setSize(sf::Vector2f(120.f, 120.f));
-    hurtbox->setOffset(sf::Vector2f(0.f, 37.f));
+    hurtbox->setSize(sf::Vector2f(70.f, 50.f));
+    hurtbox->setOffset(sf::Vector2f(0.f, 60.f));
     hurtbox->setActive(true);   // Aseguramos que la hurtbox esté activa
 
     // ATTACK HITBOX - rediseñada para mejor detección
@@ -44,15 +43,17 @@ Boss2::Boss2(const sf::Vector2f& startPosition, int DropKarmaPoints)
     facingRight = true;
     isInvincible = false;
     invincibilityTimer = 0.f;
+
+    KarmaPoints = DropKarmaPoints; // Puntos de karma que suelta al morir
 }
 
 Boss2::~Boss2() {
-    std::cout << "[Boss2] Destructor llamado" << std::endl;
+   // std::cout << "[Boss2] Destructor llamado" << std::endl;
     delete attackHitbox;
 }
 
 void Boss2::loadAnimations() {
-    std::cout << "[Boss2] Cargando animaciones..." << std::endl;
+   // std::cout << "[Boss2] Cargando animaciones..." << std::endl;
     // Definir animaciones usando el spritesheet
     animator->addAnimation("idle", 8, sf::Vector2i(0, 0), sf::Vector2i(264, 177), true);
     animator->addAnimation("moving", 12, sf::Vector2i(0, 177), sf::Vector2i(264, 177), true);
@@ -68,7 +69,7 @@ void Boss2::loadAnimations() {
 }
 
 void Boss2::changeAnimation(int newStateInt) {
-    std::cout << "[Boss2] Cambiando animación a estado: " << newStateInt << std::endl;
+   // std::cout << "[Boss2] Cambiando animación a estado: " << newStateInt << std::endl;
     Boss2State newState = static_cast<Boss2State>(newStateInt);
     switch (newState) {
         case Boss2State::IDLE:
@@ -99,7 +100,7 @@ void Boss2::changeAnimation(int newStateInt) {
 }
 
 void Boss2::takeDamage(float damage, const sf::Vector2f& attackPosition) {
-    std::cout << "[Boss2] Recibe daño: " << damage << " en posición: " << attackPosition.x << ", " << attackPosition.y << std::endl;
+   // std::cout << "[Boss2] Recibe daño: " << damage << " en posición: " << attackPosition.x << ", " << attackPosition.y << std::endl;
     if (isInvincible || currentBoss2State == Boss2State::DYING || currentBoss2State == Boss2State::DEAD)
         return;
 
@@ -126,16 +127,17 @@ void Boss2::takeDamage(float damage, const sf::Vector2f& attackPosition) {
     }
 
     if (currentHealth <= 0) {
-        std::cout << "[Boss2] ¡Muerto!" << std::endl;
+       // std::cout << "[Boss2] ¡Muerto!" << std::endl;
         changeState(static_cast<int>(Boss2State::DYING));
+        SFXManager::getInstance().addEffect("./resources/sfx/Boss2_die.wav");
     } else {
-        std::cout << "[Boss2] Cambia a estado HURT" << std::endl;
+       // std::cout << "[Boss2] Cambia a estado HURT" << std::endl;
         changeState(static_cast<int>(Boss2State::HURT));
     }
 }
 
 void Boss2::attackMelee() {
-    std::cout << "[Boss2] Ataque melee ejecutado" << std::endl;
+   // std::cout << "[Boss2] Ataque melee ejecutado" << std::endl;
 
     // Posicionar correctamente la hitbox de ataque según la dirección
     float xOffset = facingRight ? 120.f : -120.f;
@@ -145,11 +147,11 @@ void Boss2::attackMelee() {
     attackHitbox->setActive(true);
     attackHitbox->setPosition(hitboxPos);
     
-    std::cout << "[Boss2] Hitbox de ataque activada en " << hitboxPos.x << ", " << hitboxPos.y << std::endl;
+   // std::cout << "[Boss2] Hitbox de ataque activada en " << hitboxPos.x << ", " << hitboxPos.y << std::endl;
     
     // Efectos de sonido y visuales
     try {
-        float pitch = 0.8f + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (1.2f - 0.8f);
+        float pitch = 0.8f + static_cast<float>(rand()) / static_cast<float>(static_cast<float>(RAND_MAX)) * (1.2f - 0.8f);
         SFXManager::getInstance().addEffect("./resources/sfx/blood_slash.wav", 100.f, pitch);        
         //VFXManager::getInstance()->createEffect("melee_impact", hitboxPos);
     } catch (const std::exception& e) {
@@ -159,7 +161,7 @@ void Boss2::attackMelee() {
     // Verificar colisión con el jugador directamente
     Character* player = Character::getInstance();
     if (player && attackHitbox->getGlobalBounds().intersects(player->getHurtbox()->getGlobalBounds())) {
-        std::cout << "[Boss2] Ataque melee impacta al jugador" << std::endl;
+       // std::cout << "[Boss2] Ataque melee impacta al jugador" << std::endl;
         player->takeDamage(50.f); // Aplicar 50 de daño
     }
 
@@ -168,7 +170,7 @@ void Boss2::attackMelee() {
 }
 
 void Boss2::attackRanged(const sf::Vector2f& playerPos) {
-    std::cout << "[Boss2] Ataque a distancia hacia: " << playerPos.x << ", " << playerPos.y << std::endl;
+    // std::cout << "[Boss2] Ataque a distancia hacia: " << playerPos.x << ", " << playerPos.y << std::endl;
     
     // Calcular dirección del proyectil
     sf::Vector2f direction = playerPos - position;
@@ -184,17 +186,17 @@ void Boss2::attackRanged(const sf::Vector2f& playerPos) {
         return;
     }
     
-    std::cout << "[Boss2] Creando proyectil en posición: " << projectilePos.x << ", " << projectilePos.y 
-              << " con velocidad: " << (direction.x * projectileSpeed) << ", " << (direction.y * projectileSpeed) << std::endl;
+    // std::cout << "[Boss2] Creando proyectil en posición: " << projectilePos.x << ", " << projectilePos.y 
+    //          << " con velocidad: " << (direction.x * projectileSpeed) << ", " << (direction.y * projectileSpeed) << std::endl;
     
-    std::cout << "[Boss2] Posicion del Boss: " << position.x << ", " << position.y << std::endl;
+    // std::cout << "[Boss2] Posicion del Boss: " << position.x << ", " << position.y << std::endl;
 
     // Crear proyectil a través del EnemyManager
     try {
         EnemyManager::getInstance()->createProjectile(
             projectilePos, 
             direction * projectileSpeed, 
-            40.f,    // Aumentado el daño del proyectil
+            1.f,    // Aumentado el daño del proyectil
             3.0f     // Tiempo de vida del proyectil
         );
         
@@ -269,14 +271,14 @@ void Boss2::update(float deltaTime, Character* player, const TileMap* tileMap) {
                         changeState(static_cast<int>(Boss2State::ATTACKING_MELEE));
                     } else if (dist < rangedRange) {
                         // 50% probabilidad de moverse, 50% de ataque a distancia (más agresivo)
-                        if (static_cast<float>(rand()) / RAND_MAX < 0.5f) {
+                        if (static_cast<float>(rand()) / static_cast<float>(RAND_MAX) < 0.5f) {
                             changeState(static_cast<int>(Boss2State::MOVING));
                         } else {
                             changeState(static_cast<int>(Boss2State::ATTACKING_RANGED));
                         }
                     } else {
                         // 80% de moverse hacia el jugador si está lejos
-                        if (static_cast<float>(rand()) / RAND_MAX < 0.8f) {
+                        if (static_cast<float>(rand()) / static_cast<float>(RAND_MAX) < 0.8f) {
                             changeState(static_cast<int>(Boss2State::MOVING));
                         } else {
                             changeState(static_cast<int>(Boss2State::ATTACKING_RANGED));
@@ -305,7 +307,7 @@ void Boss2::update(float deltaTime, Character* player, const TileMap* tileMap) {
                     updateHitboxes();
                     
                     // Mayor probabilidad de ataque a distancia mientras se mueve
-                    if (dist < rangedRange && attackTimer <= 0 && static_cast<float>(rand()) / RAND_MAX < 0.05f) {
+                    if (dist < rangedRange && attackTimer <= 0 && static_cast<float>(rand()) / static_cast<float>(RAND_MAX) < 0.05f) {
                         changeState(static_cast<int>(Boss2State::ATTACKING_RANGED));
                     }
                     
@@ -313,7 +315,7 @@ void Boss2::update(float deltaTime, Character* player, const TileMap* tileMap) {
                     moveTimer += deltaTime;
                     if (moveTimer > 3.0f) {  // Reducido para más dinámica
                         // 30% de probabilidad de descansar, 70% de seguir persiguiendo
-                        if (static_cast<float>(rand()) / RAND_MAX < 0.3f) {
+                        if (static_cast<float>(rand()) / static_cast<float>(RAND_MAX) < 0.3f) {
                             changeState(static_cast<int>(Boss2State::IDLE));
                         } else {
                             moveTimer = 0.f;  // Reiniciar el timer y seguir persiguiendo
@@ -348,7 +350,7 @@ void Boss2::update(float deltaTime, Character* player, const TileMap* tileMap) {
                     sf::Vector2f toPlayer = player->getPosition() - position;
                     float dist = std::sqrt(toPlayer.x * toPlayer.x + toPlayer.y * toPlayer.y);
                     
-                    if (dist < meleeRange && static_cast<float>(rand()) / RAND_MAX < 0.7f) {
+                    if (dist < meleeRange && static_cast<float>(rand()) / static_cast<float>(RAND_MAX) < 0.7f) {
                         changeState(static_cast<int>(Boss2State::ATTACKING_MELEE));
                         return;
                     }
@@ -387,7 +389,7 @@ void Boss2::update(float deltaTime, Character* player, const TileMap* tileMap) {
                 attacked = false;
                 
                 // Mayor probabilidad de moverse después de un ataque a distancia
-                if (static_cast<float>(rand()) / RAND_MAX < 0.8f) {
+                if (static_cast<float>(rand()) / static_cast<float>(RAND_MAX) < 0.8f) {
                     changeState(static_cast<int>(Boss2State::MOVING));
                 } else {
                     changeState(static_cast<int>(Boss2State::IDLE));
@@ -407,9 +409,9 @@ void Boss2::update(float deltaTime, Character* player, const TileMap* tileMap) {
                     float dist = std::sqrt(toPlayer.x * toPlayer.x + toPlayer.y * toPlayer.y);
                     
                     // Después de recibir daño, elegir entre contraatacar o retirarse
-                    if (dist < meleeRange && static_cast<float>(rand()) / RAND_MAX < 0.7f) {
+                    if (dist < meleeRange && static_cast<float>(rand()) / static_cast<float>(RAND_MAX) < 0.7f) {
                         changeState(static_cast<int>(Boss2State::ATTACKING_MELEE));
-                    } else if (dist < rangedRange && static_cast<float>(rand()) / RAND_MAX < 0.6f) {
+                    } else if (dist < rangedRange && static_cast<float>(rand()) / static_cast<float>(RAND_MAX) < 0.6f) {
                         changeState(static_cast<int>(Boss2State::ATTACKING_RANGED));
                     } else {
                         changeState(static_cast<int>(Boss2State::MOVING));
@@ -425,21 +427,10 @@ void Boss2::update(float deltaTime, Character* player, const TileMap* tileMap) {
             // Desactivar hitboxes durante la muerte
             hitbox->setActive(false);
             hurtbox->setActive(false);
-            attackHitbox->setActive(false);
-            float pitch = 0.8f + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (1.2f - 0.8f);
-            SFXManager::getInstance().addEffect("./resources/sfx/Boss2_die.wav", 100.f, pitch);        
+            attackHitbox->setActive(false);        
             // Cuando termina la animación de muerte
             if (stateTimer >= 2.2f) {
                 changeState(static_cast<int>(Boss2State::DEAD));
-                
-                // Liberar recursos y generar recompensas
-                try {
-                    Character::getInstance()->addKarma(KarmaPoints);
-                    // VFXManager::getInstance()->createEffect("karma_gain", position);
-                    //SFXManager::getInstance()->playSFX("karma_collect");
-                } catch (const std::exception& e) {
-                    std::cerr << "[ERROR] No se pudo otorgar karma: " << e.what() << std::endl;
-                }
             }
             break;
         }
@@ -465,17 +456,37 @@ void Boss2::updateHitboxes() {
     }
 }
 
+void Boss2::move(const TileMap* tileMap, float deltaTime){
+    sf::FloatRect nextBounds = hurtbox->getGlobalBounds();
+    sf::FloatRect nextXBounds = nextBounds;
+    sf::FloatRect nextYBounds = nextBounds;
+
+    // Movimiento en eje X
+    nextXBounds.left += velocity.x * deltaTime;
+    if (tileMap->isColliding(nextXBounds)) {
+        velocity.x = 0;
+    }
+
+    // Movimiento en eje Y
+    nextYBounds.top += velocity.y * deltaTime;
+    if (tileMap->isColliding(nextYBounds)) {
+        velocity.y = 0;
+    }
+    position += velocity * deltaTime;
+    sprite.move(velocity * deltaTime);
+}
+
 void Boss2::changeState(int newStateInt) {
     Boss2State newState = static_cast<Boss2State>(newStateInt);
     if (currentBoss2State != newState) {
-        std::cout << "[Boss2] Cambio de estado: " << static_cast<int>(currentBoss2State) << " -> " << newStateInt << std::endl;
+       // std::cout << "[Boss2] Cambio de estado: " << static_cast<int>(currentBoss2State) << " -> " << newStateInt << std::endl;
         currentBoss2State = newState;
         stateTimer = 0.f;
         attacked = false;
         
         switch (newState) {
             case Boss2State::IDLE:
-                idleTimer = 0.5f + static_cast<float>(rand()) / RAND_MAX * 1.5f;  // Reducido para mayor actividad
+                idleTimer = 0.5f + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * 1.5f;  // Reducido para mayor actividad
                 break;
                 
             case Boss2State::MOVING:
@@ -515,8 +526,4 @@ void Boss2::changeState(int newStateInt) {
 
 bool Boss2::isDead() const {
     return currentBoss2State == Boss2State::DEAD;
-}
-
-int Boss2::getKarmaPoints() const {
-    return KarmaPoints;
 }

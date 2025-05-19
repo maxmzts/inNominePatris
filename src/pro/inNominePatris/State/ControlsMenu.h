@@ -4,6 +4,7 @@
 #include "State.h"
 #include "../GameEngine/GameEngine.h"
 #include <SFML/Graphics.hpp>
+#include <map>
 
 class ControlsMenu : public State {
 private:
@@ -13,10 +14,13 @@ private:
     sf::Sprite loadingSprite;
     sf::Font font;
     sf::Text backButtonText;
-    sf::RectangleShape backButtonBackground;
+    //sf::RectangleShape backButtonBackground;
 
     sf::Color defaultButtonTextColor;
-    sf::Color defaultButtonOutlineColor;
+    //sf::Color defaultButtonOutlineColor;
+
+    sf::RectangleShape underline;
+    bool underlineVisible;
 
     ControlsMenu(GameEngine& engine, float width, float height);
 

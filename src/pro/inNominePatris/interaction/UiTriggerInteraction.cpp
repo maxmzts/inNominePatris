@@ -10,7 +10,7 @@ void UiTriggerInteraction::execute(Character& character, TileMap& tilemap) {
     // Esta función se llama desde checkAutoInteractions en InGame.cpp
     // Ya no necesitamos obtener la instancia de InGame aquí
     // InGame será pasado por parámetro en setUiTriggerState desde checkAutoInteractions
-    std::cout << "UiTrigger activado: " << m_uiName << std::endl;
+    //std::cout << "UiTrigger activado: " << m_uiName << std::endl;
     // La lógica real de cambio de estado se hace en setUiTriggerState
 }
 

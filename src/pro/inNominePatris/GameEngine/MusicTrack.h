@@ -18,12 +18,11 @@ public:
     bool isPlaying() const { return music.getStatus() == sf::Music::Playing; }
     bool isPaused() const;
     bool isStopped() const;
-    bool isValid() const {
-        return music.getDuration().asSeconds() > 0;
-    }
+    bool isValid() const;
     const std::string& getFilename() const { return filename; }
     
 private:
     sf::Music music;
+    bool loadedSuccessfully = false;
     std::string filename;
 };

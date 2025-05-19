@@ -626,6 +626,10 @@ void Character::addKarma(int amount) {
     karmaPoints += amount;
 }
 
+void Character::QuitKarma(int amount) {
+    karmaPoints -= amount;
+}
+
 void Character::updateHealthRegeneration(float deltaTime) {
     if (healthRegenerationEnabled) {
         healthRegenTimer += deltaTime;

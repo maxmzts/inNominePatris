@@ -26,7 +26,7 @@ void ItemManager::clearRunItemEffects(const std::vector<Weapon*>& weapons) {
             if (weapon->getItemType() == item->getType()) {
                 item->revertEffect(*weapon);
                 // DEBUG
-                std::cout << "Efecto revertido para el arma de tipo: " << static_cast<int>(weapon->getItemType()) << std::endl;
+              // std::cout << "Efecto revertido para el arma de tipo: " << static_cast<int>(weapon->getItemType()) << std::endl;
             }
         }
     }

@@ -65,7 +65,7 @@ public:
         enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(103.f, 12.f), 2));
         enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(136.f, 11.f), 2));
         enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(120.f, 24.f), 2));
-        enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(120.f, 20.f), 50));
+        enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(120.f, 20.f), 2));
 
         // crear la sala
         auto room = std::make_shared<DungeonRoom>(
@@ -103,7 +103,7 @@ public:
         enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(197.f, 10.f), 2));
         enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(236.f, 10.f), 2));
         enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(236.f, 43.f), 2));
-        enemies.push_back(std::make_shared<EnemyNecromancer>(sf::Vector2f(223.f, 26.f), 2));
+        enemies.push_back(std::make_shared<EnemyNecromancer>(sf::Vector2f(223.f, 26.f), 10));
 
         auto room = std::make_shared<DungeonRoom>(
             "room3",
@@ -139,8 +139,8 @@ public:
         enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(214.f, 110.f), 2));
         enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(214.f, 101.f), 2));
         enemies.push_back(std::make_shared<EnemyBat>(sf::Vector2f(214.f, 92.f), 2));
-        enemies.push_back(std::make_shared<EnemyNecromancer>(sf::Vector2f(209.f, 117.f), 2));
-        enemies.push_back(std::make_shared<EnemyNecromancer>(sf::Vector2f(221.f, 117.f), 2));
+        enemies.push_back(std::make_shared<EnemyNecromancer>(sf::Vector2f(209.f, 117.f), 10));
+        enemies.push_back(std::make_shared<EnemyNecromancer>(sf::Vector2f(221.f, 117.f), 10));
         
         auto room = std::make_shared<DungeonRoom>(
             "room4",
@@ -175,7 +175,7 @@ public:
 
         auto room = std::make_shared<DungeonRoom>(
             "room5",
-            std::vector<std::shared_ptr<Enemy>>{std::make_shared<Boss1>(sf::Vector2f(220.f,192.f), 0)},
+            std::vector<std::shared_ptr<Enemy>>{std::make_shared<Boss1>(sf::Vector2f(220.f,192.f), 200)},
             "./resources/music/memories.ogg",
             "./resources/music/vengeance-part-i.ogg",
             [](TileMap& tileMap) {

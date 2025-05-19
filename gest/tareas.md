@@ -25,11 +25,12 @@ Este fichero puede ser un PDF si la herramienta que gastáis lo requiere, pero *
 * `[X]` - `20250507; Ciclo de muerte (morir y ventana de KO); fin; EstrellaDomínguez`
 * `[X]` - `20250507; Añadir el bucle de salas (State); fin; EstrellaDomínguez`
 * `[X]` - `20250507; Que funcionen los menús con el click del ratón; fin; EstrellaDomínguez`
-* `[X]` - `20250507; Tilear mundo 1 mínimo; fin; JorgePelegrín & DavidGonzález`
+* `[X]` - `20250507; Tilear mundo 1,2 y 3; fin; JorgePelegrín & DavidGonzález`
 * `[X]` - `20250507; Sprite del personaje principal; fin; JorgePelegrín`
 * `[X]` - `20250507; Añadir items para las armas; fin; JorgePelegrín`
+* `[X]` - `20250507; Añadir reinicio de mejoras de items al salir del mundo al lobby; fin; JorgePelegrín`
 * `[X]` - `20250507; Cambios menores en armas; en_progreso; fin; JorgePelegrín`
-* `[.]` - `20250507; Agregar el boss; nueva; MaximoMartínez`
+* `[.]` - `20250507; Agregar el boss; fin; MaximoMartínez y JorgePelegrín`
 * `[.]` - `20250507; Añadir más efectos de sonido (algunos más); en_progreso; MaximoMartínez`
 * `[.]` - `20250507; Añadir input de recibir daño, y algún efecto de sonido.; nueva; `
 * `[.]` - `20250507; Render Interpolado.; nueva; `

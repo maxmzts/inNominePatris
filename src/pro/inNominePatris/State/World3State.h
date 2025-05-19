@@ -56,7 +56,7 @@ public:
         RoomManager* roomManager = RoomManager::getInstance();
 
         std::vector<std::shared_ptr<Enemy>> enemies;
-        enemies.push_back(std::make_shared<Boss3>(sf::Vector2f(44.f, 42.f), 1000));
+        enemies.push_back(std::make_shared<Boss3>(sf::Vector2f(44.f, 42.f), 0));
 
         auto room = std::make_shared<DungeonRoom>(
             "room2",

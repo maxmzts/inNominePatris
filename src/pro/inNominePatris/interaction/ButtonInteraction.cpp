@@ -10,7 +10,7 @@ ButtonInteraction::ButtonInteraction(int id, const std::string& name, int center
 
 void ButtonInteraction::execute(Character& character, TileMap& tilemap) {
     if (!m_isActivated) {
-        std::cout << "Activando " << getName() << " (ID: " << getId() << ")" << std::endl;
+      // std::cout << "Activando " << getName() << " (ID: " << getId() << ")" << std::endl;
         
         // Actualizar la capa de decoración (abrir jaula)
         tilemap.setLocalTile("deco", m_centerX - 2, m_centerY, 64);     // izquierda
@@ -26,7 +26,7 @@ void ButtonInteraction::execute(Character& character, TileMap& tilemap) {
         // Registrar en el InteractionManager
         InteractionManager::getInstance()->registerButtonPress(getId());
     } else {
-        std::cout << "El botón " << getName() << " ya está activado." << std::endl;
+      // std::cout << "El botón " << getName() << " ya está activado." << std::endl;
     }
 }
 

@@ -4,7 +4,7 @@
 // Constructor privado
 HUD::HUD(float width, float height) {
     // Configurar inventario
-    inventoryBackground.setSize(sf::Vector2f(300, 100));
+    inventoryBackground.setSize(sf::Vector2f(400, 100));
     inventoryBackground.setFillColor(sf::Color(50, 50, 50, 200));
     inventoryBackground.setPosition(10, height - 150);
 
@@ -13,6 +13,12 @@ HUD::HUD(float width, float height) {
     weaponText.setCharacterSize(20);
     weaponText.setFillColor(sf::Color::White);
     weaponText.setPosition(20, height - 140);
+
+    // Configurar texto de karma
+    karmaText.setFont(font);
+    karmaText.setCharacterSize(20);
+    karmaText.setFillColor(sf::Color::White);
+    karmaText.setPosition(20, height - 80); // Positioned below weaponText
 
     // Configurar texto del arma secundaria
     secondaryWeaponText.setFont(font);
@@ -42,10 +48,19 @@ itemNotificationDesc.setPosition(width - 400, height - 70);
     itemNotificationDuration = 0.0f;
 
     // Cargar fuente
-    if (!font.loadFromFile("./assets/fonts/IMPACT.TTF")) {
+    if (!font.loadFromFile("./assets/fonts/PIXEL.ttf")) {
         std::cerr << "Error cargando la fuente\n";
         exit(-1);
     }
+
+    // Configurar barra de vida del boss
+    bossHealthBarBackground.setSize(sf::Vector2f(400, 20));
+    bossHealthBarBackground.setFillColor(sf::Color(50, 50, 50, 200));
+    bossHealthBarBackground.setPosition(10, 10);
+
+    bossHealthBar.setSize(sf::Vector2f(400, 20));
+    bossHealthBar.setFillColor(sf::Color::Red);
+    bossHealthBar.setPosition(10, 10);
 }
 
 // Obtener la instancia única
@@ -61,9 +76,11 @@ void HUD::update(const Character& character) {
     // Actualizar texto del arma equipada
     Weapon* equippedWeapon = character.getEquippedWeapon();
     if (equippedWeapon) {
-        weaponText.setString("Arma equipada: " + equippedWeapon->getName() + ", Karma: " + std::to_string(character.getKarma()));
+        weaponText.setString("Arma equipada: " + equippedWeapon->getName());
+        karmaText.setString("Karma: " + std::to_string(character.getKarma()));
     } else {
         weaponText.setString("Sin arma equipada");
+        karmaText.setString("");
     }
 
     // Actualizar texto del arma secundaria
@@ -134,6 +151,9 @@ void HUD::draw(sf::RenderWindow& window, const Character& character) {
     // Dibujar texto del arma equipada
     window.draw(weaponText);
 
+    // Dibujar texto del karma
+    window.draw(karmaText);
+
     // Dibujar texto del arma secundaria
     window.draw(secondaryWeaponText);
     
@@ -144,6 +164,30 @@ void HUD::draw(sf::RenderWindow& window, const Character& character) {
         window.draw(itemNotificationDesc);
     }
 
+    // Dibujar barra de vida del boss si está visible
+    if (bossHealthBarVisible) {
+        window.draw(bossHealthBarBackground);
+        window.draw(bossHealthBar);
+    }
+
     // Restaurar la vista original
     window.setView(originalView);
+}
+
+void HUD::setBossHealthBarVisibility(bool visible) {
+    bossHealthBarVisible = visible;
+}
+
+void HUD::setBossHealth(float currentHealth, float maxHealth) {
+    bossCurrentHealth = currentHealth;
+    bossMaxHealth = maxHealth;
+
+    // Calcular el porcentaje de vida restante
+    float healthPercentage = currentHealth / maxHealth;
+
+    // Asegurarse de que el porcentaje esté entre 0 y 1
+    healthPercentage = std::max(0.0f, std::min(1.0f, healthPercentage));
+
+    // Establecer el tamaño de la barra de vida en función del porcentaje
+    bossHealthBar.setSize(sf::Vector2f(400 * healthPercentage, 20));
 }
