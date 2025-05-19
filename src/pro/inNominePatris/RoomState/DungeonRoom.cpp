@@ -33,7 +33,7 @@ void DungeonRoom::enter() {
         }
     }
     // DEBUG
-    std::cout << "Entré en la sala " << roomId << std::endl;
+    // std::cout << "Entré en la sala " << roomId << std::endl;
 }
 
 void DungeonRoom::setItemPositions(const std::vector<sf::Vector2f>& positions) {

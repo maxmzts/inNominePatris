@@ -13,7 +13,7 @@
 Boss3::Boss3(const sf::Vector2f& startPosition, int DropkarmaPoints)
     : Enemy(
         "Bat", 
-        100.f, 
+        800.f, 
         50.f, 
         startPosition, 
         "resources/enemies/boss3.png"),
