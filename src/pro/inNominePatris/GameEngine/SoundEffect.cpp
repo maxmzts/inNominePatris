@@ -2,7 +2,7 @@
 #include <stdexcept>
 #include <algorithm>
 
-SoundEffect::SoundEffect(const std::string& filename, float volume, float pitch) {
+SoundEffect::SoundEffect(const std::string& filename, float volume, float pitch) : currentStatus(Status::Playing) {
     loadSound(filename);
     setVolume(volume);
     setPitch(pitch);
@@ -38,14 +38,6 @@ void SoundEffect::setVolume(float newVolume) {
     sound.setVolume(volume);
 }
 
-
 void SoundEffect::setPitch(float pitch) {
     sound.setPitch(pitch);
-}
-
-bool SoundEffect::isStopped(){
-    if(currentStatus == Status::Stopped)
-        return true;
-    else 
-        return false;
 }

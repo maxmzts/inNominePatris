@@ -1,34 +1,46 @@
 #include "InGame.h"
 #include "../Game.h"
-#include "../character/Character.h"
-#include "../interface/HUD.h"
-#include "../hboxes/Hitbox.h"
-#include "../Shop/Shop.h"
-#include "../interaction/Interaction.h"
+#include "Character.h"
+#include "HUD.h"
+#include "Hitbox.h"
+#include "Shop.h"
+#include "Interaction.h"
 #include "MainMenu.h"
 #include "KarmaSystem.h"
 #include "PauseMenu.h"
+#include "KoScreen.h"
 #include "InteractionFactory.h"
+#include "ItemManager.h"
 #include "SpawnPlayerInteraction.h"
+#include "WorldChangeInteraction.h"
+#include "UiTriggerInteraction.h"
+#include "RoomManager.h"
 #include <iostream>
 #include <algorithm>
 #include "EnemyBat.h"
+#include "LobbyState.h"
+#include "World1State.h"
+#include "World2State.h"
+#include "World3State.h"
 #include <EnemyManager.h>
 #include <EnemyNecromancer.h>
 #include <MusicManager.h>
+#include <SaveSystem.h>
 
 InGame* InGame::instance = nullptr;
 
 /** 
  * Constructor de InGame. Carga el motor y el lobby con el jugador.
  */
-InGame::InGame(GameEngine& engine)
-    : engine(engine), player("./resources/sprites.png"), hud(800, 600), karmaSystem(player), shop(engine.getWindow(), karmaSystem) {
+InGame::InGame(GameEngine& engine, bool loadSaveFile)
+    : engine(engine), player(), karmaSystem(player), shop(engine.getWindow(), karmaSystem) {
     // Cargar el mapa
-    if (!tileMap.loadFromFile("./maps/world_1.tmx", engine)) {
+    if (!tileMap.loadFromFile("./maps/lobby.tmx", engine)) {
         std::cerr << "Error cargando el mapa\n";
         exit(-1);
     }
+
+    Character::setInstance(&player); // Establecer la instancia del jugador
 
     // Cargar la fuente
     if (!font.loadFromFile("./assets/fonts/IMPACT.TTF")) {
@@ -36,36 +48,43 @@ InGame::InGame(GameEngine& engine)
     }
 
     // Hacer spawn al jugador
-    player.spawnAt(tileMap, 30, 44);
+    player.spawnAt(tileMap, 20, 44);
+    MusicManager::getInstance().transitionTo("resources/music/sanity.ogg");
 
-    // Crear las armas y colocarlas en los pilares
-    Sword* sword = new Sword(&engine);
-    Lance* lance = new Lance(&engine);
-    Bow* bow = new Bow(&engine);
+    // Inicializar los subestados del mundo
+    worldStates["lobby"] = std::make_unique<LobbyState>();
+    worldStates["world_1"] = std::make_unique<World1State>();
+    worldStates["world_2"] = std::make_unique<World2State>();
+    worldStates["world_3"] = std::make_unique<World3State>();
 
-    weaponsOnGround = { sword, lance, bow };
+    currentWorldState = worldStates["lobby"].get(); // Comienza en el lobby
+    spawnWeaponsInLobby();
 
-    // Posiciones de los pilares
-    sword->setPosition(183, 530);
-    lance->setPosition(234, 500);
-    bow->setPosition(163, 578);
+    // SETUP SAVESYSTEM
+    SaveSystem::getInstance().setSaveFilePath("./savefile.txt");
 
-    //TESTS ENEMIGOS
-    std::shared_ptr<EnemyBat> enemy = nullptr;
-    //cargar enemigos
-    for (size_t i = 0; i < 3; i++)
-    {
-        enemy = std::make_shared<EnemyBat>(sf::Vector2f(100.f*i,100.f*i));
-        EnemyManager::getInstance()->addEnemy(enemy);
+    if (!loadSaveFile || !SaveSystem::getInstance().loadGameState(karmaSystem)) {
+        // Si no hay partida guardada, inicializar con valores por defecto
+        Character::getInstance()->addKarma(0);
+        SaveSystem::getInstance().saveGameState(karmaSystem);
+        // No hay mejoras iniciales
+        //std::cout << "No se encontró partida guardada. Usando valores por defecto." << std::endl;
+    } else {
+        // std::cout << "Partida cargada correctamente." << std::endl;    
     }
-    EnemyManager::getInstance()->addEnemy(std::make_shared<EnemyNecromancer>(sf::Vector2f(400.f,400.f)));
-    MusicManager::getInstance().addTrack("resources/music/lobby_track.ogg");
+
+    m_isPlayerInAnyUiTriggerArea = false;
+    m_lastUiTriggerTileId = -1;
 }
 
-InGame* InGame::getInstance(GameEngine& engine) {
+InGame* InGame::getInstance(GameEngine& engine, bool loadSaveFile) {
     if (!instance) {
-        instance = new InGame(engine);
-    }
+        instance = new InGame(engine, loadSaveFile);
+    } 
+    // else {
+    //     // Reinicia el estado del juego si ya existe
+    //     instance->reset(engine);
+    // }
     return instance;
 }
 
@@ -77,6 +96,8 @@ InGame* InGame::getInstance(GameEngine& engine) {
 void InGame::update(Game& game) {
     sf::RenderWindow& window = game.getWindow();
     sf::Event event;
+
+    currentWorldState->update(tileMap);
 
     while (window.pollEvent(event)) {
         if (event.type == sf::Event::Closed) {
@@ -93,10 +114,32 @@ void InGame::update(Game& game) {
         
         player.handleInput(event);
 
+        // CHEATCODE PARA LA PRESENTACION
+        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Num0) {
+            const std::vector<std::shared_ptr<Enemy>> enemies = EnemyManager::getInstance()->getEnemyList();
+            for( std::shared_ptr<Enemy> enemy : enemies ){
+                enemy->takeDamage(50000.f, {0.f,0.f});
+            }
+        }
+        // CHEATCODE PARA LA PRESENTACION
+        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Num2) {
+            LobbyState::setWorld1completed();
+        }
+        // CHEATCODE PARA LA PRESENTACION
+        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Num3) {
+            LobbyState::setWorld2completed();
+        }
+
+        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Num7) {
+            player.addKarma(2000);
+        }
+
         // Abrir la tienda (tecla B)
         if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::B) {
-            std::cout << "Abriendo tienda..." << std::endl;
-            shop.open();
+            if (m_playerInShopArea) {  // Solo abre la tienda si el jugador está en una zona de tienda
+                //std::cout << "Abriendo tienda..." << std::endl;
+                shop.open();
+            }
         }
 
         if (shop.isOpen()) {
@@ -137,10 +180,22 @@ void InGame::update(Game& game) {
             // Verificar si el jugador está cerca de un arma en el suelo
             auto it = std::find_if(weaponsOnGround.begin(), weaponsOnGround.end(), [&](Weapon* weapon) {
                 sf::Vector2f weaponPosition = weapon->getPosition();
-                return std::abs(playerPosition.x - weaponPosition.x) < 50 &&
-                       std::abs(playerPosition.y - weaponPosition.y) < 50;
+                
+                // Comprobar si el arma es accesible según el progreso
+                bool canInteract = true;
+                
+                // Verificar que el jugador pueda interactuar con este tipo de arma
+                if (dynamic_cast<Lance*>(weapon) && !LobbyState::isWorld2Completed()) {
+                    canInteract = false; // La lanza no está disponible si no se ha completado el mundo 2
+                } else if (dynamic_cast<Bow*>(weapon) && !LobbyState::isWorld1Completed()) {
+                    canInteract = false; // El arco no está disponible si no se ha completado el mundo 1
+                }
+                
+                return canInteract && 
+                    std::abs(playerPosition.x - weaponPosition.x) < 50 &&
+                    std::abs(playerPosition.y - weaponPosition.y) < 50;
             });
-        
+
             if (it != weaponsOnGround.end()) {
                 Weapon* weapon = *it;
                 sf::Vector2f weaponPos = weapon->getPosition();
@@ -150,7 +205,7 @@ void InGame::update(Game& game) {
                     player.addWeaponWithPosition(weapon, weaponPos);
                     weaponsOnGround.erase(it); // Remove from ground
                     player.equipWeapon();
-                    std::cout << "Arma equipada!" << std::endl;
+                    // std::cout << "Arma equipada!" << std::endl;
                 } else {
                     // Player already has 2 weapons, replace the first one
                     sf::Vector2f oldWeaponPos;
@@ -165,11 +220,14 @@ void InGame::update(Game& game) {
                     weaponsOnGround.push_back(oldWeapon);
                     
                     player.equipWeapon();
-                    std::cout << "Arma reemplazada y equipada!" << std::endl;
+                    // std::cout << "Arma reemplazada y equipada!" << std::endl;
                 }
             }
         }
-    
+        
+
+        //  MOSTRAR MENSAJE SI EXISTE UNA INTERACCIÓN CON EL JUGADOR DISPONIBLE
+
         proximityMessage.clear(); // Limpiar el mensaje por defecto
         sf::FloatRect playerBounds = player.getBounds();
         int tileId = -1;
@@ -185,6 +243,10 @@ void InGame::update(Game& game) {
                 }
                 // Verificar si la interacción es un DoorInteraction
                 else if (auto doorInteraction = std::dynamic_pointer_cast<DoorInteraction>(interaction)) {
+                    proximityMessage = doorInteraction->getProximityMessage();
+                }
+                // Verificar si la interacción es un DoorInteraction
+                else if (auto doorInteraction = std::dynamic_pointer_cast<UiTriggerInteraction>(interaction)) {
                     proximityMessage = doorInteraction->getProximityMessage();
                 }
             }
@@ -220,12 +282,9 @@ void InGame::update(Game& game) {
                         player.startDash(sword->getDashSpeed(), 0.2f); // Usa los valores de la espada
                 } else if (Lance* lance = dynamic_cast<Lance*>(player.getEquippedWeapon())) {
                     // Usar habilidad de la lanza
-                    sf::Vector2i mousePosition = sf::Mouse::getPosition(engine.getWindow());
-                    sf::Vector2f worldMousePos = engine.getWindow().mapPixelToCoords(mousePosition);
-
                     if (!lance->getIsPortalDropped()) {
                         // Colocar el portal
-                        lance->useAbility(player.getPosition(), worldMousePos);
+                        lance->useAbility(player.getPosition());
                     } else {
                         // Teletransportar al portal
                         sf::Vector2f playerPosition = player.getPosition();
@@ -234,7 +293,7 @@ void InGame::update(Game& game) {
                     }
                 } else if (Bow* bow = dynamic_cast<Bow*>(player.getEquippedWeapon())) {
                     // Usar habilidad del arco
-                    bow->useAbility(player.getPosition(), player.getDirection());
+                    bow->useAbility(player.getPosition(), player.getAimDirection());
                 }
                 //player.useAbility(window, enemies);
             }
@@ -246,11 +305,11 @@ void InGame::update(Game& game) {
     player.update(tileMap, deltaTime);
 
     // Verificar si la vida del jugador es 0
-    // if (player.getHealth() <= 0) {
-    //     std::cout << "El jugador ha muerto. Pantalla KO..." << std::endl;
-    //     game.changeState(KoScreen::getInstance(engine, 800, 600));
-    //     return; // Salir del método para evitar más actualizaciones
-    // }
+    if (player.getHealth() <= 0) {
+        // std::cout << "El jugador ha muerto. Pantalla KO..." << std::endl;
+        game.changeState(KoScreen::getInstance());
+        return; // Salir del método para evitar más actualizaciones
+    }
     
     // Verificar interacciones automáticas (como los teletransportes)
     checkAutoInteractions();
@@ -266,7 +325,7 @@ void InGame::update(Game& game) {
                 if (!equippedWeapon->hasDealtDamage()) {
                     for (auto enemy : EnemyManager::getInstance()->getEnemyList()) {
                         if (equippedWeapon->getAttackHitbox()->getGlobalBounds().intersects(enemy->getHurtbox()->getGlobalBounds())) {
-                            std::cout << "Enemigo golpeado!" << std::endl;
+                            //std::cout << "Enemigo golpeado!" << std::endl;
                             enemy->takeDamage(equippedWeapon->calculateDamage(), equippedWeapon->getAttackHitbox()->getPosition()); // Infligir daño al enemigo
                         }
                     }
@@ -281,7 +340,7 @@ void InGame::update(Game& game) {
         for (Arrow& arrow : bow->getArrows()) {
             for (auto enemy : EnemyManager::getInstance()->getEnemyList()) {
                 if (arrow.getBounds().intersects(enemy->getHurtbox()->getGlobalBounds())) {
-                    std::cout << "Enemy hit by arrow!" << std::endl;
+                    // std::cout << "Enemy hit by arrow!" << std::endl;
                     enemy->takeDamage(bow->calculateDamage(), arrow.getPosition()); // Infligir daño al enemigo
                     arrow.markforRemoval(); // Marcar la flecha para eliminación
                     break; // Salir del bucle para evitar múltiples colisiones con la misma flecha
@@ -306,16 +365,6 @@ void InGame::update(Game& game) {
         }
     }
 
-    // TEST SISTEMA DE COMBATE
-    /**
-     * for (hitbox enemigo: enemigos){
-     *     player->hurtbox.intersect(hitbox)
-     * }
-     * for (hurtbox enemigo: enemigos){
-     *     player->arma->hitbox.intersect(hurtbox)
-     * }
-     */
-
     // Comprobar que el jugador recibe daño
     
     if(!player.getIsInvencible()){
@@ -325,8 +374,9 @@ void InGame::update(Game& game) {
         }
     }
 
-    hud.update(player);
-
+    HUD::getInstance().update(player);
+    MusicManager::getInstance().update(deltaTime);
+    SFXManager::getInstance().update();
     VFXManager::getInstance().update(deltaTime);
 }
 
@@ -334,10 +384,13 @@ void InGame::update(Game& game) {
 void InGame::checkAutoInteractions() {
     sf::FloatRect playerBounds = player.getBounds();
     int tileId = -1;
+    bool foundUiTrigger = false; // Flag para controlar si hemos encontrado algún UiTrigger activo
     
     if (tileMap.isPlayerInteractingWithTile(playerBounds, tileId)) {
         // Ajustar el ID del tile
-        tileId -= 1;
+        if(tileId != 1492){
+            tileId -= 1;
+        }
         
         // Crear la interacción correspondiente usando la fábrica
         auto interaction = InteractionFactory::createInteraction(tileId);
@@ -348,12 +401,59 @@ void InGame::checkAutoInteractions() {
                 if (spawnInteraction->getAutoTrigger() && spawnInteraction->isAvailable(player, tileMap)) {
                     // Ejecutar automáticamente el teletransporte
                     spawnInteraction->execute(player, tileMap);
+                    //cambiar de sala
+                    RoomManager::getInstance()->changeState(spawnInteraction->getRoomInfo());
+                }
+            }
+            // Verificar si es una interacción de tipo WorldChangeInteraction con autoTrigger
+            else if (auto worldChangeInteraction = std::dynamic_pointer_cast<WorldChangeInteraction>(interaction)) {
+                if (worldChangeInteraction->getAutoTrigger() && worldChangeInteraction->isAvailable(player, tileMap)) {
+                    // Ejecutar automáticamente el cambio de mundo
+                    std::string targetWorldState, mapFilePath, musicFilePath;
+                    sf::Vector2i spawnPosition;
+
+                    worldChangeInteraction->getWorldInfo(targetWorldState, mapFilePath, musicFilePath, spawnPosition);
+                    changeWorldState(targetWorldState, mapFilePath, musicFilePath, spawnPosition);
+                }
+            }
+            else if (auto uiTriggerInteraction = std::dynamic_pointer_cast<UiTriggerInteraction>(interaction)) {
+                if (uiTriggerInteraction->isAvailable(player, tileMap)) {
+                    // Marcar que hemos encontrado un UiTrigger
+                    foundUiTrigger = true;
+                    m_lastUiTriggerTileId = tileId;
+                    
+                    // Solo activamos si no estaba ya activado o si es un nuevo UiTrigger
+                    if (!m_isPlayerInAnyUiTriggerArea) {
+                        m_isPlayerInAnyUiTriggerArea = true;
+                        
+                        // Primero ejecutamos la lógica básica de la interacción
+                        uiTriggerInteraction->execute(player, tileMap);
+                        
+                        // Luego actualizamos el estado de la UI pasando la instancia de InGame por parámetro
+                        uiTriggerInteraction->setUiTriggerState(*this, true);
+                    }
                 }
             }
             // Aquí podrían ir otras tipos de interacciones automáticas
         }
     }
+    
+    // Si no encontramos ningún UiTrigger activo pero antes estábamos en uno, desactivarlo
+    if (!foundUiTrigger && m_isPlayerInAnyUiTriggerArea) {
+        // Desactivamos todos los UiTriggers
+        m_isPlayerInAnyUiTriggerArea = false;
+        
+        // Crear la interacción anterior para desactivarla
+        auto previousInteraction = InteractionFactory::createInteraction(m_lastUiTriggerTileId);
+        if (auto uiTriggerInteraction = std::dynamic_pointer_cast<UiTriggerInteraction>(previousInteraction)) {
+            // Actualizar el estado de la UI a false
+            uiTriggerInteraction->setUiTriggerState(*this, false);
+        }
+        
+        m_lastUiTriggerTileId = -1;
+    }
 }
+
 
 InGame::~InGame() {
     for (Weapon* weapon : weaponsOnGround) {
@@ -362,36 +462,6 @@ InGame::~InGame() {
     weaponsOnGround.clear();
 }
 
-/**
- * Renderiza los elementos de InGame
- */
-// void InGame::render(Game& game, sf::RenderWindow& window) {
-//     engine.clear();
-//     tileMap.draw(engine);
-
-//     for (Weapon* weapon : weaponsOnGround) {
-//         weapon->render();
-//     }
-
-//     for (auto enemy : EnemyManager::getInstance()->getEnemyList()){
-//         enemy->render(window);
-//     }
-
-//     player.draw(engine);
-
-//     VFXManager::getInstance().render(window);
-
-//     // Mostrar el HUD
-//     hud.draw(window, player);
-
-//     // Renderizar la tienda si está abierta
-//     if (shop.isOpen()) {
-//         shop.render();
-//     }
-
-//     engine.display();
-// }
-
 
 void InGame::render(Game& game, sf::RenderWindow& window) {
     GameEngine& engine = game.getEngine();
@@ -399,12 +469,22 @@ void InGame::render(Game& game, sf::RenderWindow& window) {
     engine.clear();
     tileMap.draw(engine);
 
+    currentWorldState->render(engine);
+
     for (Weapon* weapon : weaponsOnGround) {
         weapon->render(engine.getRenderWindow()); // Usa el RenderWindow directamente
     }
     
-    for (auto enemy : EnemyManager::getInstance()->getEnemyList()) {
-        enemy->render(engine.getRenderWindow()); // Usa el RenderWindow directamente
+    EnemyManager::getInstance()->renderEnemies(engine.getRenderWindow());
+
+
+    // Obtener la sala actual desde el RoomManager
+    auto currentRoom = RoomManager::getInstance()->getCurrentState();
+    if (auto dungeonRoom = std::dynamic_pointer_cast<DungeonRoom>(currentRoom)) {
+        const auto& items = dungeonRoom->getItems();
+        for (const auto& item : items) {
+            item->render(window);
+        }
     }
     
     VFXManager::getInstance().render(engine.getRenderWindow());
@@ -412,7 +492,7 @@ void InGame::render(Game& game, sf::RenderWindow& window) {
     player.draw(engine);
 
     // Mostrar el HUD
-    hud.draw(engine.getRenderWindow(), player);
+    HUD::getInstance().draw(engine.getRenderWindow(), player);
 
     // Dibujar el mensaje de proximidad
     if (!proximityMessage.empty()) {
@@ -452,6 +532,104 @@ bool InGame::checkEnemyWasHit(std::shared_ptr<Enemy> enemy, Character player){
         return enemy->getHurtbox()->getGlobalBounds().intersects(player.getEquippedWeapon()->getAttackHitbox()->getGlobalBounds());
 }
 
-bool InGame::checkPlayerWasHit(Character player, std::shared_ptr<Enemy> enemy){
+bool InGame::checkPlayerWasHit(Character& player, std::shared_ptr<Enemy> enemy){
+    if (enemy->getHitbox() == nullptr) return false;
     return player.getHurtbox()->getGlobalBounds().intersects(enemy->getHitbox()->getGlobalBounds());
+}
+
+void InGame::reset(GameEngine& engine) {
+    // Reset the tilemap
+    if (!tileMap.loadFromFile("./maps/lobby.tmx", engine)) {
+        std::cerr << "Error cargando el mapa\n";
+        exit(-1);
+    }
+
+    // Reset player
+    player.spawnAt(tileMap, 20, 44); // Posición inicial del lobby
+    player.setHealth(player.getMaxHealth());
+
+    //Reset items
+    ItemManager::getInstance()->clearRunItemEffects(player.getEquippedWeapons());
+
+    
+    // Clear enemies
+    EnemyManager::getInstance()->clearEnemies();
+    currentWorldState = worldStates["lobby"].get();
+    // Repoblar armas en el lobby
+    static_cast<LobbyState*>(currentWorldState)->spawnWeaponsOnGround(weaponsOnGround, &engine);
+}
+
+
+void InGame::changeWorldState(std::string& stateName, std::string& mapFilePath, std::string& musicFilePath, sf::Vector2i& spawnPosition) {
+    // Eliminar todas las armas del suelo al cambiar de mundo
+    for (Weapon* weapon : weaponsOnGround) {
+        delete weapon;
+    }
+    weaponsOnGround.clear();
+
+    if (worldStates.find(stateName) != worldStates.end()) {
+        // 1. Cargar el nuevo mapa (la función loadFromFile ya incluye clear() ahora)
+        if (!getTileMap().loadFromFile(mapFilePath, engine)) {
+            std::cerr << "Error cargando el mapa: " << mapFilePath << std::endl;
+            return;
+        }
+
+        // 2. Restablecer el mundo a su estado natural 
+        // Reiniciar salas
+        RoomManager::getInstance()->clearRooms();
+        // Resetear estado de portales y botones
+        SpawnPlayerInteraction::resetPortalStates();
+        InteractionManager::getInstance()->resetButtons(); 
+        // Reiniciar items y mejoras
+
+        // Vaciar listas de enemigos y de efectos visuales permanentes
+        VFXManager::getInstance().clear();
+        EnemyManager::getInstance()->clearEnemies();
+        
+        // 3. Hacer spawn al jugador en la nueva posición
+        getPlayer().spawnAt(getTileMap(), spawnPosition.x, spawnPosition.y);
+        // DEBUG
+        //std::cout << "Jugador reposicionado en: (" << spawnPosition.x << ", " << spawnPosition.y << ")" << std::endl;
+        
+        // 4. Cambiar el estado actual de mundo e inicializar
+        currentWorldState = worldStates[stateName].get();
+        currentWorldState->initialize();
+
+        // Si entramos al lobby, crear las armas allí
+        if (stateName == "lobby") {
+            static_cast<LobbyState*>(currentWorldState)->spawnWeaponsOnGround(weaponsOnGround, &engine);
+            ItemManager::getInstance()->clearRunItemEffects(getPlayer().getEquippedWeapons());
+            Character::getInstance()->setHealth(Character::getInstance()->getMaxHealth());
+        }
+
+        // 5. Guardar partida en cualquier caso
+        SaveSystem::getInstance().saveGameState(karmaSystem);
+
+        // DEBUG
+        // std::cout << "Cambiando al estado del mundo: " << stateName << std::endl;
+    } else {
+        std::cerr << "Error: Estado del mundo no encontrado: " << stateName << std::endl;
+    }
+}
+
+
+void InGame::resetInstance() {
+    // Borra la instancia actual y la establece en nullptr
+    delete instance;
+    instance = nullptr;
+}
+
+// Añadir aquí el nuevo método para el LobbyState
+void InGame::spawnWeaponsInLobby() {
+    if (currentWorldState == worldStates["lobby"].get()) {
+        static_cast<LobbyState*>(currentWorldState)->spawnWeaponsOnGround(weaponsOnGround, &engine);
+    }
+}
+
+
+void InGame::resetUiTriggerStates() {
+    // Resetear todos los flags relacionados con UIs
+    m_playerInShopArea = false;
+    m_isPlayerInAnyUiTriggerArea = false;
+    m_lastUiTriggerTileId = -1;
 }

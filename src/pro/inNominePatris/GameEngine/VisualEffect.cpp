@@ -6,7 +6,8 @@ VisualEffect::VisualEffect(
     sf::Vector2i frameSize,
     int frameCount,
     float fps,
-    bool invert
+    bool invert,
+    bool loop
 ) : finished(false)
 {
     // Cargar textura
@@ -20,15 +21,12 @@ VisualEffect::VisualEffect(
     animator = std::make_unique<AnimatedSprite>(sprite);
     
     // Añadir la animación del efecto (asumiendo que los frames están en una fila)
-    animator->addAnimation("effect", frameCount, sf::Vector2i(0, 0), frameSize, false);
-    
-    // Configurar el callback para cuando termine la animación
+    animator->addAnimation("effect", frameCount, sf::Vector2i(0, 0), frameSize, loop);
     animator->setAnimationEndCallback([this]() {
         this->finished = true;
     });
-    
     // Iniciar la animación del efecto
-    animator->play("effect", fps, false);
+    animator->play("effect", fps, loop);
 }
 
 void VisualEffect::update(float deltaTime) {

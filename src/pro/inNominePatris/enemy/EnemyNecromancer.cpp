@@ -9,7 +9,7 @@
 #include <EnemyManager.h>
 #include "EnemyBat.h"
 
-EnemyNecromancer::EnemyNecromancer(const sf::Vector2f& startPosition)
+EnemyNecromancer::EnemyNecromancer(const sf::Vector2f& startPosition, int DropKarmaPoints)
     : Enemy(
         "Necromancer", 
         150.f, 
@@ -22,7 +22,8 @@ EnemyNecromancer::EnemyNecromancer(const sf::Vector2f& startPosition)
 {
     sprite.setTextureRect(sf::IntRect(0, 0, 64, 96));
     loadAnimations();
-    attackCooldown = 10.f; 
+    attackCooldown = 4.f;
+    KarmaPoints = DropKarmaPoints; 
 }
 
 /**
@@ -121,7 +122,7 @@ void EnemyNecromancer::attack() {
     attackTimer = attackCooldown;
 }
 
-void EnemyNecromancer::move(const sf::Vector2f& direction) {
+void EnemyNecromancer::calculateVelocity(const sf::Vector2f& direction) {
     // Normalizar el vector de dirección si no es cero
     float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
     if (length > 0) {
@@ -201,23 +202,21 @@ void EnemyNecromancer::update(float deltaTime, Character* player, const TileMap*
             break;
             
         case NecromancerState::MOVING:
-            // Aplicar velocidad al movimiento
-            position += velocity * deltaTime;
-            sprite.setPosition(position.x, position.y);
-            updateHitboxes();
-            
             // Recalcular el camino periódicamente mientras nos movemos
             if (player && pathUpdateTimer >= pathUpdateInterval) {
                 pathUpdateTimer = 0;
                 findPathToPlayer(player, tileMap);
             }
+            // Aplicar velocidad al movimiento calculada en el pathfinding
+            move(tileMap, deltaTime);
+            updateHitboxes();
             
             // Verificar si podemos atacar al jugador
             if (player && attackTimer <= 0) {
                 attackPosition = player->getPosition();
                 VFXManager::getInstance().addEffect(
                     "./resources/vfx/anticipation.png",
-                    attackPosition,          // posición de prueba
+                    attackPosition,      // posición 
                     {45 , 45},           // tamaño de frame
                     12,                  // cantidad de frames
                     12.f
@@ -284,6 +283,8 @@ void EnemyNecromancer::update(float deltaTime, Character* player, const TileMap*
         case NecromancerState::DEAD:
             break;
     }
+    // DEBUG
+    // std::cout << "Necromancer,   x: " << position.x << " y: " << position.y << std::endl;
 }
 
 void EnemyNecromancer::changeState(int newStateInt) {
@@ -314,7 +315,7 @@ bool EnemyNecromancer::isDead() const{
 
 void EnemyNecromancer::spawn(){
     EnemyManager::getInstance()->addEnemy(
-        std::make_shared<EnemyBat>(position)
+        std::make_shared<EnemyBat>((position/16.f), 0)
     );
     // anyadir efecto en el futuro
 }

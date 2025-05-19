@@ -1,14 +1,16 @@
 #include "MainMenu.h"
 #include "InGame.h"
-#include "ConfMenu.h"
+#include "ControlsMenu.h" // Include the new ControlsMenu
 #include "../Game.h"
 #include <iostream>
+#include <MusicManager.h>
 
 MainMenu* MainMenu::instance = nullptr;
 
 MainMenu::MainMenu(GameEngine& engine, float width, float height) :engine(engine), selectedItemIndex(0) {
+    MusicManager::getInstance().transitionTo("./resources/music/menu-track.ogg",100.f,1.f,0.01f);
     // Cargar fuente
-    if (!font.loadFromFile("./assets/fonts/IMPACT.TTF")) {
+    if (!font.loadFromFile("./assets/fonts/PIXEL.ttf")) {
         std::cerr << "Error al cargar la fuente. Usando texto sin fuente" << std::endl;
     }
 
@@ -20,29 +22,28 @@ MainMenu::MainMenu(GameEngine& engine, float width, float height) :engine(engine
     backgroundSprite.setScale(width / backgroundTexture.getSize().x, height / backgroundTexture.getSize().y);
 
     // Opciones del menú
-    std::vector<std::string> opciones = {"Nueva Partida", "Continuar partida", "Configuracion", "Salir"};
+    std::vector<std::string> opciones = {"Nueva Partida", "Continuar partida", "Controles", "Salir"}; // Changed "Configuracion" to "Controles"
 
     for (size_t i = 0; i < opciones.size(); ++i) {
-        // Crear fondo del texto
-        sf::RectangleShape background(sf::Vector2f(300, 50));
         float spacing = height / (opciones.size() + 1);
-        background.setPosition((width - 300) / 2, spacing * (i + 1));
-        background.setFillColor(sf::Color(50, 50, 50, 200)); // Color gris con transparencia
-        background.setOutlineThickness(2);
-        background.setOutlineColor(sf::Color::White);
-        menuBackgrounds.push_back(background);
 
         // Crear texto del menú
         sf::Text text;
         text.setFont(font);
         text.setString(opciones[i]);
-        text.setFillColor(i == 0 ? sf::Color::Red : sf::Color::White);
+        text.setFillColor(i == 0 ? sf::Color(194, 199, 162) : sf::Color::White);
+        defaultButtonTextColor = text.getFillColor();
         text.setCharacterSize(30);
 
         // Centrar el texto dentro del recuadro
         sf::FloatRect textBounds = text.getLocalBounds();
-        text.setOrigin(textBounds.width / 2, textBounds.height / 2);
-        text.setPosition(background.getPosition().x + 300 / 2, background.getPosition().y + 60 / 2 - 5);
+        text.setPosition((width - textBounds.width) / 2, spacing * (i + 1));
+
+        // Initialize the underline
+        sf::RectangleShape underline(sf::Vector2f(textBounds.width, 2)); // Set the line's thickness
+        underline.setFillColor(sf::Color(194, 199, 162)); // Set the line's color to #c2c7a2
+        underline.setPosition(text.getPosition().x, text.getPosition().y + textBounds.height + 8); // Position under the text with a small offset
+        underlines.push_back(underline);
 
         menuItems.push_back(text);
     }
@@ -57,6 +58,7 @@ MainMenu* MainMenu::getInstance(GameEngine& engine, float width, float height) {
 
 void MainMenu::update(Game& game) {
     sf::RenderWindow& window = game.getWindow();
+    MusicManager::getInstance().update(engine.getDeltaTime());
 
     // Manejar eventos
     sf::Event event;
@@ -71,31 +73,55 @@ void MainMenu::update(Game& game) {
             } else if (event.key.code == sf::Keyboard::Enter) {
                 // Acción según la opción seleccionada
                 if (selectedItemIndex == 0) {
-                    std::cout << "Nueva Partida seleccionada\n";
+                    // std::cout << "Nueva Partida seleccionada\n";
                     game.changeState(InGame::getInstance(engine));
                 } else if (selectedItemIndex == 1) {
-                    std::cout << "Continuar partida seleccionada\n";
+                    // std::cout << "Continuar partida seleccionada\n";
                     game.changeState(InGame::getInstance(engine));
                 } else if (selectedItemIndex == 2) {
-                    std::cout << "Configuración seleccionada\n";
-                    game.changeState(ConfMenu::getInstance(800, 600));
+                    //std::cout << "Controles seleccionada\n";
+                    game.changeState(ControlsMenu::getInstance(engine, 800, 600)); // Changed to ControlsMenu
                 } else if (selectedItemIndex == 3) {
-                    std::cout << "Salir seleccionado\n";
+                    // std::cout << "Salir seleccionado\n";
                     window.close();
                 }
+            }
+        } else if (event.type == sf::Event::MouseButtonPressed) {
+            if (event.mouseButton.button == sf::Mouse::Left) {
+                handleMouseClick(game, window);
             }
         }
     }
 }
 
-// void MainMenu::render(Game& game, sf::RenderWindow& window) {
-//     window.draw(backgroundSprite);
+void MainMenu::handleMouseClick(Game& game, sf::RenderWindow& window) {
+    sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+    sf::Vector2f worldPos = window.mapPixelToCoords(mousePos);
 
-//     for (size_t i = 0; i < menuItems.size(); ++i) {
-//         window.draw(menuBackgrounds[i]);
-//         window.draw(menuItems[i]);
-//     }
-// }
+    for (size_t i = 0; i < menuItems.size(); ++i) {
+        if (menuItems[i].getGlobalBounds().contains(worldPos)) {
+            selectedItemIndex = i;
+            handleSelection(game);
+            break;
+        }
+    }
+}
+
+void MainMenu::handleSelection(Game& game) {
+    if (selectedItemIndex == 0) {
+        // std::cout << "Nueva Partida seleccionada\n";
+        game.changeState(InGame::getInstance(engine));
+    } else if (selectedItemIndex == 1) {
+        // std::cout << "Continuar partida seleccionada\n";
+        game.changeState(InGame::getInstance(engine, true));
+    } else if (selectedItemIndex == 2) {
+        //std::cout << "Controles seleccionada\n";
+        game.changeState(ControlsMenu::getInstance(engine, 800, 600)); // Changed to ControlsMenu
+    } else if (selectedItemIndex == 3) {
+        // std::cout << "Salir seleccionado\n";
+        game.getWindow().close();
+    }
+}
 
 void MainMenu::render(Game& game, sf::RenderWindow& window) {
     window.clear(); // Limpiar la ventana antes de dibujar
@@ -105,9 +131,11 @@ void MainMenu::render(Game& game, sf::RenderWindow& window) {
     engine.drawSprite(backgroundSprite);
 
     // Dibujar las opciones del menú
-    for (size_t i = 0; i < menuBackgrounds.size(); ++i) {
-        engine.drawRectangle(menuBackgrounds[i]);
+    for (size_t i = 0; i < menuItems.size(); ++i) {
         engine.drawText(menuItems[i]);
+        if (i == selectedItemIndex) {
+           window.draw(underlines[i]);
+        }
     }
 }
 
@@ -115,7 +143,7 @@ void MainMenu::moveUp() {
     if (selectedItemIndex > 0) {
         menuItems[selectedItemIndex].setFillColor(sf::Color::White);
         selectedItemIndex--;
-        menuItems[selectedItemIndex].setFillColor(sf::Color::Red);
+        menuItems[selectedItemIndex].setFillColor(sf::Color(194, 199, 162)); // Set the text color to #c2c7a2
     }
 }
 
@@ -123,6 +151,6 @@ void MainMenu::moveDown() {
     if (selectedItemIndex < menuItems.size() - 1) {
         menuItems[selectedItemIndex].setFillColor(sf::Color::White);
         selectedItemIndex++;
-        menuItems[selectedItemIndex].setFillColor(sf::Color::Red);
+        menuItems[selectedItemIndex].setFillColor(sf::Color(194, 199, 162)); // Set the text color to #c2c7a2
     }
 }

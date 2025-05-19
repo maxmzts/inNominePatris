@@ -12,6 +12,8 @@
 #include "Enemy.h"
 #include "Shop.h"
 #include "HUD.h"
+#include "Item.h"
+#include "WorldState.h"
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <VFXManager.h>
@@ -23,14 +25,17 @@ private:
     Character player;
     KarmaSystem karmaSystem; // Sistema de karma
     Shop shop;
+    bool m_playerInShopArea = false; // Flag para indicar si el jugador está en zona de tienda
+     // Agregar estas variables para rastrear UiTriggers activos
+    bool m_isPlayerInAnyUiTriggerArea = false;
+    int m_lastUiTriggerTileId = -1;
+
 
     TileMap tileMap;
     std::vector<Weapon*> weaponsOnGround;
     sf::Clock clock;
 
-    InGame(GameEngine& engine); // Constructor privado
-
-    HUD hud; // Instancia de la interfaz de usuario
+    InGame(GameEngine& engine, bool loadSaveFile = false); // Constructor privado
     
     // Método para verificar interacciones automáticas (como los teletransportes)
     void checkAutoInteractions();
@@ -38,15 +43,36 @@ private:
     std::string proximityMessage;
     sf::Font font;
 
+    std::unordered_map<std::string, std::unique_ptr<WorldState>> worldStates;
+    WorldState* currentWorldState;
+
 public:
-    static InGame* getInstance(GameEngine& engine); // Método para obtener la instancia
+    static InGame* getInstance(GameEngine& engine, bool loadSaveFile = false); // Método para obtener la instancia
     ~InGame();  
 
     void update(Game& game) override;
     void render(Game& game, sf::RenderWindow& window) override;
 
+    void reset(GameEngine& engine);
+
     bool checkEnemyWasHit(std::shared_ptr<Enemy> enemy, Character player);
-    bool checkPlayerWasHit(Character player, std::shared_ptr<Enemy> enemy);
+    bool checkPlayerWasHit(Character& player, std::shared_ptr<Enemy> enemy);
+
+    void changeWorldState(std::string& stateName, std::string& mapFilePath, std::string& musicFilePath, sf::Vector2i& spawnPosition);
+
+    TileMap& getTileMap() { return tileMap; }
+    Character& getPlayer() { return player; }
+    KarmaSystem& getKarmaSystem() { return karmaSystem; }
+
+    static void resetInstance(); // Método para reiniciar la instancia
+
+    void spawnWeaponsInLobby();
+
+    // Métodos para la gestión de zonas de UI
+    void setPlayerInShopArea(bool state) { m_playerInShopArea = state; }
+    bool isPlayerInShopArea() const { return m_playerInShopArea; }
+    //  método para resetear estados de UI cuando sea necesario
+    void resetUiTriggerStates();
 };
 
 #endif // INGAME_H

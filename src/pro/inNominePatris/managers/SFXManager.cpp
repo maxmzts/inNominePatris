@@ -1,4 +1,5 @@
 #include "SFXManager.h"
+#include <iostream>
 
 SFXManager& SFXManager::getInstance() {
     static SFXManager instance;
@@ -15,7 +16,16 @@ void SFXManager::addEffect(
     ));
 }
 
-void SFXManager::update(float deltaTime) {
+void SFXManager::update() {
+    // Verificar si algún sonido ha terminado de reproducirse naturalmente
+    for (auto& effect : effects) {
+        if (effect->hasFinished()) {
+            effect->stop(); // Actualizamos el estado interno a Stopped
+        }
+    }
+
+    // std::cout << effects.size() << std::endl;
+    
     // Eliminar los efectos terminados
     effects.erase(
         std::remove_if(effects.begin(), effects.end(),

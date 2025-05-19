@@ -11,10 +11,11 @@ void VFXManager::addEffect(
     sf::Vector2i frameSize,
     int frameCount,
     float framePerSecond,
-    bool invert
+    bool invert,
+    bool loop
 ) {
     effects.emplace_back(std::make_unique<VisualEffect>(
-        texturePath, position, frameSize, frameCount, framePerSecond, invert
+        texturePath, position, frameSize, frameCount, framePerSecond, invert, loop
     ));
 }
 

@@ -2,7 +2,7 @@
 #define MAINMENU_H
 
 #include "State.h"
-#include "../GameEngine/GameEngine.h" // Asegúrate de incluir GameEngine
+#include "../GameEngine/GameEngine.h"
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <string>
@@ -18,13 +18,18 @@ private:
     sf::Sprite backgroundSprite;
 
     std::vector<sf::Text> menuItems;
-    std::vector<sf::RectangleShape> menuBackgrounds;
+    //std::vector<sf::RectangleShape> menuBackgrounds; REMOVE THIS LINE
+    std::vector<sf::RectangleShape> underlines;
     int selectedItemIndex;
+    sf::Color defaultButtonTextColor;
 
     MainMenu(GameEngine& engine, float width, float height); // Constructor modificado
 
+    void handleMouseClick(Game& game, sf::RenderWindow& window); // Manejar clics del ratón
+    void handleSelection(Game& game); // Manejar la selección de una opción
+
 public:
-    static MainMenu* getInstance(GameEngine& engine, float width, float height); // Método modificado
+    static MainMenu* getInstance(GameEngine& engine, float width, float height); 
 
     void update(Game& game) override;
     void render(Game& game, sf::RenderWindow& window) override;

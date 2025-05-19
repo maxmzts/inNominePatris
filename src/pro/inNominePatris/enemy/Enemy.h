@@ -24,6 +24,8 @@ protected:
     bool isInvincible;      // Estado de invencibilidad
     float invincibilityTimer; // Contador de invencibilidad
     float invincibilityDuration; // Duración máxima de invencibilidad
+
+    int KarmaPoints; // Puntos de karma que suelta al morir
     
     sf::Vector2f position;
     sf::Vector2f velocity;
@@ -86,7 +88,8 @@ public:
     // Funciones requeridas
     virtual void takeDamage(float damage, const sf::Vector2f& attackPosition) = 0;
     virtual void attack() = 0;
-    void move(const sf::Vector2f& direction);
+    void calculateVelocity(const sf::Vector2f& direction);
+    void move(const TileMap* tileMap, float deltaTime);
     void setupKnockback(const sf::Vector2f& attackDirection, float force);
     void knockback(float deltaTime, const TileMap* tileMap);
     
@@ -107,6 +110,9 @@ public:
     // Para la detección de colisiones
     Hitbox* getHitbox() const { return hitbox; }
     Hurtbox* getHurtbox() const { return hurtbox; }
+
+    //Obtener los puntos de karma
+    int getKarmaPoints() const { return KarmaPoints; }
     
     // Cambio de estados
     virtual void changeState(int newState) = 0;

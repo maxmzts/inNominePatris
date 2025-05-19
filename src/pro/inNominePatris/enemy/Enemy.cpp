@@ -15,13 +15,13 @@ Enemy::Enemy(const std::string& name, float maxHealth, float movementSpeed, cons
     , maxHealth(maxHealth)
     , currentHealth(maxHealth)
     , movementSpeed(movementSpeed)
-    , position(startPosition)
+    , position(startPosition * 16.f)
     , isInvincible(false)
     , invincibilityTimer(0.0f)
     , invincibilityDuration(0.5f)  // Medio segundo de invencibilidad por defecto
     , currentState(EnemyState::IDLE)
     , stateTimer(0.0f)
-    , attackDamage(16.67)          // Valor por defecto
+    , attackDamage(1.f)          // Valor por defecto
     , attackCooldown(1.0f)         // 1 segundo entre ataques
     , attackTimer(0.0f)
     , detectionRadius(300.0f)      // Detecta al jugador a 300 unidades
@@ -32,7 +32,7 @@ Enemy::Enemy(const std::string& name, float maxHealth, float movementSpeed, cons
     , knockbackDuration(0.3f)
     , knockbackTimer(0.0f)
     , isInKnockback(false)
-{    
+{
     // Configuración inicial del sprite animado
     setTexture(texturePath);
     sprite.setPosition(position.x, position.y);
@@ -167,7 +167,7 @@ void Enemy::attack() {
     attackTimer = attackCooldown;
 }
 
-void Enemy::move(const sf::Vector2f& direction) {
+void Enemy::calculateVelocity(const sf::Vector2f& direction) {
     // Normalizar el vector de dirección si no es cero
     float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
     if (length > 0) {
@@ -176,10 +176,14 @@ void Enemy::move(const sf::Vector2f& direction) {
 
         // Ajusta la dirección del sprite
         if (direction.x > 0 && !facingRight) {
-            sprite.setScale(1.f, 1.f);
+            sf::Vector2f scale = sprite.getScale();
+            if(scale.x < 0)
+                scale.x = scale.x*(-1.f);
+            sprite.setScale(scale.x, scale.y);
             facingRight = true;
         } else if (direction.x < 0 && facingRight) {
-            sprite.setScale(-1.f, 1.f);
+            sf::Vector2f scale = sprite.getScale();
+            sprite.setScale(scale.x*(-1.f), scale.y);
             facingRight = false;
         }
     } else {
@@ -248,7 +252,7 @@ void Enemy::findPathToPlayer(const Character* player, const TileMap* tileMap) {
     // Si el enemigo y el jugador están en el mismo tile, moverse directamente
     if (startX == targetX && startY == targetY) {
         sf::Vector2f direction = playerPos - position;
-        move(direction);
+        calculateVelocity(direction);
         // std::cout << "Inicialización completada: " << initClock.getElapsedTime().asMicroseconds() << " microsegundos" << std::endl;
         return;
     }
@@ -282,7 +286,7 @@ void Enemy::findPathToPlayer(const Character* player, const TileMap* tileMap) {
         
         // Si hay línea de visión, moverse directamente sin calcular camino
         if (lineOfSight) {
-            move(normalizedDir);
+            calculateVelocity(normalizedDir);
             // std::cout << "Verificación de línea de visión completada: " << lineOfSightClock.getElapsedTime().asMicroseconds() << " microsegundos" << std::endl;
             // std::cout << "Tiempo total de pathfinding: " << totalClock.getElapsedTime().asMicroseconds() << " microsegundos (" 
                     //   << totalClock.getElapsedTime().asMicroseconds() / 16667.0f << " frames a 60 FPS)" << std::endl;
@@ -302,7 +306,7 @@ void Enemy::findPathToPlayer(const Character* player, const TileMap* tileMap) {
         // Si está demasiado lejos, moverse en la dirección general
         float angle = std::atan2(targetY - startY, targetX - startX);
         sf::Vector2f direction(std::cos(angle), std::sin(angle));
-        move(direction);
+        calculateVelocity(direction);
         // std::cout << "Verificación de distancia máxima completada: " << distanceCheckClock.getElapsedTime().asMicroseconds() << " microsegundos" << std::endl;
         // std::cout << "Tiempo total de pathfinding: " << totalClock.getElapsedTime().asMicroseconds() << " microsegundos (" 
                 //   << totalClock.getElapsedTime().asMicroseconds() / 16667.0f << " frames a 60 FPS)" << std::endl;
@@ -485,7 +489,7 @@ void Enemy::findPathToPlayer(const Character* player, const TileMap* tileMap) {
             direction /= length;
         }
         
-        move(direction);
+        calculateVelocity(direction);
     } else {
         // No se encontró camino o el objetivo está demasiado lejos
         // Usar un movimiento aleatorio para evitar quedarse atascado
@@ -501,7 +505,7 @@ void Enemy::findPathToPlayer(const Character* player, const TileMap* tileMap) {
                 randomDirection /= length;
             }
             
-            move(randomDirection);
+            calculateVelocity(randomDirection);
             stuckCounter = 0;
         } else {
             // Intentar moverse hacia el jugador de todas formas
@@ -512,7 +516,7 @@ void Enemy::findPathToPlayer(const Character* player, const TileMap* tileMap) {
                 direction /= length;
             }
             
-            move(direction);
+            calculateVelocity(direction);
         }
     }
     // std::cout << "Cálculo de movimiento completado: " << movementClock.getElapsedTime().asMicroseconds() << " microsegundos" << std::endl;
@@ -537,6 +541,32 @@ void Enemy::render(sf::RenderWindow& window) {
     
     // Dibujar el sprite del enemigo
     sprite.draw(window);
+}
+
+// Función para mover los enemigos, gestiona colisiones
+void Enemy::move(const TileMap* tileMap, float deltaTime){
+    sf::FloatRect nextBounds = sprite.getGlobalBounds();
+    sf::FloatRect nextXBounds = nextBounds;
+    sf::FloatRect nextYBounds = nextBounds;
+
+    // Comprobación de colisiones antes de mover al personaje
+    nextBounds = sprite.getGlobalBounds();
+
+    // Movimiento en eje X
+    nextXBounds = nextBounds;
+    nextXBounds.left += velocity.x * deltaTime;
+    if (tileMap->isColliding(nextXBounds)) {
+        velocity.x = 0;
+    }
+
+    // Movimiento en eje Y
+    nextYBounds = nextBounds;
+    nextYBounds.top += velocity.y * deltaTime;
+    if (tileMap->isColliding(nextYBounds)) {
+        velocity.y = 0;
+    }
+    position += velocity * deltaTime;
+    sprite.move(velocity * deltaTime);
 }
 
 // Primero, añade estos miembros a la clase Enemy en el archivo de cabecera (Enemy.h):
@@ -649,7 +679,7 @@ void Enemy::setInvincible(bool invincible) {
     if (invincible) {
         invincibilityTimer = invincibilityDuration;
         
-        // Efecto visual de invencibilidad (parpadeo)
+        // Efecto visual de invencibilidad 
         sprite.setColor(sf::Color(255, 76, 76, 128));  // Semi-transparente
     } else {
         sprite.setColor(sf::Color(255, 255, 255, 255));  // Opaco
@@ -657,8 +687,8 @@ void Enemy::setInvincible(bool invincible) {
 }
 
 bool Enemy::isDead() const{ 
-    if(currentState == EnemyState::DEAD) 
-        return true; 
+    if(currentState == EnemyState::DEAD)
+        return true;
     else 
         return false; 
 }

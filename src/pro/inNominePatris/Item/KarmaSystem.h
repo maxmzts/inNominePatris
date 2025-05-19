@@ -13,6 +13,7 @@ enum class KarmaType {
 };
 
 struct Upgrade {
+    int id;
     std::string name;
     KarmaType type;
     int cost;
@@ -20,8 +21,8 @@ struct Upgrade {
     bool isBlocked;
     std::function<void()> action;
 
-    Upgrade(std::string name, KarmaType type, int cost, std::function<void()> action)
-        : name(name), type(type), cost(cost), isUnlocked(false), isBlocked(false), action(action) {}
+    Upgrade(int id, std::string name, KarmaType type, int cost, std::function<void()> action)
+        : id(id), name(name), type(type), cost(cost), isUnlocked(false), isBlocked(false), action(action) {}
 };
 
 class KarmaSystem {
@@ -35,11 +36,19 @@ public:
     KarmaSystem(Character& character);
 
     bool purchaseUpgrade(int upgradeIndex);
+    bool setUpgrade(int upgradeIndex);
     void displayUpgrades() const;
     int getPecadoCount() const;
     int getAbsolucionCount() const;
     int getKarmaPoints() const;
     const std::vector<Upgrade>& getUpgrades() const { return upgrades; }
+    std::vector<int> getPurchasedUpgrades() const { 
+        std::vector<int> upgradesIndexes = {};
+        for(Upgrade upgrade : upgrades) {
+            if(upgrade.isUnlocked) upgradesIndexes.push_back(upgrade.id);
+        }
+        return upgradesIndexes; 
+    }
 };
 
 #endif // KARMASYSTEM_H

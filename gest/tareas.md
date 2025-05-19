@@ -1,19 +1,40 @@
-# Tareas Actuales
-Formato libre, pero debe tener estos items como mínimo:
+# **TAREAS PARA FINAL DE PROYECTO**
 
-`fecha_inicio; tarea; tiempo_dedicado; estado [nueva;en_progreso;fin]; usuario_git_encargado`
+**NO HEMOS GESTIONADO LAS TAREAS SEMANALMENTE** por eso solo vamos a mostrar las tareas/sistemas realizadas por cada uno sin orden.
 
-Debe estar lógicamente vinculado a las tareas generales planficadas en el hito.
+## MáximoMartínez
+- Sistema de sonido y música.
+- Sistema de enemigos + hurtbox y hitbox.
+- Diseño de todos los enemigos y jefes menos el segundo jefe.
+- Sistema de guardado.
+- Sistema de animaciones y efectos visuales.
+- Sistema de salas y gestión de estas en los mundos.
+- Búsqueda de elementos visuales y sonoros para decorar el juego.
+- Pathfinding.
+- Resolución de bugs en general.
 
-Ejemplo:
+## DavidGonzález
+- Sistema de interacción.
+- Todo lo relacionado con el tilemap (carga, gestión de capas, tilesets).
+- Diseño de mapas.
+- La mayor parte del sistema del jugador y su movimiento.
+- Puzzles.
+- Salto entre mundos y entre salas.
 
-* `[X]` - `20230107; Revisar formato de documentación; 120'; fidelaznar`
-* `[.]` - `20230108; Acabar plantilla; 120'; fidelaznar`
+## JorgePelegrín
+- Armas + el sistema de combate.
+- Mejoras.
+- Economía del juego (karma).
+- Items.
+- Tienda.
+- GameEngine y SpriteFacade.
+- Segundo boss del juego.
 
-# Otras cuestiones relacionadas
-Se recomienda gastar alguna herramienta que permita medir el tiempo y administrar las tareas:
+## EstrellaDomínguez
+- Todo lo relacionado con la gestión de estados (menos los de sala).
+- Todos los menús y sus visuales.
+- Todo el HUD y mensajes en pantalla.
+- Script para cargar los recursos de Dropbox.
+- Ciclo de muerte (morir y ventana de KO).
 
-* https://clockify.me/
-* Todo+: Plugin de VSCODE: fabiospampinato.vscode-todo-plus
-
-Este fichero puede ser un PDF si la herramienta que gastáis lo requiere, pero **debe estar actualizado semanalmente**.
+ 

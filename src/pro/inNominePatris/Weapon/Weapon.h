@@ -6,7 +6,9 @@
 #include <vector>
 #include "GameEngine.h"
 #include "Hitbox.h"
+#include "SFXManager.h"
 
+#include "ItemType.h"
 #include "AbilityType.h"
 
 class Weapon {
@@ -31,7 +33,7 @@ class Weapon {
         // Atributos estáticos (globales para todas las armas)
         inline static float globalDamageMultiplier = 1.0f;
         inline static float globalAttackSpeedMultiplier = 1.0f;
-        inline static float globalCriticalChanceBonus = 0.0f;
+        inline static float globalCriticalChanceBonus = 0.50f;
         inline static float globalCriticalMultiplier = 0.0f;
         inline static float globalCooldownReduction = 0.0f;
     
@@ -42,8 +44,10 @@ class Weapon {
         virtual void attack(sf::Vector2f position, sf::Vector2f direction) = 0;
         // REIMPLEMENTAR PORQUE CAUSA REFERENCIAS CIRCULARES POR TODOS LADOS
         virtual bool useAbility() = 0;
-        virtual void useAbility(sf::Vector2f characterPosition, sf::Vector2f mousePosition) = 0;
+        virtual void useAbility(sf::Vector2f characterPosition) = 0;
+        virtual void useAbility(sf::Vector2f position, sf::Vector2f direction) = 0;
         virtual AbilityType getAbilityType() const = 0;
+        virtual ItemType getItemType() const = 0;
 
         // Método para dibujar el arma, ajustado al personaje
         //virtual void draw(sf::Vector2f position, sf::Vector2f direction) = 0;
@@ -65,6 +69,8 @@ class Weapon {
             damage *= (1.0f + comboDamageBonus * consecutiveAttacks); // Aumentar el daño por ataques consecutivos
             float randomValue = static_cast<float>(rand()) / RAND_MAX; // Generar un número aleatorio entre 0 y 1
             if (randomValue < baseCriticalChance + globalCriticalChanceBonus) {
+                float pitch = 0.8f + static_cast<float>(rand()) / static_cast<float>(RAND_MAX) * (1.2f - 0.8f);
+                SFXManager::getInstance().addEffect("./resources/sfx/critico.wav", 60.f, pitch);
                 return damage * getCriticalMultiplier(); // Daño crítico
             }
             return damage; // Daño normal
@@ -93,7 +99,7 @@ class Weapon {
 
         static void enableComboDamageBonus(float amount) {
             comboDamageBonus += amount;
-            std::cout << "Daño por combo aumentado en " << amount * 100 << "%." << std::endl;
+          // std::cout << "Daño por combo aumentado en " << amount * 100 << "%." << std::endl;
         }
 
         float getDamage() const {

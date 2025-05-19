@@ -3,6 +3,9 @@
 #include <sstream>
 
 bool TileMap::loadFromFile(const std::string& filename, GameEngine& engine) {
+    // Limpiar datos anteriores antes de cargar el nuevo mapa
+    clear();
+
     tinyxml2::XMLDocument doc;
     if (doc.LoadFile(filename.c_str()) != tinyxml2::XML_SUCCESS) {
         std::cerr << "Error cargando el mapa XML\n";
@@ -37,10 +40,10 @@ bool TileMap::loadFromFile(const std::string& filename, GameEngine& engine) {
         tilesetElement->QueryIntAttribute("tileheight", &tileset.tileHeight);
         tileset.columns = tileset.texture.getSize().x / tileset.tileWidth;
 
-        std::cout << "Cargado tileset con firstGid=" << firstGid 
-                  << ", tileWidth=" << tileset.tileWidth 
-                  << ", tileHeight=" << tileset.tileHeight 
-                  << ", columns=" << tileset.columns << std::endl;
+        // std::cout << "Cargado tileset con firstGid=" << firstGid 
+                //   << ", tileWidth=" << tileset.tileWidth 
+                //   << ", tileHeight=" << tileset.tileHeight 
+                //   << ", columns=" << tileset.columns << std::endl;
 
         m_tilesets[firstGid] = tileset;
 
@@ -63,7 +66,7 @@ bool TileMap::loadFromFile(const std::string& filename, GameEngine& engine) {
         bool isBoundsLayer = (layerNameStr == "bounds");
         bool isInteractiveLayer = (layerNameStr == "interaction");
 
-        std::cout << "Procesando capa: " << layerNameStr << std::endl;
+        // std::cout << "Procesando capa: " << layerNameStr << std::endl;
 
         tinyxml2::XMLElement* dataElement = layerElement->FirstChildElement("data");
         if (!dataElement) continue;
@@ -87,7 +90,7 @@ bool TileMap::loadFromFile(const std::string& filename, GameEngine& engine) {
             // Registramos el bounds layer en m_layerIndices con un índice especial, por ejemplo -1
             // para indicar que es un caso especial que no está en m_layers
             m_layerIndices[layerNameStr] = -1;
-            std::cout << "Capa de bounds registrada con índice especial -1" << std::endl;
+            // std::cout << "Capa de bounds registrada con índice especial -1" << std::endl;
             continue; 
         }
         
@@ -109,7 +112,7 @@ bool TileMap::loadFromFile(const std::string& filename, GameEngine& engine) {
             
             // Registramos el interactive layer en m_layerIndices con un índice especial, por ejemplo -2
             m_layerIndices[layerNameStr] = -2;
-            std::cout << "Capa de interacción registrada con índice especial -2" << std::endl;
+            // std::cout << "Capa de interacción registrada con índice especial -2" << std::endl;
             continue; // Saltar al siguiente layer
         }
 
@@ -133,8 +136,8 @@ bool TileMap::loadFromFile(const std::string& filename, GameEngine& engine) {
         m_layerIndices[layerNameStr] = layerIndex;
         m_layers.push_back(layer);
         
-        std::cout << "Capa '" << layerNameStr << "' registrada con índice " << layerIndex 
-                  << ", usando tileset con firstGid=" << (tilesetToUse ? tilesetToUse->firstGid : 0) << std::endl;
+        // std::cout << "Capa '" << layerNameStr << "' registrada con índice " << layerIndex 
+        //          << ", usando tileset con firstGid=" << (tilesetToUse ? tilesetToUse->firstGid : 0) << std::endl;
         
         layerIndex++;
     }
@@ -145,8 +148,8 @@ bool TileMap::loadFromFile(const std::string& filename, GameEngine& engine) {
 void TileMap::updateLayerVertices(Layer& layer, TileSet* tileset) {
     if (!tileset) return;
     
-    std::cout << "Actualizando vértices para la capa '" << layer.name 
-              << "' con tileset firstGid=" << tileset->firstGid << std::endl;
+    // std::cout << "Actualizando vértices para la capa '" << layer.name 
+    //          << "' con tileset firstGid=" << tileset->firstGid << std::endl;
     
     layer.vertices.clear();
     layer.vertices.setPrimitiveType(sf::Quads);
@@ -158,12 +161,12 @@ void TileMap::updateLayerVertices(Layer& layer, TileSet* tileset) {
             if (tileNumber == 0) continue;
 
             int relativeTileID = tileNumber - tileset->firstGid;
-            if (relativeTileID < 0) {
-                std::cerr << "ERROR: TileID " << tileNumber << " menor que firstGid " 
-                          << tileset->firstGid << " en capa '" << layer.name 
-                          << "' en posición (" << x << "," << y << ")" << std::endl;
-                continue;
-            }
+            // if (relativeTileID < 0) {
+            //     std::cerr << "ERROR: TileID " << tileNumber << " menor que firstGid " 
+            //               << tileset->firstGid << " en capa '" << layer.name 
+            //               << "' en posición (" << x << "," << y << ")" << std::endl;
+            //     continue;
+            // }
             
             int tu = relativeTileID % tileset->columns;
             int tv = relativeTileID / tileset->columns;
@@ -192,9 +195,9 @@ void TileMap::updateSingleTile(Layer& layer, int x, int y, int oldTileId, int ne
     // Índice del quad en el array de vértices
     int quadIndex = (x + y * m_mapWidth) * 4;
     
-    std::cout << "Actualizando tile en (" << x << "," << y << ") de ID=" << oldTileId 
-              << " a ID=" << newTileId << " en capa '" << layer.name 
-              << "' (tileset firstGid=" << layer.tileset->firstGid << ")" << std::endl;
+    // std::cout << "Actualizando tile en (" << x << "," << y << ") de ID=" << oldTileId 
+            //   << " a ID=" << newTileId << " en capa '" << layer.name 
+            //   << "' (tileset firstGid=" << layer.tileset->firstGid << ")" << std::endl;
     
     // Si el nuevo ID es 0, hacemos el quad invisible estableciendo alfa a 0
     if (newTileId == 0) {
@@ -203,7 +206,7 @@ void TileMap::updateSingleTile(Layer& layer, int x, int y, int oldTileId, int ne
                 layer.vertices[quadIndex + i].color.a = 0;
             }
         }
-        std::cout << "Tile establecido como invisible (ID=0)" << std::endl;
+        // std::cout << "Tile establecido como invisible (ID=0)" << std::endl;
         return;
     }
     
@@ -221,7 +224,7 @@ void TileMap::updateSingleTile(Layer& layer, int x, int y, int oldTileId, int ne
     if (needsFullUpdate) {
         // Si el array de vértices no es lo suficientemente grande, ajustamos su tamaño
         if (layer.vertices.getVertexCount() < (m_mapWidth * m_mapHeight * 4)) {
-            std::cout << "Redimensionando array de vértices a " << (m_mapWidth * m_mapHeight * 4) << std::endl;
+            // std::cout << "Redimensionando array de vértices a " << (m_mapWidth * m_mapHeight * 4) << std::endl;
             layer.vertices.resize(m_mapWidth * m_mapHeight * 4);
         }
     }
@@ -231,8 +234,8 @@ void TileMap::updateSingleTile(Layer& layer, int x, int y, int oldTileId, int ne
     int tu = relativeTileID % layer.tileset->columns;
     int tv = relativeTileID / layer.tileset->columns;
     
-    std::cout << "relativeTileID=" << relativeTileID << ", tu=" << tu << ", tv=" << tv 
-              << ", columns=" << layer.tileset->columns << std::endl;
+    // std::cout << "relativeTileID=" << relativeTileID << ", tu=" << tu << ", tv=" << tv 
+    //          << ", columns=" << layer.tileset->columns << std::endl;
     
     // Actualizar las posiciones y coordenadas de textura del quad
     sf::Vertex* quad = &layer.vertices[quadIndex];
@@ -254,7 +257,7 @@ void TileMap::updateSingleTile(Layer& layer, int x, int y, int oldTileId, int ne
         quad[i].color = sf::Color::White;
     }
     
-    std::cout << "Vértices actualizados correctamente para el nuevo tile" << std::endl;
+    // std::cout << "Vértices actualizados correctamente para el nuevo tile" << std::endl;
 }
 
 
@@ -350,8 +353,8 @@ bool TileMap::isPlayerInteractingWithTile(const sf::FloatRect& playerBounds, int
 
 void TileMap::addInteractiveTile(int id, const sf::FloatRect& rect) {
     interactiveTiles.push_back({id, rect});
-    std::cout << "Añadido tile interactivo con ID=" << id 
-              << " en posición (" << rect.left << "," << rect.top << ")" << std::endl;
+    // std::cout << "Añadido tile interactivo con ID=" << id 
+    //          << " en posición (" << rect.left << "," << rect.top << ")" << std::endl;
 }
 
 
@@ -362,6 +365,11 @@ bool TileMap::setLocalTile(const std::string& layerName, int x, int y, int local
     if (layerName == "bounds") {
         // Para valores negativos (-1, -2, etc.), establecemos el ID a 0
         // lo que eliminará la colisión en updateCollisionBlocks()
+        int globalTileId = (localTileId < 0) ? 0 : localTileId;
+        return setTile(layerName, x, y, globalTileId);
+    }
+
+    if (layerName == "interaction") {
         int globalTileId = (localTileId < 0) ? 0 : localTileId;
         return setTile(layerName, x, y, globalTileId);
     }
@@ -395,8 +403,8 @@ bool TileMap::setTile(const std::string& layerName, int x, int y, int tileId) {
         return false;
     }
     
-    std::cout << "Estableciendo tile en capa '" << layerName << "' en (" << x << "," << y 
-              << ") con ID=" << tileId << std::endl;
+    // std::cout << "Estableciendo tile en capa '" << layerName << "' en (" << x << "," << y 
+    //          << ") con ID=" << tileId << std::endl;
     
     // Caso especial para la capa de colisiones
     if (layerName == "bounds") {
@@ -422,7 +430,7 @@ bool TileMap::setTile(const std::string& layerName, int x, int y, int tileId) {
         
         // Actualizar las colisiones
         updateCollisionBlocks(mainTileset);
-        std::cout << "Tile de colisión actualizado en (" << x << ", " << y << ") a ID " << tileId << std::endl;
+        // std::cout << "Tile de colisión actualizado en (" << x << ", " << y << ") a ID " << tileId << std::endl;
         return true;
     }
     
@@ -459,7 +467,7 @@ bool TileMap::setTile(const std::string& layerName, int x, int y, int tileId) {
             ));
         }
         
-        std::cout << "Tile de interacción actualizado en (" << x << ", " << y << ") a ID " << tileId << std::endl;
+        // std::cout << "Tile de interacción actualizado en (" << x << ", " << y << ") a ID " << tileId << std::endl;
         return true;
     }
     
@@ -471,7 +479,7 @@ bool TileMap::setTile(const std::string& layerName, int x, int y, int tileId) {
     }
     
     int layerIndex = layerIndexIt->second;
-    std::cout << "Índice de capa encontrado: " << layerIndex << std::endl;
+    // std::cout << "Índice de capa encontrado: " << layerIndex << std::endl;
     
     // Caso normal para capas regulares
     if (layerIndex < 0 || layerIndex >= m_layers.size()) {
@@ -504,8 +512,8 @@ bool TileMap::setTile(const std::string& layerName, int x, int y, int tileId) {
     // Actualizar solo el quad específico en lugar de regenerar todos los vértices
     updateSingleTile(layer, x, y, oldTileId, tileId);
     
-    std::cout << "Tile actualizado en capa '" << layerName << "' en (" 
-              << x << ", " << y << ") de ID " << oldTileId << " a ID " << tileId << std::endl;
+    // std::cout << "Tile actualizado en capa '" << layerName << "' en (" 
+    //          << x << ", " << y << ") de ID " << oldTileId << " a ID " << tileId << std::endl;
     return true;
 }
 
@@ -514,7 +522,7 @@ bool TileMap::setTile(const std::string& layerName, int x, int y, int tileId) {
 void TileMap::updateCollisionBlocks(TileSet* tileset) {
     if (!tileset) return;
     
-    std::cout << "Actualizando bloques de colisión..." << std::endl;
+    // std::cout << "Actualizando bloques de colisión..." << std::endl;
     
     collisionBlocks.clear();
     
@@ -540,7 +548,7 @@ void TileMap::updateCollisionBlocks(TileSet* tileset) {
         }
     }
     
-    std::cout << "Total de bloques de colisión: " << collisionBlocks.size() << std::endl;
+    // std::cout << "Total de bloques de colisión: " << collisionBlocks.size() << std::endl;
 }
 
 bool TileMap::removeCollisionByCoord(int x, int y) {
@@ -548,14 +556,14 @@ bool TileMap::removeCollisionByCoord(int x, int y) {
         [x, y](const CollisionBlock& block) {
             return block.x == x && block.y == y;
         });
-    std::cout << std::endl;
+    // std::cout << std::endl;
     
     bool removed = it != collisionBlocks.end();
     collisionBlocks.erase(it, collisionBlocks.end());
     if (removed) {
         // También actualizar m_boundsTiles para reflejar la eliminación
         m_boundsTiles[y * m_mapWidth + x] = 0;
-        std::cout << "Eliminado bloque de colisión en (" << x << ", " << y << ")" << std::endl;
+        // std::cout << "Eliminado bloque de colisión en (" << x << ", " << y << ")" << std::endl;
     }
     
     return removed;
@@ -578,7 +586,7 @@ bool TileMap::removeCollisionByTileId(int tileId) {
     collisionBlocks.erase(it, collisionBlocks.end());
     
     if (anyRemoved) {
-        std::cout << "Eliminados bloques de colisión con ID de tile: " << tileId << std::endl;
+        // std::cout << "Eliminados bloques de colisión con ID de tile: " << tileId << std::endl;
     }
     
     return anyRemoved;
@@ -595,7 +603,7 @@ bool TileMap::toggleCollisionAt(int x, int y) {
         // Si existe, lo eliminamos
         collisionBlocks.erase(it);
         m_boundsTiles[y * m_mapWidth + x] = 0;
-        std::cout << "Desactivada colisión en (" << x << ", " << y << ")" << std::endl;
+        // std::cout << "Desactivada colisión en (" << x << ", " << y << ")" << std::endl;
         return true;
     } else {
         // Si no existe, verificamos si hay un tile en la capa principal
@@ -625,7 +633,24 @@ bool TileMap::toggleCollisionAt(int x, int y) {
         // También actualizamos el array de tiles de colisión
         m_boundsTiles[y * m_mapWidth + x] = block.tileId;
         
-        std::cout << "Activada colisión en (" << x << ", " << y << ")" << std::endl;
+        // std::cout << "Activada colisión en (" << x << ", " << y << ")" << std::endl;
         return true;
     }
+}
+
+
+void TileMap::clear() {
+    // Limpiar todas las estructuras de datos
+    m_layers.clear();
+    m_tilesets.clear();
+    interactiveTiles.clear();
+    m_boundsTiles.clear();
+    m_layerIndices.clear();
+    collisionBlocks.clear();
+    
+    // Reiniciar dimensiones del mapa
+    m_mapWidth = 0;
+    m_mapHeight = 0;
+    
+    // std::cout << "Limpiados todos los datos del mapa anterior" << std::endl;
 }

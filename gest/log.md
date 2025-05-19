@@ -255,4 +255,126 @@ Por último he cambiado la barra de vida por corazones.
 Arreglado problema con los bounds, ya se puden eliminar bounds para dar paso al jugador a zonas previamente inaccesibles.
 
 ## 20250414 EstrellaDominguez @(30min)
-Arreglos menores en la tienda y el HUD. Subida a la rama main para el hito 2.
+Arreglos menores en la tienda y el HUD. Subida a main para el Hito 2.
+
+## 20250506 DavidGonzález @(2h)
+Spawn at funcionando correctamente con ida y vuelta + puliendo world_1
+
+## 20250507 EstrellaDomínguez @(1h)
+He implementado la pantalla de KO a la que se redirige cuando el personaje muere. Aunque estéticamente no está correcta y algunas funciones fallan.
+
+## 20250506 JorgePelegrín @(1h)
+He hecho un poco de mapa y cambiado la mecánica del tp de la lanza, para que ahora se coloque el portal en la posición del jugador y no en la del ratón.
+
+## 20250508 DavidGonzález @(2h)
+World_1 casi terminado (faltan los tps)
+
+## 20250509 JorgePelegrín @(4h 30min)
+He añadido varios items para mejorar las armas y alguna que otra mecánica nueva para mejorarlas. También he añadido el sprite del personaje con su animación.
+
+## 20250410 EstrellaDomínguez @(4h)
+Ya funciona la ventana de KO y el personaje muere.
+Implementación del patrón State para el lobby y mundo 1.
+El personaje spawnea en el lobby.
+Ahora los menús también funcionan con el clic del ratón y no solo con la tecla Enter.
+
+## 20250409 MaximoMartinez @(3h)
+Estuve ayudando a David para gestionar los estados de las salas para definir su bucle y poder empezar con otras tareas como spawnear enemigos. Por mi parte, no se terminó el trabajo en este día porque hubo erroes muy raros muy dificiles de debuggear en temas de casting de subclases.
+
+## 20250511 DavidGonzález @(6h)
+Muchas cosas, sistema de estados por interacción para manejar el cambio entre mapas al pasar por zonas, cambios ligeros en los mapas, añadidas funcion clear en musicManager y en TileMap entre otras y debug.
+
+## 20250511 MaximoMartinez @(7h)
+Me he ocupado de resolver una referencia circular entre InGame y WorldChangeInteraction. Luego he implementado un sistema con el patrón State para definir las salas de un mundo y así conocer en qué sala se encuentra el jugador y poder spawnear enemigos si es la primera vez que entra o cualquier otra lógica.
+(18:40) He trabajado con dicho sistema para que funcione en el mundo 1. Ahora las salas están definidas, si entras a 1 aparecen enemigos (en posiciones estaticas de momento) y cuando son eliminados se puede ejecutar lógica adicional (abrir puertas por ejemplo). He añadido que se puedan pasar funciones por parametro a las salas para así meter las funciones que eliminan sus respectivas puertas sin hacer una clase para cada sala. 
+(21:30) He pulido algunas asperezas del sistema anterior. Luego he cambiado las colisiones del personaje principal. En el momento no podía seguir entonces cambié para implementar la transición de canciones. A la tercera va la vencida y ahora las canciones transicionan entre sí. He invertido además un buen rato en crear canciones con IA para rellenar un poco el juego.
+
+## 20250512 DavidGonzález @(7h)
+World_2 hecho, completamente funcional con spawn entre salas y puzzle del botón funcionando también porque soy una bestia, añadido World2State también completamente funcional, ahora cuando pasas por la puerta del mundo 2 (en el lobby) te lleva al mundo 2 con su estado y todo (he quitado la barrera de momento para probarlo). Tambien he puesto un tile para retornar al lobby (el 1492 por si quereis hacer pruebas).
+
+## 20250512 MaximoMartinez @(2h)
+Arreglé un error por el que las puertas no se abrían al completar un combate, no pasaba el puntero de TileMap.
+He solucionado las asperezas del movimiento del personaje, ahora chocar con una pared no anula el movimiento en los dos ejes en movimientos diagonales.
+Luego me puse a poner los enemigos en sus sitios para cada sala pero me salió un error muy raro que desapareció solo (me lié o algo).
+
+## 20250513 MaximoMartinez @(1h 30min)
+He terminado de colocar los enemigos del primer y segundo mundo. 
+He agregado funciones para liberar la memoria de las salas que usaremos más adelante cuando el jugador pueda completar un mundo o morir. 
+He invertido tiempo en planificar algunos posibles enemigos que implementar para los siguientes mundos.
+He arreglado un problema con la posición del necromancer.
+
+## 20250513 EstrellaDomínguez @(1h)
+He comenzado a desarrollar el ten sheet, puesto mi parte de autoevaluación, desarrollado el manual de usuario y dado estructura al archivo de tareas.
+
+
+## 20250513 JorgePelegrín @(4h 45min)
+Añadidos los items al matar todos los enemigos, con sus sprites. Falta añadir un pequeño texto abajo que ponga lo que hace.
+
+## 20250514 MaximoMartinez @(2h)
+Haciendo pruebas con los enemigos detecté errores y me puse a solucionarlos. Ya no atraviesan paredes y voy a rehacer el pathfinding. 
+He vuelto a invertir tiempo en poner eliminar la decoración de las puertas cuando una sala se completa (antes no estaban).
+
+## 202505015 JorgePelegrín @(1h 30min)
+He hecho el HUD un singleton para mejor manejo, y he animado los items poniendo sus nombres encima, además de añadir un HUD temporal explicativo de lo que hace el item que se coge. 
+
+## 20250515 MaximoMartinez @(3h)
+Haciendo pruebas con los enemigos detecté errores y me puse a solucionarlos. Ya no atraviesan paredes.
+He vuelto a invertir tiempo en eliminar la decoración de las puertas cuando una sala se completa (antes no estaban) y en añadir las puertas del mundo 2.
+Por la tarde he cambiado la clase de la sala para permitir distintos tipos de música.
+
+## 20250516 MaximoMartinez @(1h 30min)
+Me he puesto a diseñar los bosses y configurar los sprites que elegimos para ellos.
+Hecho esto empecé a programar el primero de ellos. No terminé.
+
+## 20250517 MaximoMartinez @(4h 30min)
+He seguido trabajando en el primer boss. Ha quedado totalmente implementado. 
+Para ello también he implementado un Minion quee es una copia del boss pequeña que el boss genera de vez en cuando. Para terminarlo he tenido que editar AnimatedSprite y el movimiento de los enemigos, porque forzaban la escala del sprite a 1 (no se podía asignar una escala personalizada).
+He implementado el tecer boss.
+
+## 20250517 JorgePelegrín @(4h 30min)
+He implementado el segundo boss al completo. Lo único que falta es añadirle los efectos de sonidos a sus ataques, etc.
+
+
+## 20250517 JorgePelegrín @(1h 30min)
+He movido la logica de creacion de las armas al lobby, restringiendo su creacion dependiendo de los mundos que te hayas pasado. World3State hecho, falta poner el tile de interaccion para volver al lobby.
+
+## 20250518 EstrellaDomínguez @(2h)
+El estado de KO funciona prácticamente al completo. Ya se restauran todos los items, enemigos, armas, karma, botones y música, sin embargo cuando mueres una segunda vez falla algo.
+
+## 20250418 EstrellaDomínguez @(2h)
+El estado de KO funciona prácticamente al completo. Ya se restauran todos los items, enemigos, armas, karma, botones y música, sin embargo cuando mueres una segunda vez falla algo.
+
+## 20250518 MaximoMartinez @(6h)
+He añadido un portal al final de cada mundo para volver al lobby. 
+He asegurado que los mundos se reinicien bien cuando se vuelve al lobby.
+He implementado que se abran las puertas de cada mundo cuando se completa el anterior.
+He resuelto la excepción que saltaba al morir por segunda vez.
+Con todo eso **el juego puede por fin jugarse de principio a fin**.
+Por la noche trabajé en implementar el sistema de guardado. Conseguí que guardara pero no hice tests de la carga de datos.
+
+## 20250518 JorgePelegrín @(1h 30min)
+Ahora el efecto de los items se revierten al morir o salir del mundo al lobby. 
+Otros ajustes varios.
+
+## 20250518 EstrellaDomínguez @(1h)
+Implementada la ventana de Controles desde el menu principal y de pausa.
+He resuelto la excepción que salía al navegar entre menús.
+
+## 20250519 MaximoMartinez @(6h)
+He testeado el SaveSystem que hice ayer y he resuelto los problemas que tenía. He agregado una función para cargar partida en el InGame y he puesto el comando para guardar partida donde era necesario. Durante el proceso he comentado los std::cout del proyecto.
+He arreglado problemas que tenía el Boss 2.
+Luego me he puesto a hacer el diagrama de clases.
+Llegado cierto punto he arreglado un problema que tenía desde hace mucho con SoundEffect, resulta que nunca los liberaba de la memoria.
+
+## 20250519 EstrellaDomínguez @(4h)
+He implementado la barra de vida del enemigo.
+He cambiado completamente la estética de todos los menús.
+He corregido la ortografía de los items que hacía que salieran caracteres raros.
+He cambiado la caligrafía de todo el juego.
+He cambiado la estética del inventario.
+
+## 20250519 DavidGonzález @(2h 30 min)
+Implementación a última hora de la interaccion uitrigger para activar y desactivar interfaces al pasar por sitios. Con ello he modificado InGame para añadir interaccion para que solo se pueda activar la tienda en caso de estar en ella. 
+
+## 20250512 Jorge @(4h 30min)
+No se, he hecho muchas cosas. Bugs y tal.

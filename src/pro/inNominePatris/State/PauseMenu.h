@@ -18,13 +18,17 @@ private:
 
     sf::Texture backgroundTexture;
     sf::Sprite backgroundSprite;
-    std::vector<sf::RectangleShape> menuBackgrounds;
+    //std::vector<sf::RectangleShape> menuBackgrounds; REMOVE THIS LINE
     std::vector<sf::Text> menuItems;
     sf::Font font;
     int selectedItemIndex;
+    std::vector<sf::RectangleShape> underlines;
+    sf::Color defaultButtonTextColor;
 
     void moveUp();
     void moveDown();
+    void handleMouseClick(Game& game, sf::RenderWindow& window); // Manejar clics del ratón
+    void handleSelection(Game& game); // Manejar la selección de una opción
 };
 
 #endif

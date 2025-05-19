@@ -7,15 +7,17 @@
 #include <VFXManager.h>
 #include <unordered_set>
 
-EnemyBat::EnemyBat(const sf::Vector2f& startPosition)
+EnemyBat::EnemyBat(const sf::Vector2f& startPosition, int DropkarmaPoints)
     : Enemy(
         "Bat", 
         50.f, 
         120.f, 
         startPosition, 
-        "resources/enemies/Bat.png")
+        "resources/enemies/Bat.png"
+        )
 {
     loadAnimations();
+    KarmaPoints = DropkarmaPoints;
 }
 
 /**
@@ -87,7 +89,7 @@ void EnemyBat::attack() {
     attackTimer = attackCooldown;
 }
 
-void EnemyBat::move(const sf::Vector2f& direction) {
+void EnemyBat::calculateVelocity(const sf::Vector2f& direction) {
     // Normalizar el vector de dirección si no es cero
     float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
     if (length > 0) {
@@ -175,16 +177,15 @@ void EnemyBat::update(float deltaTime, Character* player, const TileMap* tileMap
             break;
             
         case EnemyState::MOVING:
-            // Aplicar velocidad al movimiento
-            position += velocity * deltaTime;
-            sprite.setPosition(position.x, position.y);
-            updateHitboxes();
-            
             // Recalcular el camino periódicamente mientras nos movemos
             if (player && pathUpdateTimer >= pathUpdateInterval) {
                 pathUpdateTimer = 0;
                 findPathToPlayer(player, tileMap);
             }
+
+            // La velocidad de movimiento se calcula en el pathfinding
+            move(tileMap, deltaTime);
+            updateHitboxes();
             
             // Verificar si podemos atacar al jugador
             if (player) {
