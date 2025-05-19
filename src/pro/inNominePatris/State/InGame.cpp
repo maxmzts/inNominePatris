@@ -245,6 +245,10 @@ void InGame::update(Game& game) {
                 else if (auto doorInteraction = std::dynamic_pointer_cast<DoorInteraction>(interaction)) {
                     proximityMessage = doorInteraction->getProximityMessage();
                 }
+                // Verificar si la interacción es un DoorInteraction
+                else if (auto doorInteraction = std::dynamic_pointer_cast<UiTriggerInteraction>(interaction)) {
+                    proximityMessage = doorInteraction->getProximityMessage();
+                }
             }
         }
         

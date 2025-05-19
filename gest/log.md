@@ -372,3 +372,6 @@ He cambiado completamente la estética de todos los menús.
 He corregido la ortografía de los items que hacía que salieran caracteres raros.
 He cambiado la caligrafía de todo el juego.
 He cambiado la estética del inventario.
+
+## 20250512 DavidGonzález @(2h 30 min)
+Implementación a última hora de la interaccion uitrigger para activar y desactivar interfaces al pasar por sitios. Con ello he modificado InGame para añadir interaccion para que solo se pueda activar la tienda en caso de estar en ella. 
