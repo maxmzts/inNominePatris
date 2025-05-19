@@ -360,7 +360,7 @@ Otros ajustes varios.
 Implementada la ventana de Controles desde el menu principal y de pausa.
 He resuelto la excepción que salía al navegar entre menús.
 
-## 20250519 MaximoMartinez @(4h)
+## 20250519 MaximoMartinez @(6h)
 He testeado el SaveSystem que hice ayer y he resuelto los problemas que tenía. He agregado una función para cargar partida en el InGame y he puesto el comando para guardar partida donde era necesario. Durante el proceso he comentado los std::cout del proyecto.
 He arreglado problemas que tenía el Boss 2.
 Luego me he puesto a hacer el diagrama de clases.
@@ -373,5 +373,8 @@ He corregido la ortografía de los items que hacía que salieran caracteres raro
 He cambiado la caligrafía de todo el juego.
 He cambiado la estética del inventario.
 
-## 20250512 DavidGonzález @(2h 30 min)
+## 20250519 DavidGonzález @(2h 30 min)
 Implementación a última hora de la interaccion uitrigger para activar y desactivar interfaces al pasar por sitios. Con ello he modificado InGame para añadir interaccion para que solo se pueda activar la tienda en caso de estar en ella. 
+
+## 20250512 Jorge @(4h 30min)
+No se, he hecho muchas cosas. Bugs y tal.
