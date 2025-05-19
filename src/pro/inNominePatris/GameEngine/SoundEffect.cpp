@@ -38,14 +38,6 @@ void SoundEffect::setVolume(float newVolume) {
     sound.setVolume(volume);
 }
 
-
 void SoundEffect::setPitch(float pitch) {
     sound.setPitch(pitch);
-}
-
-bool SoundEffect::isStopped(){
-    if(currentStatus == Status::Stopped)
-        return true;
-    else 
-        return false;
 }
