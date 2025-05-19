@@ -1,0 +1,571 @@
+#include "Character.h"
+#include "../hboxes/Hurtbox.h"
+#include "InteractionFactory.h"
+#include <iostream>
+#include <cmath>
+
+Character::Character(const std::string& textureFile) 
+: speed(200.f), acceleration(800.f), deceleration(1000.f), equippedWeapon(nullptr), 
+isDashing(false), dashSpeed(400.f), dashDuration(0.2f), weapons(), equippedIndex(0), 
+direction(0.f, 0.f), maxHealth(100), currentHealth(100), isInvencible(false) {
+    
+    if (!texture.loadFromFile(textureFile)) {
+        std::cerr << "Error cargando la textura" << std::endl;
+        exit(1);
+    }
+    
+    sprite.setTexture(texture);
+    sprite.setOrigin(75 / 2, 75 / 2);
+    sprite.setTextureRect(sf::IntRect(0, 0, 75, 75));
+    sprite.setPosition(320, 240);
+    sprite.setScale(0.6f, 0.6f);
+
+    // sprite.setOrigin(16 / 2, 16 / 2);
+    // sprite.setTextureRect(sf::IntRect(0, 0, 16, 16));
+    // sprite.setPosition(320, 240);
+    // sprite.setScale(2.0f, 2.0f);
+
+    velocity = sf::Vector2f(0.f, 0.f);
+
+    hurtbox = new Hurtbox(sf::Vector2f(60.0f, 60.0f), sf::Vector2f(0.0f, 0.0f));
+
+    shieldsprite.loadTexture("./resources/bubble.png");
+    // Inicializar la animación del escudo
+    shieldAnimation = new AnimatedSprite(shieldsprite); // Usar el sprite como referencia
+    shieldAnimation->addAnimation("shield", 7, {0, 0}, {64, 64}, true); // 7 frames, 64x64 cada uno
+}
+
+void Character::handleInput(const sf::Event& event) {
+    if (event.type == sf::Event::KeyPressed) {
+        switch (event.key.code) {
+            case sf::Keyboard::D: movingRight = true; break;
+            case sf::Keyboard::A: movingLeft = true; break;
+            case sf::Keyboard::W: movingUp = true; break;
+            case sf::Keyboard::S: movingDown = true; break;
+        }
+    } else if (event.type == sf::Event::KeyReleased) {
+        switch (event.key.code) {
+            case sf::Keyboard::D: movingRight = false; break;
+            case sf::Keyboard::A: movingLeft = false; break;
+            case sf::Keyboard::W: movingUp = false; break;
+            case sf::Keyboard::S: movingDown = false; break;
+        }
+    } else if (event.type == sf::Event::MouseMoved) {
+        // Actualizar la posición del ratón cuando se mueve
+        setMousePosition(sf::Vector2f(event.mouseMove.x, event.mouseMove.y));
+    }
+}
+
+void Character::setMousePosition(const sf::Vector2f& position) {
+    mousePosition = position;
+    updateAimDirection();
+}
+
+void Character::updateAimDirection() {
+    // Calcular la dirección desde el personaje hacia el ratón
+    sf::Vector2f playerPos = sprite.getPosition();
+    aimDirection = mousePosition - playerPos;
+    
+    // Normalizar el vector de dirección
+    float length = std::sqrt(aimDirection.x * aimDirection.x + aimDirection.y * aimDirection.y);
+    if (length > 0) {
+        aimDirection.x /= length;
+        aimDirection.y /= length;
+    }
+}
+
+sf::Vector2f Character::getAimDirection() const {
+    return aimDirection;
+}
+
+void Character::update(const TileMap& tilemap, float deltaTime) {
+    sf::Vector2f moveDirection(0.f, 0.f);
+    updateInvencibility(deltaTime);
+    hurtbox->setPosition(getPosition());  // Centrado en la posición del enemigo
+    updateHealthRegeneration(deltaTime); // Regenerar vida si está habilitado
+    updateAimDirection(); // Actualizar la dirección de apuntado en cada frame
+    
+    if(isShieldActive) {
+        shieldAnimation->update(deltaTime); // Actualizar la animación del escudo
+    }
+    
+    // Detectar entrada del usuario solo si no está en dash
+    if (!isDashing) {
+        if (movingRight) { moveDirection.x += 1; }
+        if (movingLeft) { moveDirection.x -= 1; }
+        if (movingUp) { moveDirection.y -= 1; }
+        if (movingDown) { moveDirection.y += 1; }
+
+        // Normalizar el vector de movimiento en caso de movimiento diagonal
+        if (moveDirection.x != 0 && moveDirection.y != 0) {
+            moveDirection *= 0.7071f; // sqrt(2)/2 para mantener velocidad uniforme
+        }
+
+        // Aplicar aceleración si hay movimiento
+        if (moveDirection.x != 0) {
+            velocity.x += moveDirection.x * acceleration * deltaTime;
+            if (velocity.x > speed) velocity.x = speed;
+            if (velocity.x < -speed) velocity.x = -speed;
+        } else {
+            // Aplicar desaceleración si no hay entrada en X
+            if (velocity.x > 0) {
+                velocity.x -= deceleration * deltaTime;
+                if (velocity.x < 0) velocity.x = 0;
+            }
+            if (velocity.x < 0) {
+                velocity.x += deceleration * deltaTime;
+                if (velocity.x > 0) velocity.x = 0;
+            }
+        }
+
+        if (moveDirection.y != 0) {
+            velocity.y += moveDirection.y * acceleration * deltaTime;
+            if (velocity.y > speed) velocity.y = speed;
+            if (velocity.y < -speed) velocity.y = -speed;
+        } else {
+            // Aplicar desaceleración si no hay entrada en Y
+            if (velocity.y > 0) {
+                velocity.y -= deceleration * deltaTime;
+                if (velocity.y < 0) velocity.y = 0;
+            }
+            if (velocity.y < 0) {
+                velocity.y += deceleration * deltaTime;
+                if (velocity.y > 0) velocity.y = 0;
+            }
+        }
+        
+        // Actualizar la dirección a la que mira el personaje para que siempre sea la dirección de apuntado
+        direction = aimDirection;
+    }
+
+    // Manejar el dash
+    if (isDashing) {
+        if (dashTimer.getElapsedTime().asSeconds() > dashDuration) {
+            isDashing = false;
+            velocity.x = 0;
+            velocity.y = 0;
+        }
+    }
+
+    // Comprobación de colisiones antes de mover al personaje
+    sf::FloatRect nextBounds = sprite.getGlobalBounds();
+    nextBounds.left += velocity.x * deltaTime;
+    nextBounds.top += velocity.y * deltaTime;
+
+    if (!tilemap.isColliding(nextBounds)) {
+        sprite.move(velocity * deltaTime);
+    } else {
+        if (isDashing) {
+            // Si hay colisión durante el dash, detener el dash
+            isDashing = false;
+            velocity = {0, 0};
+        } else {
+            velocity = {0, 0}; // Detiene el movimiento en caso de colisión
+        }
+    }
+
+    // Ajustar la textura según la dirección de apuntado
+    if (aimDirection.x > 0) {
+        sprite.setTextureRect(sf::IntRect(0, 2 * 75, 75, 75));
+        sprite.setScale(0.6f, 0.6f);
+    }
+    if (aimDirection.x < 0) {
+        sprite.setTextureRect(sf::IntRect(0, 2 * 75, 75, 75));
+        sprite.setScale(-0.6f, 0.6f);
+    }
+    if (aimDirection.y < 0 && std::abs(aimDirection.y) > std::abs(aimDirection.x)) {
+        sprite.setTextureRect(sf::IntRect(0, 3 * 75, 75, 75));
+    }
+    if (aimDirection.y > 0 && std::abs(aimDirection.y) > std::abs(aimDirection.x)) {
+        sprite.setTextureRect(sf::IntRect(0, 0 * 75, 75, 75));
+    }
+
+    // if (aimDirection.x > 0) {
+    //     sprite.setTextureRect(sf::IntRect(0, 2 * 16, 16, 16));
+    //     sprite.setScale(2.0f, 2.0f);
+    // }
+    // if (aimDirection.x < 0) {
+    //     sprite.setTextureRect(sf::IntRect(0, 2 * 16, 16, 16));
+    //     sprite.setScale(-2.0f, 2.0f);
+    // }
+    // if (aimDirection.y < 0 && std::abs(aimDirection.y) > std::abs(aimDirection.x)) {
+    //     sprite.setTextureRect(sf::IntRect(0, 3 * 16, 16, 16));
+    // }
+    // if (aimDirection.y > 0 && std::abs(aimDirection.y) > std::abs(aimDirection.x)) {
+    //     sprite.setTextureRect(sf::IntRect(0, 0 * 16, 16, 16));
+    // }
+}
+
+
+void Character::draw(GameEngine& engine) {
+    /////// DEBUG
+    hurtbox->render(engine.getWindow());
+    
+    // Dibujar el personaje
+    engine.drawSprite(sprite);
+
+    drawHearts(engine); // Dibujar corazones de vida
+
+    // Dibujar el arma equipada
+    if (equippedWeapon) {
+        equippedWeapon->renderOnPlayer(getPosition(), getDirection(), engine.getWindow()); // Pasar el posicion y direccion para ajustar la posición del arma
+    }
+
+    // Dibujar barra de vida sobre el personaje
+    // sf::RectangleShape healthBar(sf::Vector2f(50, 5));
+    // healthBar.setFillColor(sf::Color::Green);
+    // healthBar.setPosition(sprite.getPosition().x - 25, sprite.getPosition().y - 40);
+
+    // float healthPercentage = static_cast<float>(currentHealth) / maxHealth;
+    // healthBar.setSize(sf::Vector2f(50 * healthPercentage, 5));
+
+    // engine.drawRectangle(healthBar);
+
+    if (isShieldActive) {
+        shieldsprite.setPosition(sprite.getPosition().x - 32, sprite.getPosition().y - 32);
+        shieldsprite.draw(engine.getWindow());
+    }
+}
+
+
+void Character::spawnAt(const TileMap& tilemap, float x, float y) {
+    // Obtiene una posición de spawn válida
+    sf::Vector2f spawnPos = tilemap.getSpawnPosition(x * 16, y * 16);  //la casilla pasada por parametro multiplicada por los pixeles a los que equivale un tile (16*16)
+    
+    // Establece la posición del jugador
+    setPosition(spawnPos.x, spawnPos.y);
+    
+    // Reinicia la velocidad y otros estados del jugador
+    velocity = sf::Vector2f(0.f, 0.f);
+    movingLeft = false;
+    movingRight = false;
+    movingUp = false;
+    movingDown = false;
+    isDashing = false;
+    
+    // Establece la dirección inicial del jugador (hacia abajo)
+    direction = sf::Vector2f(0.0f, 1.0f);
+    
+    // Asegúrate de que la textura del sprite esté correctamente orientada
+    sprite.setTextureRect(sf::IntRect(0, 0, 75, 75));
+    // sprite.setTextureRect(sf::IntRect(0, 0, 16, 16));
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+// WEAPON STUFF-------------------------------------------------------------------------------------------------------------------------------------------
+
+void Character::equipWeapon() {
+    equippedWeapon = weapons[equippedIndex];
+}
+
+// ESTO HAY QUE CAMBIARLO
+// lo que debería hacer es activar la hitbox y dejar que el InGame gestione las intersecciones
+// crea una referencia circular al enemigo 
+//
+// void Character::attack(std::vector<Enemy>& enemies) {
+//     if (equippedWeapon) equippedWeapon->attack(*this, enemies);
+// }
+
+// void Character::useAbility(sf::RenderWindow& window, std::vector<Enemy>& enemies) {
+//     if (equippedWeapon) {
+//         if (equippedWeapon->getAbilityType() == AbilityType::Dash)
+//             equippedWeapon->useAbility(*this);
+//         else if (equippedWeapon->getAbilityType() == AbilityType::Teleport)  
+//             equippedWeapon->useAbility(*this, window);
+//         else if (equippedWeapon->getAbilityType() == AbilityType::Shot)
+//             equippedWeapon->useAbility(*this, enemies);
+//     }
+// }
+
+void Character::startDash(float speed, float duration) {
+    if (!isDashing) {
+        std::cout << "startea el dashhhhhhh" << std::endl;
+        isDashing = true;
+        dashSpeed = speed;
+        dashDuration = duration;
+        dashTimer.restart();
+        velocity.x = dashSpeed * aimDirection.x; // Se mueve en la dirección de apuntado
+        velocity.y = dashSpeed * aimDirection.y;
+    }
+}
+
+
+void Character::addWeapon(Weapon* weapon) {
+    if(weapons.size() < 2){
+        weapons.push_back(weapon);
+        if(weapons.size() == 1) 
+            equippedIndex = 0;
+    }
+}
+
+void Character::switchWeapon() {
+    if(weapons.size() > 1) {
+        equippedIndex = 1 - equippedIndex;
+    }
+}
+
+int Character::getWeaponCount() const {
+    return weapons.size();
+}
+
+Weapon* Character::getEquippedWeapon() const {
+    if (weapons.empty()) return nullptr;
+    return weapons[equippedIndex];
+}
+
+void Character::setPosition(float x, float y) {
+    sprite.setPosition(x, y);
+}
+
+sf::Vector2f Character::getDirection() const {
+    return direction;
+}
+
+void Character::setDirection(float x, float y) {
+    direction.x = x;
+    direction.y = y;
+}
+
+void Character::addWeaponWithPosition(Weapon* weapon, sf::Vector2f originalPosition) {
+    if (weapons.size() < 2) {
+        weapons.push_back(weapon);
+        weaponOriginalPositions.push_back(originalPosition);
+        if (weapons.size() == 1) 
+            equippedIndex = 0;
+    } else {
+        // Replace the first weapon (index 0)
+        Weapon* oldWeapon = weapons[0];
+        sf::Vector2f oldPos = weaponOriginalPositions[0];
+        
+        // Return the old weapon to ground
+        oldWeapon->setPosition(oldPos.x, oldPos.y);
+        
+        // Update with the new weapon
+        weapons[0] = weapon;
+        weaponOriginalPositions[0] = originalPosition;
+        
+        // Make sure we're using the second weapon (index 1)
+        equippedIndex = 1;
+    }
+}
+
+Weapon* Character::removeFirstWeapon(sf::Vector2f& outOriginalPosition) {
+    if (weapons.empty()) return nullptr;
+    
+    Weapon* removedWeapon = weapons[0];
+    outOriginalPosition = weaponOriginalPositions[0];
+    
+    // Remove the first weapon
+    weapons.erase(weapons.begin());
+    weaponOriginalPositions.erase(weaponOriginalPositions.begin());
+    
+    // Adjust equipped index if needed
+    if (!weapons.empty()) equippedIndex = 0;
+    
+    return removedWeapon;
+}
+
+
+
+
+
+
+
+
+// HEALTH STUFF-------------------------------------------------------------------------------------------------------------------------------------
+
+void Character::setHealth(int health) {
+    currentHealth = std::max(0, std::min(health, maxHealth)); // Asegura que la vida esté entre 0 y maxHealth
+}
+
+int Character::getHealth() const {
+    return currentHealth;
+}
+
+int Character::getMaxHealth() const {
+    return maxHealth;
+}
+
+void Character::takeDamage(int damage) {
+    if(!isInvencible){
+        if(tryDodge()) {
+            std::cout << "Esquivas el ataque!" << std::endl;
+            return; // Si se esquiva, no se recibe daño
+        }
+        setHealth(currentHealth - damage);
+        isInvencible = true;
+        if(invencibilityDuration == 4.0f) {
+            isShieldActive = true; // Activar el escudo temporal
+            shieldAnimation->play("shield", 12.0f); // Reproducir a 12 FPS
+        }
+    };
+}
+
+void Character::heal(int amount) {
+    setHealth(currentHealth + amount);
+}
+
+void Character::drawHearts(GameEngine& engine) {
+    // Cargar el sprite de los corazones si no está cargado
+    static SpriteFacade heartSprite("./resources/crucifix.png");
+
+    // Posición base del primer corazón (encima del personaje)
+    sf::Vector2f basePosition = sprite.getPosition();
+    basePosition.y -= 50; // Ajustar la altura para que esté encima del personaje
+    basePosition.x -= 45; // Centrar los corazones (ajustar según el tamaño del sprite)
+
+    // Dibujar los 3 corazones
+    for (int i = 0; i < 3; ++i) {
+        sf::Vector2f position = basePosition;
+        position.x += i * 30; // Separación entre corazones
+
+        // Determinar el estado del corazón (lleno, medio lleno o vacío)
+        float heartValue = currentHealth - (i * 33.33f); // Vida restante para este corazón
+        if (heartValue >= 33.33f) {
+            // Corazón lleno
+            heartSprite.setTextureRect(sf::IntRect(0, 0, 32, 32)); // Rect completo para corazón lleno
+        } else if (heartValue > 0) {
+            // Medio corazón
+            heartSprite.setTextureRect(sf::IntRect(0, 0, 16, 32)); // Rect para medio corazón
+        } else {
+            // Corazón vacío
+           heartSprite.setTextureRect(sf::IntRect(32, 0, 32, 32)); // Rect para corazón vacío (ajustar según el sprite)
+        }
+
+        heartSprite.setPosition(position.x, position.y);
+        heartSprite.draw(engine.getWindow());
+    }
+}
+
+
+
+
+
+
+
+// INTERACTION STUFF-------------------------------------------------------------------------------------------------------------------------------
+
+// void Character::InteractionCage(TileMap& tilemap, int centerX, int centerY) {
+//     // Coordenadas relativas desde el centro
+//     tilemap.setLocalTile("deco", centerX - 2, centerY, 64); // izquierda
+//     tilemap.setLocalTile("deco", centerX - 1, centerY, 65); // centro
+//     tilemap.setLocalTile("deco", centerX,     centerY, 66); // derecha
+//     tilemap.setLocalTile("deco", centerX - 2, centerY + 1, 80); // izquierda abajo
+//     tilemap.setLocalTile("deco", centerX - 1, centerY + 1, 81); // centro abajo
+//     tilemap.setLocalTile("deco", centerX,     centerY + 1, 82); // derecha abajo
+// }
+
+// void Character::InteractionOpenDoor() {
+//     std::cout << "PUERTA ABIERTA (SE HAN PULSADO LOS 3 BOTONES DE SALA 1)" << std::endl;
+// }
+
+void Character::interact(TileMap& tilemap) {
+    sf::FloatRect playerBounds = sprite.getGlobalBounds();
+    int tileId = -1;
+    
+    if (tilemap.isPlayerInteractingWithTile(playerBounds, tileId)) {
+        // Crear la interacción correspondiente usando la fábrica
+        tileId -= 1;
+        auto interaction = InteractionFactory::createInteraction(tileId);
+        
+        if (interaction) {
+            // Verificar si la interacción está disponible
+            if (interaction->isAvailable(*this, tilemap)) {
+                // Ejecutar la interacción
+                interaction->execute(*this, tilemap);
+                
+                // Si es una puerta y se han cumplido los requisitos, abrirla
+                if (auto doorInteraction = std::dynamic_pointer_cast<DoorInteraction>(interaction)) {
+                    if (InteractionManager::getInstance()->checkDoorRequirements(tileId)) {
+                        std::cout << "Se han cumplido todos los requisitos para abrir la puerta." << std::endl;
+                    }
+                }
+            }
+        } else {
+            std::cout << "No hay interacción definida para el tile " << tileId << std::endl;
+        }
+    } else {
+        std::cout << "No hay nada con lo que interactuar aquí." << std::endl;
+    }
+}
+
+
+void Character::updateInvencibility(float deltaTime){
+    if(isInvencible)
+        invencibilityTimer += deltaTime;
+    if(invencibilityTimer > invencibilityDuration){
+        isInvencible = false;
+        invencibilityTimer = 0;
+        if(invencibilityDuration == 4.0f)
+            isShieldActive = false; // Desactivar el escudo al finalizar la invencibilidad
+    }
+}
+
+int Character::getKarma() const {
+    return karmaPoints; // Asegúrate de que `karmaPoints` esté definido en la clase
+}
+
+void Character::addKarma(int amount) {
+    karmaPoints += amount;
+}
+
+void Character::updateHealthRegeneration(float deltaTime) {
+    if (healthRegenerationEnabled) {
+        healthRegenTimer += deltaTime;
+
+        if (healthRegenTimer >= healthRegenInterval) {
+            healthRegenTimer = 0.0f;
+
+            if (currentHealth < maxHealth) {
+                currentHealth++;
+                std::cout << "Vida regenerada. Vidas actuales: " << currentHealth << std::endl;
+            }
+        }
+    }
+}
+
+bool Character::tryDodge() const {
+    float randomValue = static_cast<float>(rand()) / RAND_MAX;
+    return randomValue < dodgeChance; // `dodgeChance` debe estar definido en la clase
+}
+
+void Character::increaseMovementSpeed(float amount) {
+    float oldSpeed = speed;
+    speed += amount;
+    std::cout << "Velocidad aumentada de " << oldSpeed << " a " << speed << std::endl;
+}
+
+void Character::increaseDodgeChance(float amount) {
+    dodgeChance += amount;
+}
+
+void Character::increaseMaxHealth(int amount) {
+    maxHealth += amount;
+    currentHealth = std::min(currentHealth, static_cast<float>(maxHealth)); // Asegúrate de que la vida actual no exceda la máxima
+}
+
+void Character::enableHealthRegeneration() {
+    healthRegenerationEnabled = true;
+}
+
+void Character::enableTemporalyShield(float duration) {
+    invencibilityDuration = duration;
+    invencibilityTimer = 0.0f; // Reiniciar el temporizador
+}
+
+
+sf::FloatRect Character::getBounds() const {
+    return sprite.getGlobalBounds();
+}
+

@@ -104,7 +104,7 @@ Aparece un rectángulo abajo a la izquierda que posteriormente mostrará las hab
 ## 20250312 MáximoMartínez @(2h, 45min)
 He empezado a diseñar el **sistema de audio** intentando aprovechar para que funcione a modo de **fachada del módulo de audio de SFML**. He empezado por los sonidos individuales, todo lo que no sea música. Después de mucha pelea con GPT, he conseguido que suenen muchos sonidos simultáneamente.
 
-## 20250313 MáximoMartínez @(5h)
+## 20250313 DavidGonzález @(5h)
 He implementado la camara en movimiento que sigue al personaje y un sistema de tiles, tilesets y tilemaps para montar y cargar mapas flexibles y personalizables. No he conseguido que dicho sistema funcione correctamente todavía.
 
 ## 2020317 MáximoMartínez @(1h 20min)
@@ -116,3 +116,143 @@ He añadido la lógica para poder llevar hasta dos armas equipadas.
 ## 20250317 EstrellaDomínguez (1h, 15min)
 He añadido la opción de Configuración en el menú principal.
 He creado el menú Configuración (y su acceso desde el principal), así como sus diferentes opciones.
+
+## 2020322 MáximoMartínez @(4h)
+He mejorado el sistema de áreas para que permita distintias formas.
+He creado ya una clase entidad, una clase hitbox y una clase hurtbox para implementar el "combate" o interacción del jugador con los enemigos.
+He estado mucho tiempo y no he llegado a nada funcional porque una idea que tenía resultaba en una referencia circular y las IA no me avisaron. 
+
+## 20250401 DavidGonzález @(12h)
+He conseguido que el juego cargue mapas parseando archivos exportados desde la aplicacion tiled (carga el mapa. con sus capas aunque todavia no he conseguido que cargue distinos tilesets, por tanto no puedo emplear el tileset de la decoracion de momento). También he comenzado con el dibujado de mapas, ya están hechos la sala_1 que puede servir como tutorial, y parte del lobby. La realización de todo esto está siendo bastante tediosa y no hice commits hasta ahora ya que no obtenía progresos útiles, de ahí la gran cantidad de horas que he invertido para este commit.
+IMPORTANTE: A partir de ahora para ejecutar el programa se debe instalar *Tinyxml12*, para ello escribimos los siguientes comandos en la plantilla del proyecto (Davinson en mi caso):
+- sudo apt install pkg-config
+- sudo apt install libtinyxml2-dev
+- pkg-config --modversion tinyxml2 (para comprobar que se ha instalado correctamente)
+
+## 20250402 JorgePelegrin @(1h 30min)
+Arco y habilidad.
+
+## 20250402 EstrellaDominguez @(1h 30min)
+Creada la rama developer.
+Arregladas las rutas para acceder a los recursos desde los menus.
+Terminada mi parte del diagrama.
+
+## 20250402 DavidGonzález @(3h)
+He creado los limites del mapa mediante una capa bounds en tiled, y he cambiado algunos ajustes + sigo tileando el lobby
+
+## 20250402 DavidGonzález @(2h 30 min)
+Estoy realizando la interaccion (que todavia no funciona al 100%) y está el lobby terminado con los bounds, las puertas y los bloques de interaccion puestos
+
+## 20250402 DavidGonzález, JorgePelegrin, EstrellaDominguez @(30 min)
+Creacion de la rama developer correctamente y creación de la estrcutura de carpetas
+
+## 20250402 DavidGonzález, JorgePelegrin, EstrellaDominguez, MáximoMartínez @(30 min)
+Definición del diagrama de clases del proyecto.
+
+## 20250402 MáximoMartínez @(1h)
+He descartado absolutamente todo lo que he hecho hasta el momento y me he puesto a ver qué puedo hacer e investigar.
+
+## 20250402 JorgePelegrin @(1h)
+He creado varios objetos y he añadido el portal animado (la habilidad de la lanza).
+
+## 20250405 JorgePelegrin @(4h)
+He creado el motor de juego y el façade de la clase Sprite de sfml. Además he añadido las armas y he hecho un main "funcional". En el main se dibuja el mapa y el personaje junto a su arma equipada.
+
+## 20250402 DavidGonzález @(2h)
+Diseño de los niveles y el flujo del juego + comienzo de creacion del mapa world_1 + modificaciones en el workspace + intentos de modificar el motor para que corra al personaje (está en proceso)
+
+## 20250406 JorgePelegrin @(1h)
+Unificación de character de david y mio para el movimiento del character con arma, golpeo y dasheo
+
+## 20250402 DavidGonzález @(2h)
+Unificación de character de Jorge y mio para el movimiento del character con arma, golpeo y dasheo. Creado archivo notion con los ids de las interacciones de cada mapa y actualización del lobby
+
+## 20250407 JorgePelegrin @(2h)
+He colocado las armas dentro del lobby para poder equiparlas utilizando el boton "E". Falta restringir las armas para que se puedan ir equipando a medida que pasemos los mundos.
+
+## 20250402 DavidGonzález @(2h)
+He metido el mapa del mundo 1 que está en proceso. He introducido una funcion para que el jugador spawnee en la parte del mapa que se le indique
+
+## 20250408 MáximoMartínez @(4h)
+He empezado a diseñar los enemigos del videojuego creando una clase definitiva EnemyA (la "A" para no tener conflicto con la clase prototipo que no hemos eliminado todavía) con unas clases totalmente recodificadas de Hitbox y Hurtbox. Luego además he implementado como he podido el algoritmo A* para que vayan hacia el jugador. NADA DE ESTO ESTÁ TESTEADO a fecha de este log, por lo que he hecho commit pero no he pusheado por si las moscas, simplemente para dejar constancia.
+
+## 20250407 EstrellaDomínguez @(4h)
+He modificado todos los códigos para aplicar correctamente el patrón State.
+Ahora hay una carpeta State con todos los estados y desde el main se controla el estado inicial.
+Hay un par de fallos: La ventana del menú no se cierra cuando se abre el lobby, lo cuál creo que es lo que hace que no funcione correctamente el juego (el personaje no se mueve).
+
+## 20250408 EstrellaDomínguez @(2h)
+He intentado arreglar el error de las ventanas pero no he conseguido nada.
+He cambiado el main para controlar mejor algunas excepciones y he cambiado el menú configuración para que se controle con WASD en vez de Up y Down.
+
+## 20250408 JorgePelegrin @(1h 30min)
+He arreglado el error de las dos ventanas, y ahora funciona el ```InGame``` perfectamente.
+
+## 20250408 DavidGonzález @(6h)
+Interacción implementada con éxito e incluida dentro del patrón state + modificaciones en world_1 que sigue en proceso
+
+## 20250402 DavidGonzález @(3h 30 min)
+Imlementación de funcion de cambio de tiles de capa in game (para obtener input visuales y cambiar mapa in game).
+
+## 20250408 EstrellaDomínguez @(2h)
+He implementado el HUD. Ahora el personaje tiene barra de vida y hay un inventario que indica que arma tiene seleccionada.
+
+## 20250409 MáximoMartínez @(3h)
+(2h) En clase de prácticas creé el test para los enemigos que creé ayer y funcionaron perfectamente. Hecho esto fui a descartar la clase antigua ```Enemy``` para usar la nueva actualizando todas las referencias. En el proceso reventó un problema que llevaba siendo arrastrado bastante tiempo que eran 3 referencias circulares: entre ```Enemy``` y ```Character```; otra entre ```Enemy``` y ```Character``` pero a través de ```Weapon```; y finalmente una entre ```Character``` y ```Weapon```. Empecé a trabajar en cómo solucionar este problemón.
+
+(1h) He conseguido aislar el problema de las referencias circulares. Las he eliminado de raíz donde era evidente que no hacían falta y la funcionalidad que se buscaba se debía gestionar a través de InGame. Las funcionalidades que no bastaba con quitar una parte y necesitan reimplementarse las he comentado.
+
+(1h) He cambiado ```Enemy``` para que use SpriteFaçade. A parte he descargado unos sprites para un enemigo murciélago y he implementado la animación de este. Nota: necesitamos un sistema global para animaciones. Olvidé hacer commit de esto último el mismo día.
+
+## 20250410 MáximoMartínez @(4h)
+(1h 30min) He implementado una clase ```AnimatedSprite``` para poder usar animaciones de spritesheets con la fachada de sprite. Permite cargar varias animaciones que se identifican por un nombre y elegir los FPS de la reproducción. La he añadido a la clase ```Enemy``` para probarlo.
+(1h) He creado la clase ```VisualEffect``` para los futuros efectos visuales que querramos añadir. Hace uso de la clase ```AnimatedSprite``` que hice hace nada. Para manejar los en ```InGame``` más fácilmente he creado la clase ```VFXManager```. He hecho un test y funciona perfectamente.
+(1h) He empezado a implementar aquello que descartamos por las referencias circulares (sistema de combate). El jugador tiene ```Hurtbox```, ```InGame``` comprueba si alguna hitbox colisiona con él y recibe daño si eso ocurre.
+
+## 20250410 JorgePelegrin @(3h)
+Arregladas todas las referencias circulares, mejorando el sistema de combate y añadiendo cooldown a todos los ataques y habilidades. He empezado a añadir varios items.
+
+## 20250411 EstrellaDominguez @(1h)
+Implementado los recursos en la nube mediante el archivo setup.sh y Dropbox.
+
+## 20250411 MáximoMartínez @(4h 20min)
+(2h 20min) He puesto un efecto al ataque de los enemigos. He arreglado cómo recibe daño el jugador con un estado de invencibilidad. He conseguido que los enemigos reciban daño. En ese proceso he arreglaod una "Illegal expression" que surgía al obtener la hitbox del arma porque no estaba planteada como un puntero. Al cambiarlo se ha solucionado. También he invertido tiempo en buscar y preparar más assets que añadir al juego.  
+(2h) He cambiado el pathfinding. Estaba hecho con las distancias Manhattan y ahora es euclídea. Ahora es más costoso y de vez en cuando tarda más de 15000 microsegundos en calcular (como 1.5frames a 60fps). Por lo que necesita ser optimizarlo.
+
+## 20250412 MáximoMartínez @(3h)
+
+(3h) He modificado el asset del murcielago para que tenga animación de muerte. Antes de añadir un nuevo tipo de enemigo he implementado un ```EnemyManager``` para gestionar los enemigos de ahora en adelante. La clase ```Enemy``` ahora tiene métodos virtuales para que el manager gestione bien las clases hijas. He tardado más de lo esperado por muchos cosas que no comprendía de C++, pero he aprendido una barbaridad. 
+(1h) He implementado knockback para todos los enemigos.
+(2h 30min) He añadido un enemigo ```Necromancer``` nuevo con diferente comportamiento. También me he ocupado de agregar compatibilidad con diferentes enum de estados entre los hijos y la clase padre ```Enemy```.
+
+## 20250412 EstrellaDominguez @(2h)
+He implementado el menu de pausa. Se abre cuando el usuario pulsa la tecla "esc" aunque hay algún error a la hora de mostrarlo.
+
+
+## 20250412 DavidGonzález @(5h)
+Refactorización de la interacción, creando una carpeta a parte y modulando las interacciones por clases, funcionan las interacciones básicas pero no he conseguido que los botones abran la puerta y encima he descubierto que mi codigo para quitar bounds no funciona correctamente. He hecho tambien un mapa de obstaculos para probar pathfindings.
+
+## 20250413 DavidGonzález @(6h)
+Refactorización aparentemente funcionando como debe, no vuelvo a refactorizar un codigo en mi vida, los botones abren puerta y ya hay spawnInteraction para mover al jugador entre salas, falta arreglar que setLocaltile quite la colision de los bloques, que me estoy peleando y no la consigo quitar por ahora.
+
+## 20250412 - 20250413 JorgePelegrin @(6h 30min)
+He añadido el sistema de karma con las dos ramas, una de pecado y otra de absolucion, y lo he juntado con la tienda para poder comprar las mejoras desde ahí. También he implementado todas las mejoras al personaje y armas, las cuales he tenido que refactorizar un poco el código para poder aplicar las mejoras permanentes a todas las armas a la vez.
+
+## 20250414 JorgePelegrin @(1h)
+He movido un poco el arco y la lanza para que no estén tan alejados del personaje, y he añadido la animación de una burbuja a modo visual para poder saber cuando tienes el escudo de la mejora permanente activo y no te pueden golpear. 
+
+## 20250414 MáximoMartínez @(5h 30min)
+Me he puesto a solucionar diferentes errores y a trabajar sobre la fachada de sonido que hice en el hito 1 para añadir música y efectos de sonido. Luego he ayudado a un compañero a solucionar ciertos errores. Después, parte del tiempo ha sido una sesión de planificación en grupo para el bucle de salas. 
+
+## 20250414 EstrellaDominguez @(4h)
+He cambiado algunos archivos de State para implementarlos con el motor 2D.
+He arreglado un error con el menú de pausa.
+He implementado los mensajes de texto de los botones y las puertas para ayudar al jugador.
+Ahora en el HUD se ve también el arma secundaria del personaje.
+Por último he cambiado la barra de vida por corazones.
+
+## 20250414 DavidGonzález @(3h)
+Arreglado problema con los bounds, ya se puden eliminar bounds para dar paso al jugador a zonas previamente inaccesibles.
+
+## 20250414 EstrellaDominguez @(30min)
+Arreglos menores en la tienda y el HUD. Subida a la rama main para el hito 2.
