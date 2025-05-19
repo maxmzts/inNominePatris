@@ -1,5 +1,5 @@
-// UiTriggerInteraction.cpp
 #include "UiTriggerInteraction.h"
+#include "InGame.h"
 #include <iostream>
 
 UiTriggerInteraction::UiTriggerInteraction(int id, const std::string& name, const std::string& uiName)
@@ -7,20 +7,30 @@ UiTriggerInteraction::UiTriggerInteraction(int id, const std::string& name, cons
 }
 
 void UiTriggerInteraction::execute(Character& character, TileMap& tilemap) {
-    std::cout << "Abriendo interfaz de " << m_uiName << std::endl;
-    
-    // Aquí se implementaría la lógica para mostrar la interfaz
-    // Por ahora, solo imprimimos un mensaje para simular la acción
-    // if (m_ui) {
-    //     std::cout << "La interfaz " << m_uiName << " ha sido activada" << std::endl;
-    //     // m_ui->show(); // Esto se implementaría cuando tengamos la clase UserInterface
-    // } else {
-    //     std::cout << "Error: La interfaz no está disponible" << std::endl;
-    // }
+    // Esta función se llama desde checkAutoInteractions en InGame.cpp
+    // Ya no necesitamos obtener la instancia de InGame aquí
+    // InGame será pasado por parámetro en setUiTriggerState desde checkAutoInteractions
+    std::cout << "UiTrigger activado: " << m_uiName << std::endl;
+    // La lógica real de cambio de estado se hace en setUiTriggerState
 }
 
 bool UiTriggerInteraction::isAvailable(Character& character, TileMap& tilemap) const {
-    // Podríamos añadir condiciones adicionales aquí, como requisitos de nivel
-    // o ítems para acceder a ciertas interfaces
-    return true;
+    return true; // Siempre disponible si el jugador está en el tile
+}
+
+void UiTriggerInteraction::setUiTriggerState(InGame& inGame, bool state) {
+    // Accedemos al flag en InGame y lo actualizamos
+    if (m_uiName == "Tienda") {
+        inGame.setPlayerInShopArea(state);
+    }
+    // Puedes añadir más condiciones para diferentes tipos de UIs
+    std::cout << "Estado de UI '" << m_uiName << "' actualizado a: " << (state ? "activado" : "desactivado") << std::endl;
+}
+
+std::string UiTriggerInteraction::getProximityMessage() const {
+    return "Presiona B para abrir la " + m_uiName;
+}
+
+std::string UiTriggerInteraction::getUiName() const {
+    return m_uiName;
 }

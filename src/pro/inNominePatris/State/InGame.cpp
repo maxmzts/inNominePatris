@@ -13,6 +13,7 @@
 #include "ItemManager.h"
 #include "SpawnPlayerInteraction.h"
 #include "WorldChangeInteraction.h"
+#include "UiTriggerInteraction.h"
 #include "RoomManager.h"
 #include <iostream>
 #include <algorithm>
@@ -71,6 +72,9 @@ InGame::InGame(GameEngine& engine, bool loadSaveFile)
     } else {
         // std::cout << "Partida cargada correctamente." << std::endl;    
     }
+
+    m_isPlayerInAnyUiTriggerArea = false;
+    m_lastUiTriggerTileId = -1;
 }
 
 InGame* InGame::getInstance(GameEngine& engine, bool loadSaveFile) {
@@ -132,8 +136,10 @@ void InGame::update(Game& game) {
 
         // Abrir la tienda (tecla B)
         if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::B) {
-            // std::cout << "Abriendo tienda..." << std::endl;
-            shop.open();
+            if (m_playerInShopArea) {  // Solo abre la tienda si el jugador está en una zona de tienda
+                std::cout << "Abriendo tienda..." << std::endl;
+                shop.open();
+            }
         }
 
         if (shop.isOpen()) {
@@ -374,10 +380,10 @@ void InGame::update(Game& game) {
 void InGame::checkAutoInteractions() {
     sf::FloatRect playerBounds = player.getBounds();
     int tileId = -1;
+    bool foundUiTrigger = false; // Flag para controlar si hemos encontrado algún UiTrigger activo
     
     if (tileMap.isPlayerInteractingWithTile(playerBounds, tileId)) {
         // Ajustar el ID del tile
-
         if(tileId != 1492){
             tileId -= 1;
         }
@@ -399,7 +405,6 @@ void InGame::checkAutoInteractions() {
             else if (auto worldChangeInteraction = std::dynamic_pointer_cast<WorldChangeInteraction>(interaction)) {
                 if (worldChangeInteraction->getAutoTrigger() && worldChangeInteraction->isAvailable(player, tileMap)) {
                     // Ejecutar automáticamente el cambio de mundo
-                    //worldChangeInteraction->changeWorldState(*this, engine);
                     std::string targetWorldState, mapFilePath, musicFilePath;
                     sf::Vector2i spawnPosition;
 
@@ -407,10 +412,44 @@ void InGame::checkAutoInteractions() {
                     changeWorldState(targetWorldState, mapFilePath, musicFilePath, spawnPosition);
                 }
             }
+            else if (auto uiTriggerInteraction = std::dynamic_pointer_cast<UiTriggerInteraction>(interaction)) {
+                if (uiTriggerInteraction->isAvailable(player, tileMap)) {
+                    // Marcar que hemos encontrado un UiTrigger
+                    foundUiTrigger = true;
+                    m_lastUiTriggerTileId = tileId;
+                    
+                    // Solo activamos si no estaba ya activado o si es un nuevo UiTrigger
+                    if (!m_isPlayerInAnyUiTriggerArea) {
+                        m_isPlayerInAnyUiTriggerArea = true;
+                        
+                        // Primero ejecutamos la lógica básica de la interacción
+                        uiTriggerInteraction->execute(player, tileMap);
+                        
+                        // Luego actualizamos el estado de la UI pasando la instancia de InGame por parámetro
+                        uiTriggerInteraction->setUiTriggerState(*this, true);
+                    }
+                }
+            }
             // Aquí podrían ir otras tipos de interacciones automáticas
         }
     }
+    
+    // Si no encontramos ningún UiTrigger activo pero antes estábamos en uno, desactivarlo
+    if (!foundUiTrigger && m_isPlayerInAnyUiTriggerArea) {
+        // Desactivamos todos los UiTriggers
+        m_isPlayerInAnyUiTriggerArea = false;
+        
+        // Crear la interacción anterior para desactivarla
+        auto previousInteraction = InteractionFactory::createInteraction(m_lastUiTriggerTileId);
+        if (auto uiTriggerInteraction = std::dynamic_pointer_cast<UiTriggerInteraction>(previousInteraction)) {
+            // Actualizar el estado de la UI a false
+            uiTriggerInteraction->setUiTriggerState(*this, false);
+        }
+        
+        m_lastUiTriggerTileId = -1;
+    }
 }
+
 
 InGame::~InGame() {
     for (Weapon* weapon : weaponsOnGround) {
@@ -579,4 +618,12 @@ void InGame::spawnWeaponsInLobby() {
     if (currentWorldState == worldStates["lobby"].get()) {
         static_cast<LobbyState*>(currentWorldState)->spawnWeaponsOnGround(weaponsOnGround, &engine);
     }
+}
+
+
+void InGame::resetUiTriggerStates() {
+    // Resetear todos los flags relacionados con UIs
+    m_playerInShopArea = false;
+    m_isPlayerInAnyUiTriggerArea = false;
+    m_lastUiTriggerTileId = -1;
 }

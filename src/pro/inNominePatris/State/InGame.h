@@ -25,6 +25,11 @@ private:
     Character player;
     KarmaSystem karmaSystem; // Sistema de karma
     Shop shop;
+    bool m_playerInShopArea = false; // Flag para indicar si el jugador está en zona de tienda
+     // Agregar estas variables para rastrear UiTriggers activos
+    bool m_isPlayerInAnyUiTriggerArea = false;
+    int m_lastUiTriggerTileId = -1;
+
 
     TileMap tileMap;
     std::vector<Weapon*> weaponsOnGround;
@@ -62,6 +67,12 @@ public:
     static void resetInstance(); // Método para reiniciar la instancia
 
     void spawnWeaponsInLobby();
+
+    // Métodos para la gestión de zonas de UI
+    void setPlayerInShopArea(bool state) { m_playerInShopArea = state; }
+    bool isPlayerInShopArea() const { return m_playerInShopArea; }
+    //  método para resetear estados de UI cuando sea necesario
+    void resetUiTriggerStates();
 };
 
 #endif // INGAME_H
