@@ -366,7 +366,7 @@ He arreglado problemas que tenía el Boss 2.
 Luego me he puesto a hacer el diagrama de clases.
 Llegado cierto punto he arreglado un problema que tenía desde hace mucho con SoundEffect, resulta que nunca los liberaba de la memoria.
 
-## 20250519 EstrellaDomínguez @(3h)
+## 20250519 EstrellaDomínguez @(4h)
 He implementado la barra de vida del enemigo.
 He cambiado completamente la estética de todos los menús.
 He corregido la ortografía de los items que hacía que salieran caracteres raros.
