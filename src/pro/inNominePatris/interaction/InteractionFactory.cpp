@@ -32,7 +32,7 @@ std::shared_ptr<Interaction> InteractionFactory::createInteraction(int tileId) {
         case 1242: // Si tienes una puerta con este ID
             return std::make_shared<DoorInteraction>(tileId, "Puerta Principal", false, 41, 65);
         // INTERFACES-------------------------------------------------------------------------------------------------------
-        case 873: // Tile para la tienda
+        case 872: // tienda
             return std::make_shared<UiTriggerInteraction>(tileId, "Tienda", "Tienda");
         // SPAWN POINTS----------------------------------------------------------------------------------------------------------------
         // WRLD 1

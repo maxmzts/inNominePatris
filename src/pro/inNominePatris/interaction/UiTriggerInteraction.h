@@ -1,4 +1,3 @@
-// UiTriggerInteraction.h
 #ifndef UI_TRIGGER_INTERACTION_H
 #define UI_TRIGGER_INTERACTION_H
 
@@ -6,14 +5,13 @@
 #include "Character.h"
 #include "TileMap.h"
 #include <string>
-#include <functional>
 
 // Forward declaration para evitar dependencias circulares
-class UserInterface;
+class InGame;
+class GameEngine;
 
 class UiTriggerInteraction : public Interaction {
 private:
-    UserInterface* m_ui; // Interfaz que se mostrará al activar esta interacción
     std::string m_uiName; // Nombre descriptivo de la interfaz
 
 public:
@@ -21,6 +19,15 @@ public:
     
     virtual void execute(Character& character, TileMap& tilemap) override;
     virtual bool isAvailable(Character& character, TileMap& tilemap) const override;
+    
+    // Método para activar/desactivar la UI en InGame con InGame pasado por parámetro
+    void setUiTriggerState(InGame& inGame, bool state);
+    
+    // Método para obtener el mensaje de proximidad
+    std::string getProximityMessage() const;
+    
+    // Método para obtener el nombre de la UI
+    std::string getUiName() const;
 };
 
 #endif // UI_TRIGGER_INTERACTION_H
