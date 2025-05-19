@@ -3,7 +3,7 @@
 #include <iostream>
 
 UiTriggerInteraction::UiTriggerInteraction(int id, const std::string& name, const std::string& uiName)
-    : Interaction(id, name), m_uiName(uiName) {
+    : Interaction(id, name), m_uiName(uiName), m_isActivated(false) {
 }
 
 void UiTriggerInteraction::execute(Character& character, TileMap& tilemap) {
@@ -28,7 +28,10 @@ void UiTriggerInteraction::setUiTriggerState(InGame& inGame, bool state) {
 }
 
 std::string UiTriggerInteraction::getProximityMessage() const {
-    return "Presiona B para abrir la " + m_uiName;
+    if (!m_isActivated) {
+        return "Presiona B para abrir la tienda";
+    }
+    return ""; // No mostrar mensaje si ya está activado
 }
 
 std::string UiTriggerInteraction::getUiName() const {

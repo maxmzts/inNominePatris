@@ -13,6 +13,7 @@ class GameEngine;
 class UiTriggerInteraction : public Interaction {
 private:
     std::string m_uiName; // Nombre descriptivo de la interfaz
+    bool m_isActivated; // para saber si el botón ya fue activado
 
 public:
     UiTriggerInteraction(int id, const std::string& name, const std::string& uiName);
