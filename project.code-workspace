@@ -1,11 +1,12 @@
 {
   "folders": [
     {
+      "name": "root-folder",
       "path": "."
     },
 
     {
-        "name": "inNominePatris",
+        "name": "source-code",
         "path": "src/"
     },
   ],
