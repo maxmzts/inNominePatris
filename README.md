@@ -12,6 +12,7 @@ The upgrade tree is split into two branches: **Absolution** and **Sin**. Choosin
 ## Installation
 
 ### Requirements
+- Ubuntu 24.04 (Windows subsytems included)
 - C++14 or higher
 - SFML 2.5+
 - TinyXML-2
@@ -21,18 +22,22 @@ The upgrade tree is split into two branches: **Absolution** and **Sin**. Choosin
 
 ### Build Instructions
 
-1. Having all the necessary requirements, you'll need to clone the repository:
+1. Having all the necessary requirements, you'll need to open a terminal and clone the repository:
 ```bash
 git clone https://github.com/maxmzts/inNominePatris.git
 ```
-2. On completion, open the editor:
+2. Download the assets from the cloud:
 ``` bash
-cd inNominePatris
+cd inNominePatris/src
+./setup.sh
+```
+3. On completion, open the editor:
+``` bash
 code
 ```
-3. When VSCode is running go to the top toolbar to File -> Open Workspace from File... and select the file named `project.code-workspace`.
-4. Then press F7 to compile the project.
-5. Finally, press F5 to run the build.
+4. When VSCode is running go to the top toolbar to `File` -> `Open Workspace from File...` and select the file named `project.code-workspace`.
+5. Then press F7 to compile the project.
+6. Finally, press F5 to run the build.
 
 ## Technology
 The game is developed in **C++**, using **SFML** as the graphics library, **Clang** as the compiler, and **CMake** for build configuration.  
