@@ -8,8 +8,7 @@ src/pro/Davinson/build
 .vscode/launch.json
 src/pro/multimax/MiJuego
 
-src/pro/inNominePatris/build
-src/pro/inNominePatris/MiJuego
-src/pro/inNominePatris/resources
-!src/pro/inNominePatris/resources/lista-de-atribuciones.md
-src/pro/inNominePatris/savefile.txt
+src/build
+src/MiJuego
+src/resources
+src/savefile.txt

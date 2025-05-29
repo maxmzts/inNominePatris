@@ -1,28 +1,57 @@
-# Antes de nada
-Estos son los prerequesitos antes de gastar la plantilla. Debes tener conocimientos básicos de:
+# In Nomine Patris
 
-* **git**: conocer como mínimo y estar familiarizado con los comandos commit, add, push, pull, tag, merge y branch. Si no sabes nada de git te recomiendo que le eches un vistazo rápido antes de empezar a : https://david-estevez.gitbooks.io/the-git-the-bad-and-the-ugly/content/es/control-de-versiones.html
+## Description
+A 2D action RPG with roguelike elements. It uses a custom 2D engine built from scratch, featuring tile management for map design, collision handling, dynamic music, sound effects, visual effects, and a custom save system.
 
-* **markdown**: saber escribir un fichero en markdown con formato básico. Saber incluir imágenes en dicho fichero. Es muy sencillo, con la entrada de la wikipedia podéis saber los tags básicos: https://es.wikipedia.org/wiki/Markdown
+## Gameplay
+The objective of the game is completing its 3 worlds. Each world has rooms with enemies and a boss at the end. Being either defeated or victorious will provide the player with karma, a persisten currency used to acquire permantent upgrades. 
 
-* **vscode**: probar el entorno y leer algún tutorial básico para aprender como usarlo. 
+The upgrade tree is split into two branches: **Absolution** and **Sin**. Choosing an upgrade from one branch will lock the corresponding upgrade on the same level from the opposite branch.  
+*Note: The story is not yet implemented.*
+
+## Installation
+
+### Requirements
+- C++14 or higher
+- SFML 2.5+
+- TinyXML-2
+- CMake 3.1+
+- Clang
+- VSCode
+
+### Build Instructions
+
+1. Having all the necessary requirements, you'll need to clone the repository:
+```bash
+git clone https://github.com/maxmzts/inNominePatris.git
+```
+2. On completion, open the editor:
+``` bash
+cd inNominePatris
+code
+```
+3. When VSCode is running go to the top toolbar to File -> Open Workspace from File... and select the file named `project.code-workspace`.
+4. Then press F7 to compile the project.
+5. Finally, press F5 to run the build.
+
+## Technology
+The game is developed in **C++**, using **SFML** as the graphics library, **Clang** as the compiler, and **CMake** for build configuration.  
+It also uses **TinyXML-2** for tilemap handling.
+
+## Authors
+- Máximo Martínez Torres — Enemy AI, Sound and Save System. 
+- David González Moreno — Player, Levels and Tile management.
+- Jorge Pelegrín Bru — Combat, Weapons, Upgrades and some sprites.  
+- Estrella Domínguez — Game State and HUD.
+
+Note: most assets are external resources found online, see more on CREDITS.md.
+
+## AI-generated Music Notice
+
+All background music used in this project was generated using SUNO AI, an AI-based music generation tool. This approach was chosen due to the academic nature of the project, limited resources, and the absence of dedicated composers within the team.
+
+The generated tracks serve a decorative and illustrative purpose only and are not intended for commercial use.
+
+We acknowledge the growing role of generative tools in creative workflows and remain committed to transparency regarding the origin of all assets used in this project.
 
 
-## Recomendable
-* **cmake**: tener conocimientos para que sirve y leves de que es el fichero `CMakeLists.txt`. Saber como genera *cmake* un ejecutable y hacer una mini prueba en tu equipo
-
-# Cómo obtener la plantilla
-
-La plantilla se debe obtener desde terminal mediante 
-
-~~~ 
-git clone <url_https_de_tu_repositorio>
-~~~
-La url se obtiene desde el repositorio del grupo así:
-
-![](otros/img/git_u.png)
-
-# Documentación
-
-**Tened en cuenta que las intrucciones de la plantilla están aquí:** 
-[documentación_compilada](doc/plantilla_doc.html). Existen más documentos a leer en la carpeta `doc`. ¡Échales un vistazo!
