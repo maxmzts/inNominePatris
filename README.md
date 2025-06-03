@@ -45,7 +45,7 @@ It also uses **TinyXML-2** for tilemap handling.
 
 ## Authors
 - Máximo Martínez Torres — Enemy AI, Sound and Save System. 
-- David González Moreno — Player, Levels and Tile management.
+- David González Moreno — Levels, Interaction management, Player and Tile management.
 - Jorge Pelegrín Bru — Combat, Weapons, Upgrades and some sprites.  
 - Estrella Domínguez — Game State and HUD.
 
